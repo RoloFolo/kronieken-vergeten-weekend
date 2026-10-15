@@ -1,0 +1,16 @@
+# Ruwe werkbestanden: groot, en alles wat de site nodig heeft staat al verkleind in docs/a
+audio/
+print/lagen/
+print/ui/
+print/relieken/
+print/beeld/
+print/icons/
+print/regelboek-preview.png
+
+# Speelstand van de lokale server
+app/stand.json
+
+node_modules/
+.DS_Store
+Thumbs.db
+desktop.ini

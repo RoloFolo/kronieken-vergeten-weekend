@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050203">
+<meta name="robots" content="noindex">
+<title>Chaos Lord</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Libre+Baskerville:ital@1&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Layout: the Chaos Lord's secret phone page. One column, sinister: blood red on black.
+   Free teases at the top, the three daily sabotage cards below. Single dark look by choice. */
+:root {
+  color-scheme: dark;
+  --bg: #050203; --bone: #efe3d4; --ash: #9c8a80; --blood: #c4161f; --ember: #ff3b3b; --line: #3a0a0e;
+  --carved: "Cinzel", Georgia, serif; --body: "Source Sans 3", "Segoe UI", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at 50% 0%, #3a060b, var(--bg) 60%) fixed, var(--bg); color: var(--bone); font: 16px/1.4 var(--body); padding: 18px 16px calc(28px + env(safe-area-inset-bottom)); }
+main { max-width: 480px; margin: 0 auto; display: grid; gap: 16px; }
+.kop { text-align: center; display: grid; gap: 6px; }
+h1 { margin: 0; font: 700 26px/1.1 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: transparent; -webkit-text-stroke: 1px var(--ember); text-shadow: 0 0 18px rgba(255,40,40,.6); }
+.kop p { margin: 0; font: italic 15px/1.4 "Libre Baskerville", Georgia, serif; color: var(--ash); }
+h2 { margin: 0 0 10px; font: 700 13px/1 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: var(--ember); }
+.kaart { background: linear-gradient(180deg, rgba(40,6,10,.85), rgba(12,3,5,.95)); border: 1px solid var(--line); box-shadow: inset 0 0 0 1px rgba(196,22,31,.35), 0 10px 30px #000; border-radius: 10px; padding: 14px; }
+.status { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--ash); }
+.punt { width: 10px; height: 10px; border-radius: 50%; background: #444; display: inline-block; margin-right: 8px; }
+.punt.aan { background: var(--ember); box-shadow: 0 0 10px var(--ember); }
+.kaarten { display: flex; gap: 8px; }
+.kaarten span { width: 26px; height: 36px; border-radius: 4px; border: 1px solid var(--blood); background: linear-gradient(160deg, #5a0a10, #1a0306); box-shadow: 0 0 10px rgba(196,22,31,.5); }
+.kaarten span.op { opacity: .15; box-shadow: none; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+button { font: inherit; color: var(--bone); cursor: pointer; border-radius: 10px; border: 1px solid rgba(196,22,31,.5); background: rgba(196,22,31,.1); padding: 14px 10px; display: grid; gap: 4px; justify-items: center; text-align: center; -webkit-tap-highlight-color: transparent; }
+button:active { transform: scale(.96); background: rgba(196,22,31,.3); }
+button:disabled { opacity: .3; }
+button:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
+button b { font: 700 15px/1.2 var(--carved); letter-spacing: .04em; }
+button small { color: var(--ash); font-size: 12px; line-height: 1.3; }
+.zegels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 10px; }
+.zegels button { padding: 6px; }
+.zegels img { width: 100%; max-width: 58px; aspect-ratio: 1; }
+.zegels button.gekozen { border-color: var(--ember); background: rgba(255,59,59,.22); box-shadow: 0 0 14px rgba(255,59,59,.5); }
+.zegels .n { font: 700 13px/1 var(--carved); }
+.groot { width: 100%; }
+.klein { font-size: 13px; color: var(--ash); margin: 8px 0 0; }
+.melding { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); translate: -50% 0; max-width: calc(100% - 32px); padding: 12px 16px; border-radius: 10px; background: #1a0306; border: 1px solid var(--blood); box-shadow: 0 10px 30px #000; font-size: 14px; opacity: 0; transition: opacity .3s; pointer-events: none; }
+.melding.aan { opacity: 1; }
+</style>
+</head>
+<body>
+<main>
+  <div class="kop">
+    <h1>Chaos Lord</h1>
+    <p>“Regels zijn suggesties.” Niemand hoeft te weten dat jij het bent.</p>
+  </div>
+
+  <div class="kaart status">
+    <span><span class="punt" id="punt"></span><span id="verbinding">Verbinden…</span></span>
+    <span class="kaarten" id="kaarten" aria-label="Sabotagekaarten vandaag"></span>
+  </div>
+
+  <section class="kaart">
+    <h2>Plagen · gratis</h2>
+    <div class="grid">
+      <button id="c-omen" type="button"><b>Fluistering</b><small>De Schaduw fluistert, het beeld flikkert</small></button>
+      <button id="c-bliksem" type="button"><b>Bliksem</b><small>Een donderslag</small></button>
+      <button id="c-raaf" type="button"><b>De Raaf</b><small>Hij krast en schrikt op</small></button>
+      <button id="c-hoop" type="button"><b>Valse Hoop</b><small>Een ampul stijgt… en zakt weer</small></button>
+    </div>
+    <p class="klein">Elke plagerij heeft even rust nodig voordat je hem opnieuw kunt gebruiken.</p>
+  </section>
+
+  <section class="kaart">
+    <h2>Sabotage · 3 kaarten per dag</h2>
+    <div class="zegels" id="zegels"></div>
+    <button class="groot" id="c-steel" type="button"><b>Steel een fiche</b><small>Uit het gekozen Zegel · kost 1 kaart</small></button>
+    <button class="groot" id="c-schaduw" type="button" style="margin-top:10px"><b>Roep de Schaduw</b><small>Start meteen een Schaduw-event · kost 2 kaarten</small></button>
+  </section>
+</main>
+<div class="melding" id="melding" role="status"></div>
+
+<script src="a/firebase-config.js"></script>
+<script src="a/koppeling.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const ZEGELS = [["vlam", "a/medaillon-vlam.webp"], ["hoorn", "a/medaillon-hoorn.webp"], ["schild", "a/medaillon-schild.webp"], ["hart", "a/medaillon-hart.webp"]];
+let gekozen = "vlam", stand = {};
+$("zegels").innerHTML = ZEGELS.map(([id, img]) => `<button type="button" data-id="${id}"><img src="${img}" alt="${id}"><span class="n" id="n-${id}">0</span></button>`).join("");
+$("zegels").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; gekozen = b.dataset.id; teken(); };
+
+function melding(t) { const m = $("melding"); m.textContent = t; m.classList.add("aan"); clearTimeout(m._t); m._t = setTimeout(() => m.classList.remove("aan"), 2400); }
+function kaartenOver() { const d = new Date().toLocaleDateString("sv-SE"); return stand.chaos?.dag === d ? stand.chaos.kaarten : 3; }
+function teken() {
+  const over = kaartenOver();
+  $("kaarten").innerHTML = [0, 1, 2].map((i) => `<span class="${i < over ? "" : "op"}"></span>`).join("");
+  document.querySelectorAll("#zegels button").forEach((b) => b.classList.toggle("gekozen", b.dataset.id === gekozen));
+  for (const [id] of ZEGELS) $(`n-${id}`).textContent = stand.fiches?.[id] ?? 0;
+  const inSpel = ["hal", "schaduw"].includes(stand.scherm);
+  $("c-steel").disabled = over < 1 || !inSpel || (stand.fiches?.[gekozen] ?? 0) < 1;
+  $("c-schaduw").disabled = over < 2 || stand.scherm !== "hal";
+  $("c-hoop").disabled = stand.scherm !== "hal";
+}
+const stuur = (cmd, extra = {}, tekst) => { Koppeling.stuur({ cmd, ...extra }); if (tekst) melding(tekst); };
+$("c-omen").onclick = () => stuur("chaos-omen", {}, "De Schaduw fluistert…");
+$("c-bliksem").onclick = () => stuur("chaos-bliksem", {}, "Donder.");
+$("c-raaf").onclick = () => stuur("chaos-raaf", {}, "De raaf krast.");
+$("c-hoop").onclick = () => stuur("chaos-valse-hoop", { id: gekozen }, "Valse hoop gezaaid.");
+$("c-steel").onclick = () => stuur("chaos-steel", { id: gekozen }, "Gestolen. Niemand zag het.");
+$("c-schaduw").onclick = () => stuur("chaos-schaduw", {}, "De Schaduw komt…");
+teken();
+Koppeling.start({ rol: "chaos", opStand: (s) => { stand = s; $("punt").classList.add("aan"); $("verbinding").textContent = "Verbonden"; teken(); } })
+  .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; });
+</script>
+</body>
+</html>
