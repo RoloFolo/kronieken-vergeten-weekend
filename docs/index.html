@@ -255,18 +255,18 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
   background: repeating-conic-gradient(rgba(255,215,140,.55) 0 5deg, transparent 5deg 22deg); -webkit-mask: radial-gradient(circle, #000 18%, transparent 68%); mask: radial-gradient(circle, #000 18%, transparent 68%); }
 .kistzaal .k-plek b { font: 700 1.25cqi/1.15 var(--carved); letter-spacing: .06em; text-transform: uppercase; color: var(--bronze-hi); text-shadow: 0 1px 4px #000, 0 0 12px #000; opacity: 0; transform: translateY(.6cqi); transition: opacity .8s .5s, transform .8s .5s; }
 .kistzaal .k-plek small { font: italic .95cqi/1.3 var(--display); color: var(--bone); text-shadow: 0 1px 4px #000; opacity: 0; transition: opacity .8s .9s; max-width: 13cqi; }
-.kistzaal .k-plek.spanning .vak img { opacity: .9; animation: spanning .5s ease-in-out infinite alternate; }
+.kistzaal .k-plek.spanning .k-vak img { opacity: .9; animation: spanning .5s ease-in-out infinite alternate; }
 @keyframes spanning { to { filter: brightness(0) drop-shadow(0 0 .3cqi rgba(255,90,60,1)) drop-shadow(0 0 2cqi rgba(255,60,40,.8)); } }
-.kistzaal .k-plek.gewonnen .vak img { opacity: 1; filter: drop-shadow(0 0 2cqi rgba(255,200,110,.9)); animation: rijs 1.6s cubic-bezier(.2,1.1,.3,1) both; }
+.kistzaal .k-plek.gewonnen .k-vak img { opacity: 1; filter: drop-shadow(0 0 2cqi rgba(255,200,110,.9)); animation: rijs 1.6s cubic-bezier(.2,1.1,.3,1) both; }
 @keyframes rijs { from { transform: translate(var(--vx), var(--vy)) scale(.2); filter: brightness(3) drop-shadow(0 0 3cqi rgba(255,230,160,1)); } }
 .kistzaal .k-plek.gewonnen .stralen { opacity: 1; animation: stralen 14s linear infinite, stralenIn 1.4s ease-out; }
 @keyframes stralen { to { rotate: 360deg; } }
 @keyframes stralenIn { from { opacity: 0; scale: .2; } }
 .kistzaal .k-plek.gewonnen b, .kistzaal .k-plek.gewonnen small, .kistzaal .k-plek.leeg b { opacity: 1; transform: none; }
-.kistzaal .k-plek.leeg .vak img { opacity: .18; filter: brightness(0) grayscale(1); animation: dooft 1s ease-in both; }
+.kistzaal .k-plek.leeg .k-vak img { opacity: .18; filter: brightness(0) grayscale(1); animation: dooft 1s ease-in both; }
 @keyframes dooft { 30% { opacity: .9; filter: brightness(0) drop-shadow(0 0 1.4cqi rgba(255,40,30,1)); } }
 .kistzaal .k-plek.leeg b { color: #6d5a52; }
-.kistzaal .k-plek.gebruikt .vak img { filter: grayscale(1) brightness(.45); }
+.kistzaal .k-plek.gebruikt .k-vak img { filter: grayscale(1) brightness(.45); }
 .kistzaal .k-titel { position: absolute; top: 2.4vh; left: 0; right: 0; margin: 0; text-align: center; font-size: clamp(22px, 2.3vw, 46px); letter-spacing: .2em; filter: drop-shadow(0 3px 8px #000); }
 .kistzaal .k-score { position: absolute; left: 0; right: 0; bottom: 4vh; margin: 0; text-align: center; font: italic clamp(18px, 1.8vw, 36px)/1.4 var(--display); color: var(--bone); text-shadow: 0 2px 8px #000; opacity: 0; transition: opacity 1.5s; }
 .kistzaal .k-score.aan { opacity: 1; }
@@ -806,13 +806,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=41"></script>
-<script src="a/spel.js?v=41"></script>
-<script src="a/wachters.js?v=41"></script>
-<script src="a/firebase-config.js?v=41"></script>
-<script src="a/koppeling.js?v=41"></script>
-<script src="a/rollen.js?v=41"></script>
-<script src="a/tafel.js?v=41"></script>
+<script src="a/events.js?v=42"></script>
+<script src="a/spel.js?v=42"></script>
+<script src="a/wachters.js?v=42"></script>
+<script src="a/firebase-config.js?v=42"></script>
+<script src="a/koppeling.js?v=42"></script>
+<script src="a/rollen.js?v=42"></script>
+<script src="a/tafel.js?v=42"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1460,12 +1460,12 @@ document.addEventListener("fullscreenchange", () => setTimeout(() => { zaalMaat(
 zaalMaat(); poortBeeldMaat(); kistMaat();
 // ===== the relic chest =====
 // relic slots in an arc above the chest, sockets on the chest front (fractions of the painting)
-const KIST_PLEK = [[.17, .37], [.33, .28], [.5, .245], [.67, .28], [.83, .37]], KIST_SOKKEL = [.39, .445, .5, .555, .61];
+const KIST_PLEK = [[.17, .37], [.33, .28], [.5, .245], [.67, .28], [.83, .37]], KIST_SOKKEL = [.39, .449, .5, .553, .61]; // centres of the five rings on the chest (measured on the painting)
 let kistGeopend = false, kistBezig = false;
 function tekenKistzaal() {
   $("k-plekken").innerHTML = S.relieken.map((k, i) => `<div class="k-plek" id="kp-${k.id}" style="left:${KIST_PLEK[i][0] * 100}%;top:${KIST_PLEK[i][1] * 100}%;--vx:${((.5 - KIST_PLEK[i][0]) * 100 / 9.5 * 100).toFixed(0)}%;--vy:${((.46 - KIST_PLEK[i][1]) * 1072 / 1920 * 100 / 9.5 * 100).toFixed(0)}%">
     <div class="k-vak"><div class="stralen"></div><img src="${k.img}" alt=""></div><b>${k.naam}</b><small>${k.tekst}</small></div>`).join("");
-  $("k-sokkels").innerHTML = KIST_SOKKEL.map((x, i) => `<span class="k-sokkel" id="ks-${i}" style="left:${x * 100}%;top:63%"></span>`).join("");
+  $("k-sokkels").innerHTML = KIST_SOKKEL.map((x, i) => `<span class="k-sokkel" id="ks-${i}" style="left:${x * 100}%;top:65.8%"></span>`).join("");
   $("kistzaal").classList.toggle("open", kistGeopend);
   if (kistGeopend) S.relieken.forEach((k, i) => { const p = $(`kp-${k.id}`);
     p.classList.add(relieken.has(k.id) ? "gewonnen" : "leeg"); p.classList.toggle("gebruikt", reliekGebruikt.has(k.id)); if (relieken.has(k.id)) $(`ks-${i}`).classList.add("aan");
