@@ -787,13 +787,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=30"></script>
-<script src="a/spel.js?v=30"></script>
-<script src="a/wachters.js?v=30"></script>
-<script src="a/firebase-config.js?v=30"></script>
-<script src="a/koppeling.js?v=30"></script>
-<script src="a/rollen.js?v=30"></script>
-<script src="a/tafel.js?v=30"></script>
+<script src="a/events.js?v=31"></script>
+<script src="a/spel.js?v=31"></script>
+<script src="a/wachters.js?v=31"></script>
+<script src="a/firebase-config.js?v=31"></script>
+<script src="a/koppeling.js?v=31"></script>
+<script src="a/rollen.js?v=31"></script>
+<script src="a/tafel.js?v=31"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1937,7 +1937,7 @@ function meld() {
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
-    publiek: { hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen ? { open: true, gedaan: [...tochtGedaan] } : null }, // the only part the personal pages can read
+    publiek: { hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
     tochtOpen, kistGeopend,
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   })), 150);

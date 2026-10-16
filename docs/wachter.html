@@ -25,7 +25,8 @@ body { margin: 0; min-height: 100svh; color: var(--bone); font: 17px/1.5 var(--b
   background: radial-gradient(ellipse 120% 55% at 50% 0%, rgba(150,18,28,.5), transparent 60%), radial-gradient(ellipse 100% 40% at 50% 100%, rgba(110,14,20,.35), transparent 60%),
     linear-gradient(rgba(7,4,5,.82), rgba(7,4,5,.92)), url(a/plaat.jpg) center top / cover fixed, var(--ink); }
 main { width: min(560px, 100%); margin: 0 auto; padding: max(18px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom)); display: grid; gap: 18px; }
-.logo { width: min(320px, 78%); justify-self: center; filter: drop-shadow(0 6px 18px #000); }
+html, body { overflow-x: hidden; }
+.logo { width: min(520px, 118%); justify-self: center; margin: -7% 0 -9%; filter: drop-shadow(0 6px 18px #000); } /* the image has wide empty margins */
 .carved { font-family: var(--carved); font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
   background: linear-gradient(180deg, var(--bronze-hi), #d8bf8f 45%, #9b7a4c); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .kop { text-align: center; display: grid; gap: 4px; }
@@ -192,12 +193,12 @@ body.in-frame main { visibility: hidden; }
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=30"></script>
-<script src="a/spel.js?v=30"></script>
-<script src="a/rollen.js?v=30"></script>
-<script src="a/firebase-config.js?v=30"></script>
-<script src="a/koppeling.js?v=30"></script>
-<script src="a/tafel.js?v=30"></script>
+<script src="a/wachters.js?v=31"></script>
+<script src="a/spel.js?v=31"></script>
+<script src="a/rollen.js?v=31"></script>
+<script src="a/firebase-config.js?v=31"></script>
+<script src="a/koppeling.js?v=31"></script>
+<script src="a/tafel.js?v=31"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
