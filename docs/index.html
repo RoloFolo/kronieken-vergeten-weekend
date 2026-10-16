@@ -787,13 +787,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=29"></script>
-<script src="a/spel.js?v=29"></script>
-<script src="a/wachters.js?v=29"></script>
-<script src="a/firebase-config.js?v=29"></script>
-<script src="a/koppeling.js?v=29"></script>
-<script src="a/rollen.js?v=29"></script>
-<script src="a/tafel.js?v=29"></script>
+<script src="a/events.js?v=30"></script>
+<script src="a/spel.js?v=30"></script>
+<script src="a/wachters.js?v=30"></script>
+<script src="a/firebase-config.js?v=30"></script>
+<script src="a/koppeling.js?v=30"></script>
+<script src="a/rollen.js?v=30"></script>
+<script src="a/tafel.js?v=30"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -968,21 +968,22 @@ sporen = Array.from({ length: Math.round(innerWidth / 14) }, () => nieuweSpore(t
 requestAnimationFrame(frame);
 
 /* ================= flames behind the crest ================= */
-const vc2 = $("vlammen"), vx = vc2.getContext("2d"); let tongen = [], vlamWoede = false; // vlamWoede: the traitor put out the light, the demon burns
-function maatVlam() { const r = vc2.getBoundingClientRect(); vc2.width = Math.max(1, r.width); vc2.height = Math.max(1, r.height); }
+const vc2 = $("vlammen"), vx = vc2.getContext("2d"); let tongen = [], vlamWoede = false, vlamK = 1; // vlamWoede: the traitor put out the light, the demon burns
+function maatVlam() { // extra resolution: the crest is scaled up (and on phones a lot) before entering the Hall
+  const r = vc2.getBoundingClientRect(), k = vlamK = Math.min(3, Math.max(2, devicePixelRatio || 1) * 1.5); vc2.width = Math.max(1, Math.round(r.width * k)); vc2.height = Math.max(1, Math.round(r.height * k)); }
 maatVlam(); addEventListener("resize", maatVlam);
 function nieuweTong() {
   const w = vc2.width, h = vc2.height, wild = wakker() || vlamWoede;
   // born along the demon's shoulders and the top of the plaque
   const x = w * (.22 + Math.random() * .56), y = h * (.62 + Math.random() * .3);
-  return { x, y, vx: (Math.random() - .5) * .3, vy: -(0.7 + Math.random() * (wild ? 2.2 : 1.1)), r: w * (.025 + Math.random() * (wild ? .06 : .04)), leven: 0, max: 50 + Math.random() * (wild ? 80 : 60), f: Math.random() * 6 };
+  return { x, y, vx: (Math.random() - .5) * .3 * vlamK, vy: -(0.7 + Math.random() * (wild ? 2.2 : 1.1)) * vlamK, r: w * (.025 + Math.random() * (wild ? .06 : .04)), leven: 0, max: 50 + Math.random() * (wild ? 80 : 60), f: Math.random() * 6 };
 }
 function vlamFrame() {
   const w = vc2.width, h = vc2.height; vx.clearRect(0, 0, w, h); vx.globalCompositeOperation = "lighter";
   const doel = vlamWoede ? 420 : wakker() ? 280 : 120; while (tongen.length < doel) tongen.push(nieuweTong());
   tongen = tongen.filter((t) => t.leven < t.max);
   for (const t of tongen) {
-    t.leven++; t.f += .2; t.x += t.vx + Math.sin(t.f) * .35; t.y += t.vy;
+    t.leven++; t.f += .2; t.x += t.vx + Math.sin(t.f) * .35 * vlamK; t.y += t.vy;
     const p = t.leven / t.max, rad = t.r * (1 - p * .7);
     const kleur = p < .18 ? [255, 235, 170] : p < .4 ? [255, 160, 60] : p < .7 ? [255, 70, 30] : [170, 15, 15];
     const a = (p < .1 ? p * 10 : 1 - p) * (wakker() || vlamWoede ? .8 : .55);
@@ -1294,7 +1295,8 @@ $("uitleg-verder").onclick = () => { if (uitlegActief) stopUitleg(); }; // skip 
 let crestVan = null;
 function crestStart() { // FLIP: the crest starts big in the middle of the screen
   $("crest").style.transform = "none"; const r = $("crest").getBoundingClientRect();
-  const sc = Math.min(innerWidth * .5 / r.width, innerHeight * .42 / r.height);
+  const staand = innerHeight > innerWidth; // on a phone the crest may take almost the full width
+  const sc = Math.min(innerWidth * (staand ? 1.2 : .5) / r.width, innerHeight * (staand ? .42 : .42) / r.height); // the logo image has wide empty margins
   crestVan = { dx: innerWidth / 2 - (r.left + r.width / 2), dy: innerHeight * .3 - (r.top + r.height / 2), s: sc };
   $("crest").style.transform = `translate(${crestVan.dx}px, ${crestVan.dy}px) scale(${sc})`;
 }
