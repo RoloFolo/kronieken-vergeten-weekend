@@ -334,6 +334,17 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 @keyframes goudflits { from { opacity: 1; } to { opacity: 0; } }
 /* ===== the traitor's tricks ===== */
 .zwerm { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 36; pointer-events: none; }
+/* blood on the "glass" of the screen where a raven hit, slowly running down */
+.spat { position: absolute; z-index: 44; pointer-events: none; translate: -50% -50%; filter: drop-shadow(0 2px 3px rgba(0,0,0,.6)); animation: spatIn .12s ease-out both, druip 11s linear .12s forwards; }
+@keyframes spatIn { from { scale: .35; opacity: 0; } }
+@keyframes druip { 0% { translate: -50% -50%; opacity: 1; } 75% { opacity: .95; } 100% { translate: -50% calc(-50% + 9vh); opacity: 0; } }
+.stage.zwermrood::before { content: ""; position: absolute; inset: 0; z-index: 35; pointer-events: none; background: radial-gradient(ellipse at 50% 45%, transparent 35%, rgba(90,0,6,.55) 100%); animation: duisterIn 1.2s ease-out both; }
+/* a seal that leaks: red drops fall out of the vial */
+.druppel { position: absolute; left: 50%; top: 79%; width: .75vw; aspect-ratio: 5 / 7; margin-left: -.375vw; z-index: 4; pointer-events: none; border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: radial-gradient(circle at 35% 30%, #ff9a8a, #e2323c 45%, #6a0a10); box-shadow: 0 0 10px rgba(226,50,60,.8); animation: val 1.15s cubic-bezier(.5,0,.9,.6) forwards; }
+@keyframes val { 0% { transform: translateY(0) scale(.4, .4); opacity: 0; } 12% { transform: translateY(0) scale(1, 1.25); opacity: 1; } 100% { transform: translateY(26vh) scale(.8, 1.6); opacity: 0; } }
+.vessel.loss .liquid { filter: brightness(1.8) saturate(1.3); transition: height 1.6s cubic-bezier(.2,.9,.2,1), filter .15s; }
+.vessel.ontdooi { animation: shake .5s ease-in-out; }
 .inslag { position: absolute; inset: 0; z-index: 45; pointer-events: none; opacity: 0;
   background: radial-gradient(ellipse 70% 90% at var(--ix, 50%) 0%, rgba(255,240,232,.97), rgba(255,95,70,.6) 38%, rgba(140,0,10,.25) 70%, transparent); mix-blend-mode: screen; }
 .inslag.aan { animation: inslag 1.1s ease-out; }
@@ -370,9 +381,10 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .vessel.bevroren .vglow { background: radial-gradient(ellipse, rgba(170,220,255,.5), transparent 70%) !important; }
 .vessel .glass { transition: opacity 2.5s ease; }
 .vessel .glass.ijs { opacity: 0; }
-.vessel.bevroren .glass.ijs { opacity: 1; animation: ijsglans 3.2s ease-in-out 2.5s infinite alternate; }
+.vessel.bevroren .glass.ijs { opacity: 1; filter: drop-shadow(0 0 10px rgba(0,0,0,.75)) drop-shadow(0 0 16px rgba(150,205,255,.5)); }
 .vessel.bevroren .glass:not(.ijs) { opacity: 0; }
-@keyframes ijsglans { to { filter: brightness(1.15) drop-shadow(0 0 18px rgba(150,205,255,.55)); } }
+.vessel.bevroren .vglow { animation: ijsadem 4s ease-in-out infinite; }
+@keyframes ijsadem { 0%, 100% { opacity: .55; } 50% { opacity: .9; } }
 .vessel.ijsstoot { animation: shake .45s ease-in-out; }
 .vessel[data-ijs]::before { content: attr(data-ijs); position: absolute; inset: auto; bottom: 100%; left: 50%; translate: -50% -.6vh; z-index: 5; white-space: nowrap; font: 700 clamp(11px, .8vw, 17px)/1 var(--carved); letter-spacing: .14em; color: #bfe3ff; text-shadow: 0 0 10px rgba(120,190,255,.9); }
 .overname { position: absolute; inset: 0; z-index: 60; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 45%, rgba(120,0,10,.6), #000 72%); animation: duisterIn 2s ease-out both; }
@@ -570,11 +582,11 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=11"></script>
-<script src="a/spel.js?v=11"></script>
-<script src="a/wachters.js?v=11"></script>
-<script src="a/firebase-config.js?v=11"></script>
-<script src="a/koppeling.js?v=11"></script>
+<script src="a/events.js?v=12"></script>
+<script src="a/spel.js?v=12"></script>
+<script src="a/wachters.js?v=12"></script>
+<script src="a/firebase-config.js?v=12"></script>
+<script src="a/koppeling.js?v=12"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -845,7 +857,13 @@ function fiche(id, n) {
   if (n > 0) {
     const f = document.createElement("span"); f.className = "fiche"; vial.querySelector(".inner").appendChild(f); setTimeout(() => f.remove(), 1100);
     setTimeout(() => { teken(); vial.classList.add("gain"); speel("klok", .3, 1.6); brand(id); }, 650);
-  } else { vial.classList.add("loss"); teken(); speel("klok", .2, .6); }
+  } else { vial.classList.add("loss"); teken(); speel("lek", .9, .9 + Math.random() * .2); lek(vial); }
+}
+function lek(vial) { // red drops fall from the bottom of the vial
+  const plek = vial.parentElement;
+  for (let i = 0; i < 5; i++) setTimeout(() => {
+    const d = document.createElement("span"); d.className = "druppel"; d.style.left = `${46 + Math.random() * 8}%`; d.style.top = `${vial.offsetTop + vial.offsetHeight * .8}px`; plek.appendChild(d); setTimeout(() => d.remove(), 1300);
+  }, i * 170 + Math.random() * 80);
 }
 teken();
 
@@ -1237,39 +1255,82 @@ function mag(naam, sec) { const nu = Date.now(); if ((wacht[naam] || 0) > nu) re
 function flikker(ms = 2500) { stage.classList.add("omen"); setTimeout(() => stage.classList.remove("omen"), ms); }
 // With Firebase the database rules already check the sender's own account; locally the personal token decides.
 function echteVerrader(o) { return !!verrader && (o.van ? o.van === Koppeling.emailVan(verrader.naam) : !window.FIREBASE_CONFIG && o.token === verrader.token); }
-// A flock of ravens: proper silhouettes, big and near, beating their wings across the whole screen.
-let zwerm = [], zwermLoopt = false;
+// A flock of ravens going wild: painted ravens swirl across the screen, and a few dive straight at the
+// viewer and smash into the "glass", leaving blood and feathers that slowly run down.
+const ZW = Object.fromEntries(["op", "neer", "voor"].map((n) => { const i = new Image(); i.src = `a/zwerm/raaf-${n}.webp`; return [n, i]; }));
+let zwerm = [], duikers = [], vallers = [], veren = [], zwermLoopt = false, zwermEind = 0;
 function startZwerm() {
   const c = $("zwerm"), d = devicePixelRatio || 1; c.width = innerWidth * d; c.height = innerHeight * d;
-  const W = c.width, H = c.height, naarRechts = Math.random() < .5, k = H / 1080;
-  for (let i = 0; i < 28; i++) {
-    const s = (16 + Math.random() * 38) * k * d; // near ravens are bigger and faster
-    zwerm.push({ x: naarRechts ? -80 * k - Math.random() * W * .9 : W + 80 * k + Math.random() * W * .9, y: H * (.06 + Math.random() * .6), s,
-      v: (naarRechts ? 1 : -1) * (2.4 + s / (d * k) * .06) * k * d, f: Math.random() * 6, fv: .3 + Math.random() * .12, golf: Math.random() * 6 });
+  const W = c.width, H = c.height, k = H / 1080, nu = performance.now();
+  zwermEind = nu + 9000; stage.classList.add("zwermrood"); setTimeout(() => stage.classList.remove("zwermrood"), 11000);
+  for (let i = 0; i < 42; i++) { // swirling ravens from every side, near ones bigger and faster
+    const s = (60 + Math.random() ** 2 * 190) * k * d, kant = Math.floor(Math.random() * 3), snel = (3.5 + s / (k * d) * .03) * k * d;
+    const x = kant === 0 ? -s - Math.random() * W * .5 : kant === 1 ? W + s + Math.random() * W * .5 : Math.random() * W;
+    const y = kant === 2 ? -s - Math.random() * H * .4 : H * (.05 + Math.random() * .7);
+    const hoek = kant === 0 ? (Math.random() - .5) * .8 : kant === 1 ? Math.PI + (Math.random() - .5) * .8 : Math.PI / 2 + (Math.random() - .5) * 1.4;
+    zwerm.push({ x, y, s, vx: Math.cos(hoek) * snel, vy: Math.sin(hoek) * snel, snel, f: Math.random() * 2, fv: .28 + Math.random() * .22, start: nu + Math.random() * 1500 });
   }
+  // the divers: they come at you and hit the screen
+  [1300, 2900, 4100, 5600, 6600].forEach((t) => duikers.push({ t0: nu + t + Math.random() * 300, duur: 1100 + Math.random() * 500,
+    van: { x: W * (.2 + Math.random() * .6), y: H * (.15 + Math.random() * .35) }, naar: { x: W * (.12 + Math.random() * .76), y: H * (.2 + Math.random() * .55) }, wiebel: Math.random() * 6 }));
   if (!zwermLoopt) { zwermLoopt = true; requestAnimationFrame(vliegZwerm); }
 }
-function raaf(x, g) {
-  const s = g.s, w = Math.sin(g.f), dir = Math.sign(g.v);
-  x.save(); x.translate(g.x, g.y); x.scale(dir, 1);
-  x.beginPath(); x.ellipse(0, 0, s * .55, s * .17, -.05, 0, Math.PI * 2); x.fill();                       // body
-  x.beginPath(); x.arc(s * .52, -s * .07, s * .14, 0, Math.PI * 2); x.fill();                             // head
-  x.beginPath(); x.moveTo(s * .62, -s * .1); x.lineTo(s * .86, -s * .03); x.lineTo(s * .62, -s * .01); x.fill(); // beak
-  x.beginPath(); x.moveTo(-s * .45, -s * .06); x.lineTo(-s * .95, -s * .16); x.lineTo(-s * .9, s * .1); x.lineTo(-s * .45, s * .07); x.fill(); // tail
-  for (const [schuif, schaal] of [[-s * .08, .85], [s * .05, 1]]) {                                     // far wing, near wing
-    const tip = -w * s * 1.05 * schaal;
-    x.beginPath(); x.moveTo(-s * .22 + schuif, -s * .02);
-    x.quadraticCurveTo(-s * .25 + schuif, tip * .55 - s * .12, -s * .62 + schuif, tip);
-    x.quadraticCurveTo(-s * .05 + schuif, tip * .35, s * .2 + schuif, -s * .02); x.fill();
-  }
-  x.restore();
+function tekenRaaf(x, beeld, px, py, s, spiegel, hoek = 0, alfa = 1) {
+  if (!beeld.complete || !beeld.naturalWidth) return;
+  const h = s * beeld.naturalHeight / beeld.naturalWidth;
+  x.save(); x.globalAlpha = alfa; x.translate(px, py); x.rotate(hoek); x.scale(spiegel ? -1 : 1, 1); x.drawImage(beeld, -s / 2, -h / 2, s, h); x.restore();
 }
-function vliegZwerm() {
-  const c = $("zwerm"), x = c.getContext("2d"); x.clearRect(0, 0, c.width, c.height);
-  zwerm = zwerm.filter((g) => (g.v > 0 ? g.x < c.width + 200 : g.x > -200));
-  x.fillStyle = "#070304"; x.shadowColor = "rgba(226,50,60,.45)"; x.shadowBlur = 6;
-  for (const g of zwerm) { g.x += g.v; g.f += g.fv; g.golf += .03; g.y += Math.sin(g.golf) * .6; raaf(x, g); }
-  if (zwerm.length) requestAnimationFrame(vliegZwerm); else { zwermLoopt = false; x.clearRect(0, 0, c.width, c.height); }
+function raak(px, py, s) { // a raven smashes into the screen
+  const c = $("zwerm"), d = devicePixelRatio || 1, el = document.createElement("img");
+  el.className = "spat"; el.src = "a/zwerm/bloed.webp"; el.alt = "";
+  const w = Math.max(260, s / d * (.7 + Math.random() * .3));
+  Object.assign(el.style, { left: `${px / d}px`, top: `${py / d}px`, width: `${w}px`, transform: `rotate(${(Math.random() - .5) * 70}deg) scaleX(${Math.random() < .5 ? -1 : 1})` });
+  stage.appendChild(el); setTimeout(() => el.remove(), 11500);
+  speel("klap", 1, .9 + Math.random() * .2); speel("kraai", .9, 1.35 + Math.random() * .2);
+  stage.classList.remove("beving"); void stage.offsetWidth; stage.classList.add("beving"); setTimeout(() => stage.classList.remove("beving"), 1000);
+  vallers.push({ x: px, y: py, s: s * .38, vy: -3 * d, hoek: Math.PI + (Math.random() - .5) * .6, vh: (Math.random() - .5) * .08 });
+  for (let i = 0; i < 16; i++) { const a = Math.random() * Math.PI * 2, v = (2 + Math.random() * 7) * d;
+    veren.push({ x: px, y: py, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 2 * d, hoek: Math.random() * 6, vh: (Math.random() - .5) * .25, l: (14 + Math.random() * 26) * d, t: 0 }); }
+  if (c) bliksem(0);
+}
+function vliegZwerm(nu) {
+  const c = $("zwerm"), x = c.getContext("2d"), W = c.width, H = c.height, d = devicePixelRatio || 1; x.clearRect(0, 0, W, H);
+  const weg = nu > zwermEind;
+  // swirling ravens: wander and swoop, then scatter outwards when it is over
+  zwerm = zwerm.filter((g) => !(weg && (g.x < -g.s * 1.5 || g.x > W + g.s * 1.5 || g.y < -g.s * 1.5 || g.y > H + g.s)));
+  zwerm.sort((a, b) => a.s - b.s);
+  for (const g of zwerm) {
+    if (nu < g.start) continue;
+    if (weg) { g.vx *= 1.035; g.vy = g.vy * 1.02 - .15 * d; }
+    else {
+      g.vx += (Math.random() - .5) * g.snel * .35; g.vy += (Math.random() - .5) * g.snel * .35;
+      const dx = W / 2 - g.x, dy = H * .4 - g.y; g.vx += dx / W * .12 * g.snel; g.vy += dy / H * .12 * g.snel; // stay around the hall
+      const v = Math.hypot(g.vx, g.vy), max = g.snel * 1.6; if (v > max) { g.vx *= max / v; g.vy *= max / v; }
+    }
+    g.x += g.vx; g.y += g.vy; g.f += g.fv;
+    tekenRaaf(x, Math.floor(g.f) % 2 ? ZW.op : ZW.neer, g.x, g.y, g.s, g.vx < 0, Math.max(-.5, Math.min(.5, g.vy / (g.snel * 2))) * (g.vx < 0 ? -1 : 1));
+  }
+  // dead ravens tumbling down after the impact
+  vallers = vallers.filter((g) => g.y < H + g.s);
+  for (const g of vallers) { g.vy += .9 * d; g.y += g.vy; g.hoek += g.vh; g.s *= .995; tekenRaaf(x, ZW.voor, g.x, g.y, g.s, false, g.hoek, .9); }
+  // divers: small in the distance, growing fast, then the hit
+  duikers = duikers.filter((g) => !g.klaar);
+  for (const g of duikers) {
+    const p = (nu - g.t0) / g.duur; if (p < 0) continue;
+    if (p >= 1) { g.klaar = true; raak(g.naar.x, g.naar.y, 900 * (H / 1080) * d); continue; }
+    const e = p * p * p, px = g.van.x + (g.naar.x - g.van.x) * p, py = g.van.y + (g.naar.y - g.van.y) * p + Math.sin(p * 9 + g.wiebel) * 18 * d * (1 - p);
+    if (p > .55 && !g.krijs) { g.krijs = true; speel("kraai", .8, 1.1); }
+    tekenRaaf(x, ZW.voor, px, py, (40 + 860 * e) * (H / 1080) * d, false, Math.sin(p * 14) * .12);
+  }
+  // feathers drifting down
+  veren = veren.filter((v) => v.y < H + 60 && v.t < 400);
+  x.fillStyle = "#0b0507";
+  for (const v of veren) {
+    v.t++; v.vx *= .97; v.vy = v.vy * .97 + .12 * d; v.x += v.vx + Math.sin(v.t * .08) * .8 * d; v.y += v.vy; v.hoek += v.vh;
+    x.save(); x.translate(v.x, v.y); x.rotate(v.hoek); x.beginPath(); x.ellipse(0, 0, v.l / 2, v.l / 7, 0, 0, Math.PI * 2); x.fill();
+    x.strokeStyle = "rgba(60,30,35,.8)"; x.lineWidth = d; x.beginPath(); x.moveTo(-v.l / 2, 0); x.lineTo(v.l / 2 + 4 * d, 0); x.stroke(); x.restore();
+  }
+  if (zwerm.length || duikers.length || vallers.length || veren.length) requestAnimationFrame(vliegZwerm); else { zwermLoopt = false; x.clearRect(0, 0, W, H); }
 }
 // The traitor's lightning: a strike that fills the screen, shakes the Hall and thunders right overhead.
 function inslag() {
@@ -1287,11 +1348,14 @@ function tekenIjs() {
   for (const z of ZEGELS) {
     const v = $(`vial-${z.id}`), aan = bevroren(z.id);
     v.classList.toggle("bevroren", aan);
-    if (aan) v.dataset.ijs = `Bevroren tot ${new Date(ijs[z.id]).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}`; else delete v.dataset.ijs;
-    if (!aan && ijs[z.id]) { delete ijs[z.id]; speel("glazen", .3, 1.3); meld(); }
+    if (aan) { const s = Math.ceil((ijs[z.id] - Date.now()) / 1000); v.dataset.ijs = `Bevroren · ${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`; } else delete v.dataset.ijs;
+    if (!aan && ijs[z.id]) { // the ice cracks and the seal thaws
+      delete ijs[z.id]; speel("glazen", .6, .8); setTimeout(() => speel("glazen", .4, 1.2), 160); speel("lek", .5, 1.1);
+      v.classList.remove("ontdooi"); void v.offsetWidth; v.classList.add("ontdooi"); meld();
+    }
   }
 }
-setInterval(tekenIjs, 5000);
+setInterval(tekenIjs, 1000);
 // plays a voice line and calls klaar when it is over, also when the browser refuses to play it or the file is missing
 function stemMet(naam, vol, klaar, reserve = 5000) {
   let af = false, vangnet = setTimeout(() => k(), reserve); const k = () => { if (!af) { af = true; clearTimeout(vangnet); klaar?.(); } };
@@ -1349,8 +1413,8 @@ const CHAOS_RAW = {
   },
   "chaos-zwerm": () => { // a flock of ravens, and the fog rolls in
     if (binnen === null || !mag("zwerm", 90)) return;
-    startZwerm(); setTimeout(startZwerm, 1800);
-    for (let i = 0; i < 7; i++) setTimeout(() => speel("kraai", .5 + Math.random() * .45, .7 + Math.random() * .35), 200 + i * 520);
+    startZwerm(); halMuziek.vol(.15, 600); setTimeout(() => halMuziek.vol(.5, 3000), 10000);
+    for (let i = 0; i < 16; i++) setTimeout(() => speel("kraai", .4 + Math.random() * .5, .65 + Math.random() * .6), Math.random() * 8000);
     $("mistbank").classList.add("aan"); setTimeout(() => $("mistbank").classList.remove("aan"), 30000);
   },
   "chaos-lied": () => { // the Hall's music goes out of tune
