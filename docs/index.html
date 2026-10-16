@@ -337,7 +337,11 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .opdr p { margin: 0; font: clamp(12px, 1.02vw, 20px)/1.4 var(--body); color: var(--bone); opacity: .85; }
 .opdr.gedaan { border-color: #d8b06a; box-shadow: inset 0 0 0 1px rgba(255,210,130,.6), 0 0 40px rgba(255,190,90,.45); }
 .opdr .vink { position: absolute; top: -14px; right: -14px; width: 44px; height: 44px; border-radius: 50%; display: none; place-items: center; font: 700 24px/1 var(--carved); color: #2a1a0c; background: radial-gradient(circle at 35% 30%, #fbe3b4, #b8955f 60%, #6d4a1a); box-shadow: 0 0 18px rgba(255,190,90,.8); }
-.opdr.gedaan .vink { display: grid; }
+.opdr.gedaan .vink { display: grid; animation: vinkIn .6s cubic-bezier(.2,1.7,.4,1) .2s both; }
+@keyframes vinkIn { from { transform: scale(0) rotate(-40deg); opacity: 0; } }
+/* a ticked card hops up once (translate, so it never touches the entrance animation on transform) */
+.opdr { translate: 0 0; transition: box-shadow .8s, border-color .8s, translate .38s cubic-bezier(.3,1.4,.5,1); }
+.opdr.wip { translate: 0 -2.6vh; transition: box-shadow .8s, border-color .8s, translate .25s ease-out; }
 .kist { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2vw; width: 100%; margin-top: 2vh; }
 .vak { position: relative; display: grid; justify-items: center; gap: 1.4vh; padding: 2.4vh 1vw; border: 2px solid #4a331b; background: rgba(10,5,6,.75); box-shadow: inset 0 0 30px rgba(0,0,0,.9); min-height: 34vh; align-content: center; }
 .vak .dicht { display: none; }
@@ -806,13 +810,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=42"></script>
-<script src="a/spel.js?v=42"></script>
-<script src="a/wachters.js?v=42"></script>
-<script src="a/firebase-config.js?v=42"></script>
-<script src="a/koppeling.js?v=42"></script>
-<script src="a/rollen.js?v=42"></script>
-<script src="a/tafel.js?v=42"></script>
+<script src="a/events.js?v=43"></script>
+<script src="a/spel.js?v=43"></script>
+<script src="a/wachters.js?v=43"></script>
+<script src="a/firebase-config.js?v=43"></script>
+<script src="a/koppeling.js?v=43"></script>
+<script src="a/rollen.js?v=43"></script>
+<script src="a/tafel.js?v=43"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1552,8 +1556,14 @@ function zaalVuur() {
   for (const v of doeken) v.globalCompositeOperation = "source-over"; requestAnimationFrame(zaalVuur);
 }
 function tekenTocht() {
-  $("tocht").innerHTML = S.tocht.map((o, i) => `<div class="opdr ${tochtGedaan.has(o.id) ? "gedaan" : ""}" style="--i:${i}"><span class="vink">✓</span>
+  $("tocht").innerHTML = S.tocht.map((o, i) => `<div class="opdr ${tochtGedaan.has(o.id) ? "gedaan" : ""}" data-id="${o.id}" style="--i:${i}"><span class="vink">✓</span>
     <img src="${o.zegel ? medaille(o.zegel) : "a/reliek-stilte.webp"}" alt=""><h3 class="carved">${o.naam}</h3><p>${o.tekst}</p></div>`).join("");
+}
+// tick one card in place: redrawing all of them would replay their entrance
+function vinkTocht(id, aan) {
+  const el = $("tocht").querySelector(`.opdr[data-id="${id}"]`); if (!el) return tekenTocht();
+  el.classList.toggle("gedaan", aan); if (!aan) return;
+  el.classList.add("wip"); setTimeout(() => el.classList.remove("wip"), 380);
 }
 function tekenKist(nieuw) {
   $("kist").innerHTML = S.relieken.map((k) => `<div class="vak ${relieken.has(k.id) ? "open" : ""} ${k.id === nieuw ? "nieuw" : ""} ${reliekGebruikt.has(k.id) ? "gebruikt" : ""}">
@@ -1983,7 +1993,7 @@ const OPDRACHTEN = {
   "events-opnieuw": () => { gebruikt.clear(); bewaar(); },
   scherm: (o) => { if (uitlegActief) stopUitleg(); if (dronkActief) { dronkActief = false; dronkKlaar = true; fade(dronkStem, 0, 300); }
     rollenOpen = true; if (binnen === null) { verhaalKlaar = true; proloog?.pause(); $("verhaal").hidden = true; betreden(); } if (wakker()) hal(); paneel(o.naam === "hal" ? null : o.naam); },
-  tocht: (o) => { o.aan ? tochtGedaan.add(o.id) : tochtGedaan.delete(o.id); if (paneelNu === "tocht") tekenTocht(); meld(); },
+  tocht: (o) => { o.aan ? tochtGedaan.add(o.id) : tochtGedaan.delete(o.id); if (paneelNu === "tocht") vinkTocht(o.id, !!o.aan); meld(); },
   "kist-open": () => kistRitueel(),
   reliek: (o) => { // tick a relic by hand: before the ceremony it is only noted; after it the open chest shows it
     if (o.aan) relieken.add(o.id); else relieken.delete(o.id);
