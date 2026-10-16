@@ -575,8 +575,8 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 @keyframes duister { 0%, 100% { filter: drop-shadow(0 0 10px rgba(226,50,60,.5)); } 50% { filter: drop-shadow(0 0 30px rgba(255,40,40,1)) brightness(1.3); } }
 .stage.wijs-zegels .medal { animation: wijs 1.2s ease-in-out infinite alternate; }
 @keyframes wijs { to { filter: drop-shadow(0 0 22px rgba(255,200,110,.95)) brightness(1.25); } }
-.uitleg-verder { display: block; margin: 2.6vh auto 0; pointer-events: auto; font-size: clamp(15px, 1.35vw, 26px); padding: 1.4em 4em; }
 .sla-over { position: absolute; z-index: 3; right: 3vw; bottom: 4vh; font-size: clamp(12px, 1vw, 18px); padding: 1.2em 3em; opacity: .75; }
+#uitleg-verder { z-index: 9; }
 .regie { position: absolute; right: 16px; top: max(76px, 9vh); z-index: 30; width: min(320px, calc(100vw - 32px)); background: rgba(10,5,6,.93); border: 1px solid rgba(239,227,212,.16); border-radius: 10px; font-size: 13px; box-shadow: 0 10px 40px rgba(0,0,0,.6); }
 .regie summary { cursor: pointer; padding: 10px 14px; color: var(--ash); letter-spacing: .12em; text-transform: uppercase; font-weight: 600; font-size: 11px; list-style: none; display: flex; justify-content: space-between; }
 .regie summary::after { content: "▾"; }
@@ -762,8 +762,8 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     </div>
     <button class="enter sla-over" id="sla-over" type="button"><span class="carved">Verder</span></button>
   </div>
-  <div class="uitleg" id="uitleg" hidden aria-live="polite"><div class="uitleg-kaart" id="uitleg-kaart"></div>
-    <button class="enter uitleg-verder" id="uitleg-verder" type="button"><span class="carved">Naar de Guild Hall</span></button></div>
+  <div class="uitleg" id="uitleg" hidden aria-live="polite"><div class="uitleg-kaart" id="uitleg-kaart"></div></div>
+  <button class="enter sla-over" id="uitleg-verder" type="button" hidden><span class="carved">Verder</span></button>
   <!-- the traitor's tricks -->
   <canvas class="zwerm" id="zwerm"></canvas>
   <div class="inslag" id="inslag"></div>
@@ -794,13 +794,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=38"></script>
-<script src="a/spel.js?v=38"></script>
-<script src="a/wachters.js?v=38"></script>
-<script src="a/firebase-config.js?v=38"></script>
-<script src="a/koppeling.js?v=38"></script>
-<script src="a/rollen.js?v=38"></script>
-<script src="a/tafel.js?v=38"></script>
+<script src="a/events.js?v=39"></script>
+<script src="a/spel.js?v=39"></script>
+<script src="a/wachters.js?v=39"></script>
+<script src="a/firebase-config.js?v=39"></script>
+<script src="a/koppeling.js?v=39"></script>
+<script src="a/rollen.js?v=39"></script>
+<script src="a/tafel.js?v=39"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1285,7 +1285,7 @@ const UITLEG = [
   { stem: "uitleg-5", titel: "De Guild Hall is geopend", html: () => `<p>Moge het licht jullie bijstaan, Wachters.</p>` },
 ];
 let uitlegActief = false, uitlegStap = -1, rollenOpen = false; // rollenOpen: the personal pages may show each Wachter's role
-function startUitleg() { uitlegActief = true; uitlegStap = -1; $("uitleg").hidden = false; meld(); volgendeUitleg(); }
+function startUitleg() { uitlegActief = true; uitlegStap = -1; $("uitleg").hidden = false; $("uitleg-verder").hidden = false; meld(); volgendeUitleg(); }
 function volgendeUitleg() {
   if (!uitlegActief) return;
   fade(dronkStem, 0, 300);
@@ -1297,7 +1297,7 @@ function volgendeUitleg() {
   const stap = uitlegStap;
   speelStem(u.stem, () => setTimeout(() => { if (uitlegStap === stap) volgendeUitleg(); }, 1400), 7000);
 }
-function stopUitleg() { uitlegActief = false; rollenOpen = true; stage.classList.remove("wijs-zegels"); $("uitleg").hidden = true; fade(dronkStem, 0, 400); meld(); }
+function stopUitleg() { uitlegActief = false; rollenOpen = true; $("uitleg-verder").hidden = true; stage.classList.remove("wijs-zegels"); $("uitleg").hidden = true; fade(dronkStem, 0, 400); meld(); }
 // one button walks through the whole intro: story → toast → hall → past the tutorial
 function verderIntro() {
   if (tochtIntroLoopt) return tochtIntroKlaar();
