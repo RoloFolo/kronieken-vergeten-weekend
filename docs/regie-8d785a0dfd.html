@@ -205,14 +205,19 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=21"></script>
-<script src="a/spel.js?v=21"></script>
-<script src="a/wachters.js?v=21"></script>
-<script src="a/rollen.js?v=21"></script>
-<script src="a/firebase-config.js?v=21"></script>
-<script src="a/koppeling.js?v=21"></script>
+<script src="a/events.js?v=22"></script>
+<script src="a/spel.js?v=22"></script>
+<script src="a/wachters.js?v=22"></script>
+<script src="a/rollen.js?v=22"></script>
+<script src="a/firebase-config.js?v=22"></script>
+<script src="a/koppeling.js?v=22"></script>
 <script>
 const $ = (id) => document.getElementById(id);
+// a new version online? then this page refreshes itself (checked every minute; never while typing)
+(() => { let eerste = null; const kijk = async () => { try { const v = (await (await fetch(`a/versie.txt?t=${Date.now()}`, { cache: "no-store" })).text()).trim();
+  if (eerste === null) eerste = v; else if (v && v !== eerste && !document.activeElement?.matches?.("input, textarea")) location.reload(); } catch {} };
+  kijk(); setInterval(kijk, 60000); })();
+
 const ZEGELS = [
   { id: "vlam", naam: "Vlam van Waakzaamheid", img: "a/medaillon-vlam.webp" },
   { id: "hoorn", naam: "Hoorn van Overvloed", img: "a/medaillon-hoorn.webp" },

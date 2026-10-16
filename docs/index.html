@@ -226,43 +226,50 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .paneel.aan { opacity: 1; }
 .hall { transition: opacity 1s; }
 .stage.met-paneel .seals, .stage.met-paneel .chip { opacity: 0; pointer-events: none; transition: opacity .8s; }
-/* the hall of the Round Table: floor, edge dressing, table, chairs and Wachters load in like a stage */
-.zaal { position: absolute; inset: 0; z-index: 7; overflow: hidden; background: #050203; pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 1.2s ease, visibility 0s linear 1.2s; --T: 60vh; }
+/* the hall of the Round Table: one painting split in layers (floor, edge, table) that load in like a stage */
+.zaal { position: absolute; inset: 0; z-index: 7; overflow: hidden; background: #050203; pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 1.2s ease, visibility 0s linear 1.2s; }
 .stage.in-zaal .zaal { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 1.2s ease; }
 .stage.in-zaal .hall { opacity: 0; pointer-events: none; }
-.zaal .z-vloer, .zaal .z-rand, .zaal .z-vuur { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.zaal .z-vloer { transform: scale(1.12); filter: brightness(.6); transition: transform 3.5s cubic-bezier(.2,.8,.3,1), filter 2.5s ease; }
-.zaal .z-rand { transform: scale(1.25); opacity: 0; transition: transform 2.4s cubic-bezier(.15,.85,.3,1) .4s, opacity 1.4s ease .4s; }
-.zaal .z-vuur { opacity: 0; transition: opacity 2s ease 2.4s; mix-blend-mode: plus-lighter; }
-.stage.in-zaal .zaal .z-vloer { transform: none; filter: brightness(.85); }
+.zaal .z-beeld { position: absolute; container-type: inline-size; } /* sized by zaalMaat(): object-fit cover, by hand */
+.zaal .z-vloer, .zaal .z-rand, .zaal .z-vuur { position: absolute; inset: 0; width: 100%; height: 100%; }
+.zaal .z-vloer { transform: scale(1.1); filter: brightness(.55); transition: transform 3.5s cubic-bezier(.2,.8,.3,1), filter 2.5s ease; }
+.zaal .z-rand { transform: scale(1.18); opacity: 0; transition: transform 2.4s cubic-bezier(.15,.85,.3,1) .4s, opacity 1.4s ease .4s; }
+.zaal .z-vuur { opacity: 0; transition: opacity 2s ease 2.2s; mix-blend-mode: plus-lighter; }
+.stage.in-zaal .zaal .z-vloer { transform: none; filter: none; }
 .stage.in-zaal .zaal .z-rand { transform: none; opacity: 1; }
 .stage.in-zaal .zaal .z-vuur { opacity: 1; }
-.zaal .z-titel { position: absolute; top: 2.2vh; left: 0; right: 0; margin: 0; text-align: center; font-size: clamp(22px, 2.3vw, 46px); letter-spacing: .2em; opacity: 0; transition: opacity 1.5s ease 3s; filter: drop-shadow(0 3px 8px #000); }
+.zaal .z-titel { position: absolute; top: 2vh; left: 0; right: 0; margin: 0; text-align: center; font-size: clamp(22px, 2.3vw, 46px); letter-spacing: .2em; opacity: 0; transition: opacity 1.5s ease 3s; filter: drop-shadow(0 3px 8px #000); }
 .stage.in-zaal .zaal .z-titel { opacity: 1; }
-.zaal .z-midden { position: absolute; left: 50%; top: 52%; width: var(--T); aspect-ratio: 1; translate: -50% -50%; }
-.zaal .z-tafel { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 2vh 4vh #000); transform: scale(.4) rotate(-90deg); opacity: 0; transition: transform 2.4s cubic-bezier(.15,.85,.3,1) .9s, opacity 1.2s ease .9s; }
+/* the table (cut from the painting at x 683-1243, y 378-858) spins in */
+.zaal .z-tafel { position: absolute; left: 35.57%; top: 35.26%; width: 29.17%; transform: scale(.4) rotate(-80deg); opacity: 0; transition: transform 2.4s cubic-bezier(.15,.85,.3,1) .9s, opacity 1.2s ease .9s; }
 .stage.in-zaal .zaal .z-tafel { transform: none; opacity: 1; }
 .zaal .z-ring { position: absolute; inset: 0; }
-.zaal .z-stoel { position: absolute; left: 50%; top: 50%; width: 10vh; translate: -50% -50%; filter: drop-shadow(0 1vh 1.6vh #000); opacity: 0;
-  transform: rotate(var(--hoek)) translateY(calc(var(--T) * -.5 - 17vh)) scale(.7); transition: transform 1.2s cubic-bezier(.2,.9,.3,1) var(--d), opacity .8s ease var(--d); }
-.stage.in-zaal .zaal .z-stoel { opacity: 1; transform: rotate(var(--hoek)) translateY(calc(var(--T) * -.5 - 10.5vh)); }
-.zaal .z-zit { position: absolute; left: 50%; top: 50%; width: 9.5vh; translate: -50% -50%; display: grid; justify-items: center; gap: .3vh; padding: 0; border: 0; background: none; color: inherit; cursor: pointer;
-  opacity: 0; transform: translate(var(--x), var(--y)) scale(.4); transition: transform 1s cubic-bezier(.2,1.3,.4,1) var(--d), opacity .6s ease var(--d); }
-.stage.in-zaal .zaal .z-zit { opacity: 1; transform: translate(var(--x), var(--y)); }
-.zaal .z-zit img { width: 9.5vh; aspect-ratio: 1; filter: drop-shadow(0 .6vh 1vh rgba(0,0,0,.9)); transition: transform .4s, filter .4s; }
-.zaal .z-zit b { font: 700 clamp(11px, 1.6vh, 22px)/1 var(--carved); letter-spacing: .06em; text-transform: uppercase; color: var(--bronze-hi); text-shadow: 0 1px 3px #000, 0 0 10px #000; white-space: nowrap; }
-.zaal .z-zit.licht img { transform: scale(1.22); filter: drop-shadow(0 0 2.4vh rgba(255,170,80,1)) drop-shadow(0 .6vh 1vh rgba(0,0,0,.9)); }
-.zaal .z-zit.licht b { color: #ffd98a; }
-.zaal .z-kaart { position: absolute; inset: 21%; border-radius: 50%; display: grid; place-items: center; text-align: center; padding: 3.2vh 2.6vh;
-  background: radial-gradient(circle, rgba(10,4,5,.94) 55%, rgba(10,4,5,.75) 72%, transparent 74%); opacity: 0; transition: opacity 1.2s ease 2.9s; }
+.zaal .z-stoel { position: absolute; width: 5.6cqi; translate: -50% -50%; filter: drop-shadow(0 .5cqi .8cqi #000); opacity: 0; transform: rotate(var(--hoek)) translateY(-2.5cqi) scale(.7);
+  transition: transform 1.2s cubic-bezier(.2,.9,.3,1) var(--d), opacity .8s ease var(--d); }
+.stage.in-zaal .zaal .z-stoel { opacity: 1; transform: rotate(var(--hoek)); }
+.zaal .z-zit { position: absolute; width: 5cqi; translate: -50% -50%; display: grid; justify-items: center; gap: .25cqi; padding: 0; border: 0; background: none; color: inherit; cursor: pointer;
+  opacity: 0; transform: scale(.4); transition: transform 1s cubic-bezier(.2,1.3,.4,1) var(--d), opacity .6s ease var(--d); }
+.stage.in-zaal .zaal .z-zit { opacity: 1; transform: none; }
+.zaal .z-zit .m { position: relative; width: 5cqi; aspect-ratio: 1; }
+.zaal .z-zit img { width: 100%; height: 100%; display: block; filter: drop-shadow(0 .3cqi .5cqi rgba(0,0,0,.9)); transition: transform .5s, filter .5s; }
+/* the blue inner ring of the medallion lights up for the Wachter in the spotlight */
+.zaal .z-zit .ring { position: absolute; inset: 14%; border-radius: 50%; border: .18cqi solid rgba(160,225,255,.95); box-shadow: 0 0 1cqi .3cqi rgba(110,200,255,.9), inset 0 0 1cqi rgba(110,200,255,.8); opacity: 0; transition: opacity .6s; mix-blend-mode: plus-lighter; }
+.zaal .z-zit.licht .ring { opacity: 1; animation: ringpuls 1.6s ease-in-out infinite; }
+@keyframes ringpuls { 50% { box-shadow: 0 0 2cqi .6cqi rgba(110,200,255,1), inset 0 0 1.6cqi rgba(110,200,255,1); } }
+.zaal .z-zit.licht img { transform: scale(1.18); filter: drop-shadow(0 0 1.4cqi rgba(110,200,255,.9)) drop-shadow(0 .3cqi .5cqi rgba(0,0,0,.9)); }
+.zaal .z-zit b { font: 700 1.05cqi/1 var(--carved); letter-spacing: .06em; text-transform: uppercase; color: var(--bronze-hi); text-shadow: 0 1px 3px #000, 0 0 8px #000; white-space: nowrap; transition: color .5s, transform .5s; }
+.zaal .z-zit.licht b { color: #cfeeff; transform: scale(1.15); text-shadow: 0 0 10px rgba(110,200,255,.9), 0 1px 3px #000; }
+/* the role of the lit Wachter, on the table top */
+.zaal .z-kaart { position: absolute; left: 50%; top: 55.4%; width: 21cqi; translate: -50% -50%; text-align: center; padding: 1.4cqi 1.2cqi; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(12,5,6,.82) 45%, rgba(12,5,6,.5) 65%, transparent 72%); opacity: 0; transition: opacity 1.2s ease 2.9s; }
 .stage.in-zaal .zaal .z-kaart { opacity: 1; }
-.zaal .z-kaart > div { display: grid; gap: .8vh; justify-items: center; animation: subIn .8s ease-out; }
-.zaal .z-kaart .wie { font: 700 clamp(10px, 1.3vh, 18px)/1 var(--carved); letter-spacing: .3em; text-transform: uppercase; color: var(--ash); }
-.zaal .z-kaart h2 { margin: 0; font-size: clamp(16px, 2.6vh, 36px); line-height: 1.1; }
-.zaal .z-kaart .titel { font: 600 clamp(9px, 1.25vh, 16px)/1.2 var(--carved); letter-spacing: .18em; text-transform: uppercase; color: var(--ash); }
-.zaal .z-kaart .vm { font: clamp(11px, 1.55vh, 20px)/1.35 var(--body); color: var(--bone); max-width: 30ch; }
-.zaal .z-kaart .vm b { display: block; font: 700 clamp(11px, 1.6vh, 21px)/1.2 var(--carved); color: var(--bronze-hi); }
-.zaal .z-kaart .vm span { display: block; font: 700 clamp(8px, 1vh, 13px)/1.4 var(--carved); letter-spacing: .25em; text-transform: uppercase; color: var(--ash); }
+.zaal .z-kaart > div { display: grid; gap: .5cqi; justify-items: center; }
+.zaal .z-kaart > div.in { animation: kaartIn .9s ease-out both; }
+@keyframes kaartIn { from { opacity: 0; transform: translateY(.6cqi) scale(.96); filter: blur(4px); } }
+.zaal .z-kaart .wie { font: 700 1.05cqi/1 var(--carved); letter-spacing: .35em; text-transform: uppercase; color: #cfeeff; text-shadow: 0 0 10px rgba(110,200,255,.7); }
+.zaal .z-kaart h2 { margin: 0; font-size: 1.85cqi; line-height: 1.1; }
+.zaal .z-kaart .titel { font: 600 .85cqi/1.2 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: var(--ash); }
+.zaal .z-kaart p { margin: .2cqi 0 0; font: italic 1.05cqi/1.45 var(--display); color: var(--bone); max-width: 18cqi; }
 /* the Round Table on the tv: the table on the left, the spotlighted Wachter on the right */
 .tafel-tv { display: grid; grid-template-columns: auto minmax(0, 36vw); gap: 3vw; align-items: start; margin-top: -1vh; justify-content: center; width: 100%; }
 .tafel-tv-blad { width: min(54vh, 40vw); }
@@ -422,20 +429,23 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 /* the light dies: everything but the crest sinks into black, the demon burns */
 .scene, .seals, .chip, .vloek-teken { transition: filter 1.6s ease; }
 /* the Wachterstocht: the camera flies into the castle, then the gate with its torches takes over */
-.scene { transform-origin: 13% 16%; transition: filter 1.6s ease, transform 7s cubic-bezier(.55,0,.8,.45); }
+.scene { transform-origin: 13% 16%; transition: filter 1.6s ease, transform 10s cubic-bezier(.5,0,.75,.5); }
 .stage.inzoom .scene { transform: translate(40vw, 40vh) scale(2.6); filter: brightness(.6) saturate(1.2); } /* the castle (top left) moves to the middle */
 .stage.inzoom .hall { opacity: 0; pointer-events: none; }
-.tocht-decor { position: absolute; inset: 0; z-index: 5; overflow: hidden; background: #000; opacity: 0; transition: opacity 2.6s ease; pointer-events: none; }
+.tocht-decor { position: absolute; inset: 0; z-index: 5; overflow: hidden; background: #000; opacity: 0; transition: opacity 4.5s ease; pointer-events: none; }
 .tocht-decor.aan { opacity: 1; }
 .tocht-decor .pl { position: absolute; inset: 0; }
 .tocht-decor .pl img, .tocht-decor canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 /* entrance: sky first, then the gatehouse rises, the bridge comes up, the walls close in from the sides */
-.tocht-decor .pl-lucht { opacity: 0; transform: scale(1.12); transition: opacity 2.4s ease, transform 4s cubic-bezier(.2,.8,.3,1); }
-.tocht-decor .pl-poort { opacity: 0; transform: translateY(22%); transition: opacity 1.8s ease .5s, transform 2.6s cubic-bezier(.15,.85,.3,1) .5s; }
-.tocht-decor .pl-brug { opacity: 0; transform: translateY(38%); transition: opacity 1.4s ease 1.3s, transform 2.2s cubic-bezier(.15,.85,.3,1) 1.3s; }
-.tocht-decor .pl-muur-l { transform: translateX(-100%); transition: transform 2.2s cubic-bezier(.15,.85,.3,1) 1.9s; }
-.tocht-decor .pl-muur-r { transform: translateX(100%); transition: transform 2.2s cubic-bezier(.15,.85,.3,1) 1.9s; }
-.tocht-decor .pl-vuur, .tocht-decor .fakkel, .tocht-decor .pl-mist, .tocht-decor .pl-vogels { opacity: 0; transition: opacity 2s ease 3.2s; }
+.tocht-decor .pl-lucht { opacity: 0; transform: scale(1.12); transition: opacity 3.5s ease, transform 6s cubic-bezier(.2,.8,.3,1); }
+.tocht-decor .pl-poort { opacity: 0; transform: translateY(22%); transition: opacity 2.6s ease 1s, transform 3.6s cubic-bezier(.15,.85,.3,1) 1s; }
+.tocht-decor .pl-brug { opacity: 0; transform: translateY(38%); transition: opacity 2s ease 2.2s, transform 3s cubic-bezier(.15,.85,.3,1) 2.2s; }
+.tocht-decor .pl-muur-l { transform: translateX(-100%); transition: transform 3s cubic-bezier(.15,.85,.3,1) 3s; }
+.tocht-decor .pl-muur-r { transform: translateX(100%); transition: transform 3s cubic-bezier(.15,.85,.3,1) 3s; }
+.tocht-decor .pl-vuur, .tocht-decor .fakkel, .tocht-decor .pl-mist, .tocht-decor .pl-vogels { opacity: 0; transition: opacity 2.5s ease 4.6s; }
+/* the five tasks come in one by one, so the castle can be seen first */
+.stage.in-kasteel #tocht .opdr { animation: opdrIn 1.1s cubic-bezier(.2,.9,.3,1) both; animation-delay: calc(var(--i) * .8s + .4s); }
+@keyframes opdrIn { from { opacity: 0; transform: translateY(6vh) scale(.92); filter: blur(4px); } }
 .tocht-decor.aan .pl-lucht { opacity: 1; transform: none; }
 .tocht-decor.aan .pl-poort, .tocht-decor.aan .pl-brug { opacity: 1; transform: none; }
 .tocht-decor.aan .pl-muur-l, .tocht-decor.aan .pl-muur-r { transform: none; }
@@ -644,10 +654,14 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <p>Vijf beproevingen wachten tussen de oude muren. Elke beproeving die jullie volbrengen, opent een vak van de Reliekenkist.</p>
     <p>Jullie opdrachten staan nu ook op jullie telefoon.</p></div></div>
   <div class="zaal" id="zaal" aria-live="polite">
-    <img class="z-vloer" src="a/zaal/vloer.webp" alt="">
-    <img class="z-rand" src="a/zaal/rand.webp" alt="">
-    <div class="z-midden"><img class="z-tafel" src="a/tafel.webp" alt=""><div class="z-ring" id="z-ring"></div><div class="z-kaart" id="z-kaart"></div></div>
-    <canvas class="z-vuur" id="z-vuur"></canvas>
+    <div class="z-beeld" id="z-beeld">
+      <img class="z-vloer" src="a/zaal/vloer.webp" alt="">
+      <img class="z-rand" src="a/zaal/rand.webp" alt="">
+      <canvas class="z-vuur" id="z-vuur"></canvas>
+      <img class="z-tafel" src="a/zaal/tafel.webp" alt="">
+      <div class="z-ring" id="z-ring"></div>
+      <div class="z-kaart" id="z-kaart"></div>
+    </div>
     <h1 class="z-titel carved">De Ronde Tafel</h1>
   </div>
   <div class="paneel" id="paneel" hidden>
@@ -720,13 +734,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=21"></script>
-<script src="a/spel.js?v=21"></script>
-<script src="a/wachters.js?v=21"></script>
-<script src="a/firebase-config.js?v=21"></script>
-<script src="a/koppeling.js?v=21"></script>
-<script src="a/rollen.js?v=21"></script>
-<script src="a/tafel.js?v=21"></script>
+<script src="a/events.js?v=22"></script>
+<script src="a/spel.js?v=22"></script>
+<script src="a/wachters.js?v=22"></script>
+<script src="a/firebase-config.js?v=22"></script>
+<script src="a/koppeling.js?v=22"></script>
+<script src="a/rollen.js?v=22"></script>
+<script src="a/tafel.js?v=22"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1040,7 +1054,7 @@ function muziekLus(naam, vol) {
   };
 }
 const lus = (n, v) => { const a = new Audio(bron(n)); a.loop = true; a.volume = v; return a; };
-const vuur = lus("vuur", .22), wind = lus("wind", .2);
+const vuur = lus("vuur", .12), wind = lus("wind", .2);
 const halMuziek = muziekLus("muziek-hal", .5);
 let schaduwMuziek = null, muziekAan = false;
 function startMuziek() { if (muziekAan) return; muziekAan = true; halMuziek.play(); }
@@ -1255,16 +1269,18 @@ let tochtOpen = false, tochtIntroLoopt = false, tochtIntroTimers = []; // tochtO
 let poortOk = false; $("tocht-beeld").onload = () => (poortOk = true); $("tocht-beeld").onerror = () => $("tocht-beeld").remove();
 // the camera flies into the castle; the first time with an intro, later straight to the tasks
 function kasteelIn(toonPaneel) {
-  stage.classList.add("in-kasteel", "inzoom"); halMuziek.vol(.2, 2500); fade(wind, .5, 2500); fade(vuur, .45, 3000);
+  stage.classList.add("in-kasteel", "inzoom"); halMuziek.vol(.2, 2500); fade(wind, .5, 2500); fade(vuur, .3, 3000);
   const metIntro = !tochtOpen; tochtOpen = true; meld();
   const t = (ms, fn) => tochtIntroTimers.push(setTimeout(fn, ms));
-  t(metIntro ? 5500 : 2600, () => { if (poortOk) { $("tocht-decor").classList.add("aan"); poortStart(); } });
-  if (!metIntro) return t(3200, toonPaneel);
+  t(metIntro ? 8500 : 2600, () => { if (poortOk) { $("tocht-decor").classList.add("aan"); poortStart(); } });
+  if (!metIntro) return t(5000, toonPaneel);
   tochtIntroLoopt = true; speel("donder", .5);
-  t(7600, () => { $("tocht-intro").hidden = false; speel("klok", .5, .8); });
-  t(7600 + 16000, () => tochtIntroKlaar(toonPaneel));
+  // Godfried speaks over the gate; when he is done the tasks come in
+  t(15000, () => { $("tocht-intro").hidden = false; tochtStem = stemMet("tocht-intro", 1, () => t(1500, () => tochtIntroKlaar(toonPaneel)), 30000); });
 }
+let tochtStem = null;
 function tochtIntroKlaar(toonPaneel = tochtIntroVerder) {
+  if (tochtStem) { fade(tochtStem, 0, 600); tochtStem = null; }
   tochtIntroLoopt = false; tochtIntroTimers.forEach(clearTimeout); tochtIntroTimers = [];
   if (poortOk) { $("tocht-decor").classList.add("aan"); poortStart(); } $("tocht-intro").hidden = true; toonPaneel?.();
 }
@@ -1318,7 +1334,7 @@ function poortFrame(nu) {
 function kasteelUit() {
   tochtIntroLoopt = false; tochtIntroTimers.forEach(clearTimeout); tochtIntroTimers = []; $("tocht-intro").hidden = true;
   $("tocht-decor").classList.remove("aan"); stage.classList.remove("in-kasteel");
-  setTimeout(() => stage.classList.remove("inzoom"), 900); halMuziek.vol(.5, 3000); fade(wind, .2, 2500); fade(vuur, .22, 2500);
+  setTimeout(() => stage.classList.remove("inzoom"), 900); halMuziek.vol(.5, 3000); fade(wind, .2, 2500); fade(vuur, .12, 2500);
 }
 let fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }, ere = { i: -1, namen: {} }, paneelNu = null;
 // the weekend's log (for Akte II and IV) and the traitor periods
@@ -1343,38 +1359,53 @@ function paneel(naam) {
 }
 // the Round Table hall: every 9 seconds the next Wachter is lit and his role shows on the table; a click holds it for a while
 let tafelRonde = null, tafelI = 0, tafelPauze = 0, zaalGebouwd = false;
+// the painting is 1920x1072: cover the screen with it, like object-fit: cover, so every layer and flame lines up
+function zaalMaat() {
+  const s = Math.max(innerWidth / 1920, innerHeight / 1072), w = 1920 * s, h = 1072 * s;
+  Object.assign($("z-beeld").style, { width: `${w}px`, height: `${h}px`, left: `${(innerWidth - w) / 2}px`, top: `${(innerHeight - h) / 2}px` });
+}
+addEventListener("resize", () => { if (stage.classList.contains("in-zaal")) zaalMaat(); });
 function zaalKaart(w) {
   const rol = Tafel.rolVan(w); document.querySelectorAll("#z-ring .z-zit").forEach((z) => z.classList.toggle("licht", z.dataset.naam === w.naam));
-  $("z-kaart").innerHTML = rol ? `<div><div class="wie">${schoon(w.naam)}</div><h2 class="carved">${schoon(rol.naam)}</h2><div class="titel">${schoon(rol.titel)}</div>
-    <div class="vm"><span>Passief</span><b>${schoon(rol.passief[0])}</b>${schoon(rol.passief[1])}</div>
-    <div class="vm"><span>Kracht · één keer per dag</span><b>${schoon(rol.kracht[0])}</b>${schoon(rol.kracht[1])}</div></div>` : `<div><h2 class="carved">${schoon(w.naam)}</h2></div>`;
+  $("z-kaart").innerHTML = `<div class="in">${rol ? `<div class="wie">${schoon(w.naam)}</div><h2 class="carved">${schoon(rol.naam)}</h2><div class="titel">${schoon(rol.titel)}</div><p>${schoon(rol.tekst)}</p>` : `<h2 class="carved">${schoon(w.naam)}</h2>`}</div>`;
 }
 function tekenTvTafel() {
+  zaalMaat();
   const W = window.WACHTERS || [], n = W.length;
   if (!zaalGebouwd) {
     zaalGebouwd = true;
+    // a horseshoe of 270 degrees around the table, open towards the hearth so nobody sits in the fire
+    const cx = 50, cy = 55.4, plek = (i) => (45 + (i * 270) / (n - 1)) * Math.PI / 180; // 0 = straight up
     $("z-ring").innerHTML = W.map((w, i) => {
-      const hoek = (i / n) * 360, rad = hoek * Math.PI / 180, rol = Tafel.rolVan(w);
-      // seats around the table: medallion just outside the rim, chair behind it facing the centre
-      const x = `calc(var(--T) * ${(Math.sin(rad) * .5).toFixed(4)} + ${(Math.sin(rad) * 2.4).toFixed(2)}vh)`, y = `calc(var(--T) * ${(-Math.cos(rad) * .5).toFixed(4)} - ${(Math.cos(rad) * 2.4).toFixed(2)}vh)`;
-      return `<img class="z-stoel" src="a/zaal/stoel.webp" alt="" style="--hoek:${hoek}deg;--d:${(1.4 + i * .08).toFixed(2)}s">
-        <button class="z-zit" type="button" data-naam="${schoon(w.naam)}" style="--x:${x};--y:${y};--d:${(2 + i * .08).toFixed(2)}s"><img src="${rol ? `a/rollen/${rol.id}.webp` : "a/medaillon-vlam.webp"}" alt=""><b>${schoon(w.naam)}</b></button>`;
+      const a = plek(i), rol = Tafel.rolVan(w), sx = Math.sin(a), sy = -Math.cos(a);
+      const mx = cx + sx * 17.7, my = cy + sy * 27.1, sxp = cx + sx * 21.6, syp = cy + sy * 31.2; // medallion and chair (percent of the painting)
+      return `<img class="z-stoel" src="a/zaal/stoel.webp" alt="" style="left:${sxp.toFixed(2)}%;top:${syp.toFixed(2)}%;--hoek:${(a * 180 / Math.PI).toFixed(1)}deg;--d:${(1.4 + i * .08).toFixed(2)}s">
+        <button class="z-zit" type="button" data-naam="${schoon(w.naam)}" style="left:${mx.toFixed(2)}%;top:${my.toFixed(2)}%;--d:${(2 + i * .08).toFixed(2)}s"><span class="m"><img src="${rol ? `a/rollen/${rol.id}.webp` : "a/medaillon-vlam.webp"}" alt=""><i class="ring"></i></span><b>${schoon(w.naam)}</b></button>`;
     }).join("");
     $("z-ring").onclick = (e) => { const z = e.target.closest(".z-zit"); if (!z) return; tafelPauze = Date.now() + 30000; tafelI = W.findIndex((w) => w.naam === z.dataset.naam); zaalKaart(W[tafelI]); };
   }
-  zaalKaart(W[tafelI % n]); zaalVuurStart();
+  zaalKaart(W[tafelI % n]); zaalVuurStart(); zaalGeluid(true);
   clearInterval(tafelRonde); tafelRonde = setInterval(() => { if (Date.now() < tafelPauze) return; tafelI = (tafelI + 1) % n; zaalKaart(W[tafelI]); }, 9000);
 }
-// living fire in the hearth, the braziers and on the candelabras
-const ZAAL_VUUR = [[.503, .235, 1.1], [.215, .34, .7], [.79, .34, .7], [.208, .88, .7], [.795, .88, .7], [.1, .27, .3], [.9, .27, .3], [.047, .69, .3], [.956, .69, .3]];
+// the hall sounds alive: crackling fire, chatter and laughter
+let zaalSfeer = null;
+function zaalGeluid(aan) {
+  if (aan) { halMuziek.vol(.12, 2000); fade(vuur, .3, 2000); if (!zaalSfeer) { zaalSfeer = lus("zaal-sfeer", 0); zaalSfeer.play().catch(() => {}); } fade(zaalSfeer, .7, 2500); }
+  else if (zaalSfeer) { const z = zaalSfeer; zaalSfeer = null; fade(z, 0, 1500); setTimeout(() => z.pause(), 1600); halMuziek.vol(.5, 2500); fade(vuur, .12, 2500); }
+}
+// living fire in the hearth, the four braziers and the candelabras (measured on the painting)
+const ZAAL_VUUR = [[.503, .255, 1.2], [.212, .35, .9], [.803, .352, .9], [.202, .9, .9], [.813, .905, .9],
+  [.094, .245, .18], [.114, .26, .18], [.125, .265, .18], [.12, .298, .18], [.086, .272, .18], [.081, .296, .18], [.92, .247, .18], [.901, .256, .18], [.89, .264, .18],
+  [.049, .664, .18], [.033, .675, .18], [.071, .669, .18], [.022, .693, .18], [.071, .711, .18], [.047, .745, .18], [.024, .735, .18],
+  [.966, .659, .18], [.944, .681, .18], [.981, .67, .18], [.993, .695, .18], [.944, .717, .18], [.988, .744, .18], [.968, .743, .18]];
 let zaalTongen = [], zaalLoopt = false;
 function zaalVuurStart() { if (!zaalLoopt) { zaalLoopt = true; requestAnimationFrame(zaalVuur); } }
-function zaalVuurStop() { zaalLoopt = false; }
+function zaalVuurStop() { zaalLoopt = false; zaalGeluid(false); }
 function zaalVuur() {
   if (!zaalLoopt) return;
   const cv = $("z-vuur"), [W, H] = poortMaat(cv), v = cv.getContext("2d"); v.clearRect(0, 0, W, H); v.globalCompositeOperation = "lighter";
-  for (const [fx, fy, s] of ZAAL_VUUR) for (let k = 0; k < Math.ceil(3 * s) + 1; k++) if (Math.random() < .6)
-    zaalTongen.push({ x: fx * W + (Math.random() - .5) * 30 * s * W / 1920, y: fy * H, vy: -(1 + Math.random() * 2.2) * s * H / 1080, r: (10 + Math.random() * 15) * s * W / 1920, t: 0, max: 24 + Math.random() * 20, f: Math.random() * 6 });
+  for (const [fx, fy, s] of ZAAL_VUUR) for (let k = 0; k < Math.ceil(3 * s) + 1; k++) if (Math.random() < (s < .3 ? .35 : .65))
+    zaalTongen.push({ x: fx * W + (Math.random() - .5) * 34 * s * W / 1920, y: fy * H, vy: -(1 + Math.random() * 2.2) * Math.max(s, .35) * H / 1080, r: (10 + Math.random() * 15) * Math.max(s, .3) * W / 1920, t: 0, max: (s < .3 ? 12 : 24) + Math.random() * 18, f: Math.random() * 6 });
   zaalTongen = zaalTongen.filter((t) => t.t < t.max);
   for (const t of zaalTongen) {
     t.t++; t.f += .3; t.y += t.vy; t.x += Math.sin(t.f) * .6; const p = t.t / t.max, rad = t.r * (1 - p * .6);
@@ -1385,7 +1416,7 @@ function zaalVuur() {
   v.globalCompositeOperation = "source-over"; requestAnimationFrame(zaalVuur);
 }
 function tekenTocht() {
-  $("tocht").innerHTML = S.tocht.map((o) => `<div class="opdr ${tochtGedaan.has(o.id) ? "gedaan" : ""}"><span class="vink">✓</span>
+  $("tocht").innerHTML = S.tocht.map((o, i) => `<div class="opdr ${tochtGedaan.has(o.id) ? "gedaan" : ""}" style="--i:${i}"><span class="vink">✓</span>
     <img src="${o.zegel ? medaille(o.zegel) : "a/reliek-stilte.webp"}" alt=""><h3 class="carved">${o.naam}</h3><p>${o.tekst}</p></div>`).join("");
 }
 function tekenKist(nieuw) {
@@ -1632,7 +1663,7 @@ function stemMet(naam, vol, klaar, reserve = 5000) {
   a.addEventListener("loadedmetadata", () => { clearTimeout(vangnet); vangnet = setTimeout(k, a.duration * 1000 + 800); });
   return a;
 }
-function demp(aan) { if (aan) { halMuziek.vol(.06, 800); fade(vuur, .02, 800); } else { halMuziek.vol(.5, 2500); fade(vuur, .22, 2500); } }
+function demp(aan) { if (aan) { halMuziek.vol(.06, 800); fade(vuur, .02, 800); } else { halMuziek.vol(.5, 2500); fade(vuur, .12, 2500); } }
 function verberg(id, ms = 1600) { const el = $(id); el.classList.add("weg"); setTimeout(() => { el.hidden = true; el.classList.remove("weg"); }, ms); }
 const VLOEKEN = [
   "Tot de Schaduw weer beweegt, spreekt hij alleen fluisterend.",
@@ -1782,7 +1813,7 @@ function meld() {
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
-    publiek: { hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen ? { gedaan: [...tochtGedaan] } : null }, // the only part the personal pages can read
+    publiek: { hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen ? { open: true, gedaan: [...tochtGedaan] } : null }, // the only part the personal pages can read
     tochtOpen,
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   })), 150);
@@ -1930,7 +1961,7 @@ function hal() {
   schaduwMuziek?.stop(2000); schaduwMuziek = null;
   $("event").classList.remove("show"); $("d20").hidden = true; rollend = false; stage.classList.remove("awake"); knoppen(false); $("storm").playbackRate = 1;
   $("status").textContent = "De Schaduw slaapt"; meld();
-  fade(vuur, .22, 2500); fade(wind, .2, 2500); setTimeout(() => halMuziek.play(), 1200);
+  fade(vuur, .12, 2500); fade(wind, .2, 2500); setTimeout(() => halMuziek.play(), 1200);
 }
 $("b-event").onclick = schaduw; $("b-hall").onclick = hal;
 $("b-good").onclick = () => uitslag(true); $("b-bad").onclick = () => uitslag(false);

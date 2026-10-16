@@ -40,6 +40,7 @@ const REGELS = [
   ["uitleg-2", "Charon", GODFRIED, "Elke opdracht die jullie volbrengen, voedt een Zegel. Pak een questkaart, doe wat erop staat, en meld het aan de hoeders van de Hall. Alleen, met twee, of met de hele groep."],
   ["uitleg-3", "Charon", GODFRIED, "Maar wees gewaarschuwd. Wanneer de Schaduw beweegt, legt hij jullie een beproeving op. Doorsta haar… of zie de Zegels leeglopen."],
   ["uitleg-4", "Charon", GODFRIED, "En nog iets, Wachters. Ieder van jullie kreeg een persoonlijke boodschap van mij. Open hem nu… daar wacht jouw rol, jouw kracht, en de Zegels die jou het best liggen."],
+  ["tocht-intro", "Charon", GODFRIED, "Wachters. Vanavond betreden jullie mijn kasteel. Draag het vuur door de poorten, de gangen en de gewelven. Vijf beproevingen wachten tussen de oude muren. Elke beproeving die jullie volbrengen, opent een vak van de Reliekenkist. Jullie opdrachten staan nu ook op jullie telefoon. Ga, Wachters… en laat het licht niet doven."],
   ["uitleg-5", "Charon", GODFRIED, "De Guild Hall is geopend. Moge het licht jullie bijstaan, Wachters."],
   ["chaos-1", "Enceladus", SCHADUW, "[whispering] Ik ben dichterbij… dan jullie denken."],
   ["chaos-2", "Enceladus", SCHADUW, "Hehehe… Jullie denken dat jullie veilig zijn."],

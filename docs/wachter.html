@@ -192,14 +192,19 @@ body.in-frame main { visibility: hidden; }
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=21"></script>
-<script src="a/spel.js?v=21"></script>
-<script src="a/rollen.js?v=21"></script>
-<script src="a/firebase-config.js?v=21"></script>
-<script src="a/koppeling.js?v=21"></script>
-<script src="a/tafel.js?v=21"></script>
+<script src="a/wachters.js?v=22"></script>
+<script src="a/spel.js?v=22"></script>
+<script src="a/rollen.js?v=22"></script>
+<script src="a/firebase-config.js?v=22"></script>
+<script src="a/koppeling.js?v=22"></script>
+<script src="a/tafel.js?v=22"></script>
 <script>
 const $ = (id) => document.getElementById(id);
+// a new version online? then this page refreshes itself (checked every minute; never while typing)
+(() => { let eerste = null; const kijk = async () => { try { const v = (await (await fetch(`a/versie.txt?t=${Date.now()}`, { cache: "no-store" })).text()).trim();
+  if (eerste === null) eerste = v; else if (v && v !== eerste && !document.activeElement?.matches?.("input, textarea")) location.reload(); } catch {} };
+  kijk(); setInterval(kijk, 60000); })();
+
 const START = new Date("2026-11-13T12:00:00+01:00");
 const ZEGEL = { vlam: "Vlam van Waakzaamheid", hoorn: "Hoorn van Overvloed", schild: "Schild van Broederschap", hart: "Hart van de Ardennen" };
 // Firebase: everyone logs in with his own account (#naam only prefills the e-mail address).
