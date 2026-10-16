@@ -7,6 +7,7 @@ Het tv-spel voor ons vriendenweekend in Bouillon (13–15 november 2026): een Gu
 - **De site** staat in `docs/` en wordt gehost via GitHub Pages.
 - **De tv** (laptop via HDMI) opent de site met `?tv` achter het adres en logt één keer in met het regie-wachtwoord.
 - **De regie** en **de Chaos Lord** hebben elk een eigen pagina en een eigen wachtwoord. De adressen delen de organisatoren onderling.
+- **Iedere Wachter** krijgt vooraf een persoonlijke link (`wachter.html#<token>`, te kopiëren in de regie): eerst het aftellen, na de Eerste Dronk zijn rol en in de finale zijn stuk van de eed.
 - De live koppeling loopt via **Firebase Realtime Database**. Vul `docs/a/firebase-config.js` met de config uit Firebase.
 
 Zonder internet kan het ook lokaal: `node app/server.mjs` op de laptop, en telefoons op dezelfde wifi.

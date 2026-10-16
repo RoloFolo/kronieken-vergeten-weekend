@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b0607">
+<meta name="robots" content="noindex">
+<title>Een boodschap van Godfried</title>
+<link rel="icon" href="a/medaillon-vlam.webp">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Libre+Baskerville:ital,wght@0,400;1,400&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Personal page per Wachter (link: wachter.html#<token>). Phone first, one column.
+   Before the weekend: a countdown and a sealed letter. After the First Toast: the role.
+   During the finale (Act III): this Wachter's fragment of the oath. */
+:root {
+  color-scheme: dark;
+  --ink: #0b0607; --bone: #efe3d4; --ash: #a89488; --ember: #e2323c;
+  --bronze-hi: #f1dfb6; --bronze: #b8955f; --bronze-lo: #4a331b;
+  --carved: "Cinzel", Georgia, serif; --display: "Libre Baskerville", Georgia, serif; --body: "Source Sans 3", "Segoe UI", Arial, sans-serif;
+  --paneel: linear-gradient(180deg, rgba(30,10,12,.9), rgba(10,5,6,.94));
+}
+* { box-sizing: border-box; }
+html { background: var(--ink); }
+body { margin: 0; min-height: 100svh; color: var(--bone); font: 17px/1.5 var(--body);
+  background: radial-gradient(ellipse 120% 55% at 50% 0%, rgba(150,18,28,.5), transparent 60%), radial-gradient(ellipse 100% 40% at 50% 100%, rgba(110,14,20,.35), transparent 60%),
+    linear-gradient(rgba(7,4,5,.82), rgba(7,4,5,.92)), url(a/plaat.jpg) center top / cover fixed, var(--ink); }
+main { width: min(560px, 100%); margin: 0 auto; padding: max(18px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom)); display: grid; gap: 18px; }
+.logo { width: min(320px, 78%); justify-self: center; filter: drop-shadow(0 6px 18px #000); }
+.carved { font-family: var(--carved); font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
+  background: linear-gradient(180deg, var(--bronze-hi), #d8bf8f 45%, #9b7a4c); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.kop { text-align: center; display: grid; gap: 4px; }
+.kop small { font: 700 12px/1 var(--carved); letter-spacing: .35em; color: var(--ash); text-transform: uppercase; }
+.kop h1 { margin: 0; font-size: clamp(26px, 8vw, 38px); line-height: 1.1; }
+.paneel { position: relative; padding: 22px 20px 24px; background: var(--paneel); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 16px 44px #000; }
+.paneel h2 { margin: 0 0 10px; font-size: 13px; letter-spacing: .3em; text-align: center; }
+.brief { font: italic 17px/1.6 var(--display); text-align: center; }
+.brief p { margin: 0 0 12px; } .brief p:last-child { margin: 0; }
+.klok { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; margin: 4px 0 2px; }
+.klok div { display: grid; gap: 2px; padding: 10px 2px; border: 1px solid rgba(184,149,95,.45); background: rgba(0,0,0,.35); }
+.klok b { font: 700 clamp(26px, 8vw, 36px)/1 var(--carved); color: var(--bronze-hi); text-shadow: 0 0 14px rgba(226,50,60,.6); font-variant-numeric: tabular-nums; }
+.klok span { font: 600 10px/1 var(--carved); letter-spacing: .2em; color: var(--ash); text-transform: uppercase; }
+.wanneer { text-align: center; color: var(--ash); font-size: 14px; letter-spacing: .04em; }
+
+/* the sealed letter */
+.zegel { display: grid; justify-items: center; gap: 12px; text-align: center; padding: 26px 20px; }
+.was { width: 108px; aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 35% 30%, #e0484f, #8f141c 55%, #4c070c); box-shadow: 0 6px 18px rgba(0,0,0,.8), inset 0 -6px 14px rgba(0,0,0,.45), 0 0 34px rgba(226,50,60,.45);
+  animation: adem 3.2s ease-in-out infinite; }
+.was img { width: 70%; opacity: .85; filter: grayscale(1) brightness(.35) sepia(1) hue-rotate(-30deg) saturate(3) contrast(1.4); mix-blend-mode: multiply; }
+@keyframes adem { 50% { box-shadow: 0 6px 18px rgba(0,0,0,.8), inset 0 -6px 14px rgba(0,0,0,.45), 0 0 60px rgba(226,50,60,.8); } }
+.zegel p { margin: 0; font: italic 16px/1.55 var(--display); color: var(--bone); }
+.zegel .klein { font: 14px/1.45 var(--body); color: var(--ash); font-style: normal; }
+
+/* the role */
+.rol { display: grid; justify-items: center; gap: 6px; text-align: center; animation: onthul 1.6s cubic-bezier(.2,.9,.3,1) both; }
+@keyframes onthul { from { opacity: 0; transform: scale(.9); filter: blur(6px) brightness(2); } }
+.rol .med { width: min(230px, 62vw); aspect-ratio: 1; object-fit: contain; filter: drop-shadow(0 10px 24px #000) drop-shadow(0 0 22px rgba(226,50,60,.35)); }
+.rol .med.leeg { border-radius: 50%; background: radial-gradient(circle, #3a1a14, #120708 70%); border: 3px solid var(--bronze); }
+.rol h2.naam { margin: 4px 0 0; font-size: clamp(24px, 7.4vw, 34px); letter-spacing: .06em; line-height: 1.1; }
+.rol .titel { font: 600 13px/1.2 var(--carved); letter-spacing: .25em; color: var(--ash); text-transform: uppercase; }
+.rol .tekst { margin: 8px 0 0; font: italic 17px/1.55 var(--display); }
+.vermogen { display: grid; gap: 6px; text-align: left; }
+.vermogen .soort { font: 700 11px/1 var(--carved); letter-spacing: .3em; color: var(--ash); text-transform: uppercase; }
+.vermogen h3 { margin: 0; font: 700 19px/1.2 var(--carved); color: var(--bronze-hi); letter-spacing: .04em; }
+.vermogen p { margin: 0; }
+.ingezet { margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; min-height: 48px; cursor: pointer;
+  font: 700 14px/1 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: var(--bronze-hi);
+  background: rgba(184,149,95,.12); border: 1px solid var(--bronze); border-radius: 8px; }
+.ingezet[aria-pressed="true"] { color: var(--ash); border-color: #4a331b; background: rgba(0,0,0,.35); }
+.ingezet:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
+.zegels { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; text-align: center; }
+.zegels div { display: grid; justify-items: center; gap: 6px; }
+.zegels img { width: 76px; filter: drop-shadow(0 4px 10px #000); }
+.zegels span { font: 700 12px/1.25 var(--carved); letter-spacing: .06em; text-transform: uppercase; color: var(--bone); }
+.uitleg-zegels { margin: 12px 0 0; text-align: center; color: var(--ash); font-size: 15px; }
+
+/* the oath fragment */
+.eed { text-align: center; }
+.eed .fragment { margin: 6px 0 8px; font: italic 400 clamp(28px, 9vw, 40px)/1.2 var(--display); color: #fbe3b4; text-shadow: 0 0 24px rgba(255,190,90,.55); }
+.eed p { margin: 0; color: var(--ash); font-size: 15px; }
+.slot { text-align: center; color: var(--ash); font-size: 13px; }
+.verborgen { display: none !important; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <img class="logo" src="a/logo.webp" alt="De Kronieken van het Vergeten Weekend">
+  <header class="kop"><small>Een boodschap voor</small><h1 class="carved" id="naam">Wachter</h1></header>
+
+  <!-- before the weekend -->
+  <section class="paneel verborgen" id="vooraf">
+    <div class="brief">
+      <p>Het is het jaar 1096. Diep onder het kasteel van Bouillon slaapt iets wat niet mag ontwaken.</p>
+      <p>Jij bent geroepen om te waken.</p>
+    </div>
+    <div class="klok" id="klok" aria-live="off"><div><b id="k-d">00</b><span>dagen</span></div><div><b id="k-u">00</b><span>uur</span></div><div><b id="k-m">00</b><span>min</span></div><div><b id="k-s">00</b><span>sec</span></div></div>
+    <p class="wanneer">Vrijdag 13 november, 12:00 · de Ardennen</p>
+  </section>
+
+  <!-- sealed until the Guild Hall opens -->
+  <section class="paneel zegel verborgen" id="verzegeld">
+    <div class="was"><img src="a/medaillon-vlam.webp" alt=""></div>
+    <h2 class="carved">Jouw rol</h2>
+    <p id="verzegeld-tekst">Deze boodschap is nog verzegeld. Godfried breekt het zegel zodra de Guild Hall opent.</p>
+    <p class="klein">Bewaar deze link goed. Hij is alleen voor jou.</p>
+  </section>
+
+  <!-- the role -->
+  <section class="verborgen" id="rol-blok" style="display:grid; gap:18px"></section>
+
+  <!-- wrong or missing token -->
+  <section class="paneel zegel verborgen" id="onbekend">
+    <div class="was"><img src="a/medaillon-vlam.webp" alt=""></div>
+    <p>Deze boodschap is niet voor jou bestemd. Open de link die je van de organisatoren kreeg.</p>
+  </section>
+
+  <p class="slot">De Kronieken van het Vergeten Weekend · Bouillon</p>
+</main>
+
+<script src="a/wachters.js"></script>
+<script src="a/spel.js"></script>
+<script src="a/rollen.js"></script>
+<script src="a/firebase-config.js"></script>
+<script src="a/koppeling.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+const START = new Date("2026-11-13T12:00:00+01:00");
+const ZEGEL = { vlam: "Vlam van Waakzaamheid", hoorn: "Hoorn van Overvloed", schild: "Schild van Broederschap", hart: "Hart van de Ardennen" };
+const token = location.hash.replace(/^#(t=)?/, "").split("&")[0];
+const wachter = (window.WACHTERS || []).find((w) => w.token === token);
+const rol = wachter && window.ROLLEN.find((r) => r.id === window.ROL_VAN[wachter.naam]);
+const schoon = (t) => String(t).replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[k]);
+
+let publiek = {}, getekend = "", vorige = null;
+const halOpen = () => !!publiek.hal || Date.now() >= window.ROL_UITERLIJK;
+const eedOpen = () => !!publiek.eed || Date.now() >= window.EED_UITERLIJK;
+
+// the power can be used once a day; the mark resets at midnight
+const vandaag = () => new Date().toLocaleDateString("nl-NL");
+const krachtSleutel = () => `kronieken-kracht-${token}`;
+const krachtGebruikt = () => { try { return localStorage.getItem(krachtSleutel()) === vandaag(); } catch { return false; } };
+function wisselKracht(knop) {
+  const aan = !krachtGebruikt();
+  try { aan ? localStorage.setItem(krachtSleutel(), vandaag()) : localStorage.removeItem(krachtSleutel()); } catch {}
+  zetKnop(knop);
+}
+function zetKnop(knop) { const aan = krachtGebruikt(); knop.setAttribute("aria-pressed", aan); knop.textContent = aan ? "Vandaag ingezet · morgen weer" : "Kracht inzetten"; }
+
+function tekenRol() {
+  const frag = rol.eed != null ? window.SPEL?.eed?.fragmenten?.[rol.eed] : null;
+  const eed = frag && eedOpen() ? `<section class="paneel eed"><h2 class="carved">Jouw deel van de eed</h2><div class="fragment">“${schoon(frag)}”</div><p>Zoek je plek in de rij en spreek het uit wanneer het jouw beurt is.</p></section>` : "";
+  $("rol-blok").innerHTML = `${eed}
+    <section class="paneel rol">
+      <img class="med" src="a/rollen/${rol.id}.webp" alt="" onerror="this.removeAttribute('src');this.classList.add('leeg')">
+      <h2 class="naam carved">${schoon(rol.naam)}</h2>
+      <div class="titel">${schoon(rol.titel)}</div>
+      <p class="tekst">${schoon(rol.tekst)}</p>
+    </section>
+    <section class="paneel vermogen">
+      <div class="soort">Passief · altijd actief</div>
+      <h3>${schoon(rol.passief[0])}</h3><p>${schoon(rol.passief[1])}</p>
+    </section>
+    <section class="paneel vermogen">
+      <div class="soort">Kracht · één keer per dag</div>
+      <h3>${schoon(rol.kracht[0])}</h3><p>${schoon(rol.kracht[1])}</p>
+      <p style="color:var(--ash);font-size:15px">Roep hem hardop aan, dan telt hij.</p>
+      <button class="ingezet" id="kracht" type="button" aria-pressed="false"></button>
+    </section>
+    <section class="paneel">
+      <h2 class="carved">Jouw Zegels</h2>
+      <div class="zegels">${rol.zegels.map((z) => `<div><img src="a/medaillon-${z}.webp" alt=""><span>${ZEGEL[z]}</span></div>`).join("")}</div>
+      <p class="uitleg-zegels">Doe je een quest voor één van deze Zegels, dan mag er <b>1 extra fiche</b> bij.</p>
+    </section>
+    ${eed ? "" : frag ? `<section class="paneel zegel"><div class="was"><img src="a/medaillon-schild.webp" alt=""></div><p class="klein">Hier staat nog iets verzegeld. Je ziet het wanneer Godfried erom vraagt.</p></section>` : ""}`;
+  const knop = $("kracht"); zetKnop(knop); knop.onclick = () => wisselKracht(knop);
+}
+
+function teken() {
+  const nu = Date.now();
+  const staat = !wachter ? "onbekend" : !halOpen() ? (nu < START ? "vooraf" : "wacht") : eedOpen() ? "eed" : "rol";
+  $("onbekend").classList.toggle("verborgen", staat !== "onbekend");
+  $("vooraf").classList.toggle("verborgen", staat !== "vooraf");
+  $("verzegeld").classList.toggle("verborgen", staat !== "vooraf" && staat !== "wacht");
+  $("rol-blok").classList.toggle("verborgen", staat !== "rol" && staat !== "eed");
+  if (staat === "wacht") $("verzegeld-tekst").textContent = "Het weekend is begonnen. Het zegel breekt na de Eerste Dronk in de Guild Hall.";
+  if ((staat === "rol" || staat === "eed") && getekend !== staat) {
+    if (!rol) { $("rol-blok").innerHTML = `<section class="paneel zegel"><p>Godfried heeft jouw rol nog niet gekozen. Vraag het de organisatoren.</p></section>`; }
+    else { tekenRol(); if (vorige && navigator.vibrate) try { navigator.vibrate([80, 60, 160]); } catch {} }
+  }
+  getekend = staat === "rol" || staat === "eed" ? staat : ""; vorige = staat;
+}
+
+function klok() {
+  let s = Math.max(0, Math.floor((START - Date.now()) / 1000));
+  const d = Math.floor(s / 86400); s -= d * 86400; const u = Math.floor(s / 3600); s -= u * 3600; const m = Math.floor(s / 60); s -= m * 60;
+  $("k-d").textContent = d; $("k-u").textContent = String(u).padStart(2, "0"); $("k-m").textContent = String(m).padStart(2, "0"); $("k-s").textContent = String(s).padStart(2, "0");
+}
+
+if (wachter) { $("naam").textContent = wachter.naam; document.title = `${wachter.naam} · Een boodschap van Godfried`; }
+else $("naam").textContent = "Onbekende";
+klok(); teken();
+setInterval(() => { klok(); teken(); }, 1000);
+Koppeling.luister((p) => { publiek = p || {}; teken(); });
+</script>
+</body>
+</html>

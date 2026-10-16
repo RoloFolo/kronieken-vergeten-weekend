@@ -3,8 +3,11 @@
 //   Anders de lokale server (app/server.mjs): /api/stand en /api/stroom.
 //   Anders niets: de pagina werkt dan alleen op zichzelf (zoals de concept-artifact).
 //
+//   /publiek is voor iedereen leesbaar en bevat alleen wat de persoonlijke pagina's mogen weten (hal open, eed).
+//
 // Gebruik:  await Koppeling.start({ rol: "tv" | "regie" | "chaos", opStand(stand), opOpdracht(o) })
 //           Koppeling.meldStand(stand)   (tv)      Koppeling.stuur(opdracht)   (regie, chaos)
+//           await Koppeling.luister(opPubliek)    (persoonlijke pagina, zonder inloggen)
 const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
 
 function inlogScherm(rol) {
@@ -47,7 +50,7 @@ async function viaFirebase({ rol, opStand, opOpdracht, wachtwoord }) {
   if (rol === "tv") db.onChildAdded(db.ref(d, "opdrachten"), (s) => { const o = s.val(); db.remove(s.ref); if (o && Date.now() - (o.t || 0) < 60000) opOpdracht?.(o); });
   return {
     soort: "firebase",
-    meldStand: (stand) => db.set(db.ref(d, "stand"), JSON.parse(JSON.stringify(stand))).catch(() => {}),
+    meldStand: (stand) => { db.set(db.ref(d, "stand"), JSON.parse(JSON.stringify(stand))).catch(() => {}); if (stand.publiek) db.set(db.ref(d, "publiek"), stand.publiek).catch(() => {}); },
     stuur: (o) => db.push(db.ref(d, "opdrachten"), { ...o, t: Date.now() }).catch(() => {}),
   };
 }
@@ -61,7 +64,22 @@ async function viaServer({ rol, opStand, opOpdracht }) {
   return { soort: "server", bron, meldStand: (s) => post("/api/stand", s), stuur: (o) => post("/api/opdracht", o) };
 }
 
+// The personal pages only read /publiek (Firebase) or the publiek part of the server's stand.
+async function luisterPubliek(opPubliek) {
+  if (window.FIREBASE_CONFIG) {
+    const [{ initializeApp }, db] = await Promise.all([import(FB + "firebase-app.js"), import(FB + "firebase-database.js")]);
+    const d = db.getDatabase(initializeApp(window.FIREBASE_CONFIG));
+    db.onValue(db.ref(d, "publiek"), (s) => opPubliek(s.val() || {}));
+    return "firebase";
+  }
+  const r = await fetch("/api/stand"); if (!r.ok) throw new Error("geen server");
+  opPubliek((await r.json()).publiek || {});
+  new EventSource("/api/stroom").addEventListener("stand", (e) => opPubliek(JSON.parse(e.data).publiek || {}));
+  return "server";
+}
+
 window.Koppeling = {
+  async luister(opPubliek) { try { return await luisterPubliek(opPubliek); } catch { return null; } },
   verbinding: null,
   async start(opties) {
     try { this.verbinding = window.FIREBASE_CONFIG ? await viaFirebase(opties) : await viaServer(opties); }

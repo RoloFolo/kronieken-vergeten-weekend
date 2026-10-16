@@ -25,7 +25,7 @@ window.SPEL = {
     { zegel: "hoorn", naam: "Het Feestmaal", soort: "weekend",
       intro: "De Hoorn heeft alles gezien wat jullie dit weekend deden. Bewijs dat jullie het zelf ook nog weten." },
     { zegel: "schild", naam: "De Eed der Broeders", soort: "eed",
-      intro: "Ieder van jullie draagt een stuk van de eed op de achterkant van zijn rolkaart. Alleen samen, in de juiste volgorde, spreken jullie hem uit." },
+      intro: "Ieder van jullie draagt een stuk van de eed. Het staat nu in jouw persoonlijke boodschap van Godfried. Alleen samen, in de juiste volgorde, spreken jullie hem uit." },
     { zegel: "hart", naam: "De Verrader", soort: "verrader",
       intro: "Het hele weekend liep er een verrader tussen jullie. Niet één, maar telkens een ander. Wijs ze aan." },
   ],
@@ -37,14 +37,16 @@ window.SPEL = {
     { wie: "Geert", tekst: "VOORBEELD · Vervang mij door een echte herinnering aan deze Wachter.", foto: null },
   ],
 
-  // Akte III. Eén fragment per Wachter, in de juiste volgorde. Komt op de achterkant van de rolkaarten.
-  // De aanwijzingen verwijzen straks naar de rollen; voorlopig naar de Zegels.
+  // Akte III. Eén fragment per Wachter, in de juiste volgorde. Welke rol welk fragment draagt, staat in rollen.js;
+  // het fragment verschijnt op de persoonlijke pagina zodra de regie Akte III opent.
   eed: {
     fragmenten: ["Bij het vuur", "dat nooit dooft", "bij de hoorn", "die nooit leeg raakt", "bij het schild", "van onze broederschap", "en het hart", "van de Ardennen", "zweren wij", "voor elkaar", "te waken."],
     aanwijzingen: [
-      "Het vuur spreekt als eerste, het hart van het woud pas halverwege.",
-      "Wie de Hoorn draagt, volgt op wie het vuur bewaakt.",
-      "De eed eindigt met waken, en wie zweert, zweert vlak daarvoor.",
+      "Het vuur spreekt als eerste, en wie de orde bewaakt maakt zijn zin af.",
+      "De Quartermaster heft de hoorn; de Alchemist zorgt dat hij nooit leeg raakt.",
+      "Waar de Krijgsheer het schild heft, spreekt de Gezant van broederschap.",
+      "De Woudloper brengt het hart; de Hogepriester het woud.",
+      "De Bard zweert, het Feestmaal is voor elkaar, en wie in de schaduw werkt, heeft het laatste woord.",
     ],
   },
 

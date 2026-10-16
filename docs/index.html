@@ -301,8 +301,9 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .verhaal.weg { opacity: 0; pointer-events: none; }
 .verhaal-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.32) saturate(.9) blur(1.5px); }
 .verhaal::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 55%, transparent 30%, rgba(7,4,5,.85) 100%); pointer-events: none; }
-.brief { position: relative; z-index: 2; width: min(56vw, 1150px); margin-inline: auto; text-align: center; display: grid; place-items: center; font: italic 400 clamp(22px, 2.4vw, 48px)/1.45 var(--display); }
-.brief p { grid-area: 1 / 1; width: 100%; margin: 0; font: inherit; color: var(--bone); text-shadow: 0 2px 14px #000, 0 0 30px rgba(0,0,0,.8); opacity: 0; transform: translateY(14px); transition: opacity 1.4s, transform 1.4s; }
+.brief { position: relative; z-index: 2; width: min(58vw, 1150px); margin-inline: auto; text-align: center; display: grid; justify-items: center; padding: 3.2vh 3vw 3.6vh; background: linear-gradient(180deg, rgba(30,10,12,.9), rgba(10,5,6,.94)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 20px 60px #000; font: italic 400 clamp(19px, 1.9vw, 38px)/1.5 var(--display); }
+.brief::before { content: "De brief van Godfried"; grid-row: 1; margin-bottom: 1.8vh; font: 700 clamp(14px, 1.3vw, 26px)/1 var(--carved); letter-spacing: .3em; text-transform: uppercase; background: linear-gradient(180deg, var(--bronze-hi), #d8bf8f 45%, #9b7a4c); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.brief p { grid-area: 2 / 1; width: 100%; margin: 0; font: inherit; color: var(--bone); opacity: 0; transform: translateY(10px); transition: opacity 1.4s, transform 1.4s; }
 .brief p.aan { opacity: 1; transform: none; }
 .zegel-kant { position: absolute; z-index: 2; top: 50%; translate: 0 -42%; display: grid; gap: 7vh; }
 .zegel-kant.l { left: 6vw; } .zegel-kant.r { right: 6vw; }
@@ -320,24 +321,26 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 @keyframes halo { 50% { opacity: .65; transform: scale(1.08); } }
 @keyframes flits { 0% { opacity: 1; transform: scale(.6); filter: blur(2px) brightness(2.2); } 30% { opacity: 1; transform: scale(1.45); } 100% { } }
 @keyframes zvonk { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
-.dronk { position: relative; z-index: 2; display: grid; justify-items: center; gap: 4vh; text-align: center; }
-.dronk-kop { font-size: clamp(16px, 1.5vw, 30px); letter-spacing: .4em; }
-.dronk-regel { min-height: 1.3em; font-size: clamp(34px, 5vw, 104px); line-height: 1.15; max-width: 18ch; text-wrap: balance; opacity: 0; transform: scale(.94); transition: opacity .7s, transform .9s cubic-bezier(.2,1.2,.3,1); }
+.dronk { position: relative; z-index: 2; width: min(60vw, 1200px); display: grid; justify-items: center; gap: 2.6vh; text-align: center; padding: 3.2vh 3vw 3.6vh; background: linear-gradient(180deg, rgba(30,10,12,.9), rgba(10,5,6,.94)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 20px 60px #000; }
+.dronk-kop { font-size: clamp(14px, 1.3vw, 26px); letter-spacing: .3em; }
+.dronk-regel { min-height: 1.2em; font-size: clamp(28px, 3.4vw, 72px); line-height: 1.15; max-width: 20ch; text-wrap: balance; opacity: 0; transform: scale(.94); transition: opacity .7s, transform .9s cubic-bezier(.2,1.2,.3,1); }
 .dronk-regel.aan { opacity: 1; transform: none; }
-.dronk-regel.proost { font-size: clamp(60px, 9vw, 190px); filter: drop-shadow(0 0 30px rgba(255,200,110,.9)); animation: proost 1.4s ease-out; }
+.dronk-regel.proost { font-size: clamp(44px, 5.6vw, 118px); filter: drop-shadow(0 0 24px rgba(255,200,110,.9)); animation: proost 1.4s ease-out; }
 @keyframes proost { 0% { transform: scale(.5); filter: brightness(3) drop-shadow(0 0 60px #ffd27a); } 40% { transform: scale(1.08); } }
-.dronk-hint { font: italic clamp(15px, 1.4vw, 28px)/1.4 var(--display); color: var(--ash); min-height: 1.4em; }
+.dronk-hint { font: italic clamp(16px, 1.5vw, 30px)/1.45 var(--display); color: var(--bone); opacity: .85; min-height: 1.4em; }
 .verhaal.goud::before { content: ""; position: absolute; inset: 0; z-index: 1; background: radial-gradient(circle at 50% 50%, rgba(255,215,140,.55), transparent 60%); animation: goudflits 2.2s ease-out forwards; pointer-events: none; }
 @keyframes goudflits { from { opacity: 1; } to { opacity: 0; } }
-.uitleg { position: absolute; z-index: 8; left: 50%; bottom: .8vh; translate: -50% 0; width: min(88vw, 1600px); pointer-events: none; }
-.uitleg-kaart { display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 2.4vw; row-gap: .4vh; text-align: left; padding: 1.2vh 2.2vw; background: linear-gradient(180deg, rgba(30,10,12,.92), rgba(10,5,6,.94)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 20px 60px #000; animation: subIn .9s ease-out; }
-.uitleg-kaart h2 { margin: 0; grid-column: 1 / -1; font-size: clamp(16px, 1.5vw, 30px); }
-.uitleg-kaart > :not(h2):only-of-type { grid-column: 1 / -1; }
-.uitleg-kaart p { margin: 0; max-width: 80ch; font: italic clamp(14px, 1.3vw, 26px)/1.35 var(--display); color: var(--bone); }
+.uitleg { position: absolute; z-index: 8; left: 50%; top: calc(2.2vh + clamp(220px, 27vw, 620px) * .667 + 2vh); translate: -50% 0; width: min(62vw, 1150px); pointer-events: none; }
+.uitleg-kaart { display: grid; justify-items: center; gap: 2vh; text-align: center; padding: 3.2vh 3vw 3.6vh; background: linear-gradient(180deg, rgba(30,10,12,.9), rgba(10,5,6,.94)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 20px 60px #000; animation: subIn .9s ease-out; }
+.uitleg-kaart h2 { margin: 0; font-size: clamp(14px, 1.3vw, 26px); letter-spacing: .3em; }
+.uitleg-kaart p { margin: 0; max-width: 46ch; font: italic clamp(19px, 1.9vw, 38px)/1.5 var(--display); color: var(--bone); }
 .uitleg-kaart .rij-iconen { display: flex; gap: 1.2vw; justify-content: center; }
 .uitleg-kaart .rij-iconen img { width: clamp(46px, 4.4vw, 90px); }
 .uitleg-kaart .fiches { display: flex; gap: 1.6vw; font: 700 clamp(14px, 1.3vw, 26px)/1 var(--carved); color: var(--bronze-hi); }
-.uitleg-kaart .ogen { display: flex; gap: 3vw; } .uitleg-kaart .ogen i { width: 3vw; height: 1vh; border-radius: 50%; background: #ff2a2a; box-shadow: 0 0 18px 5px rgba(255,40,40,.75); }
+.uitleg-kaart .rol-tel { width: clamp(46px, 3.6vw, 80px); aspect-ratio: 9 / 16; border: 3px solid #b8955f; border-radius: 12px; box-shadow: 0 0 0 1px #4a331b, 0 0 28px rgba(255,190,90,.55), inset 0 0 22px rgba(255,170,80,.5); background: radial-gradient(circle at 50% 45%, rgba(255,214,140,.9), rgba(160,60,20,.5) 45%, #120708 75%); animation: duister 2.4s ease-in-out infinite; }
+.uitleg-kaart .demon-kop { width: clamp(240px, 24vw, 480px); aspect-ratio: 1536 / 300; overflow: hidden; -webkit-mask: linear-gradient(to bottom, #000 75%, transparent); mask: linear-gradient(to bottom, #000 75%, transparent); }
+.uitleg-kaart .demon-kop img { width: 100%; display: block; animation: duister 2.4s ease-in-out infinite; }
+@keyframes duister { 0%, 100% { filter: drop-shadow(0 0 10px rgba(226,50,60,.5)); } 50% { filter: drop-shadow(0 0 30px rgba(255,40,40,1)) brightness(1.3); } }
 .stage.wijs-zegels .medal { animation: wijs 1.2s ease-in-out infinite alternate; }
 @keyframes wijs { to { filter: drop-shadow(0 0 22px rgba(255,200,110,.95)) brightness(1.25); } }
 .sla-over { position: absolute; z-index: 3; right: 3vw; bottom: 4vh; font-size: clamp(12px, 1vw, 18px); padding: 1.2em 3em; opacity: .75; }
@@ -960,11 +963,11 @@ function proost() {
 const UITLEG = [
   { stem: "uitleg-1", titel: "De vier Zegels", wijs: true, html: () => `<p>Hoe voller hun ampul, hoe steviger zij de Schaduwkoning gevangen houden.</p>` },
   { stem: "uitleg-2", titel: "Quests voeden de Zegels", html: () => `<p>Pak een questkaart, doe wat erop staat en meld het aan de hoeders van de Hall.</p><div class="fiches"><span>Solo +1</span><span>Duo +2</span><span>Groep +3</span></div>` },
-  { stem: "uitleg-3", titel: "De Schaduw beweegt", html: () => `<div class="ogen"><i></i><i></i></div><p>Soms legt de Schaduw jullie een beproeving op. Doorsta haar, of zie de Zegels leeglopen.</p>` },
-  { stem: "uitleg-4", titel: "Vertrouw niet blindelings", html: () => `<p>De Schaduw heeft ogen onder jullie.</p>` },
+  { stem: "uitleg-3", titel: "De Schaduw beweegt", html: () => `<div class="demon-kop"><img src="a/logo.webp" alt=""></div><p>Soms legt de Schaduw jullie een beproeving op. Doorsta haar, of zie de Zegels leeglopen.</p>` },
+  { stem: "uitleg-4", titel: "Jouw rol", rollen: true, html: () => `<div class="rol-tel"></div><p>Open de persoonlijke boodschap die je van Godfried kreeg. Daar wacht jouw rol, jouw kracht en jouw Zegels.</p>` },
   { stem: "uitleg-5", titel: "De Guild Hall is geopend", html: () => `<p>Moge het licht jullie bijstaan, Wachters.</p>` },
 ];
-let uitlegActief = false, uitlegStap = -1;
+let uitlegActief = false, uitlegStap = -1, rollenOpen = false; // rollenOpen: the personal pages may show each Wachter's role
 function startUitleg() { uitlegActief = true; uitlegStap = -1; $("uitleg").hidden = false; meld(); volgendeUitleg(); }
 function volgendeUitleg() {
   if (!uitlegActief) return;
@@ -972,11 +975,12 @@ function volgendeUitleg() {
   uitlegStap++; const u = UITLEG[uitlegStap];
   stage.classList.toggle("wijs-zegels", !!u?.wijs);
   if (!u) return stopUitleg();
+  if (u.rollen && !rollenOpen) { rollenOpen = true; meld(); }
   $("uitleg-kaart").outerHTML = `<div class="uitleg-kaart" id="uitleg-kaart"><h2 class="carved">${u.titel}</h2>${u.html()}</div>`;
   const stap = uitlegStap;
   speelStem(u.stem, () => setTimeout(() => { if (uitlegStap === stap) volgendeUitleg(); }, 1400), 7000);
 }
-function stopUitleg() { uitlegActief = false; stage.classList.remove("wijs-zegels"); $("uitleg").hidden = true; fade(dronkStem, 0, 400); meld(); }
+function stopUitleg() { uitlegActief = false; rollenOpen = true; stage.classList.remove("wijs-zegels"); $("uitleg").hidden = true; fade(dronkStem, 0, 400); meld(); }
 // one button walks through the whole intro: story → toast → hall → past the tutorial
 function verderIntro() {
   if (!$("verhaal").hidden && !verhaalKlaar) return naarHal();
@@ -1083,7 +1087,7 @@ function aktePuzzel(a) {
   }
   if (a.soort === "eed") {
     if (v.includes("klaar")) return { klaar: true, html: `<p class="vraag eed">“${S.eed.fragmenten.join(" ")}”</p>` };
-    return { html: `<ol class="aanwijzingen">${S.eed.aanwijzingen.map((t) => `<li>${t}</li>`).join("")}</ol><p class="klein-tv">Leg de rolkaarten op volgorde en spreek de eed samen uit.</p>`,
+    return { html: `<ol class="aanwijzingen">${S.eed.aanwijzingen.map((t) => `<li>${t}</li>`).join("")}</ol><p class="klein-tv">Ga in de juiste volgorde staan en spreek de eed samen uit.</p>`,
       hint: `De eed begint met: “${S.eed.fragmenten.slice(0, 3).join(" ")}…”`, check: (w) => w === "eed", goed: () => v.push("klaar") };
   }
   // verrader
@@ -1193,6 +1197,7 @@ function meld() {
     scherm: schermNu(), d20: !$("b-d20").disabled,
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], fin, ere, chaos,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds } : null,
+    publiek: { hal: rollenOpen, eed: !!fin.eedOpen }, // the only part the personal pages can read
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   })), 150);
 }
@@ -1204,13 +1209,13 @@ const OPDRACHTEN = {
   fiche: (o) => fiche(o.id, o.n > 0 ? 1 : -1),
   "events-opnieuw": () => { gebruikt.clear(); bewaar(); },
   scherm: (o) => { if (uitlegActief) stopUitleg(); if (dronkActief) { dronkActief = false; dronkKlaar = true; fade(dronkStem, 0, 300); }
-    if (binnen === null) { verhaalKlaar = true; proloog?.pause(); $("verhaal").hidden = true; betreden(); } if (wakker()) hal(); paneel(o.naam === "hal" ? null : o.naam); },
+    rollenOpen = true; if (binnen === null) { verhaalKlaar = true; proloog?.pause(); $("verhaal").hidden = true; betreden(); } if (wakker()) hal(); paneel(o.naam === "hal" ? null : o.naam); },
   tocht: (o) => { o.aan ? tochtGedaan.add(o.id) : tochtGedaan.delete(o.id); if (paneelNu === "tocht") tekenTocht(); meld(); },
   reliek: (o) => { // open one compartment of the chest, with a flash
     if (o.aan && !relieken.has(o.id)) { relieken.add(o.id); if (paneelNu !== "kist") paneel("kist"); tekenKist(o.id); speel("klok", .8, 1.1); speel("donder", .3); }
     else if (!o.aan) { relieken.delete(o.id); tekenKist(); }
     meld(); },
-  puzzel: (o) => { fin.nu = o.i; if (paneelNu !== "finale") paneel("finale"); else tekenFinale(); meld(); },
+  puzzel: (o) => { fin.nu = o.i; if (S.aktes[o.i]?.soort === "eed") fin.eedOpen = true; if (paneelNu !== "finale") paneel("finale"); else tekenFinale(); meld(); },
   beproeving: () => { fin.open[S.aktes[fin.nu].zegel] = true; speel("klok", .7, .9); tekenFinale(); meld(); },
   antwoord: (o) => antwoord(o.n ?? o.w),
   verrader: (o) => { // the organisers pass the role on; a new period starts
@@ -1221,7 +1226,7 @@ const OPDRACHTEN = {
   hint: () => hintVoor(),
   ere: (o) => { ere.i = Math.max(-1, Math.min(S.titels.length - 1, ere.i + o.d)); if (paneelNu !== "ere") paneel("ere"); else tekenEre(); speel("klok", .6, 1.1); meld(); },
   "ere-naam": (o) => { ere.namen[ere.i] = String(o.naam || "").slice(0, 40); tekenEre(); speel("donder", .4); meld(); },
-  "alles-opnieuw": () => { chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; logboek = []; verraders = []; verrader = null; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; bewaar(); },
+  "alles-opnieuw": () => { chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; bewaar(); },
 };
 // With Firebase only the tv laptop logs in (address ends in ?tv); public visitors just see the countdown.
 let standGeladen = false;
@@ -1232,7 +1237,7 @@ function laadStand(s) {
   tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
   if (s.fin) fin = { nu: 0, open: {}, opgelost: {}, hint: {}, ...s.fin }; if (s.ere) ere = { i: -1, namen: {}, ...s.ere };
   if (s.chaos) chaos = s.chaos;
-  logboek = s.logboek || []; verraders = s.verraders || []; verrader = s.verrader || null;
+  logboek = s.logboek || []; verraders = s.verraders || []; verrader = s.verrader || null; rollenOpen = !!s.publiek?.hal;
   fin.voortgang ||= {};
   meld();
 }

@@ -54,16 +54,13 @@ window.SCHADUW_EVENTS = [
   { id: "kroon-of-kelk", soort: "dilemma", naam: "De Kroon of de Kelk", zegel: null, verlies: 0,
     regel: "De Schaduw biedt 3 fiches voor de Hoorn, maar neemt er 3 uit de Vlam. Accepteren of weigeren?",
     stem: "Een ruil. Drie voor jullie Hoorn… drie uit jullie Vlam. Wat is jullie belangrijker, Wachters?" },
-  { id: "verrader", soort: "dilemma", naam: "De Verrader", zegel: null, verlies: 0,
-    regel: "Iedereen sluit de ogen. De Chaos Lord wijst één Wachter aan die tot het volgende event in het geheim voor de Schaduw werkt.",
-    stem: "Sluit jullie ogen. Er is een verrader onder jullie… en vanaf nu werkt hij voor mij." },
   { id: "twee-deuren", soort: "dilemma", naam: "Twee Deuren", zegel: null, verlies: 0,
     regel: "Kies: iedereen neemt nu een drankje naar keuze, of de groep doet samen 50 squats. Geen keuze? Dan beide.",
     stem: "Twee deuren. Achter de ene een drankje voor iedereen. Achter de andere… vijftig squats. Kies, voordat ik kies." },
 
   // ---------- vreemde zaken ----------
   { id: "derde-persoon", soort: "vreemd", naam: "De Verloren Ziel", zegel: "schild", verlies: 1,
-    regel: "De Chaos Lord kiest één Wachter. Die praat tot de volgende maaltijd alleen in de derde persoon over zichzelf.",
+    regel: "De groep wijst samen één Wachter aan. Die praat tot de volgende maaltijd alleen in de derde persoon over zichzelf.",
     stem: "Ik heb een ziel gestolen. Wie zijn naam is kwijtgeraakt, spreekt over zichzelf als over een vreemde." },
   { id: "verkeerde-hand", soort: "vreemd", naam: "De Vervloekte Hand", zegel: "hoorn", verlies: 1,
     regel: "Tot middernacht eet en drinkt iedereen alleen met zijn niet-dominante hand.",

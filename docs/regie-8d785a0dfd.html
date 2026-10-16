@@ -67,6 +67,9 @@ input[type=number] { width: 100%; font: inherit; color: var(--bone); background:
 .puzzels button.klaar { border-color: var(--ok); color: #bfe8c1; }
 input[type=text] { width: 100%; font: inherit; color: var(--bone); background: rgba(0,0,0,.35); border: 1px solid rgba(239,227,212,.25); border-radius: 8px; padding: 12px; }
 .geheim { font-size: 13px; color: var(--ash); }
+.link { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px; }
+.link .wie { min-width: 0; line-height: 1.2; } .link .wie small { display: block; color: var(--ash); font-size: 12px; }
+.link button { padding: 10px 12px; font-size: 14px; }
 .bevestig { display: grid; gap: 8px; margin-top: 10px; padding: 10px; border: 1px dashed var(--ember); border-radius: 8px; }
 </style>
 </head>
@@ -173,10 +176,16 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 
   <section class="kaart">
+    <h2>Persoonlijke links</h2>
+    <p class="klein" style="margin:0 0 10px">Stuur iedere Wachter vooraf zijn eigen link. Tot het weekend toont hij het aftellen; na de Eerste Dronk breekt het zegel en verschijnt zijn rol. In Akte III staat daar ook zijn stuk van de eed.</p>
+    <div class="lijst" id="links"></div>
+  </section>
+
+  <section class="kaart">
     <h2>Beheer</h2>
     <button id="b-reset" type="button">Alle events weer beschikbaar maken</button>
     <div class="bevestig" id="reset-vraag" hidden>
-      <span>Alle 27 events kunnen dan opnieuw voorkomen. Zeker weten?</span>
+      <span>Alle events kunnen dan opnieuw voorkomen. Zeker weten?</span>
       <div class="rij"><button class="rood" id="b-reset-ja" type="button">Ja, opnieuw</button><button id="b-reset-nee" type="button">Annuleren</button></div>
     </div>
     <button id="b-alles" type="button" style="margin-top:10px">Hele spel opnieuw beginnen</button>
@@ -190,6 +199,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <script src="a/events.js"></script>
 <script src="a/spel.js"></script>
 <script src="a/wachters.js"></script>
+<script src="a/rollen.js"></script>
 <script src="a/firebase-config.js"></script>
 <script src="a/koppeling.js"></script>
 <script>
@@ -233,6 +243,17 @@ function toonLink() {
 $("v-namen").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "verrader", naam: b.dataset.n }); };
 $("b-v-stop").onclick = () => stuur({ cmd: "geen-verrader" });
 $("b-v-kopie").onclick = () => { const v = $("v-url").value; navigator.clipboard?.writeText(v).then(() => ($("b-v-kopie").textContent = "Gekopieerd"), () => $("v-url").select()); setTimeout(() => ($("b-v-kopie").textContent = "Kopieer link"), 2000); };
+// personal links: one per Wachter, sent before the weekend
+const persoonlijk = (w) => `${location.href.replace(/[^/]*$/, "")}wachter.html#${w.token}`;
+$("links").innerHTML = (window.WACHTERS || []).map((w, i) => { const rol = window.ROLLEN?.find((r) => r.id === window.ROL_VAN?.[w.naam]);
+  return `<div class="link"><span class="wie">${w.naam}<small>${rol ? rol.naam.replace(/^The /, "") : "nog geen rol"}</small></span>
+    <button class="goud" type="button" data-kopie="${i}">Kopieer</button><button type="button" data-app="${i}">WhatsApp</button></div>`; }).join("");
+$("links").onclick = (e) => {
+  const b = e.target.closest("button"); if (!b) return;
+  const w = window.WACHTERS[b.dataset.kopie ?? b.dataset.app], url = persoonlijk(w);
+  if (b.dataset.app != null) return open(`https://wa.me/?text=${encodeURIComponent(`Wachter ${w.naam}, Godfried van Bouillon heeft een boodschap voor je. Alleen voor jou: ${url}`)}`, "_blank");
+  navigator.clipboard?.writeText(url).then(() => { b.textContent = "Gekopieerd"; setTimeout(() => (b.textContent = "Kopieer"), 2000); }, () => prompt("Link", url));
+};
 $("puzzels").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "puzzel", i: +b.dataset.i }); };
 
 const stuur = (o) => Koppeling.stuur(o);
