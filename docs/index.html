@@ -1161,7 +1161,8 @@ const KAARTEN_PER_DAG = 3, wacht = {};
 function chaosDag() { const d = new Date().toLocaleDateString("sv-SE"); if (chaos.dag !== d) chaos = { dag: d, kaarten: KAARTEN_PER_DAG }; }
 function mag(naam, sec) { const nu = Date.now(); if ((wacht[naam] || 0) > nu) return false; wacht[naam] = nu + sec * 1000; return true; }
 function flikker(ms = 2500) { stage.classList.add("omen"); setTimeout(() => stage.classList.remove("omen"), ms); }
-function echteVerrader(o) { return verrader && o.token === verrader.token; }
+// With Firebase the database rules already check the sender's own account; locally the personal token decides.
+function echteVerrader(o) { return !!verrader && (o.van ? o.van === Koppeling.emailVan(verrader.naam) : !window.FIREBASE_CONFIG && o.token === verrader.token); }
 const CHAOS_RAW = {
   "chaos-omen": () => { if (!mag("omen", 45)) return; speel(`chaos-${1 + Math.floor(Math.random() * 5)}`, 1); flikker(3200); },
   "chaos-bliksem": () => { if (!mag("bliksem", 15)) return; bliksem(.7); setTimeout(() => bliksem(0), 350); },

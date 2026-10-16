@@ -5,12 +5,11 @@ Het tv-spel voor ons vriendenweekend in Bouillon (13–15 november 2026): een Gu
 ## Zo draait het
 
 - **De site** staat in `docs/` en wordt gehost via GitHub Pages.
-- **De tv** (laptop via HDMI) opent de site met `?tv` achter het adres en logt één keer in met het regie-wachtwoord.
-- **De regie** en **de Chaos Lord** hebben elk een eigen pagina en een eigen wachtwoord. De adressen delen de organisatoren onderling.
-- **Iedere Wachter** krijgt vooraf een persoonlijke link (`wachter.html#<token>`, te kopiëren in de regie): eerst het aftellen, na de Eerste Dronk zijn rol en in de finale zijn stuk van de eed.
-- De live koppeling loopt via **Firebase Realtime Database**. Vul `docs/a/firebase-config.js` met de config uit Firebase.
+- **Iedere Wachter** logt in op `wachter.html` met zijn eigen account (`<naam>@petjoempa.nl`): eerst het aftellen, na de Eerste Dronk zijn rol, in de finale zijn stuk van de eed. Wie de verrader is, ziet daar ook de knop naar zijn verraderspaneel.
+- **De admins** (Rob, Jean, Roland) zien op hun pagina de knop naar de regie. De tv (laptop via HDMI) opent de site met `?tv` en logt één keer in met een admin-account.
+- De live koppeling loopt via **Firebase Realtime Database** en **Authentication**. Config in `docs/a/firebase-config.js`, databaseregels in `app/firebase-regels.json`.
 
-Zonder internet kan het ook lokaal: `node app/server.mjs` op de laptop, en telefoons op dezelfde wifi.
+Zonder internet kan het ook lokaal: `node app/server.mjs` op de laptop, en telefoons op dezelfde wifi. De persoonlijke links werken dan met het token uit `docs/a/wachters.js` (`wachter.html#<token>`).
 
 ## Inhoud
 

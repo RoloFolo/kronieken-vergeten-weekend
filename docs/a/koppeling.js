@@ -1,92 +1,122 @@
-// Verbinding tussen tv, regie en Chaos Lord.
-//   Firebase (als a/firebase-config.js een config heeft): /stand wordt door de tv geschreven, /opdrachten door regie en Chaos Lord.
+// Verbinding tussen tv, regie, verrader en de persoonlijke pagina's.
+//   Firebase (als a/firebase-config.js een config heeft): iedere Wachter logt in met zijn eigen account.
+//     /stand       tv schrijft, alleen admins lezen
+//     /publiek     tv schrijft, iedereen leest (hal open, eed)
+//     /verraad/<e> tv schrijft alleen voor de huidige verrader; ieder leest alleen zijn eigen plek
+//     /opdrachten  admins sturen alles, de huidige verrader alleen chaos-opdrachten
 //   Anders de lokale server (app/server.mjs): /api/stand en /api/stroom.
-//   Anders niets: de pagina werkt dan alleen op zichzelf (zoals de concept-artifact).
+//   Anders niets: de pagina werkt dan alleen op zichzelf.
 //
-//   /publiek is voor iedereen leesbaar en bevat alleen wat de persoonlijke pagina's mogen weten (hal open, eed).
-//
-// Gebruik:  await Koppeling.start({ rol: "tv" | "regie" | "chaos", opStand(stand), opOpdracht(o) })
-//           Koppeling.meldStand(stand)   (tv)      Koppeling.stuur(opdracht)   (regie, chaos)
-//           await Koppeling.luister(opPubliek)    (persoonlijke pagina, zonder inloggen)
+// Gebruik:  await Koppeling.start({ rol: "tv" | "regie" | "chaos" | "wachter", naam, opStand, opOpdracht, opPubliek, opVerraad })
+//           Koppeling.meldStand(stand)   (tv)      Koppeling.stuur(opdracht)   (regie, verrader)
+//           Koppeling.ik = { email, naam, admin }  (na inloggen via Firebase)
 const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
+const LOGIN = () => window.KRONIEKEN_LOGIN || { domein: "", admins: [] };
+const sleutel = (email) => String(email).toLowerCase().replaceAll(".", ","); // Firebase keys cannot contain dots
+const naamVan = (email) => { const kort = String(email).split("@")[0].toLowerCase(); return (window.WACHTERS || []).find((w) => w.naam.toLowerCase() === kort)?.naam || kort; };
+const isAdmin = (email) => { const [kort, dom] = String(email).toLowerCase().split("@"); return dom === LOGIN().domein && LOGIN().admins.includes(kort); };
+const emailVan = (naam) => `${String(naam).toLowerCase()}@${LOGIN().domein}`;
 
-function inlogScherm(rol) {
+function stijlEenmaal() {
+  if (document.getElementById("inlog-stijl")) return;
+  const stijl = document.createElement("style"); stijl.id = "inlog-stijl";
+  stijl.textContent = `.inlog{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;background:radial-gradient(ellipse at 50% 30%,#2a0c10,#070405 70%)}
+    .inlog-kaart{width:min(420px,100%);display:grid;gap:14px;text-align:center;padding:28px 22px;background:linear-gradient(180deg,rgba(30,14,14,.92),rgba(12,6,7,.96));border:2px solid #6e5230;box-shadow:inset 0 0 0 1px rgba(226,50,60,.4),0 20px 60px #000;color:#efe3d4;font:16px/1.4 "Source Sans 3",system-ui,sans-serif}
+    .inlog-kaart img{width:min(240px,70%);justify-self:center}
+    .inlog-kaart h1{margin:0;font:700 24px/1.1 "Cinzel",Georgia,serif;letter-spacing:.1em;text-transform:uppercase;color:#f1dfb6}
+    .inlog-kaart p{margin:0;color:#a89488}
+    .inlog-kaart input{font:inherit;color:#efe3d4;background:rgba(0,0,0,.4);border:1px solid rgba(239,227,212,.3);border-radius:8px;padding:12px;text-align:center}
+    .inlog-knop{font:inherit;cursor:pointer;padding:12px;border:1px solid #b8955f;border-radius:8px;background:rgba(184,149,95,.15);color:#f1dfb6;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+    .inlog-fout{color:#ff8a8a!important}`;
+  document.head.appendChild(stijl);
+}
+
+function inlogScherm(rol, voorEmail) {
+  stijlEenmaal();
   return new Promise((klaar) => {
     const el = document.createElement("div");
     el.className = "inlog";
-    el.innerHTML = `<form class="inlog-kaart"><h1 class="carved">${rol === "chaos" ? "De Chaos Lord" : "De Wachters"}</h1>
-      <p>${rol === "tv" ? "Log één keer in op deze laptop met het regie-wachtwoord." : "Wachtwoord"}</p>
-      <input type="password" id="inlog-ww" autocomplete="current-password" aria-label="Wachtwoord" required>
-      <button type="submit" class="inlog-knop"><span class="carved">Open</span></button><p class="inlog-fout" id="inlog-fout" hidden></p></form>`;
-    const stijl = document.createElement("style");
-    stijl.textContent = `.inlog{position:fixed;inset:0;z-index:100;display:grid;place-items:center;padding:16px;background:radial-gradient(ellipse at 50% 30%,#2a0c10,#070405 70%)}
-      .inlog-kaart{width:min(420px,100%);display:grid;gap:14px;text-align:center;padding:28px 22px;background:linear-gradient(180deg,rgba(30,14,14,.92),rgba(12,6,7,.96));border:2px solid #6e5230;box-shadow:inset 0 0 0 1px rgba(226,50,60,.4),0 20px 60px #000;color:#efe3d4;font:16px/1.4 "Source Sans 3",system-ui,sans-serif}
-      .inlog-kaart h1{margin:0;font:700 26px/1.1 "Cinzel",Georgia,serif;letter-spacing:.1em;text-transform:uppercase}
-      .inlog-kaart p{margin:0;color:#a89488}
-      .inlog-kaart input{font:inherit;color:#efe3d4;background:rgba(0,0,0,.4);border:1px solid rgba(239,227,212,.3);border-radius:8px;padding:12px;text-align:center}
-      .inlog-knop{font:inherit;cursor:pointer;padding:12px;border:1px solid #b8955f;border-radius:8px;background:rgba(184,149,95,.15);color:#f1dfb6}
-      .inlog-fout{color:#ff8a8a!important}`;
-    document.head.appendChild(stijl); document.body.appendChild(el);
-    const form = el.querySelector("form");
-    form.onsubmit = (e) => { e.preventDefault(); klaar({ ww: el.querySelector("#inlog-ww").value, toonFout: (t) => { const f = el.querySelector("#inlog-fout"); f.hidden = false; f.textContent = t; }, weg: () => el.remove() }); };
-    setTimeout(() => el.querySelector("#inlog-ww").focus(), 50);
+    const uitleg = rol === "tv" ? "Log één keer in op deze laptop met het account van een van de hoeders." : rol === "regie" ? "Alleen voor de hoeders van de Hall." : "Log in met jouw eigen account.";
+    el.innerHTML = `<form class="inlog-kaart"><img src="a/logo.webp" alt=""><h1>${rol === "regie" || rol === "tv" ? "De Hoeders" : "Wachter, meld je"}</h1>
+      <p>${uitleg}</p>
+      <input type="email" id="inlog-email" autocomplete="username" aria-label="E-mailadres" placeholder="naam@${LOGIN().domein}" required value="${voorEmail || ""}">
+      <input type="password" id="inlog-ww" autocomplete="current-password" aria-label="Wachtwoord" placeholder="Wachtwoord" required>
+      <button type="submit" class="inlog-knop">Open</button><p class="inlog-fout" id="inlog-fout" hidden></p></form>`;
+    document.body.appendChild(el);
+    el.querySelector("form").onsubmit = (e) => { e.preventDefault(); klaar({ email: el.querySelector("#inlog-email").value.trim().toLowerCase(), ww: el.querySelector("#inlog-ww").value,
+      toonFout: (t) => { const f = el.querySelector("#inlog-fout"); f.hidden = false; f.textContent = t; }, weg: () => el.remove() }); };
+    setTimeout(() => el.querySelector(voorEmail ? "#inlog-ww" : "#inlog-email").focus(), 50);
   });
 }
 
-async function viaFirebase({ rol, opStand, opOpdracht, wachtwoord }) {
+function geenToegang(email) {
+  stijlEenmaal();
+  return new Promise((klaar) => {
+    const el = document.createElement("div"); el.className = "inlog";
+    el.innerHTML = `<div class="inlog-kaart"><img src="a/logo.webp" alt=""><h1>Geen toegang</h1><p>Je bent ingelogd als ${email}. Deze pagina is alleen voor de hoeders van de Hall.</p>
+      <button type="button" class="inlog-knop">Ander account</button><a href="wachter.html" style="color:#d8bf8f">Naar mijn eigen pagina</a></div>`;
+    document.body.appendChild(el);
+    el.querySelector("button").onclick = () => { el.remove(); klaar(); };
+  });
+}
+
+async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraad }) {
   const [{ initializeApp }, auth, db] = await Promise.all([import(FB + "firebase-app.js"), import(FB + "firebase-auth.js"), import(FB + "firebase-database.js")]);
   const app = initializeApp(window.FIREBASE_CONFIG);
   const a = auth.getAuth(app); await auth.setPersistence(a, auth.browserLocalPersistence);
-  const email = window.KRONIEKEN_ACCOUNTS[rol === "chaos" ? "chaos" : "regie"];
   await new Promise((ok) => { const stop = auth.onAuthStateChanged(a, () => { stop(); ok(); }); });
-  if (wachtwoord && (!a.currentUser || a.currentUser.email !== email)) { try { await auth.signInWithEmailAndPassword(a, email, wachtwoord); } catch {} }
-  while (!a.currentUser || a.currentUser.email !== email) {
-    const scherm = await inlogScherm(rol);
-    try { await auth.signInWithEmailAndPassword(a, email, scherm.ww); scherm.weg(); }
-    catch { scherm.toonFout("Dat wachtwoord klopt niet."); await new Promise((ok) => setTimeout(ok, 1200)); scherm.weg(); }
+  const alleenAdmin = rol === "tv" || rol === "regie";
+  let voor = naam ? emailVan(naam) : "";
+  try { voor ||= localStorage.getItem("kronieken-email") || ""; } catch {}
+  for (;;) {
+    if (a.currentUser && (!alleenAdmin || isAdmin(a.currentUser.email))) break;
+    if (a.currentUser) { await geenToegang(a.currentUser.email); await auth.signOut(a); continue; }
+    const scherm = await inlogScherm(rol, voor);
+    try { await auth.signInWithEmailAndPassword(a, scherm.email, scherm.ww); scherm.weg(); try { localStorage.setItem("kronieken-email", scherm.email); } catch {} }
+    catch { scherm.toonFout("Dat klopt niet. Controleer e-mailadres en wachtwoord."); voor = scherm.email; await new Promise((ok) => setTimeout(ok, 1400)); scherm.weg(); }
   }
+  const email = a.currentUser.email.toLowerCase();
+  window.Koppeling.ik = { email, naam: naamVan(email), admin: isAdmin(email) };
   const d = db.getDatabase(app);
-  db.onValue(db.ref(d, "stand"), (s) => opStand?.(s.val() || {}));
+  if (alleenAdmin) db.onValue(db.ref(d, "stand"), (s) => opStand?.(s.val() || {}));
   if (rol === "tv") db.onChildAdded(db.ref(d, "opdrachten"), (s) => { const o = s.val(); db.remove(s.ref); if (o && Date.now() - (o.t || 0) < 60000) opOpdracht?.(o); });
+  if (rol === "wachter") db.onValue(db.ref(d, "publiek"), (s) => opPubliek?.(s.val() || {}));
+  if (rol === "wachter" || rol === "chaos") db.onValue(db.ref(d, `verraad/${sleutel(email)}`), (s) => { opVerraad?.(s.val()); if (rol === "chaos") opStand?.(s.val() || {}); }, () => opVerraad?.(null));
   return {
     soort: "firebase",
-    meldStand: (stand) => { db.set(db.ref(d, "stand"), JSON.parse(JSON.stringify(stand))).catch(() => {}); if (stand.publiek) db.set(db.ref(d, "publiek"), stand.publiek).catch(() => {}); },
-    stuur: (o) => db.push(db.ref(d, "opdrachten"), { ...o, t: Date.now() }).catch(() => {}),
+    meldStand: (stand) => {
+      const schrijf = (pad, w) => db.set(db.ref(d, pad), w).catch(() => {});
+      schrijf("stand", JSON.parse(JSON.stringify(stand)));
+      if (stand.publiek) schrijf("publiek", stand.publiek);
+      // only the current traitor gets a node, with just what the traitor panel needs
+      const v = stand.verrader;
+      schrijf("verraad", v ? { [sleutel(emailVan(v.naam))]: { naam: v.naam, sinds: v.sinds, fiches: stand.fiches, scherm: stand.scherm, chaos: stand.chaos || null } } : null);
+    },
+    stuur: (o) => db.push(db.ref(d, "opdrachten"), { ...o, van: email, t: Date.now() }).catch(() => {}),
+    uitloggen: () => auth.signOut(a),
   };
 }
 
-async function viaServer({ rol, opStand, opOpdracht }) {
+async function viaServer({ rol, opStand, opOpdracht, opPubliek }) {
   const r = await fetch("/api/stand"); if (!r.ok) throw new Error("geen server");
+  const eerste = await r.json();
   const bron = new EventSource("/api/stroom");
-  bron.addEventListener("stand", (e) => opStand?.(JSON.parse(e.data)));
+  bron.addEventListener("stand", (e) => { const s = JSON.parse(e.data); opStand?.(s); opPubliek?.(s.publiek || {}); });
+  if (rol === "wachter") opPubliek?.(eerste.publiek || {});
   if (rol === "tv") bron.addEventListener("opdracht", (e) => opOpdracht?.(JSON.parse(e.data)));
   const post = (pad, o) => fetch(pad, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(o) }).catch(() => {});
   return { soort: "server", bron, meldStand: (s) => post("/api/stand", s), stuur: (o) => post("/api/opdracht", o) };
 }
 
-// The personal pages only read /publiek (Firebase) or the publiek part of the server's stand.
-async function luisterPubliek(opPubliek) {
-  if (window.FIREBASE_CONFIG) {
-    const [{ initializeApp }, db] = await Promise.all([import(FB + "firebase-app.js"), import(FB + "firebase-database.js")]);
-    const d = db.getDatabase(initializeApp(window.FIREBASE_CONFIG));
-    db.onValue(db.ref(d, "publiek"), (s) => opPubliek(s.val() || {}));
-    return "firebase";
-  }
-  const r = await fetch("/api/stand"); if (!r.ok) throw new Error("geen server");
-  opPubliek((await r.json()).publiek || {});
-  new EventSource("/api/stroom").addEventListener("stand", (e) => opPubliek(JSON.parse(e.data).publiek || {}));
-  return "server";
-}
-
 window.Koppeling = {
-  async luister(opPubliek) { try { return await luisterPubliek(opPubliek); } catch { return null; } },
-  verbinding: null,
+  verbinding: null, ik: null, emailVan, isAdmin,
   async start(opties) {
     try { this.verbinding = window.FIREBASE_CONFIG ? await viaFirebase(opties) : await viaServer(opties); }
-    catch { this.verbinding = null; }
+    catch (e) { console.warn("Koppeling:", e); this.verbinding = null; }
     return this.verbinding;
   },
   meldStand(s) { this.verbinding?.meldStand(s); },
   stuur(o) { this.verbinding?.stuur(o); },
+  uitloggen() { return this.verbinding?.uitloggen?.(); },
 };
 window.dispatchEvent(new Event("koppeling-klaar"));

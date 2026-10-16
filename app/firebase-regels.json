@@ -1,0 +1,26 @@
+{
+  "rules": {
+    "stand": {
+      ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+      ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)"
+    },
+    "publiek": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)"
+    },
+    "verraad": {
+      ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+      ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+      "$wie": {
+        ".read": "auth != null && auth.token.email.replace('.', ',') === $wie"
+      }
+    },
+    "opdrachten": {
+      ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+      ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+      "$id": {
+        ".write": "auth != null && newData.child('van').val() === auth.token.email && root.child('verraad').child(auth.token.email.replace('.', ',')).exists() && newData.child('cmd').isString() && newData.child('cmd').val().beginsWith('chaos-')"
+      }
+    }
+  }
+}
