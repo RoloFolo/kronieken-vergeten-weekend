@@ -226,6 +226,47 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .paneel.aan { opacity: 1; }
 .hall { transition: opacity 1s; }
 .stage.met-paneel .seals, .stage.met-paneel .chip { opacity: 0; pointer-events: none; transition: opacity .8s; }
+/* the relic chest: a crypt, a closed reliquary, and one by one the relics the Wachters brought back */
+.kistzaal { position: absolute; inset: 0; z-index: 7; overflow: hidden; background: #050203; pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 1.4s ease, visibility 0s linear 1.4s; }
+.stage.in-kist .kistzaal { opacity: 1; visibility: visible; transition: opacity 1.4s ease; }
+.stage.in-kist .hall { opacity: 0; pointer-events: none; }
+.kistzaal .k-beeld { position: absolute; container-type: inline-size; }
+.kistzaal .k-dicht, .kistzaal .k-open { position: absolute; inset: 0; width: 100%; height: 100%; }
+.kistzaal .k-dicht { animation: kistadem 6s ease-in-out infinite alternate; }
+@keyframes kistadem { to { filter: brightness(1.12); } }
+.kistzaal .k-open { opacity: 0; transition: opacity 1.6s ease; }
+.kistzaal.open .k-open { opacity: 1; }
+.kistzaal .k-gloed { position: absolute; left: 50%; top: 44%; width: 60cqi; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; opacity: 0; mix-blend-mode: plus-lighter; pointer-events: none;
+  background: radial-gradient(circle, rgba(255,240,200,.95), rgba(255,190,90,.5) 22%, rgba(255,120,40,.18) 45%, transparent 68%); }
+.kistzaal .k-gloed.flits { animation: kistflits 2.2s ease-out; }
+@keyframes kistflits { 0% { opacity: 0; scale: .3; } 12% { opacity: 1; scale: 1; } 100% { opacity: 0; scale: 1.4; } }
+.kistzaal .k-sokkel { position: absolute; width: 2.4cqi; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; opacity: 0; mix-blend-mode: plus-lighter; transition: opacity 1s;
+  background: radial-gradient(circle, rgba(255,240,190,1), rgba(255,170,70,.7) 35%, transparent 70%); box-shadow: 0 0 2cqi rgba(255,170,70,.8); }
+.kistzaal .k-sokkel.aan { opacity: 1; animation: sokkel 2s ease-in-out infinite alternate; }
+@keyframes sokkel { to { box-shadow: 0 0 3.4cqi rgba(255,190,90,1); } }
+.kistzaal .k-plek { position: absolute; width: 13cqi; translate: -50% -50%; display: grid; justify-items: center; gap: .6cqi; text-align: center; }
+.kistzaal .k-plek .k-vak { position: relative; width: 9.5cqi; aspect-ratio: 1; display: grid; place-items: center; }
+.kistzaal .k-plek .k-vak img { width: 100%; height: 100%; object-fit: contain; filter: brightness(0) drop-shadow(0 0 .15cqi rgba(226,50,60,.9)) drop-shadow(0 0 1cqi rgba(226,50,60,.4)); opacity: .55; transition: filter 1s, opacity 1s; }
+.kistzaal .k-plek .stralen { position: absolute; inset: -45%; border-radius: 50%; opacity: 0; mix-blend-mode: plus-lighter;
+  background: repeating-conic-gradient(rgba(255,215,140,.55) 0 5deg, transparent 5deg 22deg); -webkit-mask: radial-gradient(circle, #000 18%, transparent 68%); mask: radial-gradient(circle, #000 18%, transparent 68%); }
+.kistzaal .k-plek b { font: 700 1.25cqi/1.15 var(--carved); letter-spacing: .06em; text-transform: uppercase; color: var(--bronze-hi); text-shadow: 0 1px 4px #000, 0 0 12px #000; opacity: 0; transform: translateY(.6cqi); transition: opacity .8s .5s, transform .8s .5s; }
+.kistzaal .k-plek small { font: italic .95cqi/1.3 var(--display); color: var(--bone); text-shadow: 0 1px 4px #000; opacity: 0; transition: opacity .8s .9s; max-width: 13cqi; }
+.kistzaal .k-plek.spanning .vak img { opacity: .9; animation: spanning .5s ease-in-out infinite alternate; }
+@keyframes spanning { to { filter: brightness(0) drop-shadow(0 0 .3cqi rgba(255,90,60,1)) drop-shadow(0 0 2cqi rgba(255,60,40,.8)); } }
+.kistzaal .k-plek.gewonnen .vak img { opacity: 1; filter: drop-shadow(0 0 2cqi rgba(255,200,110,.9)); animation: rijs 1.6s cubic-bezier(.2,1.1,.3,1) both; }
+@keyframes rijs { from { transform: translate(var(--vx), var(--vy)) scale(.2); filter: brightness(3) drop-shadow(0 0 3cqi rgba(255,230,160,1)); } }
+.kistzaal .k-plek.gewonnen .stralen { opacity: 1; animation: stralen 14s linear infinite, stralenIn 1.4s ease-out; }
+@keyframes stralen { to { rotate: 360deg; } }
+@keyframes stralenIn { from { opacity: 0; scale: .2; } }
+.kistzaal .k-plek.gewonnen b, .kistzaal .k-plek.gewonnen small, .kistzaal .k-plek.leeg b { opacity: 1; transform: none; }
+.kistzaal .k-plek.leeg .vak img { opacity: .18; filter: brightness(0) grayscale(1); animation: dooft 1s ease-in both; }
+@keyframes dooft { 30% { opacity: .9; filter: brightness(0) drop-shadow(0 0 1.4cqi rgba(255,40,30,1)); } }
+.kistzaal .k-plek.leeg b { color: #6d5a52; }
+.kistzaal .k-plek.gebruikt .vak img { filter: grayscale(1) brightness(.45); }
+.kistzaal .k-titel { position: absolute; top: 2.4vh; left: 0; right: 0; margin: 0; text-align: center; font-size: clamp(22px, 2.3vw, 46px); letter-spacing: .2em; filter: drop-shadow(0 3px 8px #000); }
+.kistzaal .k-score { position: absolute; left: 0; right: 0; bottom: 4vh; margin: 0; text-align: center; font: italic clamp(18px, 1.8vw, 36px)/1.4 var(--display); color: var(--bone); text-shadow: 0 2px 8px #000; opacity: 0; transition: opacity 1.5s; }
+.kistzaal .k-score.aan { opacity: 1; }
+.kistzaal .k-score b { font-family: var(--carved); color: #ffd98a; }
 /* the hall of the Round Table: one painting split in layers (floor, edge, table) that load in like a stage */
 .zaal { position: absolute; inset: 0; z-index: 7; overflow: hidden; background: #050203; pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 1.2s ease, visibility 0s linear 1.2s; }
 .stage.in-zaal .zaal { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 1.2s ease; }
@@ -512,7 +553,8 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .vessel.ijsstoot { animation: shake .45s ease-in-out; }
 .vessel[data-ijs]::before { content: attr(data-ijs); position: absolute; inset: auto; bottom: 100%; left: 50%; translate: -50% -.6vh; z-index: 5; white-space: nowrap; font: 700 clamp(11px, .8vw, 17px)/1 var(--carved); letter-spacing: .14em; color: #bfe3ff; text-shadow: 0 0 10px rgba(120,190,255,.9); }
 .overname { position: absolute; inset: 0; z-index: 60; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 45%, rgba(120,0,10,.6), #000 72%); animation: duisterIn 2s ease-out both; }
-.overname img { width: min(72vw, 1300px); filter: drop-shadow(0 0 60px rgba(255,30,30,.9)); animation: overpuls 2.6s ease-in-out infinite, tremor .6s linear infinite; }
+.overname canvas { position: absolute; inset: 0; width: 100%; height: 100%; mix-blend-mode: plus-lighter; pointer-events: none; }
+.overname img { position: relative; width: min(72vw, 1300px); filter: drop-shadow(0 0 60px rgba(255,30,30,.9)); animation: overpuls 2.6s ease-in-out infinite, tremor .6s linear infinite; }
 .overname.weg { animation: duisterUit 2s ease-in forwards; }
 @keyframes overpuls { 50% { filter: drop-shadow(0 0 110px rgba(255,20,20,1)) brightness(1.25); scale: 1.03; } }
 .uitleg { position: absolute; z-index: 8; left: 50%; top: calc(2.2vh + clamp(220px, 27vw, 620px) * .667 + 2vh); translate: -50% 0; width: min(62vw, 1150px); pointer-events: none; }
@@ -654,6 +696,16 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <p>Vanavond betreden jullie mijn kasteel. Draag het vuur door de poorten, de gangen en de gewelven.</p>
     <p>Vijf beproevingen wachten tussen de oude muren. Elke beproeving die jullie volbrengen, opent een vak van de Reliekenkist.</p>
     <p>Jullie opdrachten staan nu ook op jullie telefoon.</p></div></div>
+  <div class="kistzaal" id="kistzaal" aria-live="polite">
+    <div class="k-beeld" id="k-beeld">
+      <img class="k-dicht" src="a/kist/dicht.webp" alt=""><img class="k-open" src="a/kist/open.webp" alt="">
+      <div class="k-gloed" id="k-gloed"></div>
+      <div class="k-sokkels" id="k-sokkels"></div>
+      <div class="k-plekken" id="k-plekken"></div>
+    </div>
+    <h1 class="k-titel carved">De Reliekenkist</h1>
+    <p class="k-score" id="k-score"></p>
+  </div>
   <div class="zaal" id="zaal" aria-live="polite">
     <div class="z-beeld" id="z-beeld">
       <img class="z-vloer" src="a/zaal/vloer.webp" alt="">
@@ -713,7 +765,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   <div class="uitleg vals" id="vals" hidden aria-live="polite"><div class="uitleg-kaart" id="vals-kaart"><h2 class="carved">Godfried spreekt</h2><p id="vals-tekst"></p></div></div>
   <div class="uitleg vloek" id="vloek" hidden aria-live="polite"><div class="uitleg-kaart"><h2 class="carved">De Schaduw vervloekt</h2><div class="vloek-naam carved" id="vloek-naam"></div><p id="vloek-tekst"></p></div></div>
   <div class="vloek-teken" id="vloek-teken" hidden></div>
-  <div class="overname" id="overname" hidden><img src="a/logo.webp" alt=""></div>
+  <div class="overname" id="overname" hidden><canvas id="overname-vuur"></canvas><img src="a/logo.webp" alt=""></div>
 
   <details class="regie" id="regie" hidden>
     <summary>Regie · straks op je telefoon</summary>
@@ -735,13 +787,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=24"></script>
-<script src="a/spel.js?v=24"></script>
-<script src="a/wachters.js?v=24"></script>
-<script src="a/firebase-config.js?v=24"></script>
-<script src="a/koppeling.js?v=24"></script>
-<script src="a/rollen.js?v=24"></script>
-<script src="a/tafel.js?v=24"></script>
+<script src="a/events.js?v=26"></script>
+<script src="a/spel.js?v=26"></script>
+<script src="a/wachters.js?v=26"></script>
+<script src="a/firebase-config.js?v=26"></script>
+<script src="a/koppeling.js?v=26"></script>
+<script src="a/rollen.js?v=26"></script>
+<script src="a/tafel.js?v=26"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1354,6 +1406,7 @@ function paneel(naam) {
     kasteelIn(tochtIntroVerder);
   }
   else { p.hidden = false; requestAnimationFrame(() => p.classList.add("aan")); }
+  stage.classList.toggle("in-kist", naam === "kist"); if (naam === "kist" && !kistBezig) { kistMaat(); tekenKistzaal(); }
   clearInterval(tafelRonde); stage.classList.toggle("in-zaal", naam === "tafel"); if (naam === "tafel") tekenTvTafel(); else zaalVuurStop();
   if (naam === "tocht") tekenTocht(); if (naam === "kist") tekenKist(); if (naam === "finale") tekenFinale(); if (naam === "ere") tekenEre();
   meld();
@@ -1367,9 +1420,53 @@ function dekBeeld(el, bw = 1920, bh = 1072) {
 }
 const zaalMaat = () => dekBeeld($("z-beeld"));
 const poortBeeldMaat = () => dekBeeld($("p-beeld"));
-addEventListener("resize", () => { zaalMaat(); poortBeeldMaat(); });
-document.addEventListener("fullscreenchange", () => setTimeout(() => { zaalMaat(); poortBeeldMaat(); }, 60));
-zaalMaat(); poortBeeldMaat();
+const kistMaat = () => dekBeeld($("k-beeld"));
+addEventListener("resize", () => { zaalMaat(); poortBeeldMaat(); kistMaat(); });
+document.addEventListener("fullscreenchange", () => setTimeout(() => { zaalMaat(); poortBeeldMaat(); kistMaat(); }, 60));
+zaalMaat(); poortBeeldMaat(); kistMaat();
+// ===== the relic chest =====
+// relic slots in an arc above the chest, sockets on the chest front (fractions of the painting)
+const KIST_PLEK = [[.17, .37], [.33, .28], [.5, .245], [.67, .28], [.83, .37]], KIST_SOKKEL = [.39, .445, .5, .555, .61];
+let kistGeopend = false, kistBezig = false;
+function tekenKistzaal() {
+  $("k-plekken").innerHTML = S.relieken.map((k, i) => `<div class="k-plek" id="kp-${k.id}" style="left:${KIST_PLEK[i][0] * 100}%;top:${KIST_PLEK[i][1] * 100}%;--vx:${((.5 - KIST_PLEK[i][0]) * 100 / 9.5 * 100).toFixed(0)}%;--vy:${((.46 - KIST_PLEK[i][1]) * 1072 / 1920 * 100 / 9.5 * 100).toFixed(0)}%">
+    <div class="k-vak"><div class="stralen"></div><img src="${k.img}" alt=""></div><b>${k.naam}</b><small>${k.tekst}</small></div>`).join("");
+  $("k-sokkels").innerHTML = KIST_SOKKEL.map((x, i) => `<span class="k-sokkel" id="ks-${i}" style="left:${x * 100}%;top:63%"></span>`).join("");
+  $("kistzaal").classList.toggle("open", kistGeopend);
+  if (kistGeopend) S.relieken.forEach((k, i) => { const p = $(`kp-${k.id}`);
+    p.classList.add(relieken.has(k.id) ? "gewonnen" : "leeg"); p.classList.toggle("gebruikt", reliekGebruikt.has(k.id)); if (relieken.has(k.id)) $(`ks-${i}`).classList.add("aan");
+    if (!relieken.has(k.id)) p.querySelector("b").textContent = "Niet gevonden"; });
+  $("k-score").classList.toggle("aan", kistGeopend); if (kistGeopend) $("k-score").innerHTML = kistScore(relieken.size);
+}
+const kistScore = (n) => n ? `<b>${n} van de 5</b> relieken gevonden. Elk reliek is in de finale één hint waard.` : "De kist bleef leeg. Geen enkel reliek gevonden.";
+// the ceremony: Godfried speaks, the lid flies open, and slot by slot the relics rise (or stay dark)
+function kistRitueel() {
+  if (kistBezig) return; kistBezig = true; kistGeopend = false; paneel("kist");
+  const gewonnen = new Set(S.tocht.map((o) => o.id).filter((id) => tochtGedaan.has(id) && S.relieken.some((k) => k.id === id)));
+  tekenKistzaal(); halMuziek.vol(.06, 1500); fade(wind, .45, 2000); speel("knars", .5, .7);
+  setTimeout(() => stemMet("kist-intro", 1, () => {
+    // the lid
+    speel("donder-hard", .8); speel("klok", .9, .7); $("kistzaal").classList.add("open");
+    const g = $("k-gloed"); g.classList.remove("flits"); void g.offsetWidth; g.classList.add("flits");
+    let t = 2600;
+    S.relieken.forEach((k, i) => {
+      const p = $(`kp-${k.id}`);
+      setTimeout(() => { p.classList.add("spanning"); speel("hartslag", .9); setTimeout(() => speel("hartslag", .9), 700); }, t);
+      setTimeout(() => { p.classList.remove("spanning");
+        if (gewonnen.has(k.id)) { p.classList.add("gewonnen"); $(`ks-${i}`).classList.add("aan"); speel("klok", .9, 1.25); speel("glazen", .5, 1.4); setTimeout(() => speel("gejuich", .45), 300);
+          const g2 = $("k-gloed"); g2.classList.remove("flits"); void g2.offsetWidth; g2.classList.add("flits"); }
+        else { p.classList.add("leeg"); p.querySelector("b").textContent = "Niet gevonden"; speel("klok", .5, .45); speel("donder", .5); }
+      }, t + 1500);
+      t += 3400;
+    });
+    setTimeout(() => {
+      relieken = gewonnen; kistGeopend = true; kistBezig = false; log("kist", { n: gewonnen.size }); meld();
+      $("k-score").innerHTML = kistScore(gewonnen.size); $("k-score").classList.add("aan");
+      const n = gewonnen.size; halMuziek.vol(.35, 3000);
+      if (n === 5) stemMet("kist-alle", 1, () => stemMet("kist-deel", 1)); else if (n === 0) stemMet("kist-geen", 1); else stemMet("kist-deel", 1);
+    }, t + 1200);
+  }, 12000), 1600);
+}
 function zaalKaart(w) {
   const rol = Tafel.rolVan(w); document.querySelectorAll("#z-ring .z-zit").forEach((z) => z.classList.toggle("licht", z.dataset.naam === w.naam));
   $("z-kaart").innerHTML = `<div class="in">${rol ? `<div class="wie">${schoon(w.naam)}</div><h2 class="carved">${schoon(rol.naam)}</h2><div class="titel">${schoon(rol.titel)}</div><p>${schoon(rol.tekst)}</p>` : `<h2 class="carved">${schoon(w.naam)}</h2>`}</div>`;
@@ -1662,6 +1759,24 @@ function tekenIjs() {
 }
 setInterval(tekenIjs, 1000);
 // plays a voice line and calls klaar when it is over, also when the browser refuses to play it or the file is missing
+let overnameLoopt = false, overnameTongen = [];
+function overnameVuur() {
+  const ov = $("overname"); if (ov.hidden) { overnameLoopt = false; overnameTongen = []; return; }
+  const cv = $("overname-vuur"), [W, H] = poortMaat(cv), v = cv.getContext("2d"), im = ov.querySelector("img").getBoundingClientRect(), d = W / cv.getBoundingClientRect().width;
+  const L = im.left * d, T = im.top * d, B = im.width * d, Hh = im.height * d;
+  v.clearRect(0, 0, W, H); v.globalCompositeOperation = "lighter";
+  for (let k = 0; k < 22; k++) { // flames from behind the demon and along the whole crest, a few licking up the sides
+    const kant = Math.random() < .2, x = kant ? L + (Math.random() < .5 ? .08 : .92) * B : L + (.12 + Math.random() * .76) * B, y = T + (kant ? .3 + Math.random() * .5 : .05 + Math.random() * .4) * Hh;
+    overnameTongen.push({ x, y, vy: -(3 + Math.random() * 6) * H / 1080, r: (40 + Math.random() * 70) * W / 1920, t: 0, max: 30 + Math.random() * 30, f: Math.random() * 6 }); }
+  overnameTongen = overnameTongen.filter((t) => t.t < t.max);
+  for (const t of overnameTongen) {
+    t.t++; t.f += .25; t.y += t.vy; t.x += Math.sin(t.f) * 1.4; const p = t.t / t.max, rad = t.r * (1 - p * .5);
+    const kleur = p < .18 ? "255,240,190" : p < .4 ? "255,170,60" : p < .7 ? "255,80,25" : "160,15,10", a = (p < .1 ? p * 10 : 1 - p) * .55;
+    const g = v.createRadialGradient(t.x, t.y, 0, t.x, t.y, rad); g.addColorStop(0, `rgba(${kleur},${a})`); g.addColorStop(1, `rgba(${kleur},0)`);
+    v.fillStyle = g; v.beginPath(); v.ellipse(t.x, t.y, rad * .6, rad * 1.3, 0, 0, Math.PI * 2); v.fill();
+  }
+  v.globalCompositeOperation = "source-over"; requestAnimationFrame(overnameVuur);
+}
 function stemMet(naam, vol, klaar, reserve = 5000) {
   let af = false, vangnet = setTimeout(() => k(), reserve); const k = () => { if (!af) { af = true; clearTimeout(vangnet); klaar?.(); } };
   const a = speel(naam, vol); a.addEventListener("ended", k);
@@ -1792,7 +1907,7 @@ const CHAOS_RAW = {
     if (!verrader || chaos.macht === verrader.sinds || !inHal() || truc) return;
     chaos = { ...chaos, macht: verrader.sinds }; truc = true;
     halMuziek.vol(0, 800); fade(vuur, 0, 800); speel("donder-hard", 1); bliksem(0); stage.classList.add("omen");
-    $("overname").hidden = false;
+    $("overname").hidden = false; if (!overnameLoopt) { overnameLoopt = true; requestAnimationFrame(overnameVuur); } speel("vuur", 1); fade(vuur, .9, 1500);
     setTimeout(() => stemMet("chaos-macht", 1, () => {
       const vol = ZEGELS.filter((z) => z.fiches > 0).sort(() => Math.random() - .5).slice(0, 2);
       vol.forEach((z, n) => setTimeout(() => fiche(z.id, -1), n * 700)); speel("donder", .8); bliksem(0);
@@ -1819,7 +1934,7 @@ function meld() {
     ijs, vloek, vloekD20,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
     publiek: { hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen ? { open: true, gedaan: [...tochtGedaan] } : null }, // the only part the personal pages can read
-    tochtOpen,
+    tochtOpen, kistGeopend,
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   })), 150);
 }
@@ -1833,6 +1948,7 @@ const OPDRACHTEN = {
   scherm: (o) => { if (uitlegActief) stopUitleg(); if (dronkActief) { dronkActief = false; dronkKlaar = true; fade(dronkStem, 0, 300); }
     rollenOpen = true; if (binnen === null) { verhaalKlaar = true; proloog?.pause(); $("verhaal").hidden = true; betreden(); } if (wakker()) hal(); paneel(o.naam === "hal" ? null : o.naam); },
   tocht: (o) => { o.aan ? tochtGedaan.add(o.id) : tochtGedaan.delete(o.id); if (paneelNu === "tocht") tekenTocht(); meld(); },
+  "kist-open": () => kistRitueel(),
   reliek: (o) => { // open one compartment of the chest, with a flash
     if (o.aan && !relieken.has(o.id)) { relieken.add(o.id); if (paneelNu !== "kist") paneel("kist"); tekenKist(o.id); speel("klok", .8, 1.1); speel("donder", .3); }
     else if (!o.aan) { relieken.delete(o.id); tekenKist(); }
@@ -1850,7 +1966,7 @@ const OPDRACHTEN = {
   hint: () => hintVoor(),
   ere: (o) => { ere.i = Math.max(-1, Math.min(S.titels.length - 1, ere.i + o.d)); if (paneelNu !== "ere") paneel("ere"); else tekenEre(); speel("klok", .6, 1.1); meld(); },
   "ere-naam": (o) => { ere.namen[ere.i] = String(o.naam || "").slice(0, 40); tekenEre(); speel("donder", .4); meld(); },
-  "alles-opnieuw": () => { tochtOpen = false; chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; bewaar(); },
+  "alles-opnieuw": () => { tochtOpen = false; kistGeopend = false; chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; bewaar(); },
 };
 // With Firebase only the tv laptop logs in (address ends in ?tv); public visitors just see the countdown.
 let standGeladen = false, geladenOp = 0, passief = false;
@@ -1859,7 +1975,7 @@ function laadStand(s) {
   if (standGeladen) return bewaakTv(s); standGeladen = true; geladenOp = Date.now();
   for (const z of ZEGELS) z.fiches = s.fiches?.[z.id] ?? z.fiches;
   gebruikt = new Set(s.gebruikt || []); teller(); teken();
-  tochtOpen = !!s.tochtOpen; tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
+  tochtOpen = !!s.tochtOpen; kistGeopend = !!s.kistGeopend; tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
   if (s.fin) fin = { nu: 0, open: {}, opgelost: {}, hint: {}, ...s.fin }; if (s.ere) ere = { i: -1, namen: {}, ...s.ere };
   if (s.chaos) { const { wacht: w, ...rest } = s.chaos; chaos = rest; Object.assign(wacht, w || {}); }
   ijs = s.ijs || {}; vloekD20 = !!s.vloekD20; vloek = s.vloek || null; tekenIjs();

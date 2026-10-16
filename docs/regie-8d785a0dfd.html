@@ -132,9 +132,12 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 
   <section class="kaart" id="s-kist" hidden>
-    <h2>Reliekenkist · openen</h2>
-    <div class="lijst" id="kist"></div>
-    <p class="klein">Tik een reliek aan om zijn vak met een flits te openen. Doe het één voor één, voor de spanning.</p>
+    <h2>Reliekenkist</h2>
+    <p class="klein" id="kist-verdiend" style="margin:0 0 10px"></p>
+    <button class="goud groot" id="b-kist-open" type="button">Open de Reliekenkist</button>
+    <p class="klein">Godfried spreekt, de kist springt open en de gehaalde relieken rijzen één voor één op. Duurt ongeveer een minuut.</p>
+    <details style="margin-top:10px"><summary class="klein">Handmatig een reliek aan- of uitzetten</summary>
+      <div class="lijst" id="kist" style="margin-top:8px"></div></details>
   </section>
 
   <section class="kaart" id="s-finale" hidden>
@@ -205,12 +208,12 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=24"></script>
-<script src="a/spel.js?v=24"></script>
-<script src="a/wachters.js?v=24"></script>
-<script src="a/rollen.js?v=24"></script>
-<script src="a/firebase-config.js?v=24"></script>
-<script src="a/koppeling.js?v=24"></script>
+<script src="a/events.js?v=26"></script>
+<script src="a/spel.js?v=26"></script>
+<script src="a/wachters.js?v=26"></script>
+<script src="a/rollen.js?v=26"></script>
+<script src="a/firebase-config.js?v=26"></script>
+<script src="a/koppeling.js?v=26"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -234,6 +237,7 @@ $("schermen").onclick = (e) => { const b = e.target.closest("button"); if (b) st
 $("tocht").innerHTML = S.tocht.map((o) => `<button class="toggle" type="button" data-id="${o.id}"><span>${o.naam}</span><span class="vink"></span></button>`).join("");
 $("tocht").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "tocht", id: b.dataset.id, aan: !b.classList.contains("aan") }); };
 $("kist").innerHTML = S.relieken.map((k) => `<button class="toggle" type="button" data-id="${k.id}"><span>${k.naam}</span><span class="vink"></span></button>`).join("");
+$("b-kist-open").onclick = () => stuur({ cmd: "kist-open" });
 $("kist").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "reliek", id: b.dataset.id, aan: !b.classList.contains("aan") }); };
 $("puzzels").innerHTML = S.aktes.map((p, i) => `<button type="button" data-i="${i}">${["I", "II", "III", "IV"][i]} · ${p.naam}</button>`).join("");
 const NAMEN = (window.WACHTERS || []).map((w) => w.naam);
@@ -314,6 +318,9 @@ function toon(s) {
   const paneel = ["tocht", "kist", "finale", "ere"].includes(s.scherm) ? s.scherm : null;
   document.querySelectorAll("#schermen button").forEach((b) => b.classList.toggle("nu", b.dataset.s === (paneel || (s.scherm === "hal" ? "hal" : ""))));
   $("s-tocht").hidden = s.scherm !== "tocht"; $("s-kist").hidden = !["tocht", "kist"].includes(s.scherm);
+  { const verdiend = S.tocht.filter((o) => (s.tochtGedaan || []).includes(o.id)).map((o) => S.relieken.find((k) => k.id === o.id)?.naam).filter(Boolean);
+    $("kist-verdiend").textContent = s.kistGeopend ? `De kist is geopend: ${(s.relieken || []).length} van de 5 relieken.` : `Verdiend op de tocht (nog geheim): ${verdiend.length ? verdiend.join(", ") : "nog niets"} (${verdiend.length} van de 5).`;
+    $("b-kist-open").textContent = s.kistGeopend ? "Ritueel opnieuw afspelen" : "Open de Reliekenkist"; }
   $("s-finale").hidden = s.scherm !== "finale"; $("s-ere").hidden = s.scherm !== "ere";
   const gedaan = new Set(s.tochtGedaan || []), gevonden = new Set(s.relieken || []), op = new Set(s.reliekGebruikt || []);
   document.querySelectorAll("#tocht .toggle").forEach((b) => b.classList.toggle("aan", gedaan.has(b.dataset.id)));
