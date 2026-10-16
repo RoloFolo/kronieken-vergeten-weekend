@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Schaduw-events – De Kronieken van het Vergeten Weekend</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Libre+Baskerville:ital@0;1&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+/* Organisers' overview of all Shadow events, A4 portrait, same look as the rulebook. */
+:root { --ink: #0b0607; --bone: #efe3d4; --ash: #a89488; --ember: #e2323c; --bronze-hi: #f1dfb6; --bronze: #b8955f;
+  --carved: "Cinzel", Georgia, serif; --body: "Source Sans 3", Arial, sans-serif; --display: "Libre Baskerville", Georgia, serif; }
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { margin: 0; background: var(--ink); color: var(--bone); font: 10.5pt/1.45 var(--body); }
+.blad { padding: 16mm 15mm 14mm; background: radial-gradient(ellipse 120% 40% at 50% 0%, rgba(150,18,28,.45), transparent 60%), var(--ink); min-height: 297mm; }
+.carved { font-family: var(--carved); font-weight: 700; text-transform: uppercase; letter-spacing: .08em; background: linear-gradient(180deg, var(--bronze-hi), #d8bf8f 45%, #9b7a4c); -webkit-background-clip: text; background-clip: text; color: transparent; }
+header { text-align: center; margin-bottom: 6mm; }
+header img { width: 62mm; }
+h1 { margin: 2mm 0 0; font-size: 20pt; }
+.geheim { display: inline-block; margin-top: 2mm; padding: 1mm 4mm; border: .3mm solid var(--ember); color: #ff9a92; font: 700 8pt/1.4 var(--carved); letter-spacing: .25em; text-transform: uppercase; }
+.uitleg { margin: 0 0 6mm; padding: 4mm 5mm; border: .4mm solid #6e5230; background: rgba(0,0,0,.35); }
+.uitleg h2 { margin: 0 0 2mm; font-size: 10pt; letter-spacing: .2em; }
+.uitleg p, .uitleg li { margin: 0 0 1.4mm; }
+.uitleg ul { margin: 0; padding-left: 5mm; }
+h2.soort { margin: 7mm 0 3mm; font-size: 12pt; letter-spacing: .18em; border-bottom: .3mm solid rgba(184,149,95,.5); padding-bottom: 1.5mm; }
+h2.soort small { font: italic 9pt var(--display); color: var(--ash); text-transform: none; letter-spacing: 0; -webkit-text-fill-color: var(--ash); }
+.ev { display: grid; grid-template-columns: 9mm 1fr auto; gap: 3mm; align-items: start; padding: 2.4mm 0; border-bottom: .2mm solid rgba(184,149,95,.18); break-inside: avoid; }
+.ev .nr { font: 700 10pt/1.3 var(--carved); color: var(--ash); }
+.ev h3 { margin: 0 0 .8mm; font: 700 11pt/1.2 var(--carved); color: var(--bronze-hi); letter-spacing: .03em; }
+.ev p { margin: 0; font: italic 10pt/1.45 var(--display); }
+.ev .prijs { text-align: right; white-space: nowrap; font: 600 8.5pt/1.3 var(--body); color: #ff9a92; }
+.ev .prijs span { display: block; color: var(--ash); font-weight: 400; }
+footer { margin-top: 8mm; text-align: center; color: var(--ash); font-size: 8.5pt; }
+</style>
+</head>
+<body>
+<div class="blad">
+  <header><img src="kaartbeeld/logo.png" alt=""><h1 class="carved">De Schaduw-events</h1><div class="geheim">Alleen voor de organisatoren</div></header>
+
+  <section class="uitleg">
+    <h2 class="carved">Hoe het werkt</h2>
+    <ul>
+      <li>Een event start als jullie in de regie op <b>De Schaduw beweegt</b> drukken, of als de verrader zijn kaart <b>Roep de Schaduw</b> speelt. De tv kiest er willekeurig één; elk event komt maar één keer voor.</li>
+      <li>Daarna kiezen jullie in de regie: <b>Doorstaan</b> (niets aan de hand), <b>Gefaald</b> (het genoemde Zegel verliest fiches) of <b>Werp de D20</b>.</li>
+      <li><b>D20:</b> een 20 verjaagt de Schaduw, het event vervalt. Een 1 geeft een nieuw event met dubbele straf. Elke andere worp geeft gewoon een nieuw event.</li>
+      <li><b>Dilemma's</b> kosten zelf geen fiches: de keuze die de groep maakt, ís het gevolg.</li>
+    </ul>
+  </section>
+
+  <div id="lijst"></div>
+  <footer>De Kronieken van het Vergeten Weekend · Bouillon · 13–15 november 2026</footer>
+</div>
+<script src="../docs/a/events.js"></script>
+<script>
+const E = Object.values(window).find(Array.isArray), Z = { vlam: "Vlam van Waakzaamheid", hoorn: "Hoorn van Overvloed", schild: "Schild van Broederschap", hart: "Hart van de Ardennen" };
+const SOORTEN = [["opdracht", "Opdrachten", "de groep moet samen iets doen"], ["dilemma", "Dilemma's", "de groep kiest; de keuze is het gevolg"], ["vreemd", "Vreemde zaken", "een rare regel die even blijft gelden"]];
+let n = 0;
+document.getElementById("lijst").innerHTML = SOORTEN.map(([s, kop, sub]) => `<h2 class="soort carved">${kop} <small>· ${sub}</small></h2>` +
+  E.filter((e) => e.soort === s).map((e) => `<div class="ev"><span class="nr">${++n}</span><div><h3>${e.naam}</h3><p>${e.regel}</p></div>
+    <div class="prijs">${e.zegel ? `−${e.verlies} fiche${e.verlies > 1 ? "s" : ""}<span>${Z[e.zegel]}</span>` : `<span>keuze</span>`}</div></div>`).join("")).join("");
+</script>
+</body>
+</html>

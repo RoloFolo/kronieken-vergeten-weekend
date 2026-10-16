@@ -787,13 +787,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=26"></script>
-<script src="a/spel.js?v=26"></script>
-<script src="a/wachters.js?v=26"></script>
-<script src="a/firebase-config.js?v=26"></script>
-<script src="a/koppeling.js?v=26"></script>
-<script src="a/rollen.js?v=26"></script>
-<script src="a/tafel.js?v=26"></script>
+<script src="a/events.js?v=27"></script>
+<script src="a/spel.js?v=27"></script>
+<script src="a/wachters.js?v=27"></script>
+<script src="a/firebase-config.js?v=27"></script>
+<script src="a/koppeling.js?v=27"></script>
+<script src="a/rollen.js?v=27"></script>
+<script src="a/tafel.js?v=27"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1765,9 +1765,11 @@ function overnameVuur() {
   const cv = $("overname-vuur"), [W, H] = poortMaat(cv), v = cv.getContext("2d"), im = ov.querySelector("img").getBoundingClientRect(), d = W / cv.getBoundingClientRect().width;
   const L = im.left * d, T = im.top * d, B = im.width * d, Hh = im.height * d;
   v.clearRect(0, 0, W, H); v.globalCompositeOperation = "lighter";
-  for (let k = 0; k < 22; k++) { // flames from behind the demon and along the whole crest, a few licking up the sides
-    const kant = Math.random() < .2, x = kant ? L + (Math.random() < .5 ? .08 : .92) * B : L + (.12 + Math.random() * .76) * B, y = T + (kant ? .3 + Math.random() * .5 : .05 + Math.random() * .4) * Hh;
-    overnameTongen.push({ x, y, vy: -(3 + Math.random() * 6) * H / 1080, r: (40 + Math.random() * 70) * W / 1920, t: 0, max: 30 + Math.random() * 30, f: Math.random() * 6 }); }
+  const cx = L + B / 2, cy = T + Hh / 2;
+  for (let k = 0; k < 30; k++) { // a ring of fire all around the logo (it sits on top), flames rising from every side
+    const hoek = Math.random() * Math.PI * 2, rand = .92 + Math.random() * .16, binnen = Math.random() < .25 ? .75 : 1;
+    const x = cx + Math.cos(hoek) * B * .5 * rand * binnen, y = cy + Math.sin(hoek) * Hh * .52 * rand * binnen;
+    overnameTongen.push({ x, y, vy: -(2.5 + Math.random() * 5.5) * H / 1080, r: (45 + Math.random() * 75) * W / 1920, t: 0, max: 26 + Math.random() * 28, f: Math.random() * 6 }); }
   overnameTongen = overnameTongen.filter((t) => t.t < t.max);
   for (const t of overnameTongen) {
     t.t++; t.f += .25; t.y += t.vy; t.x += Math.sin(t.f) * 1.4; const p = t.t / t.max, rad = t.r * (1 - p * .5);

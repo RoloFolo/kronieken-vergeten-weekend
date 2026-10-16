@@ -16,7 +16,7 @@ Zonder internet kan het ook lokaal: `node app/server.mjs` op de laptop, en telef
 | Map | Wat |
 |---|---|
 | `docs/` | De site: tv-scherm, regie, Chaos Lord, beeld en geluid (`docs/a`) |
-| `docs/a/events.js` | De 27 Schaduw-events |
+| `docs/a/events.js` | De 26 Schaduw-events (elk één keer per weekend) |
 | `docs/a/spel.js` | Wachterstocht, relieken, finale-puzzels en de eretitels |
 | `app/server.mjs` | Lokale server (alternatief voor Firebase) |
 | `scripts/` | Hoe beeld, stemmen en muziek gemaakt zijn |
