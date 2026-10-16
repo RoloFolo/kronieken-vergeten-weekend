@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Libre+Baskerville:ital@1&family=Source+Sans+3:wght@400;600;700&display=swap">
 <style>
 /* Layout: the Chaos Lord's secret phone page. One column, sinister: blood red on black.
-   Free teases at the top, the three daily sabotage cards below. Single dark look by choice. */
+   Target pickers on top, then free teases, the three daily sabotage cards and the once-per-period takeover. Single dark look by choice. */
 :root {
   color-scheme: dark;
   --bg: #050203; --bone: #efe3d4; --ash: #9c8a80; --blood: #c4161f; --ember: #ff3b3b; --line: #3a0a0e;
@@ -43,6 +43,12 @@ button small { color: var(--ash); font-size: 12px; line-height: 1.3; }
 .zegels button.gekozen { border-color: var(--ember); background: rgba(255,59,59,.22); box-shadow: 0 0 14px rgba(255,59,59,.5); }
 .zegels .n { font: 700 13px/1 var(--carved); }
 .groot { width: 100%; }
+.namen { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.namen button { padding: 10px 2px; font-size: 14px; font-weight: 600; }
+.namen button.gekozen { border-color: var(--ember); background: rgba(255,59,59,.22); box-shadow: 0 0 14px rgba(255,59,59,.5); }
+button[data-rust]:not([data-rust=""])::after { content: "rust " attr(data-rust); font-size: 12px; color: var(--ember); }
+.macht { border-color: var(--blood); box-shadow: inset 0 0 0 1px rgba(255,59,59,.6), 0 0 30px rgba(196,22,31,.35), 0 10px 30px #000; }
+.macht button { background: rgba(196,22,31,.22); }
 .klein { font-size: 13px; color: var(--ash); margin: 8px 0 0; }
 .melding { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom)); translate: -50% 0; max-width: calc(100% - 32px); padding: 12px 16px; border-radius: 10px; background: #1a0306; border: 1px solid var(--blood); box-shadow: 0 10px 30px #000; font-size: 14px; opacity: 0; transition: opacity .3s; pointer-events: none; }
 .melding.aan { opacity: 1; }
@@ -61,32 +67,60 @@ button small { color: var(--ash); font-size: 12px; line-height: 1.3; }
   </div>
 
   <section class="kaart">
+    <h2>Kies je doelwit</h2>
+    <p class="klein" style="margin:0 0 8px">Zegel voor Valse Hoop, Steel, Verwissel en Bevries:</p>
+    <div class="zegels" id="zegels"></div>
+    <p class="klein" style="margin:0 0 8px">Wachter voor de Gefluisterde naam en de Vloek:</p>
+    <div class="namen" id="namen"></div>
+  </section>
+
+  <section class="kaart">
     <h2>Plagen · gratis</h2>
     <div class="grid">
       <button id="c-omen" type="button"><b>Fluistering</b><small>De Schaduw fluistert, het beeld flikkert</small></button>
+      <button id="c-naam" type="button"><b>Gefluisterde naam</b><small id="c-naam-wie">Fluister de naam van je doelwit</small></button>
+      <button id="c-duister" type="button"><b>Het licht dooft</b><small>Zwart scherm, alleen het hart van de demon</small></button>
+      <button id="c-dertien" type="button"><b>Het dertiende uur</b><small>De klok slaat dertien keer</small></button>
+      <button id="c-vals" type="button"><b>Valse Godfried</b><small>Een nep-bevel met Godfrieds stem</small></button>
+      <button id="c-zwerm" type="button"><b>Kraaienzwerm</b><small>Raven over het scherm, mist rolt binnen</small></button>
+      <button id="c-lied" type="button"><b>Het lied verstoord</b><small>De muziek klinkt vals, met een lachje</small></button>
+      <button id="c-hoop" type="button"><b>Valse Hoop</b><small>Een ampul stijgt… en zakt weer</small></button>
       <button id="c-bliksem" type="button"><b>Bliksem</b><small>Een donderslag</small></button>
       <button id="c-raaf" type="button"><b>De Raaf</b><small>Hij krast en schrikt op</small></button>
-      <button id="c-hoop" type="button"><b>Valse Hoop</b><small>Een ampul stijgt… en zakt weer</small></button>
     </div>
-    <p class="klein">Elke plagerij heeft even rust nodig voordat je hem opnieuw kunt gebruiken.</p>
+    <p class="klein">Elke plagerij heeft even rust nodig. Grote trucs werken alleen als de Guild Hall in beeld is.</p>
   </section>
 
   <section class="kaart">
     <h2>Sabotage · 3 kaarten per dag</h2>
-    <div class="zegels" id="zegels"></div>
-    <button class="groot" id="c-steel" type="button"><b>Steel een fiche</b><small>Uit het gekozen Zegel · kost 1 kaart</small></button>
-    <button class="groot" id="c-schaduw" type="button" style="margin-top:10px"><b>Roep de Schaduw</b><small>Start meteen een Schaduw-event · kost 2 kaarten</small></button>
+    <div class="grid">
+      <button id="c-steel" type="button"><b>Steel een fiche</b><small>Uit je Zegel · 1 kaart</small></button>
+      <button id="c-wissel" type="button"><b>Verwissel</b><small>Eén fiche naar een ander Zegel · 1 kaart</small></button>
+      <button id="c-vloek" type="button"><b>Vervloek</b><small id="c-vloek-wie">Je doelwit, tot de Schaduw beweegt · 1 kaart</small></button>
+      <button id="c-ijs" type="button"><b>Bevries</b><small>Je Zegel krijgt 30 min geen fiches · 2 kaarten</small></button>
+      <button id="c-dobbel" type="button"><b>Vervloekte dobbelsteen</b><small>Volgende D20 hooguit 10, niemand ziet het · 2 kaarten</small></button>
+      <button id="c-schaduw" type="button"><b>Roep de Schaduw</b><small>Meteen een Schaduw-event · 2 kaarten</small></button>
+    </div>
+    <div id="wissel-naar" class="naar" hidden>
+      <p class="klein" style="margin:10px 0 8px">Naar welk Zegel moet de fiche springen?</p>
+      <div class="zegels" id="naar-zegels"></div>
+    </div>
+  </section>
+
+  <section class="kaart macht">
+    <h2>Eén keer zolang jij verrader bent</h2>
+    <button class="groot" id="c-macht" type="button"><b>Zijn Schaduw</b><small>De Schaduwkoning neemt een halve minuut de Hall over. Daarna lekken twee Zegels elk een fiche.</small></button>
   </section>
 </main>
 <div class="melding" id="melding" role="status"></div>
 
-<script src="a/wachters.js?v=4"></script>
-<script src="a/firebase-config.js?v=4"></script>
-<script src="a/koppeling.js?v=4"></script>
+<script src="a/wachters.js?v=5"></script>
+<script src="a/firebase-config.js?v=5"></script>
+<script src="a/koppeling.js?v=5"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const ZEGELS = [["vlam", "a/medaillon-vlam.webp"], ["hoorn", "a/medaillon-hoorn.webp"], ["schild", "a/medaillon-schild.webp"], ["hart", "a/medaillon-hart.webp"]];
-let gekozen = "vlam", stand = {};
+let gekozen = "vlam", doel = null, stand = {};
 // Firebase: the Wachter logs in with his own account and only sees his own traitor node.
 // Local server: personal link #t=<token>.
 const FIRE = !!window.FIREBASE_CONFIG;
@@ -94,36 +128,68 @@ const h = new URLSearchParams(location.hash.slice(1)), TOKEN = h.get("t") || "";
 let IK = (window.WACHTERS || []).find((w) => w.token === TOKEN) || null;
 const zegWie = () => { if (IK) $("wie-tekst").textContent = `${IK.naam}, de Schaduw heeft jou gekozen. Niemand mag weten dat jij het bent.`; };
 zegWie();
-$("zegels").innerHTML = ZEGELS.map(([id, img]) => `<button type="button" data-id="${id}"><img src="${img}" alt="${id}"><span class="n" id="n-${id}">0</span></button>`).join("");
-$("zegels").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; gekozen = b.dataset.id; teken(); };
+const zegelKnoppen = (id) => { $(id).innerHTML = ZEGELS.map(([z, img]) => `<button type="button" data-id="${z}"><img src="${img}" alt="${z}"><span class="n" data-n="${z}">0</span></button>`).join(""); };
+zegelKnoppen("zegels"); zegelKnoppen("naar-zegels");
+$("zegels").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; gekozen = b.dataset.id; $("wissel-naar").hidden = true; teken(); };
+$("namen").innerHTML = (window.WACHTERS || []).map((w) => `<button type="button" data-n="${w.naam}">${w.naam}</button>`).join("");
+$("namen").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; doel = b.dataset.n; teken(); };
 
 function melding(t) { const m = $("melding"); m.textContent = t; m.classList.add("aan"); clearTimeout(m._t); m._t = setTimeout(() => m.classList.remove("aan"), 2400); }
 const actief = () => FIRE ? !!stand.naam : !!IK && stand.verrader?.token === TOKEN;
+const sinds = () => FIRE ? stand.sinds : stand.verrader?.sinds;
 function kaartenOver() { const d = new Date().toLocaleDateString("sv-SE"); return stand.chaos?.dag === d ? stand.chaos.kaarten : 3; }
+// rests come from the tv: seconds left per tease
+const RUST = { "c-omen": "omen", "c-naam": "naam", "c-duister": "duister", "c-dertien": "dertien", "c-vals": "vals", "c-zwerm": "zwerm", "c-lied": "lied", "c-hoop": "hoop", "c-bliksem": "bliksem", "c-raaf": "raaf" };
+const rustOver = (k) => Math.max(0, Math.ceil(((stand.chaos?.wacht || {})[k] - Date.now()) / 1000)) || 0;
+const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 function teken() {
-  const over = kaartenOver();
+  const over = kaartenOver(), fiches = stand.fiches || {}, hal = stand.scherm === "hal", inSpel = ["hal", "schaduw"].includes(stand.scherm);
   $("kaarten").innerHTML = [0, 1, 2].map((i) => `<span class="${i < over ? "" : "op"}"></span>`).join("");
   document.querySelectorAll("#zegels button").forEach((b) => b.classList.toggle("gekozen", b.dataset.id === gekozen));
-  for (const [id] of ZEGELS) $(`n-${id}`).textContent = stand.fiches?.[id] ?? 0;
-  const inSpel = ["hal", "schaduw"].includes(stand.scherm);
+  document.querySelectorAll("#namen button").forEach((b) => b.classList.toggle("gekozen", b.dataset.n === doel));
+  document.querySelectorAll("[data-n]").forEach((s) => { if (s.classList.contains("n")) s.textContent = fiches[s.dataset.n] ?? 0; });
+  $("c-naam-wie").textContent = doel ? `Fluister “${doel}”` : "Kies eerst een Wachter";
+  $("c-vloek-wie").textContent = doel ? `Vervloek ${doel}, tot de Schaduw beweegt · 1 kaart` : "Kies eerst een Wachter · 1 kaart";
   document.querySelectorAll("main button").forEach((b) => (b.disabled = !actief()));
-  if (!actief()) { $("verbinding").textContent = IK || FIRE ? "Je bent op dit moment geen verrader" : "Deze link is niet geldig"; }
-  if (!actief()) return;
-  document.querySelectorAll("#zegels button, #c-omen, #c-bliksem, #c-raaf").forEach((b) => (b.disabled = false));
+  if (!actief()) { $("verbinding").textContent = IK || FIRE ? "Je bent op dit moment geen verrader" : "Deze link is niet geldig"; return; }
   $("verbinding").textContent = "Verbonden · jij bent de verrader";
-  $("c-steel").disabled = over < 1 || !inSpel || (stand.fiches?.[gekozen] ?? 0) < 1;
-  $("c-schaduw").disabled = over < 2 || stand.scherm !== "hal";
-  $("c-hoop").disabled = stand.scherm !== "hal";
+  for (const [id, k] of Object.entries(RUST)) {
+    const s = rustOver(k), b = $(id); b.disabled = s > 0; b.dataset.rust = s > 0 ? mmss(s) : "";
+  }
+  for (const id of ["c-naam", "c-duister", "c-dertien", "c-vals", "c-lied"]) if (!hal) $(id).disabled = true;
+  if (!doel) $("c-naam").disabled = true;
+  $("c-steel").disabled = over < 1 || !inSpel || (fiches[gekozen] ?? 0) < 1;
+  $("c-wissel").disabled = over < 1 || !hal || (fiches[gekozen] ?? 0) < 1;
+  $("c-vloek").disabled = over < 1 || !hal || !doel;
+  $("c-ijs").disabled = over < 2 || !inSpel;
+  $("c-dobbel").disabled = over < 2;
+  $("c-schaduw").disabled = over < 2 || !hal;
+  const machtOp = stand.chaos?.macht != null && stand.chaos.macht === sinds();
+  $("c-macht").disabled = machtOp || !hal; $("c-macht").querySelector("b").textContent = machtOp ? "Zijn Schaduw · gebruikt" : "Zijn Schaduw";
+  document.querySelectorAll("#naar-zegels button").forEach((b) => (b.disabled = b.dataset.id === gekozen));
 }
+setInterval(teken, 1000);
 const stuur = (cmd, extra = {}, tekst) => { Koppeling.stuur({ cmd, ...(FIRE ? {} : { token: TOKEN }), ...extra }); if (tekst) melding(tekst); };
 $("c-omen").onclick = () => stuur("chaos-omen", {}, "De Schaduw fluistert…");
+$("c-naam").onclick = () => stuur("chaos-naam", { naam: doel }, `Je fluistert ${doel}…`);
+$("c-duister").onclick = () => stuur("chaos-duister", {}, "Het licht dooft.");
+$("c-dertien").onclick = () => stuur("chaos-dertien", {}, "De klok slaat…");
+$("c-vals").onclick = () => stuur("chaos-vals", {}, "Godfried spreekt… of toch niet.");
+$("c-zwerm").onclick = () => stuur("chaos-zwerm", {}, "De raven komen.");
+$("c-lied").onclick = () => stuur("chaos-lied", {}, "De muziek ontstemt.");
+$("c-hoop").onclick = () => stuur("chaos-valse-hoop", { id: gekozen }, "Valse hoop gezaaid.");
 $("c-bliksem").onclick = () => stuur("chaos-bliksem", {}, "Donder.");
 $("c-raaf").onclick = () => stuur("chaos-raaf", {}, "De raaf krast.");
-$("c-hoop").onclick = () => stuur("chaos-valse-hoop", { id: gekozen }, "Valse hoop gezaaid.");
 $("c-steel").onclick = () => stuur("chaos-steel", { id: gekozen }, "Gestolen. Niemand zag het.");
+$("c-wissel").onclick = () => { $("wissel-naar").hidden = !$("wissel-naar").hidden; };
+$("naar-zegels").onclick = (e) => { const b = e.target.closest("button"); if (!b || b.disabled) return; stuur("chaos-wissel", { id: gekozen, naar: b.dataset.id }, "De fiche springt over."); $("wissel-naar").hidden = true; };
+$("c-vloek").onclick = () => stuur("chaos-vloek", { naam: doel }, `${doel} is vervloekt.`);
+$("c-ijs").onclick = () => stuur("chaos-ijs", { id: gekozen }, "Het Zegel bevriest.");
+$("c-dobbel").onclick = () => stuur("chaos-dobbel", {}, "De dobbelsteen is vervloekt. Sst.");
 $("c-schaduw").onclick = () => stuur("chaos-schaduw", {}, "De Schaduw komt…");
+$("c-macht").onclick = () => { if (confirm("Dit kan maar één keer zolang jij verrader bent. Nu de Hall overnemen?")) stuur("chaos-macht", {}, "De Schaduwkoning spreekt."); };
 teken();
-Koppeling.start({ rol: "chaos", opStand: (s) => { stand = s || {}; $("punt").classList.add("aan"); $("verbinding").textContent = "Verbonden"; teken(); } })
+Koppeling.start({ rol: "chaos", opStand: (s) => { stand = s || {}; $("punt").classList.add("aan"); teken(); } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; if (Koppeling.ik) { IK = { naam: Koppeling.ik.naam }; zegWie(); teken(); } });
 </script>
 </body>

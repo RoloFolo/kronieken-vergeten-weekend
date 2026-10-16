@@ -119,6 +119,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   <section class="kaart">
     <h2>De Zegels</h2>
     <div class="zegels" id="zegels"></div>
+    <p class="klein" id="sabotage-status" hidden></p>
   </section>
 
   <section class="kaart" id="s-tocht" hidden>
@@ -197,12 +198,12 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=4"></script>
-<script src="a/spel.js?v=4"></script>
-<script src="a/wachters.js?v=4"></script>
-<script src="a/rollen.js?v=4"></script>
-<script src="a/firebase-config.js?v=4"></script>
-<script src="a/koppeling.js?v=4"></script>
+<script src="a/events.js?v=5"></script>
+<script src="a/spel.js?v=5"></script>
+<script src="a/wachters.js?v=5"></script>
+<script src="a/rollen.js?v=5"></script>
+<script src="a/firebase-config.js?v=5"></script>
+<script src="a/koppeling.js?v=5"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const ZEGELS = [
@@ -274,6 +275,10 @@ for (const z of ZEGELS) {
 }
 
 function toon(s) {
+  // what the traitor did that everyone can see anyway: a frozen seal (no fiches) and a cursed Wachter
+  const ijsTxt = Object.entries(s.ijs || {}).filter(([, t]) => t > Date.now()).map(([id, t]) => `❄ ${ZEGELS.find((z) => z.id === id)?.naam} bevroren tot ${new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}: plussen doen dan niets.`);
+  if (s.vloek) ijsTxt.push(`Vervloekt: ${s.vloek.naam}. ${s.vloek.tekst}`);
+  $("sabotage-status").hidden = !ijsTxt.length; $("sabotage-status").textContent = ijsTxt.join(" ");
   $("scherm").textContent = SCHERM[s.scherm] ?? "";
   $("b-verder").textContent = s.scherm === "dronk-wacht" ? "Glazen vol: toost!" : "Volgende stap";
   $("b-verder").classList.toggle("goud", s.scherm === "dronk-wacht");

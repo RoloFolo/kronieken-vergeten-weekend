@@ -1,4 +1,4 @@
-// Losse stemregels: de overwinning (Schaduwkoning en Godfried) en de fluisteringen van de Chaos Lord.
+// Losse stemregels: overwinning, toost, uitleg en alles van de verrader (fluisteringen, vloek, valse Godfried).
 //   node --env-file=C:/Users/rolan/Verno/verno-app/.env.local scripts/losse-stemmen.mjs
 import { writeFileSync, existsSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -9,7 +9,23 @@ const SCHADUW = "You are an ancient demon king beneath a castle in the Ardennes,
 const VERSLAGEN = "You are an ancient demon king, speaking Dutch, being defeated and dragged back into his prison: furious disbelief that breaks into a fading, echoing scream, then a last bitter whisper.";
 const GODFRIED = "You are Godfrey of Bouillon, a noble medieval lord, speaking Dutch to a hall of friends. Warm, solemn and proud. Steady, moderately brisk pace with short pauses only where they matter, deeply moved at the end.";
 const PROOST = "You are Godfrey of Bouillon, a noble medieval lord, speaking Dutch to a hall of friends with a raised goblet. Rousing and full of joy: build up on the first words, then roar the final word like a king rallying his hall, loud, warm and triumphant.";
+// The traitor's fake Godfried: same voice, but something is off (wavering pitch, a hollow echo).
+const VALS = "You are Godfrey of Bouillon, a noble medieval lord, speaking Dutch to a hall of friends. Commanding and urgent, a little too eager, with a faint sly undertone.";
+const VERVORMD = "vibrato=f=5.5:d=0.18,aecho=0.8:0.55:70|140:0.35|0.2,highpass=f=120";
+const NAMEN = ["Geert", "Roy", "Martin", "Stefan", "Jeroen", "Ivo", "Johan", "Robin", "Rob", "Jean", "Roland"];
 const REGELS = [
+  // the traitor's new teases and sabotage
+  ...NAMEN.map((n) => [`chaos-naam-${n.toLowerCase()}`, "Enceladus", SCHADUW, `[whispering] ${n}… ${n}… ik zie jou.`]),
+  ["chaos-vloek", "Enceladus", SCHADUW, "Mijn vloek… rust nu op jou."],
+  ["chaos-dertien", "Enceladus", SCHADUW, "Het dertiende uur… is mijn uur."],
+  ["chaos-ijs", "Enceladus", SCHADUW, "[whispering] Laat het… bevriezen."],
+  ["chaos-macht", "Enceladus", SCHADUW, "Wachters… Hebben jullie mij gemist? Jullie lachen. Jullie drinken. Jullie denken dat Godfried over jullie waakt. Maar ik zit al die tijd tussen jullie in. Aan jullie tafel. In jullie glazen. In jullie twijfels. En nu… neem ik wat mij toekomt."],
+  ["godfried-vals-1", "Charon", VALS, "Wachters! Ik beveel jullie: ga allemaal naar buiten, nu meteen, en zoek aan de hemel naar mijn teken.", VERVORMD],
+  ["godfried-vals-2", "Charon", VALS, "Wachters, de Zegels vragen om een offer. Wie als laatste zijn glas leeg heeft, schenkt de volgende ronde voor iedereen.", VERVORMD],
+  ["godfried-vals-3", "Charon", VALS, "Wachters, de Hall moet stil zijn. Wie de komende vijf minuten een woord zegt, zingt daarna een lied.", VERVORMD],
+  ["godfried-vals-4", "Charon", VALS, "Wachters, ruil allemaal van plaats. Zo kan de Schaduw jullie niet vinden.", VERVORMD],
+  ["godfried-vals-5", "Charon", VALS, "Wachters… de Hoorn heeft honger. Breng mij een boterham. Met kaas. Snel.", VERVORMD],
+
   ["einde-schaduw", "Enceladus", VERSLAGEN, "Nee… Nee! Dit kan niet… Vier Zegels… één broederschap… Ik… ik zal… [whispering] ooit… kom ik terug."],
   ["einde-godfried", "Charon", GODFRIED, "Het is volbracht. De Zegels zijn vernieuwd, en de Schaduwkoning slaapt weer onder mijn kasteel. Niet door één held… maar door een broederschap die voor elkaar zorgde. Wachters van Bouillon, ik ben trots op jullie. Open nu de envelop op de schoorsteen."],
   // De Eerste Dronk (na de proloog) en de uitleg van de Hall.
@@ -43,11 +59,11 @@ async function tts(text, voice, prompt) {
   if (s.status !== "succeeded") throw new Error(s.error ?? s.status);
   return Buffer.from(await (await fetch(typeof s.output === "string" ? s.output : s.output[0])).arrayBuffer());
 }
-for (const [naam, stem, regie, tekst] of REGELS) {
+for (const [naam, stem, regie, tekst, filter] of REGELS) {
   const mp3 = `docs/a/${naam}.mp3`; if (existsSync(mp3)) continue;
   for (let p = 1; p <= 4; p++) {
     await new Promise((ok) => setTimeout(ok, 11000));
-    try { writeFileSync("docs/a/_tmp.wav", await tts(tekst, stem, regie)); execFileSync(FF, ["-hide_banner", "-loglevel", "error", "-y", "-i", "docs/a/_tmp.wav", "-b:a", "112k", mp3]); console.log("✓", naam); break; }
+    try { writeFileSync("docs/a/_tmp.wav", await tts(tekst, stem, regie)); execFileSync(FF, ["-hide_banner", "-loglevel", "error", "-y", "-i", "docs/a/_tmp.wav", ...(filter ? ["-af", filter] : []), "-b:a", "112k", mp3]); console.log("✓", naam); break; }
     catch (e) { console.log("✗", naam, p, String(e.message).slice(0, 80)); }
   }
 }
