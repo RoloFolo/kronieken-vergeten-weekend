@@ -87,6 +87,15 @@ main { width: min(560px, 100%); margin: 0 auto; padding: max(18px, env(safe-area
 .schaduw p { margin: 0; font: italic 16px/1.55 var(--display); }
 .admin { text-align: center; padding: 16px 20px 18px; }
 .uitlog { margin-top: 10px; font: 13px var(--body); color: var(--ash); background: none; border: 0; text-decoration: underline; cursor: pointer; }
+.tocht h2 { margin-bottom: 6px; }
+.tocht-onder { margin: 0 0 12px; text-align: center; color: var(--ash); font-size: 15px; }
+.opdrachten { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.opdrachten li { display: grid; grid-template-columns: 44px 1fr; gap: 12px; align-items: start; padding: 10px 12px; border: 1px solid rgba(184,149,95,.35); background: rgba(0,0,0,.3); }
+.opdrachten img { width: 44px; height: 44px; object-fit: contain; }
+.opdrachten h3 { margin: 0 0 3px; font: 700 15px/1.2 var(--carved); color: var(--bronze-hi); letter-spacing: .04em; }
+.opdrachten p { margin: 0; font-size: 15px; line-height: 1.45; }
+.opdrachten li.gedaan { border-color: rgba(111,191,115,.6); background: rgba(111,191,115,.08); }
+.opdrachten li.gedaan h3::after { content: "  ✓ volbracht"; color: #8fd493; font: 600 12px var(--body); letter-spacing: 0; }
 .verborgen { display: none !important; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
 </style>
@@ -101,6 +110,13 @@ main { width: min(560px, 100%); margin: 0 auto; padding: max(18px, env(safe-area
     <h2 class="carved">De Schaduw heeft jou gekozen</h2>
     <p>Vanaf nu werk jij in het geheim voor de Schaduwkoning. Niemand mag het weten. Houd je scherm uit het zicht.</p>
     <a class="knop rood" href="chaos-06d0ece377.html">Open je verraderspaneel</a>
+  </section>
+
+  <!-- the Wachterstocht: the tasks, to read again on the way -->
+  <section class="paneel tocht verborgen" id="tocht">
+    <h2 class="carved">De Wachterstocht</h2>
+    <p class="tocht-onder">Vanavond in Château de Bouillon. Vijf beproevingen; elke volbrachte opent een vak van de Reliekenkist.</p>
+    <ol class="opdrachten" id="opdrachten"></ol>
   </section>
 
   <!-- organisers only -->
@@ -139,11 +155,11 @@ main { width: min(560px, 100%); margin: 0 auto; padding: max(18px, env(safe-area
   <p class="slot">De Kronieken van het Vergeten Weekend · Bouillon<span id="uit" class="verborgen"><br><button type="button" class="uitlog" id="b-uit">Niet jij? Log uit</button></span></p>
 </main>
 
-<script src="a/wachters.js?v=15"></script>
-<script src="a/spel.js?v=15"></script>
-<script src="a/rollen.js?v=15"></script>
-<script src="a/firebase-config.js?v=15"></script>
-<script src="a/koppeling.js?v=15"></script>
+<script src="a/wachters.js?v=16"></script>
+<script src="a/spel.js?v=16"></script>
+<script src="a/rollen.js?v=16"></script>
+<script src="a/firebase-config.js?v=16"></script>
+<script src="a/koppeling.js?v=16"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const START = new Date("2026-11-13T12:00:00+01:00");
@@ -223,6 +239,12 @@ function klok() {
 }
 
 function zetNaam() { if (wachter) { $("naam").textContent = wachter.naam; document.title = `${wachter.naam} · Een boodschap van Godfried`; } else $("naam").textContent = FIRE ? "…" : "Onbekende"; }
+function tekenTocht() {
+  const t = publiek.tocht, lijst = window.SPEL?.tocht || [];
+  $("tocht").classList.toggle("verborgen", !t || !wachter);
+  if (!t) return; const gedaan = new Set(t.gedaan || []);
+  $("opdrachten").innerHTML = lijst.map((o) => `<li class="${gedaan.has(o.id) ? "gedaan" : ""}"><img src="${o.zegel ? `a/medaillon-${o.zegel}.webp` : "a/reliek-stilte.webp"}" alt=""><div><h3>${schoon(o.naam)}</h3><p>${schoon(o.tekst)}</p></div></li>`).join("");
+}
 let wasVerrader = null;
 function verraad(info) {
   const nu = !!info; $("schaduw").classList.toggle("verborgen", !nu);
@@ -231,10 +253,10 @@ function verraad(info) {
 }
 zetNaam(); klok(); teken();
 setInterval(() => { klok(); teken(); }, 1000);
-Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; teken(); }, opVerraad: verraad }).then(() => {
+Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; teken(); tekenTocht(); }, opVerraad: verraad }).then(() => {
   const ik = Koppeling.ik; if (!ik) return;
   wachter = (window.WACHTERS || []).find((w) => w.naam === ik.naam) || { naam: ik.naam, token: ik.email }; token = wachter.token;
-  kiesRol(); zetNaam(); getekend = ""; teken();
+  kiesRol(); zetNaam(); getekend = ""; teken(); tekenTocht();
   $("admin").classList.toggle("verborgen", !ik.admin); $("uit").classList.remove("verborgen");
   $("b-uit").onclick = async () => { await Koppeling.uitloggen(); location.reload(); };
 });

@@ -174,6 +174,12 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 @keyframes medal { 50% { box-shadow: 0 0 34px 10px rgba(255,70,60,.6); } }
 .stage.awake .medal::after { animation-duration: .8s; }
 .medal.burn img { animation: burn 1.8s ease-out; }
+/* a full seal keeps burning: golden-red glow around vial and medal, sparks keep rising */
+.seal.vol .vglow { animation: volgloed 1.3s ease-in-out infinite alternate; background: radial-gradient(ellipse 55% 50% at 50% 60%, rgba(255,150,60,.75), rgba(226,50,60,.35) 45%, transparent 72%); }
+@keyframes volgloed { from { opacity: .7; filter: blur(10px); } to { opacity: 1; filter: blur(16px) brightness(1.35); } }
+.seal.vol .medal img { animation: volmedaille 1.1s ease-in-out infinite alternate; }
+@keyframes volmedaille { from { filter: drop-shadow(0 6px 10px rgba(0,0,0,.85)) drop-shadow(0 0 10px rgba(255,140,40,.6)) brightness(1.05); } to { filter: drop-shadow(0 6px 10px rgba(0,0,0,.85)) drop-shadow(0 0 26px rgba(255,170,60,1)) brightness(1.3); } }
+.seal.vol .medal::after { opacity: 1; box-shadow: 0 0 34px 12px rgba(255,140,50,.6); }
 .medal.burn::after { animation: burnring 1.8s ease-out; }
 @keyframes burn { 0% { filter: drop-shadow(0 6px 10px rgba(0,0,0,.85)); } 18% { filter: brightness(1.9) saturate(1.3) drop-shadow(0 0 18px rgba(255,140,60,1)) drop-shadow(0 0 40px rgba(255,60,30,.9)); } 100% { filter: drop-shadow(0 6px 10px rgba(0,0,0,.85)); } }
 @keyframes burnring { 0% { opacity: .4; } 18% { opacity: 1; box-shadow: 0 0 50px 22px rgba(255,110,50,.85), inset 0 0 30px rgba(255,160,90,.9); } 100% { } }
@@ -235,11 +241,13 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .opdr.gedaan .vink { display: grid; }
 .kist { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2vw; width: 100%; margin-top: 2vh; }
 .vak { position: relative; display: grid; justify-items: center; gap: 1.4vh; padding: 2.4vh 1vw; border: 2px solid #4a331b; background: rgba(10,5,6,.75); box-shadow: inset 0 0 30px rgba(0,0,0,.9); min-height: 34vh; align-content: center; }
-.vak .dicht { font: 700 clamp(30px, 4vw, 80px)/1 var(--carved); color: #4a331b; }
+.vak .dicht { display: none; }
 .vak img { width: 85%; aspect-ratio: 1; object-fit: contain; display: none; filter: drop-shadow(0 0 20px rgba(255,190,90,.6)); }
 .vak h3, .vak p { display: none; margin: 0; }
 .vak h3 { font-size: clamp(13px, 1.15vw, 22px); }
 .vak p { font: italic clamp(12px, .95vw, 18px)/1.35 var(--display); opacity: .85; }
+/* a closed compartment shows the relic as a dark silhouette with a faint red rim */
+.vak:not(.open) img { display: block; filter: brightness(0) drop-shadow(0 0 1px rgba(226,50,60,.9)) drop-shadow(0 0 14px rgba(226,50,60,.45)); opacity: .9; }
 .vak.open { border-color: #d8b06a; box-shadow: inset 0 0 30px rgba(0,0,0,.6), 0 0 40px rgba(255,190,90,.35); }
 .vak.open .dicht { display: none; } .vak.open img, .vak.open h3, .vak.open p { display: block; }
 .vak.nieuw img { animation: reliek 2.4s cubic-bezier(.2,1.2,.3,1); }
@@ -366,6 +374,22 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .stage.beving .scene, .stage.beving .seals { animation: tremor .32s linear 3; }
 /* the light dies: everything but the crest sinks into black, the demon burns */
 .scene, .seals, .chip, .vloek-teken { transition: filter 1.6s ease; }
+/* the Wachterstocht: the camera flies into the castle, then the gate with its torches takes over */
+.scene { transform-origin: 13% 16%; transition: filter 1.6s ease, transform 7s cubic-bezier(.55,0,.8,.45); }
+.stage.inzoom .scene { transform: translate(40vw, 40vh) scale(2.6); filter: brightness(.6) saturate(1.2); } /* the castle (top left) moves to the middle */
+.stage.inzoom .hall { opacity: 0; pointer-events: none; }
+.tocht-decor { position: absolute; inset: 0; z-index: 5; overflow: hidden; background: #000; opacity: 0; transition: opacity 2.6s ease; pointer-events: none; }
+.tocht-decor.aan { opacity: 1; }
+.tocht-decor img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; animation: kenburns 45s ease-in-out infinite alternate; }
+@keyframes kenburns { from { transform: scale(1.04); } to { transform: scale(1.16) translate(-1.2%, .8%); } }
+.tocht-decor .fakkel { position: absolute; width: 26vw; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; mix-blend-mode: plus-lighter; pointer-events: none;
+  background: radial-gradient(circle, rgba(255,190,110,.42), rgba(255,110,40,.18) 35%, transparent 68%); animation: fakkel 2.3s ease-in-out infinite; }
+.tocht-decor .fakkel.b { animation-duration: 1.9s; animation-delay: -.7s; }
+@keyframes fakkel { 0%, 100% { opacity: .75; scale: 1; } 23% { opacity: 1; scale: 1.05; } 41% { opacity: .65; scale: .97; } 63% { opacity: .95; scale: 1.03; } 82% { opacity: .7; } }
+.tocht-decor::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 75% 70% at 50% 50%, transparent 40%, rgba(5,2,3,.85)); }
+.stage.in-kasteel .paneel { background: radial-gradient(ellipse 80% 70% at 50% 55%, rgba(7,4,5,.35), rgba(7,4,5,.75)); }
+.tocht-intro { top: 30vh; }
+.tocht-intro .uitleg-kaart p + p { margin-top: -.6vh; }
 .stage.duister .scene, .stage.duister .seals, .stage.duister .chip, .stage.duister .vloek-teken { filter: brightness(.05) saturate(.4); }
 .stage.duister .ember-glow { animation: blaze .35s ease-in-out infinite alternate; width: 120%; top: 18%; background: radial-gradient(ellipse, rgba(255,140,60,.75), rgba(226,50,60,.45) 40%, transparent 70%); filter: blur(24px); }
 .stage.duister .demon-eye { opacity: 1; box-shadow: 0 0 12px 5px rgba(255,70,40,1), 0 0 30px 10px rgba(226,40,30,.7); animation: eyeburn .4s ease-in-out infinite alternate; }
@@ -539,6 +563,11 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     </div>
   </div>
 
+  <div class="tocht-decor" id="tocht-decor"><img id="tocht-beeld" src="a/tocht-poort.webp" alt=""><span class="fakkel" style="left:24%;top:46%"></span><span class="fakkel b" style="left:76%;top:46%"></span></div>
+  <div class="uitleg tocht-intro" id="tocht-intro" hidden aria-live="polite"><div class="uitleg-kaart"><h2 class="carved">De Wachterstocht</h2>
+    <p>Vanavond betreden jullie mijn kasteel. Draag het vuur door de poorten, de gangen en de gewelven.</p>
+    <p>Vijf beproevingen wachten tussen de oude muren. Elke beproeving die jullie volbrengen, opent een vak van de Reliekenkist.</p>
+    <p>Jullie opdrachten staan nu ook op jullie telefoon.</p></div></div>
   <div class="paneel" id="paneel" hidden>
     <section class="sub" id="p-tocht">
       <h1 class="kop carved">De Wachterstocht</h1>
@@ -608,11 +637,11 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=15"></script>
-<script src="a/spel.js?v=15"></script>
-<script src="a/wachters.js?v=15"></script>
-<script src="a/firebase-config.js?v=15"></script>
-<script src="a/koppeling.js?v=15"></script>
+<script src="a/events.js?v=16"></script>
+<script src="a/spel.js?v=16"></script>
+<script src="a/wachters.js?v=16"></script>
+<script src="a/firebase-config.js?v=16"></script>
+<script src="a/koppeling.js?v=16"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -863,17 +892,19 @@ for (const [n, z] of ZEGELS.entries()) {
     k.onclick = () => fiche(z.id, d); $(rij).appendChild(k);
   }
 }
-function brand(id) {
+// full seals keep throwing sparks
+setInterval(() => { for (const z of ZEGELS) if (z.fiches >= window.SPEL.drempel && binnen !== null && !paneelNu) brand(z.id, true); }, 1500);
+function brand(id, zacht) {
   const m = $(`vial-${id}`).parentElement.querySelector(".medal");
-  m.classList.remove("burn"); void m.offsetWidth; m.classList.add("burn");
-  for (let i = 0; i < 14; i++) {
+  if (!zacht) { m.classList.remove("burn"); void m.offsetWidth; m.classList.add("burn"); }
+  for (let i = 0; i < (zacht ? 6 : 14); i++) {
     const v = document.createElement("span"); v.className = "vonk";
     v.style.left = `${30 + Math.random() * 40}%`; v.style.top = `${30 + Math.random() * 40}%`;
     v.style.setProperty("--dx", `${(Math.random() - .5) * 120}px`); v.style.setProperty("--dy", `${-40 - Math.random() * 110}px`);
     v.style.animationDelay = `${Math.random() * .3}s`; m.appendChild(v); setTimeout(() => v.remove(), 1900);
   }
 }
-function teken() { for (const z of ZEGELS) { const v = $(`vial-${z.id}`); const f = Math.max(.02, Math.min(.97, z.fiches / VOL)).toFixed(3); v.style.setProperty("--f", f); v.parentElement.querySelector(".medal").style.setProperty("--f", f); v.style.setProperty("--vh", `${v.offsetHeight * .552}px`); } }
+function teken() { for (const z of ZEGELS) { $(`vial-${z.id}`).parentElement.classList.toggle("vol", z.fiches >= window.SPEL.drempel); const v = $(`vial-${z.id}`); const f = Math.max(.02, Math.min(.97, z.fiches / VOL)).toFixed(3); v.style.setProperty("--f", f); v.parentElement.querySelector(".medal").style.setProperty("--f", f); v.style.setProperty("--vh", `${v.offsetHeight * .552}px`); } }
 function fiche(id, n) {
   const z = ZEGELS.find((x) => x.id === id), vial = $(`vial-${id}`);
   if (n < 0 && z.fiches === 0) return;
@@ -1096,6 +1127,7 @@ function volgendeUitleg() {
 function stopUitleg() { uitlegActief = false; rollenOpen = true; stage.classList.remove("wijs-zegels"); $("uitleg").hidden = true; fade(dronkStem, 0, 400); meld(); }
 // one button walks through the whole intro: story → toast → hall → past the tutorial
 function verderIntro() {
+  if (tochtIntroLoopt) return tochtIntroKlaar();
   if (!$("verhaal").hidden && !verhaalKlaar) return naarHal();
   if (dronkActief && dronkWacht) return startToost();
   if (dronkActief) { fade(dronkStem, 0, 300); return proost(); }
@@ -1132,15 +1164,45 @@ function betreden() {
 /* ================= later screens: Wachterstocht, kist, finale, ere ================= */
 const S = window.SPEL;
 let tochtGedaan = new Set(), relieken = new Set(), reliekGebruikt = new Set();
+let tochtOpen = false, tochtIntroLoopt = false, tochtIntroTimers = []; // tochtOpen: the tasks are shown on the personal pages
+let poortOk = false; $("tocht-beeld").onload = () => (poortOk = true); $("tocht-beeld").onerror = () => $("tocht-beeld").remove();
+// the camera flies into the castle; the first time with an intro, later straight to the tasks
+function kasteelIn(toonPaneel) {
+  stage.classList.add("in-kasteel", "inzoom"); halMuziek.vol(.2, 2500); fade(wind, .5, 2500); fade(vuur, .45, 3000);
+  const metIntro = !tochtOpen; tochtOpen = true; meld();
+  const t = (ms, fn) => tochtIntroTimers.push(setTimeout(fn, ms));
+  t(metIntro ? 5500 : 2600, () => { if (poortOk) $("tocht-decor").classList.add("aan"); });
+  if (!metIntro) return t(3200, toonPaneel);
+  tochtIntroLoopt = true; speel("donder", .5);
+  t(7600, () => { $("tocht-intro").hidden = false; speel("klok", .5, .8); });
+  t(7600 + 16000, () => tochtIntroKlaar(toonPaneel));
+}
+function tochtIntroKlaar(toonPaneel = tochtIntroVerder) {
+  tochtIntroLoopt = false; tochtIntroTimers.forEach(clearTimeout); tochtIntroTimers = [];
+  if (poortOk) $("tocht-decor").classList.add("aan"); $("tocht-intro").hidden = true; toonPaneel?.();
+}
+let tochtIntroVerder = null;
+function kasteelUit() {
+  tochtIntroLoopt = false; tochtIntroTimers.forEach(clearTimeout); tochtIntroTimers = []; $("tocht-intro").hidden = true;
+  $("tocht-decor").classList.remove("aan"); stage.classList.remove("in-kasteel");
+  setTimeout(() => stage.classList.remove("inzoom"), 900); halMuziek.vol(.5, 3000); fade(wind, .2, 2500); fade(vuur, .22, 2500);
+}
 let fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }, ere = { i: -1, namen: {} }, paneelNu = null;
 // the weekend's log (for Akte II and IV) and the traitor periods
 let logboek = [], verraders = [], verrader = null;
 function log(type, data = {}) { logboek.push({ t: Date.now(), type, ...data }); if (logboek.length > 800) logboek.shift(); }
 const medaille = (id) => ZEGELS.find((z) => z.id === id)?.medaille;
 function paneel(naam) {
+  const wasTocht = paneelNu === "tocht";
   paneelNu = naam; const p = $("paneel"); stage.classList.toggle("met-paneel", !!naam);
   document.querySelectorAll(".sub").forEach((s) => s.classList.toggle("aan", s.id === `p-${naam}`));
+  if (wasTocht && naam !== "tocht") kasteelUit();
   if (!naam) { p.classList.remove("aan"); setTimeout(() => { if (!paneelNu) p.hidden = true; }, 1000); }
+  else if (naam === "tocht" && !wasTocht) { // first fly into the castle, then show the tasks
+    p.classList.remove("aan"); p.hidden = true;
+    tochtIntroVerder = () => { if (paneelNu !== "tocht") return; p.hidden = false; requestAnimationFrame(() => p.classList.add("aan")); };
+    kasteelIn(tochtIntroVerder);
+  }
   else { p.hidden = false; requestAnimationFrame(() => p.classList.add("aan")); }
   if (naam === "tocht") tekenTocht(); if (naam === "kist") tekenKist(); if (naam === "finale") tekenFinale(); if (naam === "ere") tekenEre();
   meld();
@@ -1543,7 +1605,8 @@ function meld() {
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
-    publiek: { hal: rollenOpen, eed: !!fin.eedOpen }, // the only part the personal pages can read
+    publiek: { hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen ? { gedaan: [...tochtGedaan] } : null }, // the only part the personal pages can read
+    tochtOpen,
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   })), 150);
 }
@@ -1574,7 +1637,7 @@ const OPDRACHTEN = {
   hint: () => hintVoor(),
   ere: (o) => { ere.i = Math.max(-1, Math.min(S.titels.length - 1, ere.i + o.d)); if (paneelNu !== "ere") paneel("ere"); else tekenEre(); speel("klok", .6, 1.1); meld(); },
   "ere-naam": (o) => { ere.namen[ere.i] = String(o.naam || "").slice(0, 40); tekenEre(); speel("donder", .4); meld(); },
-  "alles-opnieuw": () => { chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; bewaar(); },
+  "alles-opnieuw": () => { tochtOpen = false; chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; bewaar(); },
 };
 // With Firebase only the tv laptop logs in (address ends in ?tv); public visitors just see the countdown.
 let standGeladen = false;
@@ -1582,7 +1645,7 @@ function laadStand(s) {
   if (standGeladen) return; standGeladen = true;
   for (const z of ZEGELS) z.fiches = s.fiches?.[z.id] ?? z.fiches;
   gebruikt = new Set(s.gebruikt || []); teller(); teken();
-  tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
+  tochtOpen = !!s.tochtOpen; tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
   if (s.fin) fin = { nu: 0, open: {}, opgelost: {}, hint: {}, ...s.fin }; if (s.ere) ere = { i: -1, namen: {}, ...s.ere };
   if (s.chaos) { const { wacht: w, ...rest } = s.chaos; chaos = rest; Object.assign(wacht, w || {}); }
   ijs = s.ijs || {}; vloekD20 = !!s.vloekD20; vloek = s.vloek || null; tekenIjs();
