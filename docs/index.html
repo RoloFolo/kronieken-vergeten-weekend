@@ -329,6 +329,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .dronk-regel.aan { opacity: 1; transform: none; }
 .dronk-regel.proost { font-size: clamp(44px, 5.6vw, 118px); filter: drop-shadow(0 0 24px rgba(255,200,110,.9)); animation: proost 1.4s ease-out; }
 @keyframes proost { 0% { transform: scale(.5); filter: brightness(3) drop-shadow(0 0 60px #ffd27a); } 40% { transform: scale(1.08); } }
+.dronk-tekst { margin: 0; max-width: 40ch; font: italic 400 clamp(19px, 1.9vw, 38px)/1.5 var(--display); color: var(--bone); text-wrap: balance; animation: subIn 1.2s ease-out; }
 .dronk-hint { font: italic clamp(16px, 1.5vw, 30px)/1.45 var(--display); color: var(--bone); opacity: .85; min-height: 1.4em; }
 .verhaal.goud::before { content: ""; position: absolute; inset: 0; z-index: 1; background: radial-gradient(circle at 50% 50%, rgba(255,215,140,.55), transparent 60%); animation: goudflits 2.2s ease-out forwards; pointer-events: none; }
 @keyframes goudflits { from { opacity: 1; } to { opacity: 0; } }
@@ -544,13 +545,14 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <div class="brief" id="brief" aria-live="polite"></div>
     <div class="dronk" id="dronk" hidden aria-live="polite">
       <div class="dronk-kop carved">De Eerste Dronk</div>
+      <p class="dronk-tekst" id="dronk-tekst" hidden></p>
       <div class="dronk-regel carved" id="dronk-regel"></div>
       <div class="dronk-hint" id="dronk-hint"></div>
     </div>
     <button class="enter sla-over" id="sla-over" type="button"><span class="carved">Verder</span></button>
   </div>
   <div class="uitleg" id="uitleg" hidden aria-live="polite"><div class="uitleg-kaart" id="uitleg-kaart"></div>
-    <button class="enter uitleg-verder" id="uitleg-verder" type="button"><span class="carved">Verder</span></button></div>
+    <button class="enter uitleg-verder" id="uitleg-verder" type="button"><span class="carved">Naar de Guild Hall</span></button></div>
   <!-- the traitor's tricks -->
   <canvas class="zwerm" id="zwerm"></canvas>
   <div class="inslag" id="inslag"></div>
@@ -582,11 +584,11 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=12"></script>
-<script src="a/spel.js?v=12"></script>
-<script src="a/wachters.js?v=12"></script>
-<script src="a/firebase-config.js?v=12"></script>
-<script src="a/koppeling.js?v=12"></script>
+<script src="a/events.js?v=13"></script>
+<script src="a/spel.js?v=13"></script>
+<script src="a/wachters.js?v=13"></script>
+<script src="a/firebase-config.js?v=13"></script>
+<script src="a/koppeling.js?v=13"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1007,7 +1009,9 @@ function startDronk() {
   $("brief").hidden = true; document.querySelectorAll(".zegel-kant").forEach((z) => (z.hidden = true));
   $("dronk").hidden = false; $("dronk-regel").textContent = ""; $("dronk-hint").textContent = "";
   halMuziek.vol(.12, 2000);
+  setTimeout(() => { $("dronk-tekst").textContent = "Eén ding nog, Wachters. Een broederschap begint met een dronk. Haal jullie drankjes, schenk de glazen vol… en kom terug bij het vuur. Ik wacht op jullie."; $("dronk-tekst").hidden = false; }, 1200);
   setTimeout(() => speelStem("dronk-intro", () => {
+    $("dronk-tekst").hidden = true;
     // wait for the organisers: fetching drinks takes as long as it takes
     dronkWacht = true; meld();
     $("dronk-regel").textContent = "Haal je drankje"; $("dronk-regel").classList.add("aan");
@@ -1061,7 +1065,6 @@ function volgendeUitleg() {
   stage.classList.toggle("wijs-zegels", !!u?.wijs);
   if (!u) return stopUitleg();
   if (u.rollen && !rollenOpen) { rollenOpen = true; meld(); }
-  $("uitleg-verder").querySelector(".carved").textContent = uitlegStap === UITLEG.length - 1 ? "Naar de Hall" : "Verder";
   $("uitleg-kaart").outerHTML = `<div class="uitleg-kaart" id="uitleg-kaart"><h2 class="carved">${u.titel}</h2>${u.html()}</div>`;
   const stap = uitlegStap;
   speelStem(u.stem, () => setTimeout(() => { if (uitlegStap === stap) volgendeUitleg(); }, 1400), 7000);
@@ -1075,7 +1078,7 @@ function verderIntro() {
   if (uitlegActief) return volgendeUitleg();
 }
 $("sla-over").onclick = verderIntro;
-$("uitleg-verder").onclick = verderIntro;
+$("uitleg-verder").onclick = () => { if (uitlegActief) stopUitleg(); }; // skip the rest of the tutorial
 
 /* ================= entering ================= */
 let crestVan = null;
@@ -1148,8 +1151,8 @@ function weekendVragen() {
 }
 // --- Akte IV: the traitor periods (each one a different Wachter) with the sabotage done in them ---
 function verraadPeriodes() {
-  return verraders.map((v, i) => ({ ...v, tot: verraders[i + 1]?.van ?? null,
-    sporen: logboek.filter((l) => l.type === "chaos" && l.naam === v.naam && l.t >= v.van && (!verraders[i + 1] || l.t < verraders[i + 1].van)) }));
+  return verraders.map((v, i) => { const tot = v.tot ?? verraders[i + 1]?.van ?? null;
+    return { ...v, tot, sporen: logboek.filter((l) => l.type === "chaos" && l.naam === v.naam && l.t >= v.van && (!tot || l.t < tot)) }; });
 }
 const SPOOR = { "chaos-steel": (l) => `er verdween een fiche uit de ${zegelNaamVan(l.id)}`, "chaos-schaduw": () => "de Schaduw werd opgeroepen", "chaos-omen": () => "er klonk een fluistering",
   "chaos-bliksem": () => "de bliksem sloeg onverwacht in",
@@ -1254,6 +1257,9 @@ function chaosDag() { const d = new Date().toLocaleDateString("sv-SE"); if (chao
 function mag(naam, sec) { const nu = Date.now(); if ((wacht[naam] || 0) > nu) return false; wacht[naam] = nu + sec * 1000; return true; }
 function flikker(ms = 2500) { stage.classList.add("omen"); setTimeout(() => stage.classList.remove("omen"), ms); }
 // With Firebase the database rules already check the sender's own account; locally the personal token decides.
+// a traitor period ends by hand (night) or when its time is up
+function eindigVerraad() { if (!verrader) return; const p = verraders[verraders.length - 1]; if (p && !p.tot) p.tot = Date.now(); verrader = null; }
+setInterval(() => { if (verrader?.tot && Date.now() > verrader.tot) { eindigVerraad(); meld(); } }, 15000);
 function echteVerrader(o) { return !!verrader && (o.van ? o.van === Koppeling.emailVan(verrader.naam) : !window.FIREBASE_CONFIG && o.token === verrader.token); }
 // A flock of ravens going wild: painted ravens swirl across the screen, and a few dive straight at the
 // viewer and smash into the "glass", leaving blood and feathers that slowly run down.
@@ -1497,7 +1503,7 @@ function meld() {
     scherm: schermNu(), d20: !$("b-d20").disabled,
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20,
-    logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds } : null,
+    logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
     publiek: { hal: rollenOpen, eed: !!fin.eedOpen }, // the only part the personal pages can read
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   })), 150);
@@ -1519,11 +1525,13 @@ const OPDRACHTEN = {
   puzzel: (o) => { fin.nu = o.i; if (S.aktes[o.i]?.soort === "eed") fin.eedOpen = true; if (paneelNu !== "finale") paneel("finale"); else tekenFinale(); meld(); },
   beproeving: () => { fin.open[S.aktes[fin.nu].zegel] = true; speel("klok", .7, .9); tekenFinale(); meld(); },
   antwoord: (o) => antwoord(o.n ?? o.w),
-  verrader: (o) => { // the organisers pass the role on; a new period starts
+  verrader: (o) => { // the organisers pass the role on for a few hours; a new period starts
     const w = (window.WACHTERS || []).find((x) => x.naam === o.naam); if (!w) return;
-    verrader = { naam: w.naam, token: w.token, sinds: Date.now() }; verraders.push({ naam: w.naam, van: Date.now() });
+    eindigVerraad(); const nu = Date.now(), uren = Math.min(12, Math.max(1, +o.uren || 4));
+    verrader = { naam: w.naam, token: w.token, sinds: nu, tot: nu + uren * 3600000 }; verraders.push({ naam: w.naam, van: nu });
     chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; meld(); },
-  "geen-verrader": () => { verrader = null; meld(); },
+  "geen-verrader": () => { eindigVerraad(); meld(); },
+  ontdooi: (o) => { if (ijs[o.id]) { ijs[o.id] = Date.now() - 1; tekenIjs(); } },
   hint: () => hintVoor(),
   ere: (o) => { ere.i = Math.max(-1, Math.min(S.titels.length - 1, ere.i + o.d)); if (paneelNu !== "ere") paneel("ere"); else tekenEre(); speel("klok", .6, 1.1); meld(); },
   "ere-naam": (o) => { ere.namen[ere.i] = String(o.naam || "").slice(0, 40); tekenEre(); speel("donder", .4); meld(); },

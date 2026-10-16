@@ -70,6 +70,9 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 .link { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px; }
 .link .wie { min-width: 0; line-height: 1.2; } .link .wie small { display: block; color: var(--ash); font-size: 12px; }
 .link button { padding: 10px 12px; font-size: 14px; }
+.duur { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.duur button.nu { border-color: var(--bronze); background: rgba(184,149,95,.2); color: var(--bronze-hi); }
+.zegel button.ijs { border-color: #7fb7e6; color: #cfe8ff; background: rgba(120,180,240,.15); font-size: 18px; }
 .bevestig { display: grid; gap: 8px; margin-top: 10px; padding: 10px; border: 1px dashed var(--ember); border-radius: 8px; }
 </style>
 </head>
@@ -155,7 +158,11 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   <section class="kaart">
     <h2>De Verrader</h2>
     <p class="klein" id="verrader-nu">Nog geen verrader aangewezen.</p>
-    <div class="namen" id="v-namen" style="margin-top:10px"></div>
+    <button class="rood groot" id="b-v-geen" type="button" style="margin-top:10px" hidden>Geen verrader (bijvoorbeeld 's nachts)</button>
+    <p class="klein" style="margin:12px 0 6px">Hoe lang is de volgende verrader het?</p>
+    <div class="duur" id="v-duur"><button type="button" data-u="2">2 uur</button><button type="button" data-u="4" class="nu">4 uur</button><button type="button" data-u="6">6 uur</button></div>
+    <p class="klein" style="margin:12px 0 6px">Kies de verrader:</p>
+    <div class="namen" id="v-namen"></div>
     <div id="v-link" hidden style="margin-top:10px">
       <p class="klein">Stuur deze link privé naar <b id="v-wie"></b>:</p>
       <input type="text" id="v-url" readonly>
@@ -198,12 +205,12 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=12"></script>
-<script src="a/spel.js?v=12"></script>
-<script src="a/wachters.js?v=12"></script>
-<script src="a/rollen.js?v=12"></script>
-<script src="a/firebase-config.js?v=12"></script>
-<script src="a/koppeling.js?v=12"></script>
+<script src="a/events.js?v=13"></script>
+<script src="a/spel.js?v=13"></script>
+<script src="a/wachters.js?v=13"></script>
+<script src="a/rollen.js?v=13"></script>
+<script src="a/firebase-config.js?v=13"></script>
+<script src="a/koppeling.js?v=13"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const ZEGELS = [
@@ -244,7 +251,10 @@ function toonLink() {
   $("v-url").value = `${basis}chaos-06d0ece377.html#t=${verraderNu.token}${ww ? `&w=${encodeURIComponent(ww)}` : ""}`;
   $("v-wie").textContent = verraderNu.naam; $("v-link").hidden = false;
 }
-$("v-namen").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "verrader", naam: b.dataset.n }); };
+let duurUren = 4;
+$("v-duur").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; duurUren = +b.dataset.u; document.querySelectorAll("#v-duur button").forEach((x) => x.classList.toggle("nu", x === b)); };
+$("v-namen").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "verrader", naam: b.dataset.n, uren: duurUren }); };
+$("b-v-geen").onclick = () => stuur({ cmd: "geen-verrader" });
 $("b-v-stop").onclick = () => stuur({ cmd: "geen-verrader" });
 $("b-v-kopie").onclick = () => { const v = $("v-url").value; navigator.clipboard?.writeText(v).then(() => ($("b-v-kopie").textContent = "Gekopieerd"), () => $("v-url").select()); setTimeout(() => ($("b-v-kopie").textContent = "Kopieer link"), 2000); };
 // personal links: one per Wachter, sent before the weekend
@@ -267,16 +277,16 @@ for (const z of ZEGELS) {
   el.innerHTML = `<img src="${z.img}" alt=""><span class="naam">${z.naam}</span>
     <button class="rond" type="button" aria-label="Fiche eraf bij ${z.naam}">−</button>
     <span class="getal" id="n-${z.id}">0</span>
-    <button class="rond goud" type="button" aria-label="Fiche erbij bij ${z.naam}">+</button>`;
+    <button class="rond goud" type="button" id="plus-${z.id}" aria-label="Fiche erbij bij ${z.naam}">+</button>`;
   const [min, plus] = el.querySelectorAll("button");
   min.onclick = () => stuur({ cmd: "fiche", id: z.id, n: -1 });
-  plus.onclick = () => stuur({ cmd: "fiche", id: z.id, n: 1 });
+  plus.onclick = () => stuur(plus.dataset.koud ? { cmd: "ontdooi", id: z.id } : { cmd: "fiche", id: z.id, n: 1 });
   $("zegels").appendChild(el);
 }
 
 function toon(s) {
   // what the traitor did that everyone can see anyway: a frozen seal (no fiches) and a cursed Wachter
-  const ijsTxt = Object.entries(s.ijs || {}).filter(([, t]) => t > Date.now()).map(([id, t]) => `❄ ${ZEGELS.find((z) => z.id === id)?.naam} bevroren tot ${new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}: plussen doen dan niets.`);
+  const ijsTxt = Object.entries(s.ijs || {}).filter(([, t]) => t > Date.now()).map(([id, t]) => `❄ ${ZEGELS.find((z) => z.id === id)?.naam} is bevroren tot ${new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}. Tik op ❄ om te ontdooien.`);
   if (s.vloek) ijsTxt.push(`Vervloekt: ${s.vloek.naam}. ${s.vloek.tekst}`);
   $("sabotage-status").hidden = !ijsTxt.length; $("sabotage-status").textContent = ijsTxt.join(" ");
   $("scherm").textContent = SCHERM[s.scherm] ?? "";
@@ -314,7 +324,13 @@ function toon(s) {
   $("b-eed").hidden = !(bezig && p.soort === "eed");
   $("a-uitleg").textContent = !bezig ? "" : { herinnering: "Tik de naam die de groep noemt.", weekend: "Vul het antwoord van de groep in.", eed: "Druk pas als de groep de hele eed in de juiste volgorde heeft uitgesproken.", verrader: "Tik de naam die de groep beschuldigt." }[p.soort];
   verraderNu = s.verrader || null; toonLink();
-  $("verrader-nu").textContent = verraderNu ? `Verrader nu: ${verraderNu.naam} (sinds ${new Date(verraderNu.sinds).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })})` : "Nog geen verrader aangewezen.";
+  const uur = (t) => new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
+  $("verrader-nu").textContent = verraderNu ? `Verrader nu: ${verraderNu.naam}, sinds ${uur(verraderNu.sinds)}${verraderNu.tot ? ` tot ${uur(verraderNu.tot)}` : ""}.` : "Er is nu geen verrader.";
+  $("b-v-geen").hidden = !verraderNu;
+  document.querySelectorAll("#v-namen button").forEach((b) => b.classList.toggle("nu", b.dataset.n === verraderNu?.naam));
+  // frozen seals: the + does nothing, so show it, and let the organisers thaw them
+  for (const z of ZEGELS) { const knop = $(`plus-${z.id}`), koud = (s.ijs?.[z.id] || 0) > Date.now();
+    knop.classList.toggle("ijs", koud); knop.textContent = koud ? "❄" : "+"; knop.title = koud ? "Bevroren: tik om te ontdooien" : ""; knop.dataset.koud = koud ? "1" : ""; }
   document.querySelectorAll("#v-namen button").forEach((b) => b.classList.toggle("nu", b.dataset.n === verraderNu?.naam));
   $("b-beproeving").disabled = !!(vol || fin.open?.[p.zegel] || fin.opgelost?.[p.zegel]);
   const vrij = [...gevonden].filter((k) => !op.has(k)).length;

@@ -90,7 +90,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
       if (stand.publiek) schrijf("publiek", stand.publiek);
       // only the current traitor gets a node, with just what the traitor panel needs
       const v = stand.verrader;
-      schrijf("verraad", v ? { [sleutel(emailVan(v.naam))]: { naam: v.naam, sinds: v.sinds, fiches: stand.fiches, scherm: stand.scherm, chaos: stand.chaos || null } } : null);
+      schrijf("verraad", v ? { [sleutel(emailVan(v.naam))]: { naam: v.naam, sinds: v.sinds, tot: v.tot || null, fiches: stand.fiches, scherm: stand.scherm, chaos: stand.chaos || null } } : null);
     },
     stuur: (o) => db.push(db.ref(d, "opdrachten"), { ...o, van: email, t: Date.now() }).catch(() => {}),
     uitloggen: () => auth.signOut(a),

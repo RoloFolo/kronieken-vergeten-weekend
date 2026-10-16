@@ -114,9 +114,9 @@ button[data-rust]:not([data-rust=""])::after { content: "rust " attr(data-rust);
 </main>
 <div class="melding" id="melding" role="status"></div>
 
-<script src="a/wachters.js?v=12"></script>
-<script src="a/firebase-config.js?v=12"></script>
-<script src="a/koppeling.js?v=12"></script>
+<script src="a/wachters.js?v=13"></script>
+<script src="a/firebase-config.js?v=13"></script>
+<script src="a/koppeling.js?v=13"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const ZEGELS = [["vlam", "a/medaillon-vlam.webp"], ["hoorn", "a/medaillon-hoorn.webp"], ["schild", "a/medaillon-schild.webp"], ["hart", "a/medaillon-hart.webp"]];
@@ -152,7 +152,8 @@ function teken() {
   $("c-vloek-wie").textContent = doel ? `Vervloek ${doel}, tot de Schaduw beweegt · 1 kaart` : "Kies eerst een Wachter · 1 kaart";
   document.querySelectorAll("main button").forEach((b) => (b.disabled = !actief()));
   if (!actief()) { $("verbinding").textContent = IK || FIRE ? "Je bent op dit moment geen verrader" : "Deze link is niet geldig"; return; }
-  $("verbinding").textContent = "Verbonden · jij bent de verrader";
+  const tot = FIRE ? stand.tot : stand.verrader?.tot;
+  $("verbinding").textContent = tot ? `Jij bent de verrader tot ${new Date(tot).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}` : "Verbonden · jij bent de verrader";
   for (const [id, k] of Object.entries(RUST)) {
     const s = rustOver(k), b = $(id); b.disabled = s > 0; b.dataset.rust = s > 0 ? mmss(s) : "";
   }
