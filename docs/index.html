@@ -787,13 +787,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=31"></script>
-<script src="a/spel.js?v=31"></script>
-<script src="a/wachters.js?v=31"></script>
-<script src="a/firebase-config.js?v=31"></script>
-<script src="a/koppeling.js?v=31"></script>
-<script src="a/rollen.js?v=31"></script>
-<script src="a/tafel.js?v=31"></script>
+<script src="a/events.js?v=32"></script>
+<script src="a/spel.js?v=32"></script>
+<script src="a/wachters.js?v=32"></script>
+<script src="a/firebase-config.js?v=32"></script>
+<script src="a/koppeling.js?v=32"></script>
+<script src="a/rollen.js?v=32"></script>
+<script src="a/tafel.js?v=32"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1321,13 +1321,13 @@ function betreden() {
 const S = window.SPEL;
 let tochtGedaan = new Set(), relieken = new Set(), reliekGebruikt = new Set();
 let tochtOpen = false, tochtIntroLoopt = false, tochtIntroTimers = []; // tochtOpen: the tasks are shown on the personal pages
-let poortOk = false; $("tocht-beeld").onload = () => (poortOk = true); $("tocht-beeld").onerror = () => $("tocht-beeld").remove();
+const poortKlaar = () => { const i = $("tocht-beeld"); return !!i && i.complete && i.naturalWidth > 0; }; // also true when the image came from the cache
 // the camera flies into the castle; the first time with an intro, later straight to the tasks
 function kasteelIn(toonPaneel) {
   stage.classList.add("in-kasteel", "inzoom"); halMuziek.vol(.2, 2500); fade(wind, .5, 2500); fade(vuur, .3, 3000);
-  const metIntro = !tochtOpen; tochtOpen = true; meld();
+  const metIntro = true; tochtOpen = true; meld();
   const t = (ms, fn) => tochtIntroTimers.push(setTimeout(fn, ms));
-  t(metIntro ? 8500 : 2600, () => { if (poortOk) { $("tocht-decor").classList.add("aan"); poortStart(); } });
+  t(metIntro ? 8500 : 2600, () => { if (poortKlaar()) { $("tocht-decor").classList.add("aan"); poortStart(); } });
   if (!metIntro) return t(5000, toonPaneel);
   tochtIntroLoopt = true; speel("donder", .5);
   // Godfried speaks over the gate; when he is done the tasks come in
@@ -1337,7 +1337,7 @@ let tochtStem = null;
 function tochtIntroKlaar(toonPaneel = tochtIntroVerder) {
   if (tochtStem) { fade(tochtStem, 0, 600); tochtStem = null; }
   tochtIntroLoopt = false; tochtIntroTimers.forEach(clearTimeout); tochtIntroTimers = [];
-  if (poortOk) { $("tocht-decor").classList.add("aan"); poortStart(); } $("tocht-intro").hidden = true; toonPaneel?.();
+  if (poortKlaar()) { $("tocht-decor").classList.add("aan"); poortStart(); } $("tocht-intro").hidden = true; toonPaneel?.();
 }
 let tochtIntroVerder = null;
 const POORT_VUUR = [[.122, .43, 1], [.877, .42, 1], [.332, .575, .55], [.667, .57, .55], [.454, .625, .3], [.553, .625, .3]]; // x, y, size (measured on the painting)
@@ -1444,7 +1444,7 @@ const kistScore = (n) => n ? `<b>${n} van de 5</b> relieken gevonden. Elk reliek
 // the ceremony: Godfried speaks, the lid flies open, and slot by slot the relics rise (or stay dark)
 function kistRitueel() {
   if (kistBezig) return; kistBezig = true; kistGeopend = false; paneel("kist");
-  const gewonnen = new Set(S.tocht.map((o) => o.id).filter((id) => tochtGedaan.has(id) && S.relieken.some((k) => k.id === id)));
+  const gewonnen = new Set(S.relieken.map((k) => k.id).filter((id) => tochtGedaan.has(id) || relieken.has(id)));
   tekenKistzaal(); halMuziek.vol(.06, 1500); fade(wind, .45, 2000); speel("knars", .5, .7);
   setTimeout(() => stemMet("kist-intro", 1, () => {
     // the lid
@@ -1953,9 +1953,9 @@ const OPDRACHTEN = {
     rollenOpen = true; if (binnen === null) { verhaalKlaar = true; proloog?.pause(); $("verhaal").hidden = true; betreden(); } if (wakker()) hal(); paneel(o.naam === "hal" ? null : o.naam); },
   tocht: (o) => { o.aan ? tochtGedaan.add(o.id) : tochtGedaan.delete(o.id); if (paneelNu === "tocht") tekenTocht(); meld(); },
   "kist-open": () => kistRitueel(),
-  reliek: (o) => { // open one compartment of the chest, with a flash
-    if (o.aan && !relieken.has(o.id)) { relieken.add(o.id); if (paneelNu !== "kist") paneel("kist"); tekenKist(o.id); speel("klok", .8, 1.1); speel("donder", .3); }
-    else if (!o.aan) { relieken.delete(o.id); tekenKist(); }
+  reliek: (o) => { // tick a relic by hand: before the ceremony it is only noted; after it the open chest shows it
+    if (o.aan) relieken.add(o.id); else relieken.delete(o.id);
+    if (kistGeopend && paneelNu === "kist") { tekenKistzaal(); if (o.aan) { speel("klok", .8, 1.2); const g = $("k-gloed"); g.classList.remove("flits"); void g.offsetWidth; g.classList.add("flits"); } }
     meld(); },
   puzzel: (o) => { fin.nu = o.i; if (S.aktes[o.i]?.soort === "eed") fin.eedOpen = true; if (paneelNu !== "finale") paneel("finale"); else tekenFinale(); meld(); },
   beproeving: () => { fin.open[S.aktes[fin.nu].zegel] = true; speel("klok", .7, .9); tekenFinale(); meld(); },

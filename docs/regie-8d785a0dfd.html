@@ -208,12 +208,12 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=31"></script>
-<script src="a/spel.js?v=31"></script>
-<script src="a/wachters.js?v=31"></script>
-<script src="a/rollen.js?v=31"></script>
-<script src="a/firebase-config.js?v=31"></script>
-<script src="a/koppeling.js?v=31"></script>
+<script src="a/events.js?v=32"></script>
+<script src="a/spel.js?v=32"></script>
+<script src="a/wachters.js?v=32"></script>
+<script src="a/rollen.js?v=32"></script>
+<script src="a/firebase-config.js?v=32"></script>
+<script src="a/koppeling.js?v=32"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -318,7 +318,7 @@ function toon(s) {
   const paneel = ["tocht", "kist", "finale", "ere"].includes(s.scherm) ? s.scherm : null;
   document.querySelectorAll("#schermen button").forEach((b) => b.classList.toggle("nu", b.dataset.s === (paneel || (s.scherm === "hal" ? "hal" : ""))));
   $("s-tocht").hidden = s.scherm !== "tocht"; $("s-kist").hidden = !["tocht", "kist"].includes(s.scherm);
-  { const verdiend = S.tocht.filter((o) => (s.tochtGedaan || []).includes(o.id)).map((o) => S.relieken.find((k) => k.id === o.id)?.naam).filter(Boolean);
+  { const verdiend = S.relieken.filter((k) => (s.tochtGedaan || []).includes(k.id) || (s.relieken || []).includes(k.id)).map((k) => k.naam);
     $("kist-verdiend").textContent = s.kistGeopend ? `De kist is geopend: ${(s.relieken || []).length} van de 5 relieken.` : `Verdiend op de tocht (nog geheim): ${verdiend.length ? verdiend.join(", ") : "nog niets"} (${verdiend.length} van de 5).`;
     $("b-kist-open").textContent = s.kistGeopend ? "Ritueel opnieuw afspelen" : "Open de Reliekenkist"; }
   $("s-finale").hidden = s.scherm !== "finale"; $("s-ere").hidden = s.scherm !== "ere";
