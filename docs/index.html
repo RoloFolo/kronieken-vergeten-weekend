@@ -908,7 +908,7 @@ function naarHal() { // the letter is done: on to the First Toast
 }
 // ===== De Eerste Dronk: Godfried speaks a toast line by line, the group repeats it, then the Hall opens =====
 const DRONK = ["Bij het vuur dat nooit dooft,", "bij de hoorn die nooit leeg raakt,", "bij het schild van onze broederschap,", "en bij het hart van de Ardennen:", "Wij waken. Proost!"];
-let dronkActief = false, dronkKlaar = false, dronkStem = null;
+let dronkActief = false, dronkKlaar = false, dronkStem = null, dronkWacht = false, toostBezig = false;
 function speelStem(naam, klaar, reserve = 6000) { // plays a voice line, calls klaar when it ends (or after a fallback time)
   let gedaan = false; const af = () => { if (!gedaan) { gedaan = true; klaar(); } };
   dronkStem = speel(naam, 1); dronkStem.addEventListener("ended", af); dronkStem.addEventListener("error", () => setTimeout(af, reserve));
@@ -919,7 +919,19 @@ function startDronk() {
   $("brief").hidden = true; document.querySelectorAll(".zegel-kant").forEach((z) => (z.hidden = true));
   $("dronk").hidden = false; $("dronk-regel").textContent = ""; $("dronk-hint").textContent = "";
   halMuziek.vol(.12, 2000);
-  setTimeout(() => speelStem("dronk-intro", () => dronkRegel(0)), 1200);
+  setTimeout(() => speelStem("dronk-intro", () => {
+    // wait for the organisers: fetching drinks takes as long as it takes
+    dronkWacht = true; meld();
+    $("dronk-regel").textContent = "Haal je drankje"; $("dronk-regel").classList.add("aan");
+    $("dronk-hint").textContent = "Schenk de glazen vol en kom terug bij het vuur.";
+    halMuziek.vol(.35, 3000);
+  }), 1200);
+}
+function startToost() {
+  if (!dronkWacht || toostBezig) return; dronkWacht = false; toostBezig = true; meld();
+  halMuziek.vol(.1, 1500); $("dronk-hint").textContent = "";
+  const el = $("dronk-regel"); el.classList.remove("aan"); void el.offsetWidth; el.textContent = "Hef het glas"; el.classList.add("aan");
+  speelStem("dronk-toost", () => setTimeout(() => dronkRegel(0), 500), 2500);
 }
 function dronkRegel(i) {
   if (!dronkActief) return;
@@ -929,8 +941,7 @@ function dronkRegel(i) {
   $("dronk-hint").textContent = "";
   speelStem(`dronk-${i + 1}`, () => {
     if (laatste) return proost();
-    $("dronk-hint").textContent = "Spreek na…";
-    setTimeout(() => dronkRegel(i + 1), 3200); // time for the group to repeat the line
+    setTimeout(() => dronkRegel(i + 1), 450); // Godfried speaks the toast in one go
   });
 }
 function proost() {
@@ -969,6 +980,7 @@ function stopUitleg() { uitlegActief = false; stage.classList.remove("wijs-zegel
 // one button walks through the whole intro: story → toast → hall → past the tutorial
 function verderIntro() {
   if (!$("verhaal").hidden && !verhaalKlaar) return naarHal();
+  if (dronkActief && dronkWacht) return startToost();
   if (dronkActief) { fade(dronkStem, 0, 300); return proost(); }
   if (uitlegActief) return volgendeUitleg();
 }
@@ -1172,7 +1184,7 @@ const CHAOS = Object.fromEntries(Object.entries(CHAOS_RAW).map(([cmd, fn]) => [c
 /* ================= link with the laptop server (app/server.mjs) ================= */
 // Without a server (the concept page) everything runs locally as before.
 let server = false, meldTimer = null;
-function schermNu() { return dronkActief ? "dronk" : uitlegActief ? "uitleg" : !$("verhaal").hidden ? "verhaal" : binnen === null ? "start" : wakker() ? "schaduw" : paneelNu || "hal"; }
+function schermNu() { return dronkActief && dronkWacht ? "dronk-wacht" : dronkActief ? "dronk" : uitlegActief ? "uitleg" : !$("verhaal").hidden ? "verhaal" : binnen === null ? "start" : wakker() ? "schaduw" : paneelNu || "hal"; }
 function meld() {
   if (!server) return; clearTimeout(meldTimer);
   meldTimer = setTimeout(() => Koppeling.meldStand(({
