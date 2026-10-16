@@ -794,13 +794,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=37"></script>
-<script src="a/spel.js?v=37"></script>
-<script src="a/wachters.js?v=37"></script>
-<script src="a/firebase-config.js?v=37"></script>
-<script src="a/koppeling.js?v=37"></script>
-<script src="a/rollen.js?v=37"></script>
-<script src="a/tafel.js?v=37"></script>
+<script src="a/events.js?v=38"></script>
+<script src="a/spel.js?v=38"></script>
+<script src="a/wachters.js?v=38"></script>
+<script src="a/firebase-config.js?v=38"></script>
+<script src="a/koppeling.js?v=38"></script>
+<script src="a/rollen.js?v=38"></script>
+<script src="a/tafel.js?v=38"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2011,6 +2011,8 @@ function laadStand(s) {
   meld();
 }
 // if another tv window writes the stand, this one stops writing and offers to take over
+// heartbeat: the regie can see that this tv is alive (and that the buttons will work)
+setInterval(() => meld(), 30000);
 function bewaakTv(s) {
   // a stand from another window (also an old version without a tv mark) means two tvs are writing
   if (passief || s.tv === tvId || Date.now() - geladenOp < 6000) return;
