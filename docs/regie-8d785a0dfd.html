@@ -211,12 +211,12 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=45"></script>
-<script src="a/spel.js?v=45"></script>
-<script src="a/wachters.js?v=45"></script>
-<script src="a/rollen.js?v=45"></script>
-<script src="a/firebase-config.js?v=45"></script>
-<script src="a/koppeling.js?v=45"></script>
+<script src="a/events.js?v=46"></script>
+<script src="a/spel.js?v=46"></script>
+<script src="a/wachters.js?v=46"></script>
+<script src="a/rollen.js?v=46"></script>
+<script src="a/firebase-config.js?v=46"></script>
+<script src="a/koppeling.js?v=46"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -323,7 +323,7 @@ function toon(s) {
   if (s.vloek) ijsTxt.push(`Vervloekt: ${s.vloek.naam}. ${s.vloek.tekst}`);
   $("sabotage-status").hidden = !ijsTxt.length; $("sabotage-status").textContent = ijsTxt.join(" ");
   $("scherm").textContent = SCHERM[s.scherm] ?? "";
-  $("b-verder").textContent = s.scherm === "dronk-wacht" ? "Glazen vol: toost!" : "Volgende stap";
+  $("b-verder").textContent = s.scherm === "dronk-wacht" ? "Glazen vol: toost!" : s.scherm === "einde" && s.fin?.einde === 1 ? "Kist is open: de envelop" : "Volgende stap";
   $("b-verder").classList.toggle("goud", s.scherm === "dronk-wacht");
   for (const z of ZEGELS) $(`n-${z.id}`).textContent = s.fiches?.[z.id] ?? 0;
   const actief = s.scherm === "schaduw";

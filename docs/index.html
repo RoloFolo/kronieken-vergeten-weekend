@@ -271,6 +271,23 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .kistzaal .k-score { position: absolute; left: 0; right: 0; bottom: 4vh; margin: 0; text-align: center; font: italic clamp(18px, 1.8vw, 36px)/1.4 var(--display); color: var(--bone); text-shadow: 0 2px 8px #000; opacity: 0; transition: opacity 1.5s; }
 .kistzaal .k-score.aan { opacity: 1; }
 .kistzaal .k-score b { font-family: var(--carved); color: #ffd98a; }
+/* ===== the end: everything turns white, the darkness is gone, dawn over Bouillon. First the real chest, then the envelope ===== */
+.dageraad { position: absolute; inset: 0; z-index: 8; overflow: hidden; background: #f3e2c0; pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 1s ease, visibility 0s linear 1s; }
+.stage.in-einde .dageraad { opacity: 1; visibility: visible; transition: opacity 1s ease; }
+.stage.in-einde .hall { opacity: 0; }
+.dageraad img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.stage.in-einde .dageraad img { animation: dageraad 50s cubic-bezier(.2,.6,.3,1) both; }
+@keyframes dageraad { from { transform: scale(1.14); filter: brightness(1.5) saturate(.6); } to { transform: scale(1.02); filter: none; } }
+.dageraad::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 45%, rgba(30,14,6,.55) 78%, rgba(20,9,4,.8)); }
+.dageraad .d-tekst { position: absolute; z-index: 1; left: 0; right: 0; bottom: 6vh; display: grid; justify-items: center; gap: 1.8vh; text-align: center; transition: opacity 2s ease; }
+.dageraad.stil .d-tekst { opacity: 0; }
+.dageraad h1 { margin: 0; font-size: clamp(34px, 4.4vw, 92px); letter-spacing: .06em; filter: drop-shadow(0 4px 14px rgba(0,0,0,.8)) drop-shadow(0 0 40px rgba(255,200,110,.5)); }
+.dageraad p { margin: 0; font: italic clamp(20px, 2.1vw, 42px)/1.4 var(--display); color: #fff3dc; text-shadow: 0 2px 12px #000; min-height: 1.4em; transition: opacity 1.2s; }
+.dageraad .d-code { display: flex; gap: 1.6vw; font-size: clamp(40px, 5.4vw, 110px); line-height: 1; color: #ffe2a0; text-shadow: 0 0 30px rgba(255,190,90,.9), 0 4px 12px #000; opacity: 0; transform: translateY(2vh); transition: opacity 1.6s ease, transform 1.6s ease; }
+.dageraad .d-code.aan { opacity: 1; transform: none; }
+.witlicht { position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: 0; background: radial-gradient(circle at 50% 47%, #fff, #fffaf0 55%, #fff1d6); transition: opacity 2.6s ease-in; }
+.witlicht.aan { opacity: 1; }
+.witlicht.weg { transition: opacity 7s cubic-bezier(.4,0,.2,1); }
 /* ===== the finale: the last vault. The painted door is the code lock: number wheels in its four windows, the seal
    medallions in its four sockets. The camera moves between the whole door, the question and the lock. ===== */
 .gewelf { position: absolute; inset: 0; z-index: 7; overflow: hidden; background: #050203; pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 1.6s ease, visibility 0s linear 1.6s; }
@@ -652,14 +669,16 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
   background: radial-gradient(ellipse 60% 38% at 50% 50%, rgba(0,0,0,.72), rgba(0,0,0,.35) 55%, transparent 80%); }
 .fluister.aan { opacity: 1; }
 .fluister .woord { position: relative; display: flex; white-space: nowrap; }
-.fluister .l { display: inline-block; font: 900 clamp(90px, 11vw, 250px)/1 var(--carved); letter-spacing: .06em; text-transform: uppercase; color: transparent;
-  background: linear-gradient(180deg, #fff6dc 0%, #ffc15a 28%, #ff4a2e 58%, #6a0508 100%); -webkit-background-clip: text; background-clip: text;
-  filter: blur(14px) drop-shadow(0 0 0 rgba(255,60,30,0)); opacity: 0; transform: translateY(26px) scale(1.5);
-  animation: inbrand 1s cubic-bezier(.2,.9,.25,1) var(--in) forwards, weg 1.5s ease-in var(--uit) forwards; }
-@keyframes inbrand { 60% { opacity: 1; filter: blur(0) drop-shadow(0 0 40px rgba(255,90,40,1)); } 100% { opacity: 1; transform: none; filter: blur(0) drop-shadow(0 0 22px rgba(255,60,30,.85)); } }
-@keyframes weg { from { opacity: 1; transform: none; filter: blur(0) drop-shadow(0 0 22px rgba(255,60,30,.85)); }
-  to { opacity: 0; transform: translate(var(--dx), -140px) rotate(var(--r)) scale(.6); filter: blur(12px) drop-shadow(0 0 30px rgba(255,60,30,0)); } }
-.fluister .sintel { position: absolute; width: 6px; height: 6px; border-radius: 50%; background: #ffd08a; box-shadow: 0 0 10px 3px rgba(255,110,40,.95); animation: sintel 2.2s ease-out forwards; }
+/* the whispered name smoulders: charcoal letters with a thin deep-red ember rim, out of smoke and back into smoke */
+.fluister .l { display: inline-block; font: 700 clamp(70px, 8.6vw, 190px)/1 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: #120305;
+  -webkit-text-stroke: 1.5px rgba(196,32,30,.8); text-shadow: 0 0 14px rgba(150,12,16,.75), 0 0 46px rgba(110,0,8,.55);
+  filter: blur(16px); opacity: 0; transform: translateY(14px) scale(1.12);
+  animation: uitRook 1.8s cubic-bezier(.25,.8,.3,1) var(--in) forwards, smeul 1.6s ease-in-out calc(var(--in) + 1.8s) infinite alternate, weg 1.8s ease-in var(--uit) forwards; }
+@keyframes uitRook { 100% { opacity: .95; transform: none; filter: blur(0); } }
+@keyframes smeul { to { -webkit-text-stroke-color: rgba(230,60,40,.95); text-shadow: 0 0 18px rgba(190,24,20,.9), 0 0 60px rgba(130,0,10,.6); } }
+@keyframes weg { from { opacity: .95; transform: none; filter: blur(0); }
+  to { opacity: 0; transform: translate(var(--dx), -90px) rotate(var(--r)) scale(1.15); filter: blur(18px); } }
+.fluister .sintel { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #9c2416; box-shadow: 0 0 6px 1px rgba(160,24,12,.6); animation: sintel 2.6s ease-out forwards; }
 @keyframes sintel { from { opacity: 1; } to { transform: translate(var(--dx), var(--dy)) scale(.3); opacity: 0; } }
 .uitleg.vals .uitleg-kaart.glitch { animation: glitch .7s steps(2) both; }
 @keyframes glitch { 20% { filter: hue-rotate(-30deg) saturate(3) brightness(1.4); translate: 6px 0; } 40% { filter: invert(.15) saturate(4); translate: -8px 2px; } 60% { filter: brightness(.4); translate: 3px -2px; } 80% { filter: saturate(3) hue-rotate(-15deg); translate: -2px 0; } }
@@ -844,6 +863,11 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <div class="g-titel" id="g-titel"><span class="carved" id="g-titel-nr"></span><h2 class="carved" id="g-titel-naam"></h2></div>
     <div class="g-kaart" id="g-kaart"><div class="g-inhoud" id="g-inhoud"></div><div class="g-stempel carved" id="g-stempel"></div></div>
   </div>
+  <div class="dageraad" id="dageraad" aria-live="polite">
+    <img src="a/fin/dageraad.webp" alt="">
+    <div class="d-tekst"><h1 class="carved">De Schaduwkoning is verslagen</h1><p id="d-zin"></p><div class="d-code carved" id="d-code"></div></div>
+  </div>
+  <div class="witlicht" id="witlicht"></div>
   <div class="zaal" id="zaal" aria-live="polite">
     <div class="z-beeld" id="z-beeld">
       <img class="z-vloer" src="a/zaal/vloer.webp" alt="">
@@ -925,13 +949,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=45"></script>
-<script src="a/spel.js?v=45"></script>
-<script src="a/wachters.js?v=45"></script>
-<script src="a/firebase-config.js?v=45"></script>
-<script src="a/koppeling.js?v=45"></script>
-<script src="a/rollen.js?v=45"></script>
-<script src="a/tafel.js?v=45"></script>
+<script src="a/events.js?v=46"></script>
+<script src="a/spel.js?v=46"></script>
+<script src="a/wachters.js?v=46"></script>
+<script src="a/firebase-config.js?v=46"></script>
+<script src="a/koppeling.js?v=46"></script>
+<script src="a/rollen.js?v=46"></script>
+<script src="a/tafel.js?v=46"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1560,6 +1584,7 @@ function paneel(naam) {
   }
   else { p.hidden = false; requestAnimationFrame(() => p.classList.add("aan")); }
   stage.classList.toggle("in-kist", naam === "kist"); if (naam === "kist" && !kistBezig) { kistMaat(); tekenKistzaal(); }
+  stage.classList.toggle("in-einde", naam === "einde"); if (naam === "einde") tekenEinde();
   stage.classList.toggle("in-finale", naam === "finale"); if (naam === "finale" && wasFinale !== "finale") finaleIn(); if (wasFinale === "finale" && naam !== "finale") finaleUit(naam);
   clearInterval(tafelRonde); stage.classList.toggle("in-zaal", naam === "tafel"); if (naam === "tafel") tekenTvTafel(); else zaalVuurStop();
   if (naam === "tocht") tekenTocht(); if (naam === "kist") tekenKist(); if (naam === "ere") tekenEre();
@@ -1873,7 +1898,7 @@ function cijferValt(i) {
 function deurOpen() { // all four digits: the door shakes and gives way, then the victory
   gStop(); gCam(""); const g = $("gewelf"); g.classList.add("beeft"); speel("fin/sfx-gerommel", 1);
   gT(1800, () => { g.classList.add("licht"); speel("donder-hard", .9); });
-  gT(4600, () => { g.classList.remove("beeft"); gTimers = []; overwinning(); });
+  gT(3400, () => { g.classList.remove("beeft"); gTimers = []; overwinning(); });
 }
 function hintVoor() { // costs one relic, for the current step
   const a = S.aktes[fin.nu], stap = fin.voortgang[a.zegel]?.length ?? 0; if (fin.hint[a.zegel] === stap) return;
@@ -1882,11 +1907,30 @@ function hintVoor() { // costs one relic, for the current step
   speel("fin/sfx-hint", .8); flits("goud"); gZeg("hint", () => {}, 4000); if ($("g-kaart").classList.contains("aan")) kaartWissel();
 }
 let zegeStem = null;
+// The light swallows everything (the Shadow King's last scream inside it), then fades into dawn over Bouillon.
+// Godfried sends them to the real chest (code shown); regie "Volgende stap" brings the envelope with the certificates.
 function overwinning() {
-  paneel("einde"); stage.classList.add("zege"); halMuziek.vol(0, 2000); schaduwMuziek?.stop(1000);
-  speel("donder", 1); bliksem(0); setTimeout(() => bliksem(0), 400);
-  zegeStem = speel("einde-schaduw", 1);
-  zegeStem.addEventListener("ended", () => setTimeout(() => { speel("einde-godfried", 1); halMuziek.vol(.35, 4000); }, 1200));
+  gStop(); fin.einde = 1; meld();
+  const w = $("witlicht"); w.classList.remove("weg"); w.classList.add("aan");
+  halMuziek.vol(0, 2000); schaduwMuziek?.stop(1000); speel("donder-hard", .8);
+  $("dageraad").classList.add("stil"); $("d-code").classList.remove("aan");
+  zegeStem = stemMet("einde-schaduw", 1, () => setTimeout(() => {
+    zegeStem = stemMet("fin/einde-kist", 1, () => { $("d-zin").textContent = "Open de kist met de vier cijfers."; $("d-code").classList.add("aan"); }, 40000);
+  }, 1800), 16000);
+  setTimeout(() => { paneel("einde"); stage.classList.add("zege"); $("d-zin").textContent = ""; }, 2900);
+  setTimeout(() => { w.classList.remove("aan"); w.classList.add("weg"); halMuziek.vol(.3, 8000); }, 4200);
+  setTimeout(() => $("dageraad").classList.remove("stil"), 9000);
+}
+function tekenEinde() {
+  $("d-code").innerHTML = S.slotcode.map((c) => "<span>" + c + "</span>").join("");
+  if (fin.einde === 2) { $("d-zin").textContent = "Open de envelop op de schoorsteen."; $("d-code").classList.remove("aan"); }
+  else if (!$("dageraad").classList.contains("stil")) { $("d-zin").textContent = "Open de kist met de vier cijfers."; $("d-code").classList.add("aan"); }
+}
+function envelop() { // after the gifts: the certificates
+  if (fin.einde === 2) return; fin.einde = 2; meld(); if (zegeStem) fade(zegeStem, 0, 400);
+  $("d-code").classList.remove("aan"); $("d-zin").style.opacity = 0;
+  setTimeout(() => { $("d-zin").textContent = "Open de envelop op de schoorsteen."; $("d-zin").style.opacity = ""; }, 1300);
+  zegeStem = stemMet("fin/einde-envelop", 1, null, 20000);
 }
 function tekenEre() {
   const t = S.titels[ere.i];
@@ -2065,10 +2109,10 @@ const CHAOS_RAW = {
     speel(`chaos-naam-${n.toLowerCase()}`, 1); flikker(3000); speel("knars", .35, 1.3);
     // letter by letter the name burns in, holds, then blows away upward as embers
     const fl = $("fluister"), uit = 3.6;
-    fl.innerHTML = `<div class="woord">${[...n].map((l, i) => `<span class="l" style="--in:${(i * .14 + Math.random() * .08).toFixed(2)}s;--uit:${(uit + i * .09).toFixed(2)}s;--dx:${Math.round((Math.random() - .5) * 120)}px;--r:${Math.round((Math.random() - .5) * 50)}deg">${l}</span>`).join("")}</div>`;
+    fl.innerHTML = `<div class="woord">${[...n].map((l, i) => `<span class="l" style="--in:${(i * .18 + Math.random() * .1).toFixed(2)}s;--uit:${(uit + i * .09).toFixed(2)}s;--dx:${Math.round((Math.random() - .5) * 80)}px;--r:${Math.round((Math.random() - .5) * 20)}deg">${l}</span>`).join("")}</div>`;
     fl.classList.add("aan");
     setTimeout(() => { const w = fl.querySelector(".woord").getBoundingClientRect(), s = fl.getBoundingClientRect();
-      for (let i = 0; i < 46; i++) { const v = document.createElement("span"); v.className = "sintel";
+      for (let i = 0; i < 18; i++) { const v = document.createElement("span"); v.className = "sintel";
         Object.assign(v.style, { left: `${w.left - s.left + Math.random() * w.width}px`, top: `${w.top - s.top + w.height * (.2 + Math.random() * .7)}px`, animationDelay: `${Math.random() * .8}s` });
         v.style.setProperty("--dx", `${Math.round((Math.random() - .5) * 260)}px`); v.style.setProperty("--dy", `${-120 - Math.round(Math.random() * 320)}px`); fl.appendChild(v); }
     }, uit * 1000);
@@ -2194,7 +2238,7 @@ function meld() {
 const OPDRACHTEN = {
   ...CHAOS,
   start: () => { if (binnen === null && $("verhaal").hidden) { location.hash = "nu"; startVerhaal(); } },
-  verder: () => paneelNu === "finale" ? gSla() : verderIntro(),
+  verder: () => paneelNu === "finale" ? gSla() : paneelNu === "einde" ? envelop() : verderIntro(),
   schaduw: () => schaduw(), d20: () => werpD20(), goed: () => uitslag(true), fout: () => uitslag(false), hal: () => hal(),
   fiche: (o) => fiche(o.id, o.n > 0 ? 1 : -1),
   "events-opnieuw": () => { gebruikt.clear(); bewaar(); },

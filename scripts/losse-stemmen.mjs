@@ -73,6 +73,9 @@ const REGELS = [
   ["fin/dicht", "Enceladus", SCHADUW, "Dit Zegel is te zwak… Het geeft zijn geheim niet prijs. Niet zonder een laatste beproeving."],
   ["fin/open", "Charon", GODFRIED, "Het Zegel is sterk genoeg. Het geeft zijn geheim prijs."],
   ["fin/hint", "Charon", GODFRIED, "Een reliek ontwaakt. Luister naar wat het fluistert."],
+  // Het einde: eerst de echte kist (de cadeaus), op teken van de regie de envelop op de schoorsteen (de oorkondes).
+  ["fin/einde-kist", "Charon", GODFRIED, "Het is volbracht. De Zegels zijn vernieuwd, en de Schaduwkoning slaapt weer onder mijn kasteel. Niet door één held… maar door een broederschap die voor elkaar zorgde. Wachters van Bouillon, ik ben trots op jullie. De vier cijfers zijn van jullie. Open nu de kist… wat daarin ligt, is voor jullie allen."],
+  ["fin/einde-envelop", "Charon", GODFRIED, "Nog één ding, Wachters. Op de schoorsteen wacht al het hele weekend een envelop. Open hem nu. Daarin staan jullie namen… voor altijd geschreven in de Kronieken."],
 ];
 
 async function tts(text, voice, prompt) {
