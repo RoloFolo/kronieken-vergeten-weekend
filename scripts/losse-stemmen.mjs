@@ -51,6 +51,28 @@ const REGELS = [
   ["chaos-3", "Enceladus", SCHADUW, "[whispering] Jullie Zegels… lekken."],
   ["chaos-4", "Enceladus", SCHADUW, "Ik hoorde dat. Ik hoor… alles."],
   ["chaos-5", "Enceladus", SCHADUW, "[whispering] Kijk achter je."],
+  // De finale: het laatste gewelf. De cijfers volgen spel.js slotcode (7, 6, 9, 8): pas die regels aan als de code verandert.
+  ["fin/schaduw", "Enceladus", SCHADUW, "Dus… jullie zijn tot hier gekomen. Tot aan mijn laatste slot. Vier cijfers houden mij nog gevangen. Vier. [whispering] Laten we eens zien… wat jullie werkelijk weten."],
+  ["fin/godfried", "Charon", GODFRIED, "Laat je niet bang maken, Wachters. Elk Zegel bewaart één cijfer van dit slot. Volbreng zijn akte, en het cijfer valt op zijn plaats. Vier cijfers… en de Schaduwkoning is opnieuw gebonden."],
+  ["fin/akte-1", "Charon", GODFRIED, "Akte één. Het Vuur der Herinnering. Het vuur onthoudt wie jullie zijn. Het toont jullie herinneringen… herken de Wachter over wie het spreekt."],
+  ["fin/akte-2", "Charon", GODFRIED, "Akte twee. Het Feestmaal. De Hoorn heeft alles gezien wat jullie dit weekend deden. Bewijs dat jullie het zelf ook nog weten."],
+  ["fin/akte-3", "Charon", GODFRIED, "Akte drie. De Eed der Broeders. Ieder van jullie draagt een stuk van de eed. Het staat nu in jouw persoonlijke boodschap van mij. Alleen samen, in de juiste volgorde, spreken jullie hem uit."],
+  ["fin/akte-4", "Charon", GODFRIED, "Akte vier. De Verrader. Het hele weekend liep er een verrader tussen jullie. Niet één, maar telkens een ander. Wijs ze aan."],
+  ["fin/goed-1", "Charon", GODFRIED, "Juist. Het vuur herkent de waarheid."],
+  ["fin/goed-2", "Charon", GODFRIED, "Zo is het, Wachters!"],
+  ["fin/goed-3", "Charon", GODFRIED, "Goed gesproken. De Schaduw deinst terug."],
+  ["fin/goed-4", "Charon", GODFRIED, "Ja! Dat is het."],
+  ["fin/fout-1", "Enceladus", SCHADUW, "Fout… Ik proef jullie twijfel."],
+  ["fin/fout-2", "Enceladus", SCHADUW, "[laughing] Nee… nee, nee, nee."],
+  ["fin/fout-3", "Enceladus", SCHADUW, "Jullie geheugen laat jullie in de steek, Wachters."],
+  ["fin/fout-4", "Enceladus", SCHADUW, "Nog zo'n fout… en ik word sterker."],
+  ["fin/cijfer-1", "Charon", GODFRIED, "Het eerste cijfer valt in het slot. Zeven!"],
+  ["fin/cijfer-2", "Charon", GODFRIED, "Het tweede cijfer. Zes!"],
+  ["fin/cijfer-3", "Charon", GODFRIED, "Het derde cijfer. Negen!"],
+  ["fin/cijfer-4", "Charon", GODFRIED, "Het vierde… en laatste cijfer. Acht!"],
+  ["fin/dicht", "Enceladus", SCHADUW, "Dit Zegel is te zwak… Het geeft zijn geheim niet prijs. Niet zonder een laatste beproeving."],
+  ["fin/open", "Charon", GODFRIED, "Het Zegel is sterk genoeg. Het geeft zijn geheim prijs."],
+  ["fin/hint", "Charon", GODFRIED, "Een reliek ontwaakt. Luister naar wat het fluistert."],
 ];
 
 async function tts(text, voice, prompt) {
