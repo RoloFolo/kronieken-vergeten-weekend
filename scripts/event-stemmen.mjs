@@ -1,5 +1,5 @@
 // Spreekt elke Schaduw-event in met de stem van de Schaduwkoning (Enceladus, oorspronkelijke trage regie).
-// Leest app/concept/a/events.js; slaat al bestaande opnames over.
+// Leest docs/a/events.js; slaat al bestaande opnames over.
 //   node --env-file=C:/Users/rolan/Verno/verno-app/.env.local scripts/event-stemmen.mjs
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -7,11 +7,11 @@ import vm from "node:vm";
 
 const SLEUTEL = process.env.REPLICATE_API_TOKEN;
 const MODEL = "google/gemini-3.1-flash-tts";
-const UIT = "app/concept/a/events";
+const UIT = "docs/a/events";
 const FF = "C:/Users/rolan/AppData/Local/Temp/claude/C--Users-rolan-Vriendenweekend/1549c95c-5790-4407-b7c8-1ee5e18148e9/scratchpad/build/node_modules/ffmpeg-static/ffmpeg.exe";
 const REGIE = `You are an ancient demon king, imprisoned for centuries beneath a castle in the Ardennes, speaking Dutch. Very slow, very low, cold and amused, as if savouring every word. Drawn-out vowels, long silences between sentences, a sinister near-whisper that rises in menace on the last line.`;
 
-const ctx = { window: {} }; vm.runInNewContext(readFileSync("app/concept/a/events.js", "utf8"), ctx);
+const ctx = { window: {} }; vm.runInNewContext(readFileSync("docs/a/events.js", "utf8"), ctx);
 const EVENTS = ctx.window.SCHADUW_EVENTS;
 mkdirSync(UIT, { recursive: true });
 

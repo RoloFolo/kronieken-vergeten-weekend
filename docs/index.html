@@ -439,7 +439,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 @keyframes halo { 50% { opacity: .65; transform: scale(1.08); } }
 @keyframes flits { 0% { opacity: 1; transform: scale(.6); filter: blur(2px) brightness(2.2); } 30% { opacity: 1; transform: scale(1.45); } 100% { } }
 @keyframes zvonk { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
-.dronk { position: relative; z-index: 2; width: min(60vw, 1200px); display: grid; justify-items: center; gap: 2.6vh; text-align: center; padding: 3.2vh 3vw 3.6vh; background: linear-gradient(180deg, rgba(30,10,12,.9), rgba(10,5,6,.94)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 20px 60px #000; }
+.dronk { position: relative; z-index: 2; width: fit-content; min-width: min(34vw, 640px); max-width: min(60vw, 1200px); display: grid; justify-items: center; gap: 2.6vh; text-align: center; padding: 3.2vh 3vw 3.6vh; background: linear-gradient(180deg, rgba(30,10,12,.9), rgba(10,5,6,.94)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 20px 60px #000; }
 .dronk-kop { font-size: clamp(14px, 1.3vw, 26px); letter-spacing: .3em; }
 .dronk-regel { min-height: 1.2em; font-size: clamp(28px, 3.4vw, 72px); line-height: 1.15; max-width: 20ch; text-wrap: balance; opacity: 0; transform: scale(.94); transition: opacity .7s, transform .9s cubic-bezier(.2,1.2,.3,1); }
 .dronk-regel.aan { opacity: 1; transform: none; }
@@ -787,13 +787,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=28"></script>
-<script src="a/spel.js?v=28"></script>
-<script src="a/wachters.js?v=28"></script>
-<script src="a/firebase-config.js?v=28"></script>
-<script src="a/koppeling.js?v=28"></script>
-<script src="a/rollen.js?v=28"></script>
-<script src="a/tafel.js?v=28"></script>
+<script src="a/events.js?v=29"></script>
+<script src="a/spel.js?v=29"></script>
+<script src="a/wachters.js?v=29"></script>
+<script src="a/firebase-config.js?v=29"></script>
+<script src="a/koppeling.js?v=29"></script>
+<script src="a/rollen.js?v=29"></script>
+<script src="a/tafel.js?v=29"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1247,7 +1247,7 @@ function dronkRegel(i) {
 }
 function proost() {
   if (dronkKlaar) return; dronkKlaar = true; dronkActief = false;
-  speel("glazen", 1); setTimeout(() => speel("glazen", .8, 1.1), 180); setTimeout(() => speel("gejuich", .9), 350);
+  speel("proost-klink", 1); setTimeout(() => speel("gejuich", .9), 450);
   $("verhaal").classList.add("goud"); speel("klok", .7, 1.2);
   setTimeout(() => {
     $("verhaal").classList.add("weg"); setTimeout(() => { $("verhaal").hidden = true; $("verhaal-bg").pause(); $("verhaal").classList.remove("goud"); }, 1700);
