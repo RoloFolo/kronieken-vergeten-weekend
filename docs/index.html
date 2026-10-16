@@ -148,6 +148,8 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .vessel.gain .vglow { animation: gainglow 1s ease-out; }
 @keyframes gainglow { 30% { opacity: 1; filter: blur(8px) brightness(1.8); } }
 .vessel.loss { animation: shake .7s ease-in-out; }
+.vessel.hoop .liquid { transition: height 4.2s cubic-bezier(.35,.05,.35,1); }
+.vessel.leeg-hoop .liquid { transition: height 1.2s cubic-bezier(.6,0,.9,.4); }
 .vessel.loss .liquid { filter: brightness(.6); }
 @keyframes shake { 15% { transform: translateX(-7px) rotate(-1.5deg); } 35% { transform: translateX(6px) rotate(1deg); } 55% { transform: translateX(-4px); } 75% { transform: translateX(3px); } }
 .fiche { inset: auto; position: absolute; left: 50%; top: 19%; width: 13%; aspect-ratio: 1; margin-left: -6.5%; border-radius: 50%; z-index: 3;
@@ -339,11 +341,14 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 @keyframes duisterIn { from { opacity: 0; } }
 @keyframes duisterUit { to { opacity: 0; } }
 @keyframes hartgloed { 0%, 100% { filter: brightness(.45) drop-shadow(0 0 10px rgba(226,50,60,.4)); } 12% { filter: brightness(1.5) drop-shadow(0 0 40px rgba(255,30,30,1)); } 30% { filter: brightness(.8) drop-shadow(0 0 18px rgba(226,50,60,.6)); } 42% { filter: brightness(1.3) drop-shadow(0 0 32px rgba(255,30,30,.9)); } }
-.mistbank { position: absolute; inset: 0; z-index: 22; pointer-events: none; opacity: 0; transition: opacity 5s ease;
-  background: radial-gradient(ellipse 55% 28% at 18% 88%, rgba(120,88,92,.6), transparent 70%), radial-gradient(ellipse 65% 32% at 78% 84%, rgba(110,78,84,.55), transparent 70%), linear-gradient(to top, rgba(55,36,40,.75), transparent 60%);
-  background-size: 200% 100%, 200% 100%, 100% 100%; animation: mistdrift 40s linear infinite; }
+/* fog bank: soft blobs that fade out inside their own tile (no seams), two layers drifting at different speeds */
+.mistbank { position: absolute; inset: 0; z-index: 22; pointer-events: none; opacity: 0; transition: opacity 5s ease; overflow: hidden;
+  background: linear-gradient(to top, rgba(55,36,40,.7), rgba(55,36,40,.25) 30%, transparent 55%); }
+.mistbank::before, .mistbank::after { content: ""; position: absolute; left: 0; width: 200%; background-repeat: repeat-x; }
+.mistbank::before { bottom: -8%; height: 55%; background-image: radial-gradient(closest-side, rgba(125,92,98,.6), rgba(125,92,98,.25) 55%, transparent); background-size: 25% 100%; animation: mistschuif 70s linear infinite; }
+.mistbank::after { bottom: 6%; height: 42%; background-image: radial-gradient(closest-side, rgba(105,76,82,.45), rgba(105,76,82,.15) 60%, transparent); background-size: 16.6667% 100%; background-position: 8% 0; animation: mistschuif 45s linear infinite reverse; }
 .mistbank.aan { opacity: 1; }
-@keyframes mistdrift { to { background-position: 200% 0, -200% 0, 0 0; } }
+@keyframes mistschuif { to { transform: translateX(-50%); } }
 .fluister { position: absolute; inset: 0; z-index: 41; display: grid; place-items: center; pointer-events: none; opacity: 0;
   font: italic 400 clamp(64px, 8vw, 180px)/1 var(--display); color: rgba(255,80,70,.85); text-shadow: 0 0 40px rgba(255,30,20,.9); }
 .fluister.aan { animation: fluister 5s ease-in-out both; }
@@ -557,11 +562,11 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=8"></script>
-<script src="a/spel.js?v=8"></script>
-<script src="a/wachters.js?v=8"></script>
-<script src="a/firebase-config.js?v=8"></script>
-<script src="a/koppeling.js?v=8"></script>
+<script src="a/events.js?v=10"></script>
+<script src="a/spel.js?v=10"></script>
+<script src="a/wachters.js?v=10"></script>
+<script src="a/firebase-config.js?v=10"></script>
+<script src="a/koppeling.js?v=10"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1306,7 +1311,15 @@ const CHAOS_RAW = {
   "chaos-raaf": () => { if (!mag("raaf", 12)) return; speel("kraai", .9, .85); setTimeout(() => speel("kraai", .8, .8), 420); const r = $("raven"); r.classList.remove("schrik"); void r.offsetWidth; r.classList.add("schrik"); },
   "chaos-valse-hoop": (o) => { // a vial fills up… and drains away again
     const id = o.id || "vlam"; if (binnen === null || paneelNu || bevroren(id) || !mag("hoop", 90)) return;
-    fiche(id, 1); setTimeout(() => { fiche(id, -1); speel("chaos-2", .9); }, 4500);
+    // only the picture rises (no real fiches, so the finale log stays clean): slowly to the brim, a moment of glory, then it drains
+    const v = $(`vial-${id}`), m = v.parentElement.querySelector(".medal");
+    v.classList.add("hoop"); v.style.setProperty("--f", ".97"); m.style.setProperty("--f", ".97");
+    for (let i = 0; i < 6; i++) setTimeout(() => speel("klok", .35, 1.15 + i * .12), i * 650);
+    setTimeout(() => { v.classList.remove("gain"); void v.offsetWidth; v.classList.add("gain"); brand(id); speel("klok", .7, 1.3); }, 4300);
+    setTimeout(() => {
+      v.classList.remove("hoop", "loss"); v.classList.add("leeg-hoop"); void v.offsetWidth; v.classList.add("loss");
+      speel("chaos-2", .9); teken(); setTimeout(() => v.classList.remove("leeg-hoop"), 1600);
+    }, 7600);
   },
   "chaos-steel": (o) => {
     chaosDag(); if (binnen === null || paneelNu || chaos.kaarten < 1) return;
