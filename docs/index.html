@@ -357,9 +357,11 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .vloek-teken b { display: block; font: 700 clamp(11px, .8vw, 17px)/1.2 var(--carved); letter-spacing: .25em; text-transform: uppercase; color: #ff6b5f; font-style: normal; margin-bottom: .4vh; }
 .vessel.bevroren .liquid { filter: hue-rotate(190deg) saturate(.55) brightness(1.25); }
 .vessel.bevroren .vglow { background: radial-gradient(ellipse, rgba(170,220,255,.5), transparent 70%) !important; }
-.vessel.bevroren::after { content: ""; position: absolute; left: 27%; right: 27%; top: 15%; bottom: 18%; border-radius: 30% 30% 14% 14%; pointer-events: none;
-  background: linear-gradient(160deg, rgba(225,242,255,.45), rgba(150,200,255,.12) 38%, rgba(225,242,255,.38) 70%, rgba(170,215,255,.2)); box-shadow: inset 0 0 28px rgba(210,235,255,.8), 0 0 34px rgba(140,200,255,.65); mix-blend-mode: screen; animation: ijsglans 3.2s ease-in-out infinite alternate; }
-@keyframes ijsglans { to { opacity: .65; } }
+.vessel .glass { transition: opacity 2.5s ease; }
+.vessel .glass.ijs { opacity: 0; }
+.vessel.bevroren .glass.ijs { opacity: 1; animation: ijsglans 3.2s ease-in-out 2.5s infinite alternate; }
+.vessel.bevroren .glass:not(.ijs) { opacity: 0; }
+@keyframes ijsglans { to { filter: brightness(1.15) drop-shadow(0 0 18px rgba(150,205,255,.55)); } }
 .vessel.ijsstoot { animation: shake .45s ease-in-out; }
 .vessel[data-ijs]::before { content: attr(data-ijs); position: absolute; inset: auto; bottom: 100%; left: 50%; translate: -50% -.6vh; z-index: 5; white-space: nowrap; font: 700 clamp(11px, .8vw, 17px)/1 var(--carved); letter-spacing: .14em; color: #bfe3ff; text-shadow: 0 0 10px rgba(120,190,255,.9); }
 .overname { position: absolute; inset: 0; z-index: 60; display: grid; place-items: center; background: radial-gradient(ellipse at 50% 45%, rgba(120,0,10,.6), #000 72%); animation: duisterIn 2s ease-out both; }
@@ -553,11 +555,11 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=5"></script>
-<script src="a/spel.js?v=5"></script>
-<script src="a/wachters.js?v=5"></script>
-<script src="a/firebase-config.js?v=5"></script>
-<script src="a/koppeling.js?v=5"></script>
+<script src="a/events.js?v=6"></script>
+<script src="a/spel.js?v=6"></script>
+<script src="a/wachters.js?v=6"></script>
+<script src="a/firebase-config.js?v=6"></script>
+<script src="a/koppeling.js?v=6"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -796,7 +798,7 @@ setInterval(() => { if ($("raven").hidden) return; raafBeeld = (raafBeeld + 1) %
 /* ================= seals ================= */
 for (const [n, z] of ZEGELS.entries()) {
   const el = document.createElement("div"); el.className = "seal";
-  el.innerHTML = `<div class="vessel" id="vial-${z.id}"><div class="vglow"></div><div class="inner"><div class="liquid"></div></div><img class="glass" src="a/ampul.webp" alt=""></div>
+  el.innerHTML = `<div class="vessel" id="vial-${z.id}"><div class="vglow"></div><div class="inner"><div class="liquid"></div></div><img class="glass" src="a/ampul.webp" alt=""><img class="glass ijs" src="a/ampul-ijs.webp" alt=""></div>
     <div class="medal" style="--dl:${-n * 1.5}s"><img src="${z.medaille}" alt=""></div>
     <div class="plate"><div class="seal-name carved">${z.naam.replace(" van ", "<br>van ")}</div></div>`;
   $("seals").appendChild(el);
