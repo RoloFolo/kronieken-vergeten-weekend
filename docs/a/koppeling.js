@@ -78,21 +78,45 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
   const email = a.currentUser.email.toLowerCase();
   window.Koppeling.ik = { email, naam: naamVan(email), admin: isAdmin(email) };
   const d = db.getDatabase(app);
-  if (alleenAdmin) db.onValue(db.ref(d, "stand"), (s) => opStand?.(s.val() || {}));
-  if (rol === "tv") db.onChildAdded(db.ref(d, "opdrachten"), (s) => { const o = s.val(); db.remove(s.ref); if (o && Date.now() - (o.t || 0) < 60000) opOpdracht?.(o); });
-  if (rol === "wachter") db.onValue(db.ref(d, "publiek"), (s) => opPubliek?.(s.val() || {}));
-  if (rol === "wachter" || rol === "chaos") db.onValue(db.ref(d, `verraad/${sleutel(email)}`), (s) => { opVerraad?.(s.val()); if (rol === "chaos") opStand?.(s.val() || {}); }, () => opVerraad?.(null));
+  // The login token lives one hour. When a phone or laptop sleeps past that, the database cancels every
+  // listener that needs the login and refuses writes, while the page still looks connected. So: keep the
+  // token fresh, listen again after a cancel, retry a refused write once with a new token, and report it.
+  const status = { online: false, kapot: 0, fout: 0 };
+  const meld = () => window.dispatchEvent(new CustomEvent("koppeling-status", { detail: { ...status } }));
+  const vers = (forceer) => a.currentUser ? a.currentUser.getIdToken(forceer).catch(() => null) : Promise.resolve(null);
+  setInterval(() => vers(false), 4 * 60000);
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) vers(false); });
+  auth.onAuthStateChanged(a, (u) => { if (!u) location.reload(); });
+  db.onValue(db.ref(d, ".info/connected"), (s) => { status.online = !!s.val(); if (status.online) vers(false); meld(); });
+  const luister = (soort, pad, op) => {
+    let poging = 0, weg = false;
+    const start = () => soort(db.ref(d, pad), (s) => { if (weg) { weg = false; status.kapot--; meld(); } poging = 0; op(s); }, async () => {
+      if (!weg) { weg = true; status.kapot++; meld(); }
+      await vers(true);
+      setTimeout(start, Math.min(30000, 1500 * 2 ** poging++));
+    });
+    start();
+  };
+  const metToken = async (doe) => {
+    try { await doe(); status.fout = 0; meld(); return true; }
+    catch { await vers(true); try { await doe(); status.fout = 0; meld(); return true; } catch { status.fout++; meld(); return false; } }
+  };
+  if (alleenAdmin) luister(db.onValue, "stand", (s) => opStand?.(s.val() || {}));
+  if (rol === "tv") luister(db.onChildAdded, "opdrachten", (s) => { const o = s.val(); db.remove(s.ref).catch(() => {}); if (o && Date.now() - (o.t || 0) < 60000) opOpdracht?.(o); });
+  if (rol === "wachter") luister(db.onValue, "publiek", (s) => opPubliek?.(s.val() || {}));
+  // a cancelled listener says nothing about the role: never treat it as "no longer the traitor"
+  if (rol === "wachter" || rol === "chaos") luister(db.onValue, `verraad/${sleutel(email)}`, (s) => { opVerraad?.(s.val()); if (rol === "chaos") opStand?.(s.val() || {}); });
   return {
     soort: "firebase",
     meldStand: (stand) => {
-      const schrijf = (pad, w) => db.set(db.ref(d, pad), w).catch(() => {});
+      const schrijf = (pad, w) => metToken(() => db.set(db.ref(d, pad), w));
       schrijf("stand", JSON.parse(JSON.stringify(stand)));
       if (stand.publiek) schrijf("publiek", stand.publiek);
       // only the current traitor gets a node, with just what the traitor panel needs
       const v = stand.verrader;
       schrijf("verraad", v ? { [sleutel(emailVan(v.naam))]: { naam: v.naam, sinds: v.sinds, tot: v.tot || null, fiches: stand.fiches, scherm: stand.scherm, chaos: stand.chaos || null } } : null);
     },
-    stuur: (o) => db.push(db.ref(d, "opdrachten"), { ...o, van: email, t: Date.now() }).catch(() => {}),
+    stuur: (o) => metToken(() => db.push(db.ref(d, "opdrachten"), { ...o, van: email, t: Date.now() })),
     uitloggen: () => auth.signOut(a),
   };
 }
@@ -116,7 +140,7 @@ window.Koppeling = {
     return this.verbinding;
   },
   meldStand(s) { this.verbinding?.meldStand(s); },
-  stuur(o) { this.verbinding?.stuur(o); },
+  stuur(o) { return this.verbinding?.stuur(o); },
   uitloggen() { return this.verbinding?.uitloggen?.(); },
 };
 window.dispatchEvent(new Event("koppeling-klaar"));

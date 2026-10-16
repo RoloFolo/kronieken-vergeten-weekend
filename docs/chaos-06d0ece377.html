@@ -114,9 +114,9 @@ button[data-rust]:not([data-rust=""])::after { content: "rust " attr(data-rust);
 </main>
 <div class="melding" id="melding" role="status"></div>
 
-<script src="a/wachters.js?v=39"></script>
-<script src="a/firebase-config.js?v=39"></script>
-<script src="a/koppeling.js?v=39"></script>
+<script src="a/wachters.js?v=40"></script>
+<script src="a/firebase-config.js?v=40"></script>
+<script src="a/koppeling.js?v=40"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -175,7 +175,7 @@ function teken() {
   document.querySelectorAll("#naar-zegels button").forEach((b) => (b.disabled = b.dataset.id === gekozen));
 }
 setInterval(teken, 1000);
-const stuur = (cmd, extra = {}, tekst) => { Koppeling.stuur({ cmd, ...(FIRE ? {} : { token: TOKEN }), ...extra }); if (tekst) melding(tekst); };
+const stuur = async (cmd, extra = {}, tekst) => { const ok = await Koppeling.stuur({ cmd, ...(FIRE ? {} : { token: TOKEN }), ...extra }); if (ok === false) melding("Dat kwam niet aan: de verbinding hapert. Probeer het zo opnieuw."); else if (tekst) melding(tekst); };
 $("c-omen").onclick = () => stuur("chaos-omen", {}, "De Schaduw fluistert…");
 $("c-naam").onclick = () => stuur("chaos-naam", { naam: doel }, `Je fluistert ${doel}…`);
 $("c-duister").onclick = () => stuur("chaos-duister", {}, "Het licht dooft.");

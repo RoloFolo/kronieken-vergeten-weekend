@@ -211,12 +211,12 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=39"></script>
-<script src="a/spel.js?v=39"></script>
-<script src="a/wachters.js?v=39"></script>
-<script src="a/rollen.js?v=39"></script>
-<script src="a/firebase-config.js?v=39"></script>
-<script src="a/koppeling.js?v=39"></script>
+<script src="a/events.js?v=40"></script>
+<script src="a/spel.js?v=40"></script>
+<script src="a/wachters.js?v=40"></script>
+<script src="a/rollen.js?v=40"></script>
+<script src="a/firebase-config.js?v=40"></script>
+<script src="a/koppeling.js?v=40"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -379,7 +379,15 @@ function toon(s) {
   $("teller").textContent = `Nog ${over} van de ${totaal} events over.`;
 }
 
-Koppeling.start({ rol: "regie", opStand: (s) => { $("punt").classList.add("aan"); $("verbinding").textContent = "Verbonden"; toon(s); } })
+// the dot shows the real line to the database: green only when online, listening and the last button got through
+let kopStatus = { online: true, kapot: 0, fout: 0 }, kreegStand = false;
+function tekenVerbinding() {
+  const k = kopStatus, goed = kreegStand && k.online && !k.kapot && !k.fout;
+  $("punt").classList.toggle("aan", goed);
+  $("verbinding").textContent = !kreegStand ? "Verbinden met de tv…" : !k.online ? "Geen internet: knoppen wachten tot de verbinding terug is" : k.kapot ? "Verbinding herstellen…" : k.fout ? "Laatste knop kwam niet aan. Probeer opnieuw." : "Verbonden";
+}
+addEventListener("koppeling-status", (e) => { kopStatus = e.detail; tekenVerbinding(); });
+Koppeling.start({ rol: "regie", opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; });
 
 $("b-start").onclick = () => stuur({ cmd: "start" });
