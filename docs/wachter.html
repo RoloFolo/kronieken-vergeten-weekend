@@ -139,11 +139,11 @@ main { width: min(560px, 100%); margin: 0 auto; padding: max(18px, env(safe-area
   <p class="slot">De Kronieken van het Vergeten Weekend · Bouillon<span id="uit" class="verborgen"><br><button type="button" class="uitlog" id="b-uit">Niet jij? Log uit</button></span></p>
 </main>
 
-<script src="a/wachters.js?v=2"></script>
-<script src="a/spel.js?v=2"></script>
-<script src="a/rollen.js?v=2"></script>
-<script src="a/firebase-config.js?v=2"></script>
-<script src="a/koppeling.js?v=2"></script>
+<script src="a/wachters.js?v=3"></script>
+<script src="a/spel.js?v=3"></script>
+<script src="a/rollen.js?v=3"></script>
+<script src="a/firebase-config.js?v=3"></script>
+<script src="a/koppeling.js?v=3"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const START = new Date("2026-11-13T12:00:00+01:00");
@@ -152,6 +152,8 @@ const ZEGEL = { vlam: "Vlam van Waakzaamheid", hoorn: "Hoorn van Overvloed", sch
 // Without Firebase (local server): the personal token in the link decides who you are.
 const FIRE = !!window.FIREBASE_CONFIG;
 const hash = location.hash.replace(/^#(t=)?/, "").split("&")[0];
+const linkWW = new URLSearchParams(location.hash.slice(1)).get("w") || "";
+if (linkWW) history.replaceState(null, "", location.pathname + "#" + hash); // keep the password out of sight and history
 let token = hash, wachter = FIRE ? null : (window.WACHTERS || []).find((w) => w.token === hash), rol = null;
 const kiesRol = () => { rol = wachter && window.ROLLEN.find((r) => r.id === window.ROL_VAN[wachter.naam]); };
 kiesRol();
@@ -231,7 +233,7 @@ function verraad(info) {
 }
 zetNaam(); klok(); teken();
 setInterval(() => { klok(); teken(); }, 1000);
-Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; teken(); }, opVerraad: verraad }).then(() => {
+Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, wachtwoord: linkWW, opPubliek: (p) => { publiek = p || {}; teken(); }, opVerraad: verraad }).then(() => {
   const ik = Koppeling.ik; if (!ik) return;
   wachter = (window.WACHTERS || []).find((w) => w.naam === ik.naam) || { naam: ik.naam, token: ik.email }; token = wachter.token;
   kiesRol(); zetNaam(); getekend = ""; teken();

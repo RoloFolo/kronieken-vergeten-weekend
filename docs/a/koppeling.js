@@ -7,7 +7,8 @@
 //   Anders de lokale server (app/server.mjs): /api/stand en /api/stroom.
 //   Anders niets: de pagina werkt dan alleen op zichzelf.
 //
-// Gebruik:  await Koppeling.start({ rol: "tv" | "regie" | "chaos" | "wachter", naam, opStand, opOpdracht, opPubliek, opVerraad })
+// Gebruik:  await Koppeling.start({ rol: "tv" | "regie" | "chaos" | "wachter", naam, wachtwoord, opStand, opOpdracht, opPubliek, opVerraad })
+//           naam + wachtwoord (uit de persoonlijke link) loggen stil in, zonder inlogscherm.
 //           Koppeling.meldStand(stand)   (tv)      Koppeling.stuur(opdracht)   (regie, verrader)
 //           Koppeling.ik = { email, naam, admin }  (na inloggen via Firebase)
 const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
@@ -60,7 +61,7 @@ function geenToegang(email) {
   });
 }
 
-async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraad }) {
+async function viaFirebase({ rol, naam, wachtwoord, opStand, opOpdracht, opPubliek, opVerraad }) {
   const [{ initializeApp }, auth, db] = await Promise.all([import(FB + "firebase-app.js"), import(FB + "firebase-auth.js"), import(FB + "firebase-database.js")]);
   const app = initializeApp(window.FIREBASE_CONFIG);
   const a = auth.getAuth(app); await auth.setPersistence(a, auth.browserLocalPersistence);
@@ -68,6 +69,9 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
   const alleenAdmin = rol === "tv" || rol === "regie";
   let voor = naam ? emailVan(naam) : "";
   try { voor ||= localStorage.getItem("kronieken-email") || ""; } catch {}
+  if (naam && wachtwoord && a.currentUser?.email?.toLowerCase() !== voor) {
+    try { await auth.signInWithEmailAndPassword(a, voor, wachtwoord); localStorage.setItem("kronieken-email", voor); } catch {}
+  }
   for (;;) {
     if (a.currentUser && (!alleenAdmin || isAdmin(a.currentUser.email))) break;
     if (a.currentUser) { await geenToegang(a.currentUser.email); await auth.signOut(a); continue; }
