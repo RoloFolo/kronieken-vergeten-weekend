@@ -205,12 +205,12 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=16"></script>
-<script src="a/spel.js?v=16"></script>
-<script src="a/wachters.js?v=16"></script>
-<script src="a/rollen.js?v=16"></script>
-<script src="a/firebase-config.js?v=16"></script>
-<script src="a/koppeling.js?v=16"></script>
+<script src="a/events.js?v=18"></script>
+<script src="a/spel.js?v=18"></script>
+<script src="a/wachters.js?v=18"></script>
+<script src="a/rollen.js?v=18"></script>
+<script src="a/firebase-config.js?v=18"></script>
+<script src="a/koppeling.js?v=18"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const ZEGELS = [
@@ -220,10 +220,10 @@ const ZEGELS = [
   { id: "hart", naam: "Hart van de Ardennen", img: "a/medaillon-hart.webp" },
 ];
 const SOORT = { opdracht: "Opdracht", dilemma: "Dilemma", vreemd: "Vreemde zaak" };
-const SCHERM = { start: "Welkomstscherm", verhaal: "Verhaal", dronk: "De Eerste Dronk", "dronk-wacht": "Wacht op drankjes", uitleg: "Uitleg", hal: "Guild Hall", schaduw: "Schaduw-event", tocht: "Wachterstocht", kist: "Reliekenkist", finale: "Finale", ere: "Ere van de Wachters", einde: "Overwinning" };
+const SCHERM = { start: "Welkomstscherm", verhaal: "Verhaal", dronk: "De Eerste Dronk", "dronk-wacht": "Wacht op drankjes", uitleg: "Uitleg", hal: "Guild Hall", schaduw: "Schaduw-event", tafel: "Ronde Tafel", tocht: "Wachterstocht", kist: "Reliekenkist", finale: "Finale", ere: "Ere van de Wachters", einde: "Overwinning" };
 const S = window.SPEL;
 let laatste = {};
-const KNOPPEN = [["hal", "Guild Hall"], ["tocht", "Wachter&shy;stocht"], ["kist", "Relieken&shy;kist"], ["finale", "Finale"], ["ere", "Ere"]];
+const KNOPPEN = [["hal", "Guild Hall"], ["tafel", "Ronde Tafel"], ["tocht", "Wachter&shy;stocht"], ["kist", "Relieken&shy;kist"], ["finale", "Finale"], ["ere", "Ere"]];
 $("schermen").innerHTML = KNOPPEN.map(([id, t]) => `<button type="button" data-s="${id}">${t}</button>`).join("");
 $("schermen").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "scherm", naam: b.dataset.s }); };
 $("tocht").innerHTML = S.tocht.map((o) => `<button class="toggle" type="button" data-id="${o.id}"><span>${o.naam}</span><span class="vink"></span></button>`).join("");

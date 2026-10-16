@@ -226,6 +226,16 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .paneel.aan { opacity: 1; }
 .hall { transition: opacity 1s; }
 .stage.met-paneel .seals, .stage.met-paneel .chip { opacity: 0; pointer-events: none; transition: opacity .8s; }
+/* the Round Table on the tv: the table on the left, the spotlighted Wachter on the right */
+.tafel-tv { display: grid; grid-template-columns: auto minmax(0, 36vw); gap: 3vw; align-items: start; margin-top: -1vh; justify-content: center; width: 100%; }
+.tafel-tv-blad { width: min(54vh, 40vw); }
+.tafel-tv-kaart { text-align: left; justify-items: stretch; padding: 3vh 2vw; }
+.tafel-tv-kaart .rolkaart h3 { font-size: clamp(20px, 1.9vw, 40px); }
+.tafel-tv-kaart .rolkaart .rk-kop { grid-template-columns: clamp(70px, 6vw, 130px) 1fr; }
+.tafel-tv-kaart .rolkaart .rk-kop img { width: 100%; }
+.tafel-tv-kaart .rolkaart .rk-tekst { font-size: clamp(15px, 1.15vw, 24px); }
+.tafel-tv-kaart .rolkaart .rk-vm p { font-size: clamp(13px, 1vw, 20px); }
+.tafel-tv-kaart .rolkaart .rk-vm b { font-size: clamp(14px, 1.1vw, 22px); }
 .sub { display: none; align-content: start; justify-items: center; gap: 2.4vh; text-align: center; }
 .sub.aan { display: grid; animation: subIn 1s ease-out; }
 @keyframes subIn { from { opacity: 0; transform: translateY(20px); } }
@@ -385,6 +395,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .tocht-decor .fakkel { position: absolute; width: 26vw; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; mix-blend-mode: plus-lighter; pointer-events: none;
   background: radial-gradient(circle, rgba(255,190,110,.42), rgba(255,110,40,.18) 35%, transparent 68%); animation: fakkel 2.3s ease-in-out infinite; }
 .tocht-decor .fakkel.b { animation-duration: 1.9s; animation-delay: -.7s; }
+.tocht-decor .fakkel.klein { width: 13vw; }
 @keyframes fakkel { 0%, 100% { opacity: .75; scale: 1; } 23% { opacity: 1; scale: 1.05; } 41% { opacity: .65; scale: .97; } 63% { opacity: .95; scale: 1.03; } 82% { opacity: .7; } }
 .tocht-decor::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 75% 70% at 50% 50%, transparent 40%, rgba(5,2,3,.85)); }
 .stage.in-kasteel .paneel { background: radial-gradient(ellipse 80% 70% at 50% 55%, rgba(7,4,5,.35), rgba(7,4,5,.75)); }
@@ -563,7 +574,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     </div>
   </div>
 
-  <div class="tocht-decor" id="tocht-decor"><img id="tocht-beeld" src="a/tocht-poort.webp" alt=""><span class="fakkel" style="left:24%;top:46%"></span><span class="fakkel b" style="left:76%;top:46%"></span></div>
+  <div class="tocht-decor" id="tocht-decor"><img id="tocht-beeld" src="a/tocht-poort.webp" alt=""><span class="fakkel" style="left:12%;top:35%"></span><span class="fakkel b" style="left:88%;top:35%"></span><span class="fakkel klein b" style="left:33.5%;top:56%"></span><span class="fakkel klein" style="left:66.5%;top:56%"></span></div>
   <div class="uitleg tocht-intro" id="tocht-intro" hidden aria-live="polite"><div class="uitleg-kaart"><h2 class="carved">De Wachterstocht</h2>
     <p>Vanavond betreden jullie mijn kasteel. Draag het vuur door de poorten, de gangen en de gewelven.</p>
     <p>Vijf beproevingen wachten tussen de oude muren. Elke beproeving die jullie volbrengen, opent een vak van de Reliekenkist.</p>
@@ -582,6 +593,10 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <section class="sub" id="p-finale">
       <div class="slot" id="slot"></div>
       <div class="puzzel" id="puzzel"></div>
+    </section>
+    <section class="sub" id="p-tafel">
+      <h1 class="kop carved">De Ronde Tafel</h1>
+      <div class="tafel-tv"><div class="tafel-tv-blad" id="tv-tafel"></div><div class="uitleg-kaart tafel-tv-kaart" id="tv-tafel-kaart"></div></div>
     </section>
     <section class="sub" id="p-ere">
       <div class="ere" id="ere"></div>
@@ -637,11 +652,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=16"></script>
-<script src="a/spel.js?v=16"></script>
-<script src="a/wachters.js?v=16"></script>
-<script src="a/firebase-config.js?v=16"></script>
-<script src="a/koppeling.js?v=16"></script>
+<script src="a/events.js?v=18"></script>
+<script src="a/spel.js?v=18"></script>
+<script src="a/wachters.js?v=18"></script>
+<script src="a/firebase-config.js?v=18"></script>
+<script src="a/koppeling.js?v=18"></script>
+<script src="a/rollen.js?v=18"></script>
+<script src="a/tafel.js?v=18"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1204,8 +1221,18 @@ function paneel(naam) {
     kasteelIn(tochtIntroVerder);
   }
   else { p.hidden = false; requestAnimationFrame(() => p.classList.add("aan")); }
+  clearInterval(tafelRonde); if (naam === "tafel") tekenTvTafel();
   if (naam === "tocht") tekenTocht(); if (naam === "kist") tekenKist(); if (naam === "finale") tekenFinale(); if (naam === "ere") tekenEre();
   meld();
+}
+// the Round Table: every 9 seconds the spotlight moves to the next Wachter; a click holds it for a while
+let tafelRonde = null, tafelI = 0, tafelPauze = 0;
+function tekenTvTafel() {
+  const W = window.WACHTERS || [], toon = (w) => { $("tv-tafel-kaart").innerHTML = Tafel.details(Tafel.rolVan(w), w);
+    document.querySelectorAll("#tv-tafel .stoel").forEach((s) => s.classList.toggle("gekozen", s.dataset.naam === w.naam)); };
+  Tafel.teken($("tv-tafel"), { open: true, opKies: (w) => { tafelPauze = Date.now() + 30000; tafelI = W.indexOf(w); toon(w); } });
+  toon(W[tafelI % W.length]);
+  clearInterval(tafelRonde); tafelRonde = setInterval(() => { if (Date.now() < tafelPauze) return; tafelI = (tafelI + 1) % W.length; toon(W[tafelI]); }, 9000);
 }
 function tekenTocht() {
   $("tocht").innerHTML = S.tocht.map((o) => `<div class="opdr ${tochtGedaan.has(o.id) ? "gedaan" : ""}"><span class="vink">✓</span>

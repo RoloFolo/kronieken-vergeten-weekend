@@ -114,9 +114,9 @@ button[data-rust]:not([data-rust=""])::after { content: "rust " attr(data-rust);
 </main>
 <div class="melding" id="melding" role="status"></div>
 
-<script src="a/wachters.js?v=16"></script>
-<script src="a/firebase-config.js?v=16"></script>
-<script src="a/koppeling.js?v=16"></script>
+<script src="a/wachters.js?v=18"></script>
+<script src="a/firebase-config.js?v=18"></script>
+<script src="a/koppeling.js?v=18"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const ZEGELS = [["vlam", "a/medaillon-vlam.webp"], ["hoorn", "a/medaillon-hoorn.webp"], ["schild", "a/medaillon-schild.webp"], ["hart", "a/medaillon-hart.webp"]];
@@ -190,7 +190,9 @@ $("c-dobbel").onclick = () => stuur("chaos-dobbel", {}, "De dobbelsteen is vervl
 $("c-schaduw").onclick = () => stuur("chaos-schaduw", {}, "De Schaduw komt…");
 $("c-macht").onclick = () => { if (confirm("Dit kan maar één keer zolang jij verrader bent. Nu de Hall overnemen?")) stuur("chaos-macht", {}, "De Schaduwkoning spreekt."); };
 teken();
-Koppeling.start({ rol: "chaos", opStand: (s) => { stand = s || {}; $("punt").classList.add("aan"); teken(); } })
+let wasActief = false;
+Koppeling.start({ rol: "chaos", opStand: (s) => { stand = s || {}; $("punt").classList.add("aan"); teken();
+    const nu = actief(); if (wasActief && !nu) { const m = $("melding"); m.textContent = "Je tijd als verrader is om. De Schaduw laat je los."; m.classList.add("aan"); clearTimeout(m._t); m._t = setTimeout(() => m.classList.remove("aan"), 12000); } wasActief = nu; } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; if (Koppeling.ik) { IK = { naam: Koppeling.ik.naam }; zegWie(); teken(); } });
 </script>
 </body>

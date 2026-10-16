@@ -96,7 +96,29 @@ main { width: min(560px, 100%); margin: 0 auto; padding: max(18px, env(safe-area
 .opdrachten p { margin: 0; font-size: 15px; line-height: 1.45; }
 .opdrachten li.gedaan { border-color: rgba(111,191,115,.6); background: rgba(111,191,115,.08); }
 .opdrachten li.gedaan h3::after { content: "  ✓ volbracht"; color: #8fd493; font: 600 12px var(--body); letter-spacing: 0; }
-.verborgen { display: none !important; }
+/* the app: tabs at the bottom; Regie and Verrader open inside the app */
+:root { --nav-h: calc(62px + env(safe-area-inset-bottom)); }
+body { padding-bottom: var(--nav-h); }
+.tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; height: var(--nav-h); padding-bottom: env(safe-area-inset-bottom); display: flex; justify-content: center;
+  background: linear-gradient(180deg, rgba(20,8,9,.96), #070304); border-top: 1px solid #6e5230; box-shadow: 0 -8px 24px rgba(0,0,0,.6); }
+.tabs button { flex: 1; max-width: 120px; display: grid; place-items: center; align-content: center; gap: 3px; padding: 6px 2px; border: 0; background: none; color: var(--ash); cursor: pointer;
+  font: 700 10.5px/1 var(--carved); letter-spacing: .12em; text-transform: uppercase; -webkit-tap-highlight-color: transparent; }
+.tabs button .ico { width: 26px; height: 26px; object-fit: contain; opacity: .55; filter: grayscale(.6); transition: opacity .2s, filter .2s; }
+.tabs button[hidden] { display: none; }
+.tabs button[aria-current="true"] { color: var(--bronze-hi); }
+.tabs button[aria-current="true"] .ico { opacity: 1; filter: drop-shadow(0 0 6px rgba(255,170,80,.7)); }
+.tabs button.rood[aria-current="true"] { color: #ff8a80; }
+.tabs button:focus-visible { outline: 2px solid var(--bone); outline-offset: -4px; }
+.frame { position: fixed; left: 0; right: 0; top: 0; bottom: var(--nav-h); z-index: 40; background: #0b0607; }
+.frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+body.in-frame main { visibility: hidden; }
+.tafel-doos { width: min(100%, 520px); justify-self: center; }
+.tafel-kaart { min-height: 120px; }
+.tafel-kaart .leeg { margin: 0; text-align: center; color: var(--ash); font: italic 15px/1.5 var(--display); }
+.melding-groot { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 16px; background: rgba(5,2,3,.86); }
+.melding-groot .paneel { width: min(460px, 100%); text-align: center; display: grid; gap: 12px; }
+.melding-groot p { margin: 0; font: italic 16px/1.55 var(--display); }
+.verborgen, .tab-weg { display: none !important; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
 </style>
 </head>
@@ -109,21 +131,24 @@ main { width: min(560px, 100%); margin: 0 auto; padding: max(18px, env(safe-area
   <section class="paneel schaduw verborgen" id="schaduw">
     <h2 class="carved">De Schaduw heeft jou gekozen</h2>
     <p>Vanaf nu werk jij in het geheim voor de Schaduwkoning. Niemand mag het weten. Houd je scherm uit het zicht.</p>
-    <a class="knop rood" href="chaos-06d0ece377.html">Open je verraderspaneel</a>
+    <button class="knop rood" type="button" data-naar="verrader">Open je verraderspaneel</button>
   </section>
 
-  <!-- the Wachterstocht: the tasks, to read again on the way -->
-  <section class="paneel tocht verborgen" id="tocht">
+  <!-- tab: the Round Table -->
+  <section class="tab verborgen" id="tab-tafel" style="display:grid; gap:18px">
+    <section class="paneel"><h2 class="carved">De Ronde Tafel</h2>
+      <p class="tocht-onder" id="tafel-onder">Tik op een Wachter om zijn rol en kracht te zien.</p>
+      <div class="tafel-doos" id="tafel-doos"></div></section>
+    <section class="paneel tafel-kaart" id="tafel-kaart"><p class="leeg">Kies een Wachter aan de tafel.</p></section>
+  </section>
+
+  <!-- tab: the Wachterstocht, to read again on the way -->
+  <section class="paneel tocht tab verborgen" id="tocht">
     <h2 class="carved">De Wachterstocht</h2>
     <p class="tocht-onder">Vanavond in Château de Bouillon. Vijf beproevingen; elke volbrachte opent een vak van de Reliekenkist.</p>
     <ol class="opdrachten" id="opdrachten"></ol>
   </section>
 
-  <!-- organisers only -->
-  <section class="paneel admin verborgen" id="admin">
-    <h2 class="carved">Hoeder van de Hall</h2>
-    <a class="knop" href="regie-8d785a0dfd.html">Open de regie</a>
-  </section>
 
   <!-- before the weekend -->
   <section class="paneel verborgen" id="vooraf">
@@ -152,14 +177,27 @@ main { width: min(560px, 100%); margin: 0 auto; padding: max(18px, env(safe-area
     <p>Deze boodschap is niet voor jou bestemd. Open de link die je van de organisatoren kreeg.</p>
   </section>
 
-  <p class="slot">De Kronieken van het Vergeten Weekend · Bouillon<span id="uit" class="verborgen"><br><button type="button" class="uitlog" id="b-uit">Niet jij? Log uit</button></span></p>
+  <p class="slot tab-ik">De Kronieken van het Vergeten Weekend · Bouillon<span id="uit" class="verborgen"><br><button type="button" class="uitlog" id="b-uit">Niet jij? Log uit</button></span></p>
 </main>
+<div class="frame verborgen" id="frame-regie"><iframe title="Regie" data-src="regie-8d785a0dfd.html"></iframe></div>
+<div class="frame verborgen" id="frame-verrader"><iframe title="Verraderspaneel" data-src="chaos-06d0ece377.html"></iframe></div>
+<nav class="tabs" id="tabs" aria-label="Menu">
+  <button type="button" data-tab="ik"><img class="ico" src="a/medaillon-vlam.webp" alt="">Ik</button>
+  <button type="button" data-tab="tafel"><img class="ico" src="a/medaillon-schild.webp" alt="">Tafel</button>
+  <button type="button" data-tab="tocht" hidden><img class="ico" src="a/reliek-vlam.webp" alt="">Tocht</button>
+  <button type="button" data-tab="regie" hidden><img class="ico" src="a/medaillon-hoorn.webp" alt="">Regie</button>
+  <button type="button" data-tab="verrader" class="rood" hidden><img class="ico" src="a/logo.webp" alt="">Verrader</button>
+</nav>
+<div class="melding-groot verborgen" id="melding" role="alertdialog" aria-modal="true" aria-labelledby="melding-kop">
+  <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
+</div>
 
-<script src="a/wachters.js?v=16"></script>
-<script src="a/spel.js?v=16"></script>
-<script src="a/rollen.js?v=16"></script>
-<script src="a/firebase-config.js?v=16"></script>
-<script src="a/koppeling.js?v=16"></script>
+<script src="a/wachters.js?v=18"></script>
+<script src="a/spel.js?v=18"></script>
+<script src="a/rollen.js?v=18"></script>
+<script src="a/firebase-config.js?v=18"></script>
+<script src="a/koppeling.js?v=18"></script>
+<script src="a/tafel.js?v=18"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const START = new Date("2026-11-13T12:00:00+01:00");
@@ -241,23 +279,62 @@ function klok() {
 function zetNaam() { if (wachter) { $("naam").textContent = wachter.naam; document.title = `${wachter.naam} · Een boodschap van Godfried`; } else $("naam").textContent = FIRE ? "…" : "Onbekende"; }
 function tekenTocht() {
   const t = publiek.tocht, lijst = window.SPEL?.tocht || [];
-  $("tocht").classList.toggle("verborgen", !t || !wachter);
+  $("tocht").classList.toggle("verborgen", !t || !wachter); tekenTabs();
+  if (tabNu === "tafel" && tafelOpen !== halOpen()) tekenTafel();
   if (!t) return; const gedaan = new Set(t.gedaan || []);
   $("opdrachten").innerHTML = lijst.map((o) => `<li class="${gedaan.has(o.id) ? "gedaan" : ""}"><img src="${o.zegel ? `a/medaillon-${o.zegel}.webp` : "a/reliek-stilte.webp"}" alt=""><div><h3>${schoon(o.naam)}</h3><p>${schoon(o.tekst)}</p></div></li>`).join("");
 }
-let wasVerrader = null;
+let wasVerrader = null, isVerrader = false;
+function melding(kop, tekst) { $("melding-kop").textContent = kop; $("melding-tekst").textContent = tekst; $("melding").classList.remove("verborgen"); $("melding-ok").focus(); }
+$("melding-ok").onclick = () => $("melding").classList.add("verborgen");
 function verraad(info) {
-  const nu = !!info; $("schaduw").classList.toggle("verborgen", !nu);
+  const nu = !!info; isVerrader = nu; $("schaduw").classList.toggle("verborgen", !nu);
   if (nu && wasVerrader === false && navigator.vibrate) try { navigator.vibrate([200, 100, 200, 100, 400]); } catch {}
-  wasVerrader = nu;
+  if (!nu && wasVerrader === true) { // the role ended: by hand (night) or because the time was up
+    melding("Je tijd als verrader is om", "De Schaduw laat je los. Vanaf nu ben je weer een gewone Wachter. Zeg niets: in de finale wordt gezocht wie het waren.");
+    const fr = $("frame-verrader").querySelector("iframe"); fr.removeAttribute("src");
+    if (navigator.vibrate) try { navigator.vibrate([300, 120, 300]); } catch {}
+  }
+  wasVerrader = nu; tekenTabs();
 }
-zetNaam(); klok(); teken();
+// ---------- tabs ----------
+let tabNu = "ik";
+try { tabNu = localStorage.getItem("kronieken-tab") || "ik"; } catch {}
+const beschikbaar = (t) => t === "ik" || t === "tafel" || (t === "tocht" && !!publiek.tocht) || (t === "regie" && !!Koppeling.ik?.admin) || (t === "verrader" && isVerrader);
+function toonTab(t) {
+  if (!beschikbaar(t)) t = "ik"; tabNu = t; try { localStorage.setItem("kronieken-tab", t); } catch {}
+  document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-current", b.dataset.tab === t));
+  const ik = t === "ik";
+  for (const id of ["schaduw", "vooraf", "verzegeld", "rol-blok", "onbekend"]) $(id).classList.toggle("tab-weg", !ik);
+  document.querySelector(".slot").classList.toggle("tab-weg", !ik);
+  $("tab-tafel").classList.toggle("verborgen", t !== "tafel"); $("tocht").classList.toggle("tab-weg", t !== "tocht");
+  for (const naam of ["regie", "verrader"]) {
+    const fr = $(`frame-${naam}`), aan = t === naam; fr.classList.toggle("verborgen", !aan);
+    const i = fr.querySelector("iframe"); if (aan && !i.getAttribute("src")) i.src = i.dataset.src;
+  }
+  document.body.classList.toggle("in-frame", t === "regie" || t === "verrader");
+  if (t === "tafel") tekenTafel();
+  if (!document.body.classList.contains("in-frame")) scrollTo(0, 0);
+}
+function tekenTabs() {
+  document.querySelectorAll("#tabs button").forEach((b) => (b.hidden = !beschikbaar(b.dataset.tab)));
+  if (!beschikbaar(tabNu)) toonTab("ik");
+}
+$("tabs").onclick = (e) => { const b = e.target.closest("button"); if (b) toonTab(b.dataset.tab); };
+document.addEventListener("click", (e) => { const b = e.target.closest("[data-naar]"); if (b) toonTab(b.dataset.naar); });
+let tafelGekozen = null, tafelOpen = null;
+function tekenTafel() {
+  tafelOpen = halOpen();
+  $("tafel-onder").textContent = tafelOpen ? "Tik op een Wachter om zijn rol en kracht te zien." : "De rollen zijn nog verzegeld tot de Eerste Dronk.";
+  Tafel.teken($("tafel-doos"), { open: tafelOpen, gekozen: tafelGekozen, opKies: (w, r) => { tafelGekozen = w.naam; $("tafel-kaart").innerHTML = Tafel.details(r, w); } });
+}
+zetNaam(); klok(); teken(); tekenTabs(); toonTab(tabNu);
 setInterval(() => { klok(); teken(); }, 1000);
 Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; teken(); tekenTocht(); }, opVerraad: verraad }).then(() => {
   const ik = Koppeling.ik; if (!ik) return;
   wachter = (window.WACHTERS || []).find((w) => w.naam === ik.naam) || { naam: ik.naam, token: ik.email }; token = wachter.token;
   kiesRol(); zetNaam(); getekend = ""; teken(); tekenTocht();
-  $("admin").classList.toggle("verborgen", !ik.admin); $("uit").classList.remove("verborgen");
+  $("uit").classList.remove("verborgen"); tekenTabs(); toonTab(tabNu);
   $("b-uit").onclick = async () => { await Koppeling.uitloggen(); location.reload(); };
 });
 </script>
