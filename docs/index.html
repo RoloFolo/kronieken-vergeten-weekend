@@ -226,6 +226,43 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .paneel.aan { opacity: 1; }
 .hall { transition: opacity 1s; }
 .stage.met-paneel .seals, .stage.met-paneel .chip { opacity: 0; pointer-events: none; transition: opacity .8s; }
+/* the hall of the Round Table: floor, edge dressing, table, chairs and Wachters load in like a stage */
+.zaal { position: absolute; inset: 0; z-index: 7; overflow: hidden; background: #050203; pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 1.2s ease, visibility 0s linear 1.2s; --T: 60vh; }
+.stage.in-zaal .zaal { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 1.2s ease; }
+.stage.in-zaal .hall { opacity: 0; pointer-events: none; }
+.zaal .z-vloer, .zaal .z-rand, .zaal .z-vuur { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.zaal .z-vloer { transform: scale(1.12); filter: brightness(.6); transition: transform 3.5s cubic-bezier(.2,.8,.3,1), filter 2.5s ease; }
+.zaal .z-rand { transform: scale(1.25); opacity: 0; transition: transform 2.4s cubic-bezier(.15,.85,.3,1) .4s, opacity 1.4s ease .4s; }
+.zaal .z-vuur { opacity: 0; transition: opacity 2s ease 2.4s; mix-blend-mode: plus-lighter; }
+.stage.in-zaal .zaal .z-vloer { transform: none; filter: brightness(.85); }
+.stage.in-zaal .zaal .z-rand { transform: none; opacity: 1; }
+.stage.in-zaal .zaal .z-vuur { opacity: 1; }
+.zaal .z-titel { position: absolute; top: 2.2vh; left: 0; right: 0; margin: 0; text-align: center; font-size: clamp(22px, 2.3vw, 46px); letter-spacing: .2em; opacity: 0; transition: opacity 1.5s ease 3s; filter: drop-shadow(0 3px 8px #000); }
+.stage.in-zaal .zaal .z-titel { opacity: 1; }
+.zaal .z-midden { position: absolute; left: 50%; top: 52%; width: var(--T); aspect-ratio: 1; translate: -50% -50%; }
+.zaal .z-tafel { position: absolute; inset: 0; width: 100%; height: 100%; filter: drop-shadow(0 2vh 4vh #000); transform: scale(.4) rotate(-90deg); opacity: 0; transition: transform 2.4s cubic-bezier(.15,.85,.3,1) .9s, opacity 1.2s ease .9s; }
+.stage.in-zaal .zaal .z-tafel { transform: none; opacity: 1; }
+.zaal .z-ring { position: absolute; inset: 0; }
+.zaal .z-stoel { position: absolute; left: 50%; top: 50%; width: 10vh; translate: -50% -50%; filter: drop-shadow(0 1vh 1.6vh #000); opacity: 0;
+  transform: rotate(var(--hoek)) translateY(calc(var(--T) * -.5 - 17vh)) scale(.7); transition: transform 1.2s cubic-bezier(.2,.9,.3,1) var(--d), opacity .8s ease var(--d); }
+.stage.in-zaal .zaal .z-stoel { opacity: 1; transform: rotate(var(--hoek)) translateY(calc(var(--T) * -.5 - 10.5vh)); }
+.zaal .z-zit { position: absolute; left: 50%; top: 50%; width: 9.5vh; translate: -50% -50%; display: grid; justify-items: center; gap: .3vh; padding: 0; border: 0; background: none; color: inherit; cursor: pointer;
+  opacity: 0; transform: translate(var(--x), var(--y)) scale(.4); transition: transform 1s cubic-bezier(.2,1.3,.4,1) var(--d), opacity .6s ease var(--d); }
+.stage.in-zaal .zaal .z-zit { opacity: 1; transform: translate(var(--x), var(--y)); }
+.zaal .z-zit img { width: 9.5vh; aspect-ratio: 1; filter: drop-shadow(0 .6vh 1vh rgba(0,0,0,.9)); transition: transform .4s, filter .4s; }
+.zaal .z-zit b { font: 700 clamp(11px, 1.6vh, 22px)/1 var(--carved); letter-spacing: .06em; text-transform: uppercase; color: var(--bronze-hi); text-shadow: 0 1px 3px #000, 0 0 10px #000; white-space: nowrap; }
+.zaal .z-zit.licht img { transform: scale(1.22); filter: drop-shadow(0 0 2.4vh rgba(255,170,80,1)) drop-shadow(0 .6vh 1vh rgba(0,0,0,.9)); }
+.zaal .z-zit.licht b { color: #ffd98a; }
+.zaal .z-kaart { position: absolute; inset: 21%; border-radius: 50%; display: grid; place-items: center; text-align: center; padding: 3.2vh 2.6vh;
+  background: radial-gradient(circle, rgba(10,4,5,.94) 55%, rgba(10,4,5,.75) 72%, transparent 74%); opacity: 0; transition: opacity 1.2s ease 2.9s; }
+.stage.in-zaal .zaal .z-kaart { opacity: 1; }
+.zaal .z-kaart > div { display: grid; gap: .8vh; justify-items: center; animation: subIn .8s ease-out; }
+.zaal .z-kaart .wie { font: 700 clamp(10px, 1.3vh, 18px)/1 var(--carved); letter-spacing: .3em; text-transform: uppercase; color: var(--ash); }
+.zaal .z-kaart h2 { margin: 0; font-size: clamp(16px, 2.6vh, 36px); line-height: 1.1; }
+.zaal .z-kaart .titel { font: 600 clamp(9px, 1.25vh, 16px)/1.2 var(--carved); letter-spacing: .18em; text-transform: uppercase; color: var(--ash); }
+.zaal .z-kaart .vm { font: clamp(11px, 1.55vh, 20px)/1.35 var(--body); color: var(--bone); max-width: 30ch; }
+.zaal .z-kaart .vm b { display: block; font: 700 clamp(11px, 1.6vh, 21px)/1.2 var(--carved); color: var(--bronze-hi); }
+.zaal .z-kaart .vm span { display: block; font: 700 clamp(8px, 1vh, 13px)/1.4 var(--carved); letter-spacing: .25em; text-transform: uppercase; color: var(--ash); }
 /* the Round Table on the tv: the table on the left, the spotlighted Wachter on the right */
 .tafel-tv { display: grid; grid-template-columns: auto minmax(0, 36vw); gap: 3vw; align-items: start; margin-top: -1vh; justify-content: center; width: 100%; }
 .tafel-tv-blad { width: min(54vh, 40vw); }
@@ -606,6 +643,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <p>Vanavond betreden jullie mijn kasteel. Draag het vuur door de poorten, de gangen en de gewelven.</p>
     <p>Vijf beproevingen wachten tussen de oude muren. Elke beproeving die jullie volbrengen, opent een vak van de Reliekenkist.</p>
     <p>Jullie opdrachten staan nu ook op jullie telefoon.</p></div></div>
+  <div class="zaal" id="zaal" aria-live="polite">
+    <img class="z-vloer" src="a/zaal/vloer.webp" alt="">
+    <img class="z-rand" src="a/zaal/rand.webp" alt="">
+    <div class="z-midden"><img class="z-tafel" src="a/tafel.webp" alt=""><div class="z-ring" id="z-ring"></div><div class="z-kaart" id="z-kaart"></div></div>
+    <canvas class="z-vuur" id="z-vuur"></canvas>
+    <h1 class="z-titel carved">De Ronde Tafel</h1>
+  </div>
   <div class="paneel" id="paneel" hidden>
     <section class="sub" id="p-tocht">
       <h1 class="kop carved">De Wachterstocht</h1>
@@ -621,10 +665,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
       <div class="slot" id="slot"></div>
       <div class="puzzel" id="puzzel"></div>
     </section>
-    <section class="sub" id="p-tafel">
-      <h1 class="kop carved">De Ronde Tafel</h1>
-      <div class="tafel-tv"><div class="tafel-tv-blad" id="tv-tafel"></div><div class="uitleg-kaart tafel-tv-kaart" id="tv-tafel-kaart"></div></div>
-    </section>
+    <section class="sub" id="p-tafel"></section>
     <section class="sub" id="p-ere">
       <div class="ere" id="ere"></div>
     </section>
@@ -679,13 +720,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=19"></script>
-<script src="a/spel.js?v=19"></script>
-<script src="a/wachters.js?v=19"></script>
-<script src="a/firebase-config.js?v=19"></script>
-<script src="a/koppeling.js?v=19"></script>
-<script src="a/rollen.js?v=19"></script>
-<script src="a/tafel.js?v=19"></script>
+<script src="a/events.js?v=20"></script>
+<script src="a/spel.js?v=20"></script>
+<script src="a/wachters.js?v=20"></script>
+<script src="a/firebase-config.js?v=20"></script>
+<script src="a/koppeling.js?v=20"></script>
+<script src="a/rollen.js?v=20"></script>
+<script src="a/tafel.js?v=20"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1296,18 +1337,52 @@ function paneel(naam) {
     kasteelIn(tochtIntroVerder);
   }
   else { p.hidden = false; requestAnimationFrame(() => p.classList.add("aan")); }
-  clearInterval(tafelRonde); if (naam === "tafel") tekenTvTafel();
+  clearInterval(tafelRonde); stage.classList.toggle("in-zaal", naam === "tafel"); if (naam === "tafel") tekenTvTafel(); else zaalVuurStop();
   if (naam === "tocht") tekenTocht(); if (naam === "kist") tekenKist(); if (naam === "finale") tekenFinale(); if (naam === "ere") tekenEre();
   meld();
 }
-// the Round Table: every 9 seconds the spotlight moves to the next Wachter; a click holds it for a while
-let tafelRonde = null, tafelI = 0, tafelPauze = 0;
+// the Round Table hall: every 9 seconds the next Wachter is lit and his role shows on the table; a click holds it for a while
+let tafelRonde = null, tafelI = 0, tafelPauze = 0, zaalGebouwd = false;
+function zaalKaart(w) {
+  const rol = Tafel.rolVan(w); document.querySelectorAll("#z-ring .z-zit").forEach((z) => z.classList.toggle("licht", z.dataset.naam === w.naam));
+  $("z-kaart").innerHTML = rol ? `<div><div class="wie">${schoon(w.naam)}</div><h2 class="carved">${schoon(rol.naam)}</h2><div class="titel">${schoon(rol.titel)}</div>
+    <div class="vm"><span>Passief</span><b>${schoon(rol.passief[0])}</b>${schoon(rol.passief[1])}</div>
+    <div class="vm"><span>Kracht · één keer per dag</span><b>${schoon(rol.kracht[0])}</b>${schoon(rol.kracht[1])}</div></div>` : `<div><h2 class="carved">${schoon(w.naam)}</h2></div>`;
+}
 function tekenTvTafel() {
-  const W = window.WACHTERS || [], toon = (w) => { $("tv-tafel-kaart").innerHTML = Tafel.details(Tafel.rolVan(w), w);
-    document.querySelectorAll("#tv-tafel .stoel").forEach((s) => s.classList.toggle("gekozen", s.dataset.naam === w.naam)); };
-  Tafel.teken($("tv-tafel"), { open: true, opKies: (w) => { tafelPauze = Date.now() + 30000; tafelI = W.indexOf(w); toon(w); } });
-  toon(W[tafelI % W.length]);
-  clearInterval(tafelRonde); tafelRonde = setInterval(() => { if (Date.now() < tafelPauze) return; tafelI = (tafelI + 1) % W.length; toon(W[tafelI]); }, 9000);
+  const W = window.WACHTERS || [], n = W.length;
+  if (!zaalGebouwd) {
+    zaalGebouwd = true;
+    $("z-ring").innerHTML = W.map((w, i) => {
+      const hoek = (i / n) * 360, rad = hoek * Math.PI / 180, rol = Tafel.rolVan(w);
+      // seats around the table: medallion just outside the rim, chair behind it facing the centre
+      const x = `calc(var(--T) * ${(Math.sin(rad) * .5).toFixed(4)} + ${(Math.sin(rad) * 2.4).toFixed(2)}vh)`, y = `calc(var(--T) * ${(-Math.cos(rad) * .5).toFixed(4)} - ${(Math.cos(rad) * 2.4).toFixed(2)}vh)`;
+      return `<img class="z-stoel" src="a/zaal/stoel.webp" alt="" style="--hoek:${hoek}deg;--d:${(1.4 + i * .08).toFixed(2)}s">
+        <button class="z-zit" type="button" data-naam="${schoon(w.naam)}" style="--x:${x};--y:${y};--d:${(2 + i * .08).toFixed(2)}s"><img src="${rol ? `a/rollen/${rol.id}.webp` : "a/medaillon-vlam.webp"}" alt=""><b>${schoon(w.naam)}</b></button>`;
+    }).join("");
+    $("z-ring").onclick = (e) => { const z = e.target.closest(".z-zit"); if (!z) return; tafelPauze = Date.now() + 30000; tafelI = W.findIndex((w) => w.naam === z.dataset.naam); zaalKaart(W[tafelI]); };
+  }
+  zaalKaart(W[tafelI % n]); zaalVuurStart();
+  clearInterval(tafelRonde); tafelRonde = setInterval(() => { if (Date.now() < tafelPauze) return; tafelI = (tafelI + 1) % n; zaalKaart(W[tafelI]); }, 9000);
+}
+// living fire in the hearth, the braziers and on the candelabras
+const ZAAL_VUUR = [[.503, .235, 1.1], [.215, .34, .7], [.79, .34, .7], [.208, .88, .7], [.795, .88, .7], [.1, .27, .3], [.9, .27, .3], [.047, .69, .3], [.956, .69, .3]];
+let zaalTongen = [], zaalLoopt = false;
+function zaalVuurStart() { if (!zaalLoopt) { zaalLoopt = true; requestAnimationFrame(zaalVuur); } }
+function zaalVuurStop() { zaalLoopt = false; }
+function zaalVuur() {
+  if (!zaalLoopt) return;
+  const cv = $("z-vuur"), [W, H] = poortMaat(cv), v = cv.getContext("2d"); v.clearRect(0, 0, W, H); v.globalCompositeOperation = "lighter";
+  for (const [fx, fy, s] of ZAAL_VUUR) for (let k = 0; k < Math.ceil(3 * s) + 1; k++) if (Math.random() < .6)
+    zaalTongen.push({ x: fx * W + (Math.random() - .5) * 30 * s * W / 1920, y: fy * H, vy: -(1 + Math.random() * 2.2) * s * H / 1080, r: (10 + Math.random() * 15) * s * W / 1920, t: 0, max: 24 + Math.random() * 20, f: Math.random() * 6 });
+  zaalTongen = zaalTongen.filter((t) => t.t < t.max);
+  for (const t of zaalTongen) {
+    t.t++; t.f += .3; t.y += t.vy; t.x += Math.sin(t.f) * .6; const p = t.t / t.max, rad = t.r * (1 - p * .6);
+    const kleur = p < .2 ? "255,235,180" : p < .45 ? "255,160,60" : p < .75 ? "255,80,30" : "150,20,15", al = (p < .1 ? p * 10 : 1 - p) * .45;
+    const g = v.createRadialGradient(t.x, t.y, 0, t.x, t.y, rad); g.addColorStop(0, `rgba(${kleur},${al})`); g.addColorStop(1, `rgba(${kleur},0)`);
+    v.fillStyle = g; v.beginPath(); v.ellipse(t.x, t.y, rad * .6, rad * 1.25, 0, 0, Math.PI * 2); v.fill();
+  }
+  v.globalCompositeOperation = "source-over"; requestAnimationFrame(zaalVuur);
 }
 function tekenTocht() {
   $("tocht").innerHTML = S.tocht.map((o) => `<div class="opdr ${tochtGedaan.has(o.id) ? "gedaan" : ""}"><span class="vink">✓</span>
