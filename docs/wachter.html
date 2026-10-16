@@ -192,12 +192,12 @@ body.in-frame main { visibility: hidden; }
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=27"></script>
-<script src="a/spel.js?v=27"></script>
-<script src="a/rollen.js?v=27"></script>
-<script src="a/firebase-config.js?v=27"></script>
-<script src="a/koppeling.js?v=27"></script>
-<script src="a/tafel.js?v=27"></script>
+<script src="a/wachters.js?v=28"></script>
+<script src="a/spel.js?v=28"></script>
+<script src="a/rollen.js?v=28"></script>
+<script src="a/firebase-config.js?v=28"></script>
+<script src="a/koppeling.js?v=28"></script>
+<script src="a/tafel.js?v=28"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -292,7 +292,14 @@ function tekenTocht() {
 let wasVerrader = null, isVerrader = false;
 function melding(kop, tekst) { $("melding-kop").textContent = kop; $("melding-tekst").textContent = tekst; $("melding").classList.remove("verborgen"); $("melding-ok").focus(); }
 $("melding-ok").onclick = () => $("melding").classList.add("verborgen");
+// the traitor node can blink for a moment (a reconnect, a second tv): only act when it stays gone for 5 seconds
+let verraadWeg = null;
 function verraad(info) {
+  clearTimeout(verraadWeg);
+  if (!info && wasVerrader === true) { verraadWeg = setTimeout(() => verraadEcht(null), 5000); return; }
+  verraadEcht(info);
+}
+function verraadEcht(info) {
   const nu = !!info; isVerrader = nu; $("schaduw").classList.toggle("verborgen", !nu);
   if (nu && wasVerrader === false && navigator.vibrate) try { navigator.vibrate([200, 100, 200, 100, 400]); } catch {}
   if (!nu && wasVerrader === true) { // the role ended: by hand (night) or because the time was up
