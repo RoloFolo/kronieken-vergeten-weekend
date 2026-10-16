@@ -320,6 +320,26 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 @keyframes halo { 50% { opacity: .65; transform: scale(1.08); } }
 @keyframes flits { 0% { opacity: 1; transform: scale(.6); filter: blur(2px) brightness(2.2); } 30% { opacity: 1; transform: scale(1.45); } 100% { } }
 @keyframes zvonk { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
+.dronk { position: relative; z-index: 2; display: grid; justify-items: center; gap: 4vh; text-align: center; }
+.dronk-kop { font-size: clamp(16px, 1.5vw, 30px); letter-spacing: .4em; }
+.dronk-regel { min-height: 1.3em; font-size: clamp(34px, 5vw, 104px); line-height: 1.15; max-width: 18ch; text-wrap: balance; opacity: 0; transform: scale(.94); transition: opacity .7s, transform .9s cubic-bezier(.2,1.2,.3,1); }
+.dronk-regel.aan { opacity: 1; transform: none; }
+.dronk-regel.proost { font-size: clamp(60px, 9vw, 190px); filter: drop-shadow(0 0 30px rgba(255,200,110,.9)); animation: proost 1.4s ease-out; }
+@keyframes proost { 0% { transform: scale(.5); filter: brightness(3) drop-shadow(0 0 60px #ffd27a); } 40% { transform: scale(1.08); } }
+.dronk-hint { font: italic clamp(15px, 1.4vw, 28px)/1.4 var(--display); color: var(--ash); min-height: 1.4em; }
+.verhaal.goud::before { content: ""; position: absolute; inset: 0; z-index: 1; background: radial-gradient(circle at 50% 50%, rgba(255,215,140,.55), transparent 60%); animation: goudflits 2.2s ease-out forwards; pointer-events: none; }
+@keyframes goudflits { from { opacity: 1; } to { opacity: 0; } }
+.uitleg { position: absolute; z-index: 8; left: 50%; bottom: .8vh; translate: -50% 0; width: min(88vw, 1600px); pointer-events: none; }
+.uitleg-kaart { display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 2.4vw; row-gap: .4vh; text-align: left; padding: 1.2vh 2.2vw; background: linear-gradient(180deg, rgba(30,10,12,.92), rgba(10,5,6,.94)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 20px 60px #000; animation: subIn .9s ease-out; }
+.uitleg-kaart h2 { margin: 0; grid-column: 1 / -1; font-size: clamp(16px, 1.5vw, 30px); }
+.uitleg-kaart > :not(h2):only-of-type { grid-column: 1 / -1; }
+.uitleg-kaart p { margin: 0; max-width: 80ch; font: italic clamp(14px, 1.3vw, 26px)/1.35 var(--display); color: var(--bone); }
+.uitleg-kaart .rij-iconen { display: flex; gap: 1.2vw; justify-content: center; }
+.uitleg-kaart .rij-iconen img { width: clamp(46px, 4.4vw, 90px); }
+.uitleg-kaart .fiches { display: flex; gap: 1.6vw; font: 700 clamp(14px, 1.3vw, 26px)/1 var(--carved); color: var(--bronze-hi); }
+.uitleg-kaart .ogen { display: flex; gap: 3vw; } .uitleg-kaart .ogen i { width: 3vw; height: 1vh; border-radius: 50%; background: #ff2a2a; box-shadow: 0 0 18px 5px rgba(255,40,40,.75); }
+.stage.wijs-zegels .medal { animation: wijs 1.2s ease-in-out infinite alternate; }
+@keyframes wijs { to { filter: drop-shadow(0 0 22px rgba(255,200,110,.95)) brightness(1.25); } }
 .sla-over { position: absolute; z-index: 3; right: 3vw; bottom: 4vh; font-size: clamp(12px, 1vw, 18px); padding: 1.2em 3em; opacity: .75; }
 .regie { position: absolute; right: 16px; top: max(76px, 9vh); z-index: 30; width: min(320px, calc(100vw - 32px)); background: rgba(10,5,6,.93); border: 1px solid rgba(239,227,212,.16); border-radius: 10px; font-size: 13px; box-shadow: 0 10px 40px rgba(0,0,0,.6); }
 .regie summary { cursor: pointer; padding: 10px 14px; color: var(--ash); letter-spacing: .12em; text-transform: uppercase; font-weight: 600; font-size: 11px; list-style: none; display: flex; justify-content: space-between; }
@@ -457,8 +477,14 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <div class="zegel-kant l"><div class="vz" data-z="0"></div><div class="vz" data-z="2"></div></div>
     <div class="zegel-kant r"><div class="vz" data-z="1"></div><div class="vz" data-z="3"></div></div>
     <div class="brief" id="brief" aria-live="polite"></div>
+    <div class="dronk" id="dronk" hidden aria-live="polite">
+      <div class="dronk-kop carved">De Eerste Dronk</div>
+      <div class="dronk-regel carved" id="dronk-regel"></div>
+      <div class="dronk-hint" id="dronk-hint"></div>
+    </div>
     <button class="enter sla-over" id="sla-over" type="button"><span class="carved">Verder</span></button>
   </div>
+  <div class="uitleg" id="uitleg" hidden aria-live="polite"><div class="uitleg-kaart" id="uitleg-kaart"></div></div>
 
   <details class="regie" id="regie" hidden>
     <summary>Regie · straks op je telefoon</summary>
@@ -875,13 +901,78 @@ function startVerhaal() {
     requestAnimationFrame(volg);
   })();
 }
-function naarHal() {
+function naarHal() { // the letter is done: on to the First Toast
   if (verhaalKlaar) return; verhaalKlaar = true;
   fade(proloog, 0, 1500); setTimeout(() => proloog?.pause(), 1600);
-  $("verhaal").classList.add("weg"); setTimeout(() => { $("verhaal").hidden = true; $("verhaal-bg").pause(); }, 1700);
-  setTimeout(betreden, 600);
+  startDronk();
 }
-$("sla-over").onclick = naarHal;
+// ===== De Eerste Dronk: Godfried speaks a toast line by line, the group repeats it, then the Hall opens =====
+const DRONK = ["Bij het vuur dat nooit dooft,", "bij de hoorn die nooit leeg raakt,", "bij het schild van onze broederschap,", "en bij het hart van de Ardennen:", "Wij waken. Proost!"];
+let dronkActief = false, dronkKlaar = false, dronkStem = null;
+function speelStem(naam, klaar, reserve = 6000) { // plays a voice line, calls klaar when it ends (or after a fallback time)
+  let gedaan = false; const af = () => { if (!gedaan) { gedaan = true; klaar(); } };
+  dronkStem = speel(naam, 1); dronkStem.addEventListener("ended", af); dronkStem.addEventListener("error", () => setTimeout(af, reserve));
+  setTimeout(af, 30000);
+}
+function startDronk() {
+  dronkActief = true; meld();
+  $("brief").hidden = true; document.querySelectorAll(".zegel-kant").forEach((z) => (z.hidden = true));
+  $("dronk").hidden = false; $("dronk-regel").textContent = ""; $("dronk-hint").textContent = "";
+  halMuziek.vol(.12, 2000);
+  setTimeout(() => speelStem("dronk-intro", () => dronkRegel(0)), 1200);
+}
+function dronkRegel(i) {
+  if (!dronkActief) return;
+  const el = $("dronk-regel"), laatste = i === DRONK.length - 1;
+  el.classList.remove("aan", "proost"); void el.offsetWidth;
+  el.textContent = DRONK[i]; el.classList.add("aan"); if (laatste) el.classList.add("proost");
+  $("dronk-hint").textContent = "";
+  speelStem(`dronk-${i + 1}`, () => {
+    if (laatste) return proost();
+    $("dronk-hint").textContent = "Spreek na…";
+    setTimeout(() => dronkRegel(i + 1), 3200); // time for the group to repeat the line
+  });
+}
+function proost() {
+  if (dronkKlaar) return; dronkKlaar = true; dronkActief = false;
+  speel("glazen", 1); setTimeout(() => speel("glazen", .8, 1.1), 180); setTimeout(() => speel("gejuich", .9), 350);
+  $("verhaal").classList.add("goud"); speel("klok", .7, 1.2);
+  setTimeout(() => {
+    $("verhaal").classList.add("weg"); setTimeout(() => { $("verhaal").hidden = true; $("verhaal-bg").pause(); $("verhaal").classList.remove("goud"); }, 1700);
+    betreden(); halMuziek.vol(.5, 3000);
+    // the first toast feeds every Seal once
+    ZEGELS.forEach((z, n) => setTimeout(() => fiche(z.id, 1), 3600 + n * 450));
+    setTimeout(startUitleg, 6200);
+  }, 2600);
+}
+// ===== De uitleg: five short cards with Godfried's voice over the opened Hall =====
+const UITLEG = [
+  { stem: "uitleg-1", titel: "De vier Zegels", wijs: true, html: () => `<p>Hoe voller hun ampul, hoe steviger zij de Schaduwkoning gevangen houden.</p>` },
+  { stem: "uitleg-2", titel: "Quests voeden de Zegels", html: () => `<p>Pak een questkaart, doe wat erop staat en meld het aan de hoeders van de Hall.</p><div class="fiches"><span>Solo +1</span><span>Duo +2</span><span>Groep +3</span></div>` },
+  { stem: "uitleg-3", titel: "De Schaduw beweegt", html: () => `<div class="ogen"><i></i><i></i></div><p>Soms legt de Schaduw jullie een beproeving op. Doorsta haar, of zie de Zegels leeglopen.</p>` },
+  { stem: "uitleg-4", titel: "Vertrouw niet blindelings", html: () => `<p>De Schaduw heeft ogen onder jullie.</p>` },
+  { stem: "uitleg-5", titel: "De Guild Hall is geopend", html: () => `<p>Moge het licht jullie bijstaan, Wachters.</p>` },
+];
+let uitlegActief = false, uitlegStap = -1;
+function startUitleg() { uitlegActief = true; uitlegStap = -1; $("uitleg").hidden = false; meld(); volgendeUitleg(); }
+function volgendeUitleg() {
+  if (!uitlegActief) return;
+  fade(dronkStem, 0, 300);
+  uitlegStap++; const u = UITLEG[uitlegStap];
+  stage.classList.toggle("wijs-zegels", !!u?.wijs);
+  if (!u) return stopUitleg();
+  $("uitleg-kaart").outerHTML = `<div class="uitleg-kaart" id="uitleg-kaart"><h2 class="carved">${u.titel}</h2>${u.html()}</div>`;
+  const stap = uitlegStap;
+  speelStem(u.stem, () => setTimeout(() => { if (uitlegStap === stap) volgendeUitleg(); }, 1400), 7000);
+}
+function stopUitleg() { uitlegActief = false; stage.classList.remove("wijs-zegels"); $("uitleg").hidden = true; fade(dronkStem, 0, 400); meld(); }
+// one button walks through the whole intro: story → toast → hall → past the tutorial
+function verderIntro() {
+  if (!$("verhaal").hidden && !verhaalKlaar) return naarHal();
+  if (dronkActief) { fade(dronkStem, 0, 300); return proost(); }
+  if (uitlegActief) return volgendeUitleg();
+}
+$("sla-over").onclick = verderIntro;
 
 /* ================= entering ================= */
 let crestVan = null;
@@ -1081,7 +1172,7 @@ const CHAOS = Object.fromEntries(Object.entries(CHAOS_RAW).map(([cmd, fn]) => [c
 /* ================= link with the laptop server (app/server.mjs) ================= */
 // Without a server (the concept page) everything runs locally as before.
 let server = false, meldTimer = null;
-function schermNu() { return !$("verhaal").hidden ? "verhaal" : binnen === null ? "start" : wakker() ? "schaduw" : paneelNu || "hal"; }
+function schermNu() { return dronkActief ? "dronk" : uitlegActief ? "uitleg" : !$("verhaal").hidden ? "verhaal" : binnen === null ? "start" : wakker() ? "schaduw" : paneelNu || "hal"; }
 function meld() {
   if (!server) return; clearTimeout(meldTimer);
   meldTimer = setTimeout(() => Koppeling.meldStand(({
@@ -1096,11 +1187,12 @@ function meld() {
 const OPDRACHTEN = {
   ...CHAOS,
   start: () => { if (binnen === null && $("verhaal").hidden) { location.hash = "nu"; startVerhaal(); } },
-  verder: () => { if (!$("verhaal").hidden) naarHal(); },
+  verder: () => verderIntro(),
   schaduw: () => schaduw(), d20: () => werpD20(), goed: () => uitslag(true), fout: () => uitslag(false), hal: () => hal(),
   fiche: (o) => fiche(o.id, o.n > 0 ? 1 : -1),
   "events-opnieuw": () => { gebruikt.clear(); bewaar(); },
-  scherm: (o) => { if (binnen === null) { verhaalKlaar = true; proloog?.pause(); $("verhaal").hidden = true; betreden(); } if (wakker()) hal(); paneel(o.naam === "hal" ? null : o.naam); },
+  scherm: (o) => { if (uitlegActief) stopUitleg(); if (dronkActief) { dronkActief = false; dronkKlaar = true; fade(dronkStem, 0, 300); }
+    if (binnen === null) { verhaalKlaar = true; proloog?.pause(); $("verhaal").hidden = true; betreden(); } if (wakker()) hal(); paneel(o.naam === "hal" ? null : o.naam); },
   tocht: (o) => { o.aan ? tochtGedaan.add(o.id) : tochtGedaan.delete(o.id); if (paneelNu === "tocht") tekenTocht(); meld(); },
   reliek: (o) => { // open one compartment of the chest, with a flash
     if (o.aan && !relieken.has(o.id)) { relieken.add(o.id); if (paneelNu !== "kist") paneel("kist"); tekenKist(o.id); speel("klok", .8, 1.1); speel("donder", .3); }
@@ -1230,7 +1322,7 @@ $("b-full").onclick = () => document.documentElement.requestFullscreen?.().catch
 addEventListener("keydown", (e) => {
   const k = e.key.toLowerCase();
   if (k === "s") schaduw(); else if (k === "h") hal(); else if (k === "d") uitslag(true); else if (k === "g") uitslag(false); else if (k === "t") werpD20();
-  else if (k === "v" && !$("verhaal").hidden) naarHal(); else if (k === "f") $("b-full").click();
+  else if (k === "v") verderIntro(); else if (k === "f") $("b-full").click();
 
   else if (/^Digit[1-4]$/.test(e.code)) fiche(ZEGELS[+e.code.slice(5) - 1].id, e.shiftKey ? -1 : 1);
 });

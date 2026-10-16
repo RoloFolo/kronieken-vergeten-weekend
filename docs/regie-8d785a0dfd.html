@@ -84,9 +84,9 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <h2>Intro</h2>
     <div class="rij">
       <button class="goud" id="b-start" type="button">Start verhaal</button>
-      <button id="b-verder" type="button">Verhaal overslaan</button>
+      <button id="b-verder" type="button">Volgende stap</button>
     </div>
-    <p class="klein">Klik één keer op de tv-laptop zelf voordat je start, anders mag de browser geen geluid afspelen.</p>
+    <p class="klein">Klik één keer op de tv-laptop zelf voordat je start, anders mag de browser geen geluid afspelen. Daarna loopt alles vanzelf: verhaal, Eerste Dronk (zorg dat de glazen vol zijn), Hall en uitleg. "Volgende stap" slaat het lopende deel over.</p>
   </section>
 
   <section class="kaart">
@@ -201,7 +201,7 @@ const ZEGELS = [
   { id: "hart", naam: "Hart van de Ardennen", img: "a/medaillon-hart.webp" },
 ];
 const SOORT = { opdracht: "Opdracht", dilemma: "Dilemma", vreemd: "Vreemde zaak" };
-const SCHERM = { start: "Welkomstscherm", verhaal: "Verhaal", hal: "Guild Hall", schaduw: "Schaduw-event", tocht: "Wachterstocht", kist: "Reliekenkist", finale: "Finale", ere: "Ere van de Wachters", einde: "Overwinning" };
+const SCHERM = { start: "Welkomstscherm", verhaal: "Verhaal", dronk: "De Eerste Dronk", uitleg: "Uitleg", hal: "Guild Hall", schaduw: "Schaduw-event", tocht: "Wachterstocht", kist: "Reliekenkist", finale: "Finale", ere: "Ere van de Wachters", einde: "Overwinning" };
 const S = window.SPEL;
 let laatste = {};
 const KNOPPEN = [["hal", "Guild Hall"], ["tocht", "Wachter&shy;stocht"], ["kist", "Relieken&shy;kist"], ["finale", "Finale"], ["ere", "Ere"]];
@@ -253,7 +253,7 @@ function toon(s) {
   $("scherm").textContent = SCHERM[s.scherm] ?? "";
   for (const z of ZEGELS) $(`n-${z.id}`).textContent = s.fiches?.[z.id] ?? 0;
   const actief = s.scherm === "schaduw";
-  $("intro").hidden = !(s.scherm === "start" || s.scherm === "verhaal");
+  $("intro").hidden = !["start", "verhaal", "dronk", "uitleg"].includes(s.scherm);
   $("b-schaduw").disabled = actief;
   for (const id of ["b-goed", "b-fout", "b-hal"]) $(id).disabled = !actief;
   $("b-d20").disabled = !s.d20;
