@@ -2,7 +2,8 @@
   "rules": {
     "stand": {
       ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
-      ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)"
+      ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+      ".validate": "newData.child('tv').isString()"
     },
     "publiek": {
       ".read": true,

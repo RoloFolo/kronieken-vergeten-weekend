@@ -85,6 +85,8 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <span id="verbinding">Verbinden met de tv…</span>
     <span class="scherm" id="scherm"></span>
   </div>
+  <p class="klein" id="tv-info" style="margin:-8px 4px 0"></p>
+  <div class="kaart" id="tv-alarm" hidden style="border-color:var(--ember);color:#ffd2d0"></div>
 
   <section class="kaart" id="intro">
     <h2>Intro</h2>
@@ -208,12 +210,12 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=36"></script>
-<script src="a/spel.js?v=36"></script>
-<script src="a/wachters.js?v=36"></script>
-<script src="a/rollen.js?v=36"></script>
-<script src="a/firebase-config.js?v=36"></script>
-<script src="a/koppeling.js?v=36"></script>
+<script src="a/events.js?v=37"></script>
+<script src="a/spel.js?v=37"></script>
+<script src="a/wachters.js?v=37"></script>
+<script src="a/rollen.js?v=37"></script>
+<script src="a/firebase-config.js?v=37"></script>
+<script src="a/koppeling.js?v=37"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -293,7 +295,21 @@ for (const z of ZEGELS) {
   $("zegels").appendChild(el);
 }
 
+// which tv windows wrote the stand lately; two writers (or one without a tv mark = an old version) explains a flipping state
+const schrijvers = new Map();
+function bewaakTvs(s) {
+  const nu = Date.now(), id = s.tv || "oud"; schrijvers.set(id, nu);
+  for (const [k, t] of schrijvers) if (nu - t > 180000) schrijvers.delete(k);
+  const i = s.tvInfo;
+  $("tv-info").textContent = s.tv ? `Tv: ${i?.apparaat || "?"}, versie ${i?.versie || "?"}, laatste melding ${new Date(i?.gemeld || nu).toLocaleTimeString("nl-NL")}` : "Tv: oude versie (zonder kenmerk)";
+  const twee = schrijvers.size > 1 || !s.tv;
+  $("tv-alarm").hidden = !twee;
+  if (twee) $("tv-alarm").textContent = schrijvers.has("oud") || !s.tv
+    ? "Let op: er draait nog een oude tv-pagina die de stand overschrijft (daardoor springt bijvoorbeeld de verrader aan en uit). Zoek en sluit alle tabbladen met ?tv, ook op telefoons en de laptop, en open er één opnieuw."
+    : "Let op: er schrijven twee tv-vensters tegelijk. Sluit alle tabbladen met ?tv behalve één.";
+}
 function toon(s) {
+  bewaakTvs(s);
   // what the traitor did that everyone can see anyway: a frozen seal (no fiches) and a cursed Wachter
   const ijsTxt = Object.entries(s.ijs || {}).filter(([, t]) => t > Date.now()).map(([id, t]) => `❄ ${ZEGELS.find((z) => z.id === id)?.naam} is bevroren tot ${new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}. Tik op ❄ om te ontdooien.`);
   if (s.vloek) ijsTxt.push(`Vervloekt: ${s.vloek.naam}. ${s.vloek.tekst}`);
