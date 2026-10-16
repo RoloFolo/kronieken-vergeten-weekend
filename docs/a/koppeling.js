@@ -30,12 +30,13 @@ function inlogScherm(rol) {
   });
 }
 
-async function viaFirebase({ rol, opStand, opOpdracht }) {
+async function viaFirebase({ rol, opStand, opOpdracht, wachtwoord }) {
   const [{ initializeApp }, auth, db] = await Promise.all([import(FB + "firebase-app.js"), import(FB + "firebase-auth.js"), import(FB + "firebase-database.js")]);
   const app = initializeApp(window.FIREBASE_CONFIG);
   const a = auth.getAuth(app); await auth.setPersistence(a, auth.browserLocalPersistence);
   const email = window.KRONIEKEN_ACCOUNTS[rol === "chaos" ? "chaos" : "regie"];
   await new Promise((ok) => { const stop = auth.onAuthStateChanged(a, () => { stop(); ok(); }); });
+  if (wachtwoord && (!a.currentUser || a.currentUser.email !== email)) { try { await auth.signInWithEmailAndPassword(a, email, wachtwoord); } catch {} }
   while (!a.currentUser || a.currentUser.email !== email) {
     const scherm = await inlogScherm(rol);
     try { await auth.signInWithEmailAndPassword(a, email, scherm.ww); scherm.weg(); }

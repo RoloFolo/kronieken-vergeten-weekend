@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#050203">
 <meta name="robots" content="noindex">
-<title>Chaos Lord</title>
+<title>De Verrader</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Libre+Baskerville:ital@1&family=Source+Sans+3:wght@400;600;700&display=swap">
 <style>
 /* Layout: the Chaos Lord's secret phone page. One column, sinister: blood red on black.
@@ -51,8 +51,8 @@ button small { color: var(--ash); font-size: 12px; line-height: 1.3; }
 <body>
 <main>
   <div class="kop">
-    <h1>Chaos Lord</h1>
-    <p>“Regels zijn suggesties.” Niemand hoeft te weten dat jij het bent.</p>
+    <h1>De Verrader</h1>
+    <p id="wie-tekst">De Schaduw heeft jou gekozen. Niemand mag weten dat jij het bent.</p>
   </div>
 
   <div class="kaart status">
@@ -80,16 +80,23 @@ button small { color: var(--ash); font-size: 12px; line-height: 1.3; }
 </main>
 <div class="melding" id="melding" role="status"></div>
 
+<script src="a/wachters.js"></script>
 <script src="a/firebase-config.js"></script>
 <script src="a/koppeling.js"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const ZEGELS = [["vlam", "a/medaillon-vlam.webp"], ["hoorn", "a/medaillon-hoorn.webp"], ["schild", "a/medaillon-schild.webp"], ["hart", "a/medaillon-hart.webp"]];
 let gekozen = "vlam", stand = {};
+// personal link: #t=<token>&w=<password>
+const h = new URLSearchParams(location.hash.slice(1)), TOKEN = h.get("t") || "", WW = h.get("w") || "";
+const IK = (window.WACHTERS || []).find((w) => w.token === TOKEN);
+if (WW) history.replaceState(null, "", location.pathname + "#t=" + TOKEN); // keep the password out of the address bar
+if (IK) $("wie-tekst").textContent = `${IK.naam}, de Schaduw heeft jou gekozen. Niemand mag weten dat jij het bent.`;
 $("zegels").innerHTML = ZEGELS.map(([id, img]) => `<button type="button" data-id="${id}"><img src="${img}" alt="${id}"><span class="n" id="n-${id}">0</span></button>`).join("");
 $("zegels").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; gekozen = b.dataset.id; teken(); };
 
 function melding(t) { const m = $("melding"); m.textContent = t; m.classList.add("aan"); clearTimeout(m._t); m._t = setTimeout(() => m.classList.remove("aan"), 2400); }
+const actief = () => !!IK && stand.verrader?.token === TOKEN;
 function kaartenOver() { const d = new Date().toLocaleDateString("sv-SE"); return stand.chaos?.dag === d ? stand.chaos.kaarten : 3; }
 function teken() {
   const over = kaartenOver();
@@ -97,11 +104,16 @@ function teken() {
   document.querySelectorAll("#zegels button").forEach((b) => b.classList.toggle("gekozen", b.dataset.id === gekozen));
   for (const [id] of ZEGELS) $(`n-${id}`).textContent = stand.fiches?.[id] ?? 0;
   const inSpel = ["hal", "schaduw"].includes(stand.scherm);
+  document.querySelectorAll("main button").forEach((b) => (b.disabled = !actief()));
+  if (!actief()) { $("verbinding").textContent = IK ? "Je bent op dit moment geen verrader" : "Deze link is niet geldig"; }
+  if (!actief()) return;
+  document.querySelectorAll("#zegels button, #c-omen, #c-bliksem, #c-raaf").forEach((b) => (b.disabled = false));
+  $("verbinding").textContent = "Verbonden · jij bent de verrader";
   $("c-steel").disabled = over < 1 || !inSpel || (stand.fiches?.[gekozen] ?? 0) < 1;
   $("c-schaduw").disabled = over < 2 || stand.scherm !== "hal";
   $("c-hoop").disabled = stand.scherm !== "hal";
 }
-const stuur = (cmd, extra = {}, tekst) => { Koppeling.stuur({ cmd, ...extra }); if (tekst) melding(tekst); };
+const stuur = (cmd, extra = {}, tekst) => { Koppeling.stuur({ cmd, token: TOKEN, ...extra }); if (tekst) melding(tekst); };
 $("c-omen").onclick = () => stuur("chaos-omen", {}, "De Schaduw fluistert…");
 $("c-bliksem").onclick = () => stuur("chaos-bliksem", {}, "Donder.");
 $("c-raaf").onclick = () => stuur("chaos-raaf", {}, "De raaf krast.");
@@ -109,7 +121,7 @@ $("c-hoop").onclick = () => stuur("chaos-valse-hoop", { id: gekozen }, "Valse ho
 $("c-steel").onclick = () => stuur("chaos-steel", { id: gekozen }, "Gestolen. Niemand zag het.");
 $("c-schaduw").onclick = () => stuur("chaos-schaduw", {}, "De Schaduw komt…");
 teken();
-Koppeling.start({ rol: "chaos", opStand: (s) => { stand = s; $("punt").classList.add("aan"); $("verbinding").textContent = "Verbonden"; teken(); } })
+Koppeling.start({ rol: "chaos", wachtwoord: WW, opStand: (s) => { stand = s; $("punt").classList.add("aan"); $("verbinding").textContent = "Verbonden"; teken(); } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; });
 </script>
 </body>

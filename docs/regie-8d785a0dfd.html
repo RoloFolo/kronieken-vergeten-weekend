@@ -57,8 +57,10 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
 .toggle.aan { border-color: var(--bronze); background: rgba(184,149,95,.15); }
 .toggle.aan .vink { background: var(--bronze); color: #1a0f08; }
 .toggle.aan .vink::after { content: "✓"; }
-.cijfers { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
-.cijfers button { font: 700 22px/1 var(--carved); padding: 14px 0; }
+.namen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.namen button { padding: 12px 4px; font-weight: 600; }
+.namen button.nu { border-color: var(--ember); background: rgba(226,50,60,.18); }
+input[type=number] { width: 100%; font: inherit; color: var(--bone); background: rgba(0,0,0,.35); border: 1px solid rgba(239,227,212,.25); border-radius: 8px; padding: 12px; }
 .puzzels { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .puzzels button { padding: 8px 4px; font-size: 13px; line-height: 1.2; }
 .puzzels button.nu { border-color: var(--ember); }
@@ -137,8 +139,26 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
       <button class="goud" id="b-hint" type="button">Hint (kost een reliek)</button>
     </div>
     <h2>Antwoord van de groep</h2>
-    <div class="cijfers" id="cijfers"></div>
-    <p class="klein">Of typ het cijfer op het toetsenbord van de tv-laptop.</p>
+    <div class="namen" id="a-namen" hidden></div>
+    <div id="a-getal" hidden>
+      <div class="rij"><input type="number" inputmode="numeric" id="a-getal-in" placeholder="Getal"><button class="goud" id="b-getal" type="button">Antwoord</button></div>
+    </div>
+    <div class="namen" id="a-zegels" hidden></div>
+    <button class="goud groot" id="b-eed" type="button" hidden>De eed is juist uitgesproken</button>
+    <p class="klein" id="a-uitleg"></p>
+  </section>
+
+  <section class="kaart">
+    <h2>De Verrader</h2>
+    <p class="klein" id="verrader-nu">Nog geen verrader aangewezen.</p>
+    <div class="namen" id="v-namen" style="margin-top:10px"></div>
+    <div id="v-link" hidden style="margin-top:10px">
+      <p class="klein">Stuur deze link privé naar <b id="v-wie"></b>:</p>
+      <input type="text" id="v-url" readonly>
+      <div class="rij" style="margin-top:8px"><button class="goud" id="b-v-kopie" type="button">Kopieer link</button><button id="b-v-stop" type="button">Geen verrader meer</button></div>
+    </div>
+    <label class="klein" for="v-ww" style="display:block;margin-top:12px">Chaos-wachtwoord (zit dan in de link, alleen op deze telefoon bewaard):</label>
+    <input type="password" id="v-ww" autocomplete="off">
   </section>
 
   <section class="kaart" id="s-ere" hidden>
@@ -169,6 +189,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 
 <script src="a/events.js"></script>
 <script src="a/spel.js"></script>
+<script src="a/wachters.js"></script>
 <script src="a/firebase-config.js"></script>
 <script src="a/koppeling.js"></script>
 <script>
@@ -190,10 +211,30 @@ $("tocht").innerHTML = S.tocht.map((o) => `<button class="toggle" type="button" 
 $("tocht").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "tocht", id: b.dataset.id, aan: !b.classList.contains("aan") }); };
 $("kist").innerHTML = S.relieken.map((k) => `<button class="toggle" type="button" data-id="${k.id}"><span>${k.naam}</span><span class="vink"></span></button>`).join("");
 $("kist").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "reliek", id: b.dataset.id, aan: !b.classList.contains("aan") }); };
-$("puzzels").innerHTML = S.puzzels.map((p, i) => `<button type="button" data-i="${i}">${p.naam}</button>`).join("");
+$("puzzels").innerHTML = S.aktes.map((p, i) => `<button type="button" data-i="${i}">${["I", "II", "III", "IV"][i]} · ${p.naam}</button>`).join("");
+const NAMEN = (window.WACHTERS || []).map((w) => w.naam);
+const naamKnoppen = (id, cmd) => { $(id).innerHTML = NAMEN.map((n) => `<button type="button" data-n="${n}">${n}</button>`).join(""); };
+naamKnoppen("a-namen"); naamKnoppen("v-namen");
+$("a-namen").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "antwoord", w: b.dataset.n }); };
+$("a-zegels").innerHTML = ZEGELS.map((z) => `<button type="button" data-z="${z.id}"><img src="${z.img}" alt="" style="width:36px;height:36px"><br>${z.naam.split(" ")[0]}</button>`).join("");
+$("a-zegels").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "antwoord", w: b.dataset.z }); };
+$("b-getal").onclick = () => { const v = $("a-getal-in").value.trim(); if (v !== "") { stuur({ cmd: "antwoord", w: v }); $("a-getal-in").value = ""; } };
+$("b-eed").onclick = () => stuur({ cmd: "antwoord", w: "eed" });
+// the traitor: pick a Wachter, then send him his personal link in a private message
+try { $("v-ww").value = localStorage.getItem("kronieken-chaos-ww") || ""; } catch {}
+$("v-ww").oninput = () => { try { localStorage.setItem("kronieken-chaos-ww", $("v-ww").value); } catch {} toonLink(); };
+let verraderNu = null;
+function toonLink() {
+  if (!verraderNu) { $("v-link").hidden = true; return; }
+  const basis = location.href.replace(/[^/]*$/, ""), ww = $("v-ww").value;
+  $("v-url").value = `${basis}chaos-06d0ece377.html#t=${verraderNu.token}${ww ? `&w=${encodeURIComponent(ww)}` : ""}`;
+  $("v-wie").textContent = verraderNu.naam; $("v-link").hidden = false;
+}
+$("v-namen").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "verrader", naam: b.dataset.n }); };
+$("b-v-stop").onclick = () => stuur({ cmd: "geen-verrader" });
+$("b-v-kopie").onclick = () => { const v = $("v-url").value; navigator.clipboard?.writeText(v).then(() => ($("b-v-kopie").textContent = "Gekopieerd"), () => $("v-url").select()); setTimeout(() => ($("b-v-kopie").textContent = "Kopieer link"), 2000); };
 $("puzzels").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "puzzel", i: +b.dataset.i }); };
-$("cijfers").innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((n) => `<button type="button" data-n="${n}">${n}</button>`).join("");
-$("cijfers").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "antwoord", n: +b.dataset.n }); };
+
 const stuur = (o) => Koppeling.stuur(o);
 
 for (const z of ZEGELS) {
@@ -228,16 +269,25 @@ function toon(s) {
   document.querySelectorAll("#schermen button").forEach((b) => b.classList.toggle("nu", b.dataset.s === (paneel || (s.scherm === "hal" ? "hal" : ""))));
   $("s-tocht").hidden = s.scherm !== "tocht"; $("s-kist").hidden = !["tocht", "kist"].includes(s.scherm);
   $("s-finale").hidden = s.scherm !== "finale"; $("s-ere").hidden = s.scherm !== "ere";
-  const gedaan = new Set(s.tochtGedaan || []), open = new Set(s.relieken || []), op = new Set(s.reliekGebruikt || []);
+  const gedaan = new Set(s.tochtGedaan || []), gevonden = new Set(s.relieken || []), op = new Set(s.reliekGebruikt || []);
   document.querySelectorAll("#tocht .toggle").forEach((b) => b.classList.toggle("aan", gedaan.has(b.dataset.id)));
-  document.querySelectorAll("#kist .toggle").forEach((b) => b.classList.toggle("aan", open.has(b.dataset.id)));
+  document.querySelectorAll("#kist .toggle").forEach((b) => b.classList.toggle("aan", gevonden.has(b.dataset.id)));
   const fin = s.fin || { nu: 0, open: {}, opgelost: {}, hint: {} };
-  document.querySelectorAll("#puzzels button").forEach((b, i) => { b.classList.toggle("nu", i === fin.nu); b.classList.toggle("klaar", !!fin.opgelost?.[S.puzzels[i].zegel]); });
-  const p = S.puzzels[fin.nu], vol = (s.fiches?.[p.zegel] ?? 0) >= S.drempel;
-  $("fin-status").textContent = fin.opgelost?.[p.zegel] ? "Deze puzzel is opgelost." : vol || fin.open?.[p.zegel] ? "Puzzel staat open op de tv." : "Zegel is niet vol genoeg: de groep moet eerst een beproeving doorstaan (bedenk er zelf één, of laat de D20 beslissen).";
+  document.querySelectorAll("#puzzels button").forEach((b, i) => { b.classList.toggle("nu", i === fin.nu); b.classList.toggle("klaar", !!fin.opgelost?.[S.aktes[i].zegel]); });
+  const p = S.aktes[fin.nu], vol = (s.fiches?.[p.zegel] ?? 0) >= S.drempel, open = vol || fin.open?.[p.zegel], klaar = !!fin.opgelost?.[p.zegel];
+  $("fin-status").textContent = klaar ? "Deze akte is volbracht." : open ? "De akte staat open op de tv." : "Zegel is niet vol genoeg: de groep moet eerst een beproeving doorstaan (bedenk er zelf één, of laat de D20 beslissen).";
+  const info = s.aktevraag || {}, bezig = open && !klaar;
+  $("a-namen").hidden = !(bezig && ["herinnering", "verrader"].includes(p.soort));
+  $("a-getal").hidden = !(bezig && p.soort === "weekend" && !info.zegelVraag);
+  $("a-zegels").hidden = !(bezig && p.soort === "weekend" && info.zegelVraag);
+  $("b-eed").hidden = !(bezig && p.soort === "eed");
+  $("a-uitleg").textContent = !bezig ? "" : { herinnering: "Tik de naam die de groep noemt.", weekend: "Vul het antwoord van de groep in.", eed: "Druk pas als de groep de hele eed in de juiste volgorde heeft uitgesproken.", verrader: "Tik de naam die de groep beschuldigt." }[p.soort];
+  verraderNu = s.verrader || null; toonLink();
+  $("verrader-nu").textContent = verraderNu ? `Verrader nu: ${verraderNu.naam} (sinds ${new Date(verraderNu.sinds).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })})` : "Nog geen verrader aangewezen.";
+  document.querySelectorAll("#v-namen button").forEach((b) => b.classList.toggle("nu", b.dataset.n === verraderNu?.naam));
   $("b-beproeving").disabled = !!(vol || fin.open?.[p.zegel] || fin.opgelost?.[p.zegel]);
-  const vrij = [...open].filter((k) => !op.has(k)).length;
-  $("b-hint").disabled = !vrij || !!fin.hint?.[p.zegel] || !!fin.opgelost?.[p.zegel];
+  const vrij = [...gevonden].filter((k) => !op.has(k)).length;
+  $("b-hint").disabled = !vrij || fin.hint?.[p.zegel] === (fin.voortgang?.[p.zegel]?.length ?? 0) || klaar || !open;
   $("b-hint").textContent = `Hint (${vrij} reliek${vrij === 1 ? "" : "en"} over)`;
   const ere = s.ere || { i: -1 }; $("ere-titel").textContent = ere.i < 0 ? "Nog geen titel getoond." : `Nu op de tv: ${S.titels[ere.i].naam} (${ere.i + 1} van ${S.titels.length})`;
   const totaal = (window.SCHADUW_EVENTS || []).length, over = totaal - (s.gebruikt?.length ?? 0);

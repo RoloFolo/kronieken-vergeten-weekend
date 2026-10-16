@@ -243,6 +243,25 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .puzzel .hint { max-width: 60ch; padding: 1.4vh 1.6vw; border: 1px solid #d8b06a; background: rgba(40,26,10,.6); font: clamp(14px, 1.2vw, 24px)/1.4 var(--body); color: #fbe3b4; box-shadow: 0 0 24px rgba(255,190,90,.25); }
 .puzzel .dichtbord { font: italic clamp(16px, 1.6vw, 32px)/1.5 var(--display); max-width: 50ch; color: var(--bone); }
 .puzzel .fout { color: var(--ember); font: 700 clamp(20px, 2vw, 40px)/1 var(--carved); animation: neon .6s steps(1) 3; }
+.akte-nr { font-size: clamp(14px, 1.2vw, 24px); letter-spacing: .4em; }
+.klein-tv { margin: 0; font: 600 clamp(13px, 1.1vw, 22px)/1.3 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--ash); }
+.sterren { display: flex; flex-wrap: wrap; justify-content: center; gap: 1vw; max-width: 70vw; }
+.ster { min-width: 3.4em; padding: .5em .8em; font: 700 clamp(12px, 1vw, 20px)/1 var(--carved); color: #6e5230; border: 1px solid #4a331b; }
+.ster.aan { color: #fbe3b4; border-color: #d8b06a; box-shadow: 0 0 18px rgba(255,190,90,.45); animation: vast .8s ease-out; }
+.herinnering-foto { max-height: 30vh; max-width: 40vw; border: 3px solid #6e5230; box-shadow: 0 10px 30px #000, 0 0 30px rgba(226,50,60,.3); filter: sepia(.35) contrast(1.05); }
+.bekers { display: flex; gap: 1.6vw; }
+.beker { width: clamp(30px, 2.6vw, 54px); aspect-ratio: .7; border: 2px solid #6e5230; border-radius: 0 0 40% 40%; background: linear-gradient(to top, #2a1416, #0e0607); }
+.beker.vol { background: linear-gradient(to top, #6b0a10, #e2323c); border-color: #d8b06a; box-shadow: 0 0 18px rgba(226,50,60,.6); }
+.aanwijzingen { margin: 0; padding-left: 1.4em; max-width: 60ch; text-align: left; display: grid; gap: 1.2vh; font: italic clamp(16px, 1.6vw, 32px)/1.4 var(--display); color: var(--bone); }
+.vraag.eed { color: #fbe3b4; }
+.periodes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(240px, 40vw), 1fr)); gap: 1.2vw; width: min(86vw, 1500px); }
+.periode { padding: 1.6vh 1.2vw; text-align: left; border: 2px solid #4a331b; background: rgba(14,6,7,.85); display: grid; gap: .8vh; }
+.periode.nu { border-color: var(--ember); box-shadow: 0 0 22px var(--glow); }
+.periode.ontmaskerd { border-color: #d8b06a; }
+.periode .wanneer { font: 700 clamp(12px, 1vw, 20px)/1.2 var(--carved); color: var(--bronze-hi); text-transform: capitalize; }
+.periode ul { margin: 0; padding-left: 1.1em; font: clamp(12px, .95vw, 18px)/1.35 var(--body); color: var(--bone); }
+.periode .wie-was { font: 700 clamp(18px, 1.8vw, 36px)/1 var(--carved); text-align: center; color: #6e5230; }
+.periode.ontmaskerd .wie-was { color: #fbe3b4; filter: drop-shadow(0 0 12px rgba(255,190,90,.7)); }
 .woud { width: min(76vw, 1240px, 96vh); aspect-ratio: 16 / 7; border: 2px solid #6e5230; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
 .ere { display: grid; justify-items: center; gap: 2.6vh; max-width: 70vw; }
 .ere .nr { font-size: clamp(14px, 1.2vw, 24px); letter-spacing: .3em; }
@@ -463,6 +482,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
 
 <script src="a/events.js"></script>
 <script src="a/spel.js"></script>
+<script src="a/wachters.js"></script>
 <script src="a/firebase-config.js"></script>
 <script src="a/koppeling.js"></script>
 <script>
@@ -729,7 +749,7 @@ function teken() { for (const z of ZEGELS) { const v = $(`vial-${z.id}`); const 
 function fiche(id, n) {
   const z = ZEGELS.find((x) => x.id === id), vial = $(`vial-${id}`);
   if (n < 0 && z.fiches === 0) return;
-  z.fiches = Math.max(0, z.fiches + n); meld();
+  z.fiches = Math.max(0, z.fiches + n); log("fiche", { id, n }); meld();
   vial.classList.remove("gain", "loss"); void vial.offsetWidth;
   if (n > 0) {
     const f = document.createElement("span"); f.className = "fiche"; vial.querySelector(".inner").appendChild(f); setTimeout(() => f.remove(), 1100);
@@ -891,7 +911,10 @@ function betreden() {
 /* ================= later screens: Wachterstocht, kist, finale, ere ================= */
 const S = window.SPEL;
 let tochtGedaan = new Set(), relieken = new Set(), reliekGebruikt = new Set();
-let fin = { nu: 0, open: {}, opgelost: {}, hint: {} }, ere = { i: -1, namen: {} }, paneelNu = null;
+let fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }, ere = { i: -1, namen: {} }, paneelNu = null;
+// the weekend's log (for Akte II and IV) and the traitor periods
+let logboek = [], verraders = [], verrader = null;
+function log(type, data = {}) { logboek.push({ t: Date.now(), type, ...data }); if (logboek.length > 800) logboek.shift(); }
 const medaille = (id) => ZEGELS.find((z) => z.id === id)?.medaille;
 function paneel(naam) {
   paneelNu = naam; const p = $("paneel"); stage.classList.toggle("met-paneel", !!naam);
@@ -911,61 +934,103 @@ function tekenKist(nieuw) {
   $("kist-onder").textContent = relieken.size ? `${relieken.size} van de 5 relieken gevonden. Elk reliek is in de finale één hint waard.` : "Elke volbrachte beproeving opent een vak. Elk reliek is in de finale één hint waard.";
 }
 function zegelVol(id) { return (ZEGELS.find((z) => z.id === id)?.fiches ?? 0) >= S.drempel; }
+const NAMEN = (window.WACHTERS || []).map((w) => w.naam);
+const zegelNaamVan = (id) => ZEGELS.find((z) => z.id === id)?.naam ?? id;
+const tijd = (t) => new Date(t).toLocaleString("nl-NL", { weekday: "long", hour: "2-digit", minute: "2-digit" });
+const schoon = (t) => String(t).replace(/[<>&]/g, "");
+
+// --- Akte II: questions about the weekend, answered from the app's own log ---
+function weekendVragen() {
+  const tel = (type, f = () => true) => logboek.filter((l) => l.type === type && f(l)).length;
+  const verlies = {}; for (const l of logboek) if (l.type === "fiche" && l.n < 0) verlies[l.id] = (verlies[l.id] || 0) + 1;
+  const meest = Math.max(0, ...Object.values(verlies)), zwaarst = Object.keys(verlies).filter((k) => verlies[k] === meest);
+  return [
+    { vraag: "Hoeveel Schaduw-events hebben jullie dit weekend doorstaan?", antwoord: [tel("uitslag", (l) => l.goed)] },
+    { vraag: "Hoe vaak heeft de Schaduw zich gevoed?", antwoord: [tel("uitslag", (l) => !l.goed)] },
+    { vraag: "Hoe vaak is de D20 geworpen?", antwoord: [tel("d20")] },
+    { vraag: "Welk Zegel verloor de meeste fiches?", zegel: true, antwoord: zwaarst.length ? zwaarst : ZEGELS.map((z) => z.id) },
+    { vraag: "Hoeveel relieken vonden jullie in het kasteel?", antwoord: [relieken.size] },
+  ];
+}
+// --- Akte IV: the traitor periods (each one a different Wachter) with the sabotage done in them ---
+function verraadPeriodes() {
+  return verraders.map((v, i) => ({ ...v, tot: verraders[i + 1]?.van ?? null,
+    sporen: logboek.filter((l) => l.type === "chaos" && l.naam === v.naam && l.t >= v.van && (!verraders[i + 1] || l.t < verraders[i + 1].van)) }));
+}
+const SPOOR = { "chaos-steel": (l) => `er verdween een fiche uit de ${zegelNaamVan(l.id)}`, "chaos-schaduw": () => "de Schaduw werd opgeroepen", "chaos-omen": () => "er klonk een fluistering",
+  "chaos-bliksem": () => "de bliksem sloeg onverwacht in", "chaos-raaf": () => "de raaf schrok op", "chaos-valse-hoop": (l) => `de ${zegelNaamVan(l.id)} steeg… en zakte weer` };
+function aktePuzzel(a) {
+  const v = fin.voortgang[a.zegel] ||= [];
+  if (a.soort === "herinnering") {
+    const lijst = S.herinneringen, i = lijst.findIndex((_, n) => !v.includes(n));
+    const sterren = lijst.map((h, n) => `<span class="ster ${v.includes(n) ? "aan" : ""}">${v.includes(n) ? schoon(h.wie) : "✦"}</span>`).join("");
+    if (i < 0) return { klaar: true, html: `<div class="sterren">${sterren}</div>` };
+    const h = lijst[i];
+    return { html: `<div class="sterren">${sterren}</div>${h.foto ? `<img class="herinnering-foto" src="${h.foto}" alt="">` : ""}<p class="vraag">${schoon(h.tekst)}</p><p class="klein-tv">Wie is deze Wachter?</p>`,
+      hint: `Zijn naam begint met een ${h.wie[0]}.`, check: (w) => String(w).toLowerCase() === h.wie.toLowerCase(), goed: () => v.push(i) };
+  }
+  if (a.soort === "weekend") {
+    const vragen = weekendVragen(), i = vragen.findIndex((_, n) => !v.includes(n));
+    const bekers = vragen.map((_, n) => `<span class="beker ${v.includes(n) ? "vol" : ""}"></span>`).join("");
+    if (i < 0) return { klaar: true, html: `<div class="bekers">${bekers}</div>` };
+    const q = vragen[i];
+    return { html: `<div class="bekers">${bekers}</div><p class="vraag">${q.vraag}</p>`,
+      hint: q.zegel ? `Het was de ${zegelNaamVan(q.antwoord[0])}.` : `Het antwoord is ${q.antwoord[0]}.`,
+      check: (w) => q.antwoord.map(String).includes(String(w).toLowerCase()), goed: () => v.push(i) };
+  }
+  if (a.soort === "eed") {
+    if (v.includes("klaar")) return { klaar: true, html: `<p class="vraag eed">“${S.eed.fragmenten.join(" ")}”</p>` };
+    return { html: `<ol class="aanwijzingen">${S.eed.aanwijzingen.map((t) => `<li>${t}</li>`).join("")}</ol><p class="klein-tv">Leg de rolkaarten op volgorde en spreek de eed samen uit.</p>`,
+      hint: `De eed begint met: “${S.eed.fragmenten.slice(0, 3).join(" ")}…”`, check: (w) => w === "eed", goed: () => v.push("klaar") };
+  }
+  // verrader
+  const periodes = verraadPeriodes(), i = periodes.findIndex((_, n) => !v.includes(n));
+  const kaarten = periodes.map((p, n) => `<div class="periode ${v.includes(n) ? "ontmaskerd" : ""} ${n === i ? "nu" : ""}">
+    <div class="wanneer">${tijd(p.van)}${p.tot ? ` – ${tijd(p.tot)}` : " – nu"}</div>
+    <ul>${p.sporen.length ? p.sporen.map((l) => `<li>${new Date(l.t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}: ${SPOOR[l.cmd]?.(l) ?? "er gebeurde iets vreemds"}</li>`).join("") : "<li>Geen sporen. Deze verrader hield zich gedeisd…</li>"}</ul>
+    <div class="wie-was">${v.includes(n) ? schoon(p.naam) : "?"}</div></div>`).join("");
+  if (!periodes.length) return { klaar: true, html: `<p class="vraag">Er was dit weekend geen verrader actief. De Schaduw stond er alleen voor.</p>` };
+  if (i < 0) return { klaar: true, html: `<div class="periodes">${kaarten}</div>` };
+  return { html: `<div class="periodes">${kaarten}</div><p class="klein-tv">Wie was de verrader in de gemarkeerde periode?</p>`,
+    hint: `De verrader van deze periode heeft ${periodes[i].naam.length} letters in zijn naam.`, check: (w) => String(w).toLowerCase() === periodes[i].naam.toLowerCase(), goed: () => v.push(i) };
+}
+function aktePuzzelInfo() {
+  const a = S.aktes[fin.nu]; if (!a) return null;
+  const vragen = a.soort === "weekend" ? weekendVragen() : null, stap = fin.voortgang[a.zegel]?.length ?? 0;
+  return { soort: a.soort, zegelVraag: !!(vragen && vragen[stap]?.zegel), stap };
+}
 function tekenFinale(fout) {
-  $("slot").innerHTML = S.puzzels.map((p, i) => `<div class="cijfer ${fin.opgelost[p.zegel] ? "vast" : ""} ${i === fin.nu ? "actief" : ""}">${fin.opgelost[p.zegel] ? p.antwoord : "?"}</div>`).join("");
-  const p = S.puzzels[fin.nu], open = fin.open[p.zegel] || zegelVol(p.zegel);
-  let h = `<img class="med" src="${medaille(p.zegel)}" alt=""><h2 class="carved">${p.naam}</h2>`;
-  if (fin.opgelost[p.zegel]) h += `<p class="vraag">Opgelost. Het ${["eerste", "tweede", "derde", "vierde"][fin.nu]} cijfer is <b>${p.antwoord}</b>.</p>`;
+  $("slot").innerHTML = S.aktes.map((a, i) => `<div class="cijfer ${fin.opgelost[a.zegel] ? "vast" : ""} ${i === fin.nu ? "actief" : ""}">${fin.opgelost[a.zegel] ? S.slotcode[i] : "?"}</div>`).join("");
+  const a = S.aktes[fin.nu], open = fin.open[a.zegel] || zegelVol(a.zegel);
+  let h = `<div class="akte-nr carved">Akte ${["I", "II", "III", "IV"][fin.nu]}</div><img class="med" src="${medaille(a.zegel)}" alt=""><h2 class="carved">${a.naam}</h2>`;
+  if (fin.opgelost[a.zegel]) h += `<p class="vraag">Volbracht. Het ${["eerste", "tweede", "derde", "vierde"][fin.nu]} cijfer is <b>${S.slotcode[fin.nu]}</b>.</p>`;
   else if (!open) h += `<p class="dichtbord">Dit Zegel is niet sterk genoeg om zijn geheim prijs te geven. Doorsta eerst een laatste beproeving.</p>`;
   else {
-    h += `<p class="vraag">${p.tekst}</p>`;
-    if (p.code) h += `<div class="code">${p.code}</div>`;
-    if (p.herten) h += `<canvas class="woud" id="woud" width="1600" height="700"></canvas>`;
-    if (fin.hint[p.zegel]) h += `<div class="hint">${p.hint}</div>`;
+    const p = aktePuzzel(a);
+    if (!(fin.voortgang[a.zegel]?.length)) h += `<p class="onder">${a.intro}</p>`;
+    h += p.html;
+    if (fin.hint[a.zegel] === fin.voortgang[a.zegel]?.length && p.hint) h += `<div class="hint">${p.hint}</div>`;
     if (fout) h += `<div class="fout">De Schaduw lacht. Fout.</div>`;
   }
   $("puzzel").innerHTML = h;
-  if (p.herten && open && !fin.opgelost[p.zegel]) tekenWoud(p.herten, !!fin.hint[p.zegel]);
 }
-// a painted forest with a fixed number of stags hidden between the trees (same picture every time)
-const hertImg = new Image(); hertImg.src = "a/hert.svg";
-function tekenWoud(aantal, hint) {
-  const cv = $("woud"); if (!cv) return; const x = cv.getContext("2d"); let s = 7;
-  const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647;
-  const g = x.createLinearGradient(0, 0, 0, 700); g.addColorStop(0, "#5a0d10"); g.addColorStop(.5, "#2a0708"); g.addColorStop(1, "#0b0404");
-  x.fillStyle = g; x.fillRect(0, 0, 1600, 700);
-  const dennen = (n, y0, h0, kleur) => { x.fillStyle = kleur; for (let i = 0; i < n; i++) { const bx = rnd() * 1650 - 25, h = h0 * (.6 + rnd() * .6), b = h * .38;
-    x.beginPath(); x.moveTo(bx, y0 - h); for (let k = 1; k <= 5; k++) { x.lineTo(bx - b * k / 5, y0 - h + h * k / 5); x.lineTo(bx - b * k / 9, y0 - h + h * k / 5); } x.lineTo(bx + b, y0); for (let k = 5; k >= 1; k--) { x.lineTo(bx + b * k / 9, y0 - h + h * k / 5); x.lineTo(bx + b * k / 5, y0 - h + h * k / 5); } x.closePath(); x.fill(); } };
-  const rijen = [[230, 34, "#2e0b0d"], [470, 28, "#1c0607"], [690, 24, "#0f0304"]];
-  const plekken = [[180, 150], [760, 120], [1320, 170], [420, 380], [1050, 360], [1460, 420], [260, 600], [880, 610]].slice(0, aantal);
-  const teken = () => {
-    rijen.forEach(([y, n, k], rij) => {
-      dennen(n, y + 40, 260 - rij * 30, k);
-      x.globalAlpha = hint ? .95 : .78;
-      for (const [hx, hy] of plekken) if ((hy < 260 && rij === 0) || (hy >= 260 && hy < 500 && rij === 1) || (hy >= 500 && rij === 2)) {
-        if (hint) { x.shadowColor = "rgba(255,190,90,.9)"; x.shadowBlur = 18; }
-        x.drawImage(hertImg, hx - 34, hy - 34, 68, 68); x.shadowBlur = 0;
-      }
-      x.globalAlpha = 1;
-    });
-    x.fillStyle = "rgba(200,180,180,.06)"; for (let i = 0; i < 40; i++) { x.beginPath(); x.ellipse(rnd() * 1600, 300 + rnd() * 400, 160, 30, 0, 0, 7); x.fill(); }
-  };
-  if (hertImg.complete) teken(); else hertImg.onload = teken;
-}
-function antwoord(n) {
-  if (paneelNu !== "finale") return; const p = S.puzzels[fin.nu];
-  if (fin.opgelost[p.zegel] || !(fin.open[p.zegel] || zegelVol(p.zegel))) return;
-  if (n === p.antwoord) {
-    fin.opgelost[p.zegel] = true; speel("klok", .9, 1.2); speel("donder", .35);
-    tekenFinale(); meld();
-    if (S.puzzels.every((q) => fin.opgelost[q.zegel])) setTimeout(overwinning, 2500);
-    else setTimeout(() => { const v = S.puzzels.findIndex((q) => !fin.opgelost[q.zegel]); if (v >= 0) { fin.nu = v; tekenFinale(); meld(); } }, 3500);
+function antwoord(w) {
+  if (paneelNu !== "finale") return; const a = S.aktes[fin.nu];
+  if (fin.opgelost[a.zegel] || !(fin.open[a.zegel] || zegelVol(a.zegel))) return;
+  const p = aktePuzzel(a); if (p.klaar || !p.check) return;
+  if (p.check(w)) {
+    p.goed(); speel("klok", .7, 1.15);
+    if (aktePuzzel(a).klaar) { // the act is complete: its digit falls into the lock
+      fin.opgelost[a.zegel] = true; speel("donder", .4); setTimeout(() => speel("klok", 1, .9), 400); tekenFinale(); meld();
+      if (S.aktes.every((x) => fin.opgelost[x.zegel])) setTimeout(overwinning, 3000);
+      else setTimeout(() => { const n = S.aktes.findIndex((x) => !fin.opgelost[x.zegel]); if (n >= 0) { fin.nu = n; tekenFinale(); meld(); } }, 5000);
+    } else { tekenFinale(); meld(); }
   } else { speel("donder", .8); bliksem(0); tekenFinale(true); }
 }
-function hintVoor() { // costs one relic
-  const p = S.puzzels[fin.nu]; if (fin.hint[p.zegel]) return;
+function hintVoor() { // costs one relic, for the current step
+  const a = S.aktes[fin.nu], stap = fin.voortgang[a.zegel]?.length ?? 0; if (fin.hint[a.zegel] === stap) return;
   const vrij = [...relieken].find((k) => !reliekGebruikt.has(k)); if (!vrij) return;
-  reliekGebruikt.add(vrij); fin.hint[p.zegel] = true; speel("klok", .6, 1.4); tekenFinale(); meld();
+  reliekGebruikt.add(vrij); fin.hint[a.zegel] = stap; speel("klok", .6, 1.4); tekenFinale(); meld();
 }
 let zegeStem = null;
 function overwinning() {
@@ -989,7 +1054,8 @@ const KAARTEN_PER_DAG = 3, wacht = {};
 function chaosDag() { const d = new Date().toLocaleDateString("sv-SE"); if (chaos.dag !== d) chaos = { dag: d, kaarten: KAARTEN_PER_DAG }; }
 function mag(naam, sec) { const nu = Date.now(); if ((wacht[naam] || 0) > nu) return false; wacht[naam] = nu + sec * 1000; return true; }
 function flikker(ms = 2500) { stage.classList.add("omen"); setTimeout(() => stage.classList.remove("omen"), ms); }
-const CHAOS = {
+function echteVerrader(o) { return verrader && o.token === verrader.token; }
+const CHAOS_RAW = {
   "chaos-omen": () => { if (!mag("omen", 45)) return; speel(`chaos-${1 + Math.floor(Math.random() * 5)}`, 1); flikker(3200); },
   "chaos-bliksem": () => { if (!mag("bliksem", 15)) return; bliksem(.7); setTimeout(() => bliksem(0), 350); },
   "chaos-raaf": () => { if (!mag("raaf", 12)) return; speel("kraai", .9, .85); setTimeout(() => speel("kraai", .8, .8), 420); const r = $("raven"); r.classList.remove("schrik"); void r.offsetWidth; r.classList.add("schrik"); },
@@ -1007,6 +1073,10 @@ const CHAOS = {
     chaos.kaarten -= 2; meld(); schaduw();
   },
 };
+const CHAOS = Object.fromEntries(Object.entries(CHAOS_RAW).map(([cmd, fn]) => [cmd, (o) => {
+  if (!echteVerrader(o)) return; const voor = chaos.kaarten; const wachtVoor = JSON.stringify(wacht);
+  fn(o); if (chaos.kaarten !== voor || JSON.stringify(wacht) !== wachtVoor) { log("chaos", { cmd, naam: verrader.naam, id: o.id }); meld(); }
+}]));
 
 /* ================= link with the laptop server (app/server.mjs) ================= */
 // Without a server (the concept page) everything runs locally as before.
@@ -1019,6 +1089,8 @@ function meld() {
     event: wakker() && EVENT ? { id: EVENT.id, naam: EVENT.naam, regel: EVENT.regel, soort: EVENT.soort, zegel: EVENT.zegel, verlies: EVENT.verlies * extra } : null,
     scherm: schermNu(), d20: !$("b-d20").disabled,
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], fin, ere, chaos,
+    logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds } : null,
+    aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   })), 150);
 }
 const OPDRACHTEN = {
@@ -1035,12 +1107,17 @@ const OPDRACHTEN = {
     else if (!o.aan) { relieken.delete(o.id); tekenKist(); }
     meld(); },
   puzzel: (o) => { fin.nu = o.i; if (paneelNu !== "finale") paneel("finale"); else tekenFinale(); meld(); },
-  beproeving: () => { fin.open[S.puzzels[fin.nu].zegel] = true; speel("klok", .7, .9); tekenFinale(); meld(); },
-  antwoord: (o) => antwoord(o.n),
+  beproeving: () => { fin.open[S.aktes[fin.nu].zegel] = true; speel("klok", .7, .9); tekenFinale(); meld(); },
+  antwoord: (o) => antwoord(o.n ?? o.w),
+  verrader: (o) => { // the organisers pass the role on; a new period starts
+    const w = (window.WACHTERS || []).find((x) => x.naam === o.naam); if (!w) return;
+    verrader = { naam: w.naam, token: w.token, sinds: Date.now() }; verraders.push({ naam: w.naam, van: Date.now() });
+    chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; meld(); },
+  "geen-verrader": () => { verrader = null; meld(); },
   hint: () => hintVoor(),
   ere: (o) => { ere.i = Math.max(-1, Math.min(S.titels.length - 1, ere.i + o.d)); if (paneelNu !== "ere") paneel("ere"); else tekenEre(); speel("klok", .6, 1.1); meld(); },
   "ere-naam": (o) => { ere.namen[ere.i] = String(o.naam || "").slice(0, 40); tekenEre(); speel("donder", .4); meld(); },
-  "alles-opnieuw": () => { chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {} }; ere = { i: -1, namen: {} }; bewaar(); },
+  "alles-opnieuw": () => { chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; logboek = []; verraders = []; verrader = null; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; bewaar(); },
 };
 // With Firebase only the tv laptop logs in (address ends in ?tv); public visitors just see the countdown.
 let standGeladen = false;
@@ -1051,6 +1128,8 @@ function laadStand(s) {
   tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
   if (s.fin) fin = { nu: 0, open: {}, opgelost: {}, hint: {}, ...s.fin }; if (s.ere) ere = { i: -1, namen: {}, ...s.ere };
   if (s.chaos) chaos = s.chaos;
+  logboek = s.logboek || []; verraders = s.verraders || []; verrader = s.verrader || null;
+  fin.voortgang ||= {};
   meld();
 }
 if (!window.FIREBASE_CONFIG || new URLSearchParams(location.search).has("tv"))
@@ -1093,7 +1172,7 @@ let rollend = false;
 function werpD20() {
   if (!wakker() || beslist || rollend) return; rollend = true;
   const d = $("d20"), g = $("d20-getal"), u = $("d20-uitslag");
-  const worp = 1 + Math.floor(Math.random() * 20);
+  const worp = 1 + Math.floor(Math.random() * 20); log("d20", { worp });
   fade(stem, 0, 300); $("event").classList.remove("show");
   d.hidden = false; d.className = "d20 rol"; u.textContent = "";
   speel("klok", .5, .7);
@@ -1127,7 +1206,7 @@ function schaduw() {
   setTimeout(() => toonEvent(nieuw), 2300);
 }
 function uitslag(goed) {
-  if (!wakker() || beslist) return; beslist = true; knoppen(false);
+  if (!wakker() || beslist) return; beslist = true; knoppen(false); log("uitslag", { goed, event: EVENT?.id });
   const v = $("verdict"); v.hidden = false; v.className = `verdict carved ${goed ? "good" : "bad"}`;
   v.textContent = goed ? "Doorstaan" : "De Schaduw voedt zich";
   if (goed) speel("klok", .6, 1.25);
@@ -1152,7 +1231,7 @@ addEventListener("keydown", (e) => {
   const k = e.key.toLowerCase();
   if (k === "s") schaduw(); else if (k === "h") hal(); else if (k === "d") uitslag(true); else if (k === "g") uitslag(false); else if (k === "t") werpD20();
   else if (k === "v" && !$("verhaal").hidden) naarHal(); else if (k === "f") $("b-full").click();
-  else if (paneelNu === "finale" && /^[0-9]$/.test(e.key)) antwoord(+e.key);
+
   else if (/^Digit[1-4]$/.test(e.code)) fiche(ZEGELS[+e.code.slice(5) - 1].id, e.shiftKey ? -1 : 1);
 });
 </script>

@@ -16,22 +16,38 @@ window.SPEL = {
     { id: "hart", naam: "De Wortel van de Wildernis", tekst: "Hij ademt nog steeds het woud.", img: "a/reliek-hart.webp" },
     { id: "stilte", naam: "De Kaars van Stilte", tekst: "Hij geeft geen licht, maar dwingt rust af.", img: "a/reliek-stilte.webp" },
   ],
-  // Vier puzzels, één per Zegel. Elk antwoord is één cijfer van het slot op de kist (volgorde: vlam, hoorn, schild, hart).
-  drempel: 12, // fiches waarbij een Zegel zijn puzzel vanzelf vrijgeeft; anders eerst een beproeving
-  puzzels: [
-    { zegel: "vlam", naam: "Het Vuurraadsel", antwoord: 7,
-      tekst: "Ik werd geboren in het jaar dat Godfried vertrok. Tel mijn cijfers bij elkaar op, en blijft er meer dan één cijfer over, tel dan opnieuw. Welk cijfer blijft er over?",
-      hint: "Godfried vertrok in 1096. Dus 1 + 0 + 9 + 6 = 16, en dan nog één keer." },
-    { zegel: "hoorn", naam: "De Vier Bekers", antwoord: 6,
-      tekst: "In vier bekers zitten samen dertien slokken. De gouden beker bevat precies één slok. De rode bevat er twee meer dan de groene. De blauwe bevat er evenveel als de rode en de groene samen. Hoeveel slokken zitten er in de blauwe beker?",
-      hint: "Haal de gouden slok eraf: dan blijven er twaalf over. Probeer de groene beker met twee slokken." },
-    { zegel: "schild", naam: "Het Woord der Broeders", antwoord: 9,
-      tekst: "De broeders schreven hun geheimen met elke letter verschoven, net zo veel plaatsen als er Zegels zijn. Ontcijfer het getal:", code: "R I K I R",
-      hint: "Er zijn vier Zegels. Schuif elke letter vier plaatsen terug in het alfabet: R wordt N." },
-    { zegel: "hart", naam: "Het Spoor van het Hert", antwoord: 8,
-      tekst: "In het woud van de Ardennen verbergen zich herten. Tel ze allemaal. Hoeveel herten zie je?", herten: 8,
-      hint: "Ze schuilen in drie rijen: hoog tussen de toppen, midden tussen de stammen en laag in het struikgewas." },
+  // ===== De finale: vier aktes, samen ongeveer een uur. Elke akte geeft bij voltooiing één cijfer van het slot. =====
+  slotcode: [7, 6, 9, 8], // volgorde: vlam, hoorn, schild, hart. Zo moet het cijferslot op de kist staan.
+  drempel: 12,            // fiches waarbij een Zegel zijn akte vanzelf opent; anders eerst een beproeving
+  aktes: [
+    { zegel: "vlam", naam: "Het Vuur der Herinnering", soort: "herinnering",
+      intro: "Het vuur onthoudt wie jullie zijn. Ik lees jullie herinneringen voor… herken de Wachter over wie ik spreek." },
+    { zegel: "hoorn", naam: "Het Feestmaal", soort: "weekend",
+      intro: "De Hoorn heeft alles gezien wat jullie dit weekend deden. Bewijs dat jullie het zelf ook nog weten." },
+    { zegel: "schild", naam: "De Eed der Broeders", soort: "eed",
+      intro: "Ieder van jullie draagt een stuk van de eed op de achterkant van zijn rolkaart. Alleen samen, in de juiste volgorde, spreken jullie hem uit." },
+    { zegel: "hart", naam: "De Verrader", soort: "verrader",
+      intro: "Het hele weekend liep er een verrader tussen jullie. Niet één, maar telkens een ander. Wijs ze aan." },
   ],
+
+  // Akte I. Per Wachter een herinnering (anekdote) en eventueel een foto in docs/a/fotos/. In te vullen door de organisatoren.
+  // De voorbeelden hieronder zijn alleen om te testen en worden vervangen.
+  herinneringen: [
+    { wie: "Roland", tekst: "VOORBEELD · Hij die dit hele spel bedacht, en daarbij vergat dat ook hij moet raden.", foto: null },
+    { wie: "Geert", tekst: "VOORBEELD · Vervang mij door een echte herinnering aan deze Wachter.", foto: null },
+  ],
+
+  // Akte III. Eén fragment per Wachter, in de juiste volgorde. Komt op de achterkant van de rolkaarten.
+  // De aanwijzingen verwijzen straks naar de rollen; voorlopig naar de Zegels.
+  eed: {
+    fragmenten: ["Bij het vuur", "dat nooit dooft", "bij de hoorn", "die nooit leeg raakt", "bij het schild", "van onze broederschap", "en het hart", "van de Ardennen", "zweren wij", "voor elkaar", "te waken."],
+    aanwijzingen: [
+      "Het vuur spreekt als eerste, het hart van het woud pas halverwege.",
+      "Wie de Hoorn draagt, volgt op wie het vuur bewaakt.",
+      "De eed eindigt met waken, en wie zweert, zweert vlak daarvoor.",
+    ],
+  },
+
   // Zondagochtend bij het ontbijt.
   titels: [
     { naam: "De Onuitputtelijke Kelk", voor: "Degene die het langst gezellig bleef zonder zijn humeur te verliezen.", spreuk: "Men zegt dat zijn beker nooit leeg was… of in ieder geval nooit lang." },
