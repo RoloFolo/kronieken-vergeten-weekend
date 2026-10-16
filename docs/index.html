@@ -720,13 +720,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=20"></script>
-<script src="a/spel.js?v=20"></script>
-<script src="a/wachters.js?v=20"></script>
-<script src="a/firebase-config.js?v=20"></script>
-<script src="a/koppeling.js?v=20"></script>
-<script src="a/rollen.js?v=20"></script>
-<script src="a/tafel.js?v=20"></script>
+<script src="a/events.js?v=21"></script>
+<script src="a/spel.js?v=21"></script>
+<script src="a/wachters.js?v=21"></script>
+<script src="a/firebase-config.js?v=21"></script>
+<script src="a/koppeling.js?v=21"></script>
+<script src="a/rollen.js?v=21"></script>
+<script src="a/tafel.js?v=21"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1521,8 +1521,8 @@ function mag(naam, sec) { const nu = Date.now(); if ((wacht[naam] || 0) > nu) re
 function flikker(ms = 2500) { stage.classList.add("omen"); setTimeout(() => stage.classList.remove("omen"), ms); }
 // With Firebase the database rules already check the sender's own account; locally the personal token decides.
 // a traitor period ends by hand (night) or when its time is up
-function eindigVerraad() { if (!verrader) return; const p = verraders[verraders.length - 1]; if (p && !p.tot) p.tot = Date.now(); verrader = null; }
-setInterval(() => { if (verrader?.tot && Date.now() > verrader.tot) { eindigVerraad(); meld(); } }, 15000);
+function eindigVerraad(reden) { if (!verrader) return; const p = verraders[verraders.length - 1]; if (p && !p.tot) p.tot = Date.now(); log("verrader-einde", { naam: verrader.naam, reden }); verrader = null; }
+setInterval(() => { if (verrader?.tot && Date.now() > verrader.tot) { eindigVerraad("tijd"); meld(); } }, 15000);
 function echteVerrader(o) { return !!verrader && (o.van ? o.van === Koppeling.emailVan(verrader.naam) : !window.FIREBASE_CONFIG && o.token === verrader.token); }
 // A flock of ravens going wild: painted ravens swirl across the screen, and a few dive straight at the
 // viewer and smash into the "glass", leaving blood and feathers that slowly run down.
@@ -1774,9 +1774,9 @@ const CHAOS = Object.fromEntries(Object.entries(CHAOS_RAW).map(([cmd, fn]) => [c
 let server = false, meldTimer = null;
 function schermNu() { return dronkActief && dronkWacht ? "dronk-wacht" : dronkActief ? "dronk" : uitlegActief ? "uitleg" : !$("verhaal").hidden ? "verhaal" : binnen === null ? "start" : wakker() ? "schaduw" : paneelNu || "hal"; }
 function meld() {
-  if (!server) return; clearTimeout(meldTimer);
+  if (!server || passief || !standGeladen) return; clearTimeout(meldTimer);
   meldTimer = setTimeout(() => Koppeling.meldStand(({
-    fiches: Object.fromEntries(ZEGELS.map((z) => [z.id, z.fiches])), gebruikt: [...gebruikt],
+    tv: tvId, fiches: Object.fromEntries(ZEGELS.map((z) => [z.id, z.fiches])), gebruikt: [...gebruikt],
     event: wakker() && EVENT ? { id: EVENT.id, naam: EVENT.naam, regel: EVENT.regel, soort: EVENT.soort, zegel: EVENT.zegel, verlies: EVENT.verlies * extra } : null,
     scherm: schermNu(), d20: !$("b-d20").disabled,
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
@@ -1806,10 +1806,10 @@ const OPDRACHTEN = {
   antwoord: (o) => antwoord(o.n ?? o.w),
   verrader: (o) => { // the organisers pass the role on for a few hours; a new period starts
     const w = (window.WACHTERS || []).find((x) => x.naam === o.naam); if (!w) return;
-    eindigVerraad(); const nu = Date.now(), uren = Math.min(12, Math.max(1, +o.uren || 4));
+    eindigVerraad("nieuwe verrader"); const nu = Date.now(), uren = Math.min(12, Math.max(1, +o.uren || 4));
     verrader = { naam: w.naam, token: w.token, sinds: nu, tot: nu + uren * 3600000 }; verraders.push({ naam: w.naam, van: nu });
     chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; meld(); },
-  "geen-verrader": () => { eindigVerraad(); meld(); },
+  "geen-verrader": () => { eindigVerraad("regie"); meld(); },
   ontdooi: (o) => { if (ijs[o.id]) { ijs[o.id] = Date.now() - 1; tekenIjs(); } },
   hint: () => hintVoor(),
   ere: (o) => { ere.i = Math.max(-1, Math.min(S.titels.length - 1, ere.i + o.d)); if (paneelNu !== "ere") paneel("ere"); else tekenEre(); speel("klok", .6, 1.1); meld(); },
@@ -1817,9 +1817,10 @@ const OPDRACHTEN = {
   "alles-opnieuw": () => { tochtOpen = false; chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; bewaar(); },
 };
 // With Firebase only the tv laptop logs in (address ends in ?tv); public visitors just see the countdown.
-let standGeladen = false;
+let standGeladen = false, geladenOp = 0, passief = false;
+const tvId = Math.random().toString(36).slice(2, 8) + Date.now().toString(36);
 function laadStand(s) {
-  if (standGeladen) return; standGeladen = true;
+  if (standGeladen) return bewaakTv(s); standGeladen = true; geladenOp = Date.now();
   for (const z of ZEGELS) z.fiches = s.fiches?.[z.id] ?? z.fiches;
   gebruikt = new Set(s.gebruikt || []); teller(); teken();
   tochtOpen = !!s.tochtOpen; tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
@@ -1831,8 +1832,17 @@ function laadStand(s) {
   fin.voortgang ||= {};
   meld();
 }
+// if another tv window writes the stand, this one stops writing and offers to take over
+function bewaakTv(s) {
+  if (passief || !s.tv || s.tv === tvId || Date.now() - geladenOp < 6000) return;
+  passief = true; clearTimeout(meldTimer);
+  const el = document.createElement("div"); el.id = "tv-passief";
+  el.style.cssText = "position:fixed;inset:0;z-index:200;display:grid;place-items:center;padding:16px;background:rgba(5,2,3,.93);color:#efe3d4;text-align:center;font:clamp(16px,1.4vw,26px)/1.5 var(--body)";
+  el.innerHTML = `<div style="display:grid;gap:2vh;max-width:40ch"><h1 class="carved" style="margin:0">Een ander scherm is de tv</h1><p style="margin:0">Er draait nog een tv-venster. Dit venster schrijft niets meer weg, zodat de stand niet door elkaar loopt.</p><button type="button" class="enter"><span class="carved">Dit scherm wordt de tv</span></button></div>`;
+  document.body.appendChild(el); el.querySelector("button").onclick = () => location.reload();
+}
 if (!window.FIREBASE_CONFIG || new URLSearchParams(location.search).has("tv"))
-  Koppeling.start({ rol: "tv", opStand: laadStand, opOpdracht: (o) => OPDRACHTEN[o.cmd]?.(o) }).then((v) => { server = !!v; if (v && v.soort === "firebase") setTimeout(() => { if (!standGeladen) laadStand({}); }, 3000); });
+  Koppeling.start({ rol: "tv", opStand: laadStand, opOpdracht: (o) => { if (!passief) OPDRACHTEN[o.cmd]?.(o); } }).then((v) => { server = !!v; });
 
 /* ================= Schaduw-event ================= */
 let stem = null, typer = null, stormTimer = null, beslist = false;

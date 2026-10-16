@@ -205,12 +205,12 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=20"></script>
-<script src="a/spel.js?v=20"></script>
-<script src="a/wachters.js?v=20"></script>
-<script src="a/rollen.js?v=20"></script>
-<script src="a/firebase-config.js?v=20"></script>
-<script src="a/koppeling.js?v=20"></script>
+<script src="a/events.js?v=21"></script>
+<script src="a/spel.js?v=21"></script>
+<script src="a/wachters.js?v=21"></script>
+<script src="a/rollen.js?v=21"></script>
+<script src="a/firebase-config.js?v=21"></script>
+<script src="a/koppeling.js?v=21"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 const ZEGELS = [
@@ -327,6 +327,8 @@ function toon(s) {
   const uur = (t) => new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
   $("verrader-nu").textContent = verraderNu ? `Verrader nu: ${verraderNu.naam}, sinds ${uur(verraderNu.sinds)}${verraderNu.tot ? ` tot ${uur(verraderNu.tot)}` : ""}.` : "Er is nu geen verrader.";
   $("b-v-geen").hidden = !verraderNu;
+  const einde = [...(s.logboek || [])].reverse().find((l) => l.type === "verrader-einde");
+  if (!verraderNu && einde) $("verrader-nu").textContent = `Er is nu geen verrader. Laatste: ${einde.naam}, gestopt om ${uur(einde.t)} (${{ tijd: "tijd om", regie: "door de regie", "nieuwe verrader": "opgevolgd" }[einde.reden] || "onbekend"}).`;
   document.querySelectorAll("#v-namen button").forEach((b) => b.classList.toggle("nu", b.dataset.n === verraderNu?.naam));
   // frozen seals: the + does nothing, so show it, and let the organisers thaw them
   for (const z of ZEGELS) { const knop = $(`plus-${z.id}`), koud = (s.ijs?.[z.id] || 0) > Date.now();
