@@ -474,7 +474,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 /* the light dies: everything but the crest sinks into black, the demon burns */
 .scene, .seals, .chip, .vloek-teken { transition: filter 1.6s ease; }
 /* the Wachterstocht: the camera flies into the castle, then the gate with its torches takes over */
-.scene { transform-origin: 13% 16%; transition: filter 1.6s ease, transform 10s cubic-bezier(.5,0,.75,.5); }
+.scene { transform-origin: 13% 16%; transition: filter 1.6s ease, transform 7.5s cubic-bezier(.5,0,.75,.5); }
 .stage.inzoom .scene { transform: translate(40vw, 40vh) scale(2.6); filter: brightness(.6) saturate(1.2); } /* the castle (top left) moves to the middle */
 .stage.inzoom .hall { opacity: 0; pointer-events: none; }
 .tocht-decor { position: absolute; inset: 0; z-index: 5; overflow: hidden; background: #000; opacity: 0; transition: opacity 4.5s ease; pointer-events: none; }
@@ -484,16 +484,17 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .tocht-decor .pl img, .tocht-decor canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 /* entrance: sky first, then the gatehouse rises, the bridge comes up, the walls close in from the sides */
 .tocht-decor .pl-lucht { opacity: 0; transform: scale(1.12); transition: opacity 3.5s ease, transform 6s cubic-bezier(.2,.8,.3,1); }
-.tocht-decor .pl-poort { opacity: 0; transform: translateY(22%); transition: opacity 2.6s ease 1s, transform 3.6s cubic-bezier(.15,.85,.3,1) 1s; }
-.tocht-decor .pl-brug { opacity: 0; transform: translateY(38%); transition: opacity 2s ease 2.2s, transform 3s cubic-bezier(.15,.85,.3,1) 2.2s; }
-.tocht-decor .pl-muur-l { transform: translateX(-100%); transition: transform 3s cubic-bezier(.15,.85,.3,1) 3s; }
-.tocht-decor .pl-muur-r { transform: translateX(100%); transition: transform 3s cubic-bezier(.15,.85,.3,1) 3s; }
-.tocht-decor .pl-vuur, .tocht-decor .fakkel, .tocht-decor .pl-mist, .tocht-decor .pl-vogels { opacity: 0; transition: opacity 2.5s ease 4.6s; }
+/* first the bridge comes up from below, then the gatehouse grows out of the depth (small to full size), then the walls close in */
+.tocht-decor .pl-brug { opacity: 0; transform: translateY(40%); transition: opacity 1.6s ease .8s, transform 2.6s cubic-bezier(.15,.85,.3,1) .8s; }
+.tocht-decor .pl-poort { opacity: 0; transform: scale(.78); transform-origin: 50% 74%; filter: blur(3px) brightness(.6); transition: opacity 2.6s ease 2.4s, transform 3.4s cubic-bezier(.2,.8,.3,1) 2.4s, filter 3s ease 2.4s; }
+.tocht-decor .pl-muur-l { transform: translateX(-100%); transition: transform 2.8s cubic-bezier(.15,.85,.3,1) 4.2s; }
+.tocht-decor .pl-muur-r { transform: translateX(100%); transition: transform 2.8s cubic-bezier(.15,.85,.3,1) 4.2s; }
+.tocht-decor .pl-vuur, .tocht-decor .fakkel, .tocht-decor .pl-mist, .tocht-decor .pl-vogels { opacity: 0; transition: opacity 2.5s ease 5.6s; }
 /* the five tasks come in one by one, so the castle can be seen first */
 .stage.in-kasteel #tocht .opdr { animation: opdrIn 1.1s cubic-bezier(.2,.9,.3,1) both; animation-delay: calc(var(--i) * .8s + .4s); }
 @keyframes opdrIn { from { opacity: 0; transform: translateY(6vh) scale(.92); filter: blur(4px); } }
 .tocht-decor.aan .pl-lucht { opacity: 1; transform: none; }
-.tocht-decor.aan .pl-poort, .tocht-decor.aan .pl-brug { opacity: 1; transform: none; }
+.tocht-decor.aan .pl-poort, .tocht-decor.aan .pl-brug { opacity: 1; transform: none; filter: none; }
 .tocht-decor.aan .pl-muur-l, .tocht-decor.aan .pl-muur-r { transform: none; }
 .tocht-decor.aan .pl-vuur, .tocht-decor.aan .fakkel, .tocht-decor.aan .pl-mist, .tocht-decor.aan .pl-vogels { opacity: 1; }
 .tocht-decor .pl-lucht img { animation: wolken 60s ease-in-out infinite alternate; }
@@ -793,13 +794,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=34"></script>
-<script src="a/spel.js?v=34"></script>
-<script src="a/wachters.js?v=34"></script>
-<script src="a/firebase-config.js?v=34"></script>
-<script src="a/koppeling.js?v=34"></script>
-<script src="a/rollen.js?v=34"></script>
-<script src="a/tafel.js?v=34"></script>
+<script src="a/events.js?v=35"></script>
+<script src="a/spel.js?v=35"></script>
+<script src="a/wachters.js?v=35"></script>
+<script src="a/firebase-config.js?v=35"></script>
+<script src="a/koppeling.js?v=35"></script>
+<script src="a/rollen.js?v=35"></script>
+<script src="a/tafel.js?v=35"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1345,11 +1346,11 @@ function kasteelIn(toonPaneel) {
   stage.classList.add("in-kasteel", "inzoom"); halMuziek.vol(.2, 2500); fade(wind, .5, 2500); fade(vuur, .3, 3000);
   const metIntro = true; tochtOpen = true; meld();
   const t = (ms, fn) => tochtIntroTimers.push(setTimeout(fn, ms));
-  t(metIntro ? 8500 : 2600, () => { if (poortKlaar()) { $("tocht-decor").classList.add("aan"); poortStart(); } });
+  t(metIntro ? 6500 : 2600, () => { if (poortKlaar()) { $("tocht-decor").classList.add("aan"); poortStart(); } });
   if (!metIntro) return t(5000, toonPaneel);
   tochtIntroLoopt = true; speel("donder", .5);
   // Godfried speaks over the gate; when he is done the tasks come in
-  t(15000, () => { $("tocht-intro").hidden = false; tochtStem = stemMet("tocht-intro", 1, () => t(1500, () => tochtIntroKlaar(toonPaneel)), 30000); });
+  t(14000, () => { $("tocht-intro").hidden = false; tochtStem = stemMet("tocht-intro", 1, () => t(1500, () => tochtIntroKlaar(toonPaneel)), 30000); });
 }
 let tochtStem = null;
 function tochtIntroKlaar(toonPaneel = tochtIntroVerder) {
