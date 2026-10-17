@@ -139,13 +139,13 @@ body.in-frame main { visibility: hidden; }
 .intro > *:not(.intro-bg):not(.sintel) { position: relative; z-index: 2; }
 .intro-logo { width: min(250px, 62vw); margin: -4% 0 -6%; filter: drop-shadow(0 6px 18px #000); }
 /* Godfried's letter: painted parchment with the four seal medallions in its corners, dark ink, a wax seal at the bottom */
-.intro-brief { position: relative; height: min(60svh, 132vw); aspect-ratio: 800 / 1192; background: url(a/app/brief.webp) center / 100% 100% no-repeat;
+.intro-brief { position: relative; height: min(60svh, 135vw); aspect-ratio: 800 / 1203; background: url(a/app/brief.webp) center / 100% 100% no-repeat;
   filter: drop-shadow(0 18px 40px #000) drop-shadow(0 0 30px rgba(226,50,60,.35)); animation: ontvouw 1.6s cubic-bezier(.2,.8,.2,1) both; }
 @keyframes ontvouw { from { opacity: 0; transform: perspective(900px) rotateX(38deg) scale(.82) translateY(30px); filter: blur(6px) brightness(.4); } }
-.intro-brief .vlak { position: absolute; left: 17%; right: 17%; top: 23%; bottom: 25%; display: grid; grid-template-rows: auto 1fr; justify-items: center; text-align: center; }
+.intro-brief .vlak { position: absolute; left: 13%; right: 13%; top: 11%; bottom: 20%; display: grid; grid-template-rows: auto 1fr; justify-items: center; text-align: center; }
 .intro-kop { font: 900 clamp(11px, 3.1vw, 14px)/1.25 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: #7a1016; }
 .intro-tekst { display: grid; align-items: center; width: 100%; }
-.intro-tekst p { grid-area: 1 / 1; margin: 0; font: italic 400 clamp(14px, 4.3vw, 19px)/1.5 var(--display); color: #2a1508; opacity: 0; transform: translateY(8px); filter: blur(3px); transition: opacity 1.2s, transform 1.2s, filter 1.2s; }
+.intro-tekst p { grid-area: 1 / 1; margin: 0; font: italic 400 clamp(15px, 4.8vw, 21px)/1.5 var(--display); color: #2a1508; opacity: 0; transform: translateY(8px); filter: blur(3px); transition: opacity 1.2s, transform 1.2s, filter 1.2s; }
 .intro-tekst p.aan { opacity: 1; transform: none; filter: none; }
 .intro-brief .zegel-was { position: absolute; left: 50%; bottom: 3.5%; width: 19%; translate: -50% 0; filter: drop-shadow(0 3px 5px rgba(40,0,0,.6)); }
 /* the corner medallions wake one by one: a deep red glow, never yellow */
@@ -176,10 +176,10 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
 /* the order on parchment: sealed (tap the wax seal to break it), then open with an empty seal spot to press your seal on */
 .bevel { background: none; border: 0; box-shadow: none; padding: 0; display: grid; gap: 10px; justify-items: center; }
 .bevel > h2 { margin: 0; }
-.bevel-brief { position: relative; width: min(100%, 400px); aspect-ratio: 800 / 1192; background: url(a/app/brief.webp) center / 100% 100% no-repeat;
+.bevel-brief { position: relative; width: min(100%, 400px); aspect-ratio: 800 / 1203; background: url(a/app/brief.webp) center / 100% 100% no-repeat;
   filter: drop-shadow(0 16px 34px #000) drop-shadow(0 0 22px rgba(226,50,60,.3)); }
 .bevel-brief.ontvouw { animation: ontvouw 1.3s cubic-bezier(.2,.8,.2,1) both; }
-.bevel-brief .vlak { position: absolute; left: 17%; right: 17%; top: 22%; bottom: 23%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; color: #2a1508; }
+.bevel-brief .vlak { position: absolute; left: 13%; right: 13%; top: 10%; bottom: 23%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; text-align: center; color: #2a1508; }
 .bevel-brief .van { font: 900 clamp(10px, 2.8vw, 12px)/1.2 var(--carved); letter-spacing: .16em; text-transform: uppercase; color: #7a1016; }
 .bevel-brief h3 { margin: 0; font: 900 clamp(17px, 5.4vw, 23px)/1.15 var(--carved); letter-spacing: .05em; text-transform: uppercase; color: #5a0d12; }
 .bevel-brief .opdracht { margin: 0; font: italic 400 clamp(14px, 4.1vw, 17px)/1.5 var(--display); }
@@ -187,15 +187,16 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
 /* closed: Godfried's wax seal, big, in the middle */
 .bevel-brief .dicht-zegel { position: absolute; left: 50%; top: 47%; width: 46%; aspect-ratio: 1; translate: -50% -50%; border: 0; padding: 0; background: none; cursor: pointer; }
 .bevel-brief .dicht-zegel img { position: absolute; inset: 0; width: 100%; filter: drop-shadow(0 6px 10px rgba(40,0,0,.6)); }
-.bevel-brief .dicht-zegel img.links { clip-path: polygon(0 0, 54% 0, 44% 38%, 56% 62%, 46% 100%, 0 100%); }
-.bevel-brief .dicht-zegel img.rechts { clip-path: polygon(54% 0, 100% 0, 100% 100%, 46% 100%, 56% 62%, 44% 38%); }
+.bevel-brief .dicht-zegel .scherf { transition: transform .9s cubic-bezier(.25,.6,.35,1), opacity .9s ease-in; }
 .bevel-brief .dicht-zegel:not(.breekt) { animation: wenk 2s ease-in-out infinite; }
-.bevel-brief .dicht-zegel.breekt img.links { transition: transform .8s cubic-bezier(.3,.6,.4,1), opacity .8s; transform: translate(-40%, 18%) rotate(-24deg); opacity: 0; }
-.bevel-brief .dicht-zegel.breekt img.rechts { transition: transform .8s cubic-bezier(.3,.6,.4,1), opacity .8s; transform: translate(40%, 22%) rotate(26deg); opacity: 0; }
-.bevel-brief .tik { position: absolute; left: 17%; right: 17%; top: 72%; text-align: center; font: 700 clamp(12px, 3.4vw, 14px)/1.3 var(--carved); letter-spacing: .1em; text-transform: uppercase; color: #7a1016; }
+.bevel-brief .dicht-zegel.breekt .scherf { transform: translate(var(--tx), var(--ty)) rotate(var(--r)); opacity: 0; }
+.bevel-brief .kruimel { position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; border-radius: 40%; background: #8f141c; box-shadow: 0 0 3px rgba(60,0,0,.6); pointer-events: none;
+  animation: kruimel .9s cubic-bezier(.2,.7,.4,1) forwards; }
+@keyframes kruimel { to { transform: translate(var(--tx), var(--ty)) rotate(200deg); opacity: 0; } }
+.bevel-brief .tik { position: absolute; left: 13%; right: 13%; top: 72%; text-align: center; font: 700 clamp(12px, 3.4vw, 14px)/1.3 var(--carved); letter-spacing: .1em; text-transform: uppercase; color: #7a1016; }
 @keyframes wenk { 50% { transform: scale(1.05); filter: drop-shadow(0 0 14px rgba(226,50,60,.7)); } }
 /* open: the empty spot for the seal, on the border at the bottom, clearly asking to be pressed */
-.bevel-brief .plek { position: absolute; left: 50%; bottom: 2.2%; width: 23%; aspect-ratio: 1; translate: -50% 0; border-radius: 50%; padding: 0; cursor: pointer;
+.bevel-brief .plek { position: absolute; left: 50%; bottom: 4%; width: 23%; aspect-ratio: 1; translate: -50% 0; border-radius: 50%; padding: 0; cursor: pointer;
   border: 3px dashed #c4202c; background: radial-gradient(circle, rgba(255,235,210,.92), rgba(240,215,180,.85)); display: grid; place-items: center;
   font: 900 clamp(9px, 2.6vw, 11px)/1.1 var(--carved); letter-spacing: .08em; text-transform: uppercase; color: #9b111e; animation: wenk 1.4s ease-in-out infinite; }
 .bevel-brief .plek img { width: 112%; max-width: none; filter: drop-shadow(0 4px 6px rgba(40,0,0,.6)); }
@@ -316,7 +317,6 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <video class="intro-bg" id="intro-bg" src="a/storm.mp4" poster="a/plaat.jpg" muted loop playsinline preload="none"></video>
   <img class="intro-logo" src="a/logo.webp" alt="">
   <div class="intro-brief" id="intro-brief">
-    <span class="hoek" style="left:18.75%;top:12.25%"></span><span class="hoek" style="left:82.5%;top:11.7%"></span><span class="hoek" style="left:18.75%;top:85.9%"></span><span class="hoek" style="left:81.25%;top:85.9%"></span>
     <div class="vlak"><div class="intro-kop">Een boodschap van Godfried</div><div class="intro-tekst" id="intro-tekst" aria-live="polite"></div></div>
     <img class="zegel-was" src="a/app/lakzegel.webp" alt="">
   </div>
@@ -328,13 +328,13 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=61"></script>
-<script src="a/spel.js?v=61"></script>
-<script src="a/rollen.js?v=61"></script>
-<script src="a/firebase-config.js?v=61"></script>
-<script src="a/koppeling.js?v=61"></script>
-<script src="a/tafel.js?v=61"></script>
-<script src="a/voorbereiding.js?v=61"></script>
+<script src="a/wachters.js?v=62"></script>
+<script src="a/spel.js?v=62"></script>
+<script src="a/rollen.js?v=62"></script>
+<script src="a/firebase-config.js?v=62"></script>
+<script src="a/koppeling.js?v=62"></script>
+<script src="a/tafel.js?v=62"></script>
+<script src="a/voorbereiding.js?v=62"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -581,6 +581,23 @@ function toonVooraf(aan) {
   if (vooraafGetekend === sleutelNu) return; vooraafGetekend = sleutelNu;
   tekenBevel(); tekenHulp(); tekenStap2(stap); tekenStap3(stap);
 }
+// the wax seal as 9 irregular shards around an off-centre point; on breaking each flies outward along its own direction.
+// Jagged crack lines run from that point to the rim; neighbouring shards share a line, so the seal is whole until it breaks.
+function scherven() {
+  const n = 9, cx = 47 + Math.random() * 6, cy = 46 + Math.random() * 8, hoek = [];
+  for (let i = 0; i < n; i++) hoek.push((i / n) * Math.PI * 2 + (Math.random() - .5) * .45);
+  const pt = (a, r) => `${(cx + Math.cos(a) * r).toFixed(1)}% ${(cy + Math.sin(a) * r).toFixed(1)}%`;
+  const lijn = hoek.map((a) => [pt(a + (Math.random() - .5) * .35, 14 + Math.random() * 8), pt(a + (Math.random() - .5) * .25, 32 + Math.random() * 10), pt(a, 95)]);
+  const scherf = (poly, mid, d) => `<img class="scherf" src="a/app/lakzegel.webp" alt="" style="clip-path:polygon(${poly});--tx:${(Math.cos(mid) * d).toFixed(0)}%;--ty:${(Math.sin(mid) * d + 25).toFixed(0)}%;--r:${Math.round((Math.random() - .5) * 140)}deg">`;
+  return hoek.map((a, i) => { const j = (i + 1) % n, b = hoek[j] + (j === 0 ? Math.PI * 2 : 0), mid = (a + b) / 2;
+    const rand = [1, 2].map((k) => pt(a + (b - a) * k / 3, 95));
+    // each wedge breaks once more along a ring: an inner chunk that stays close, an outer chunk that flies further
+    const binnen = [`${cx}% ${cy}%`, lijn[i][0], lijn[i][1], lijn[j][1], lijn[j][0]].join(", ");
+    const buiten = [lijn[i][1], lijn[i][2], ...rand, lijn[j][2], lijn[j][1]].join(", ");
+    return scherf(binnen, mid + (Math.random() - .5) * .6, 25 + Math.random() * 30) + scherf(buiten, mid, 70 + Math.random() * 70); }).join("");
+}
+function kruimels(knop) { for (let i = 0; i < 16; i++) { const k = document.createElement("span"), a = Math.random() * Math.PI * 2, d = 50 + Math.random() * 90;
+  k.className = "kruimel"; k.style.setProperty("--tx", `${Math.round(Math.cos(a) * d)}px`); k.style.setProperty("--ty", `${Math.round(Math.sin(a) * d + 30)}px`); k.style.animationDelay = `${Math.random() * .1}s`; knop.appendChild(k); } }
 let bevelNetOpen = false, bevelBezig = false; // while the seal is being pressed, a quick answer from the database must not redraw it
 function tekenBevel() {
   const b = V.bevelen?.[wachter.naam], el = $("bevel");
@@ -589,7 +606,7 @@ function tekenBevel() {
   const sleutel = () => `kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`, open = lokaal(sleutel()) === "open", ja = !!mijnVooraf.bevel?.aanvaard;
   el.innerHTML = `<h2 class="carved">Jouw bevel</h2>` + (!open
     ? `<div class="bevel-brief"><div class="vlak" style="justify-content:flex-start"><div class="van">Een bevel van Godfried</div></div>
-         <button class="dicht-zegel" type="button" id="b-breek" aria-label="Breek het zegel"><img class="links" src="a/app/lakzegel.webp" alt=""><img class="rechts" src="a/app/lakzegel.webp" alt=""></button>
+         <button class="dicht-zegel" type="button" id="b-breek" aria-label="Breek het zegel">${scherven()}</button>
          <div class="tik">Tik op het zegel<br>om het te breken</div></div>`
     : `<div class="bevel-brief ${bevelNetOpen ? "ontvouw" : ""}" id="bevel-brief"><div class="vlak">
          <div class="van">Een bevel van Godfried</div><h3>${schoon(b.titel)}</h3><p class="opdracht">${schoon(b.tekst)}</p>
@@ -598,7 +615,7 @@ function tekenBevel() {
        <p class="op-slot" style="font-size:14px;margin:0">Volbreng je het in het weekend, dan voedt het een Zegel.</p>`);
   bevelNetOpen = false;
   const breek = $("b-breek"); if (breek) breek.onclick = () => {
-    breek.classList.add("breekt"); piep("onthul", .6); if (navigator.vibrate) try { navigator.vibrate([60, 40, 120]); } catch {}
+    breek.classList.add("breekt"); kruimels(breek); piep("onthul", .6); if (navigator.vibrate) try { navigator.vibrate([60, 40, 120]); } catch {}
     setTimeout(() => { lokaal(sleutel(), "open"); bevelNetOpen = true; vooraafGetekend = ""; toonVooraf(true); }, 750);
   };
   const plek = $("b-aanvaard"); if (plek && !ja) plek.onclick = async () => {
