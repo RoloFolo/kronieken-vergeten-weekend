@@ -41,8 +41,10 @@ html, body { overflow-x: hidden; }
 .klok b { font: 700 clamp(26px, 8vw, 36px)/1 var(--carved); color: var(--bronze-hi); text-shadow: 0 0 14px rgba(226,50,60,.6); font-variant-numeric: tabular-nums; }
 .klok span { font: 600 10px/1 var(--carved); letter-spacing: .2em; color: var(--ash); text-transform: uppercase; }
 /* before the weekend the countdown is the heart of the page */
-#vooraf.na-zegel { display: none !important; }
-#vooraf:not(.na-zegel) { animation: onthul 1.2s cubic-bezier(.2,.9,.3,1) both; }
+body.bevel-eerst :is(#vooraf, #spreek-rij, #hulp, #stap2, #stap3, #verzegeld) { display: none !important; }
+body:not(.bevel-eerst) :is(#vooraf, #hulp, #stap2) { animation: onthul 1.2s cubic-bezier(.2,.9,.3,1) both; }
+.bevel-verder { display: block; margin: 4px auto 0; padding: 13px 34px; cursor: pointer; font: 700 13px/1 var(--carved); letter-spacing: .22em; text-transform: uppercase;
+  color: #ffd2d0; background: rgba(10,5,6,.7); border: 1px solid var(--ember); border-radius: 6px; box-shadow: 0 0 22px rgba(226,50,60,.55); animation: adem 2.4s ease-in-out infinite; }
 .spreek-rij { display: flex; justify-content: center; margin-top: -4px; }
 .spreek-rij .spreek { margin: 0; letter-spacing: .06em; font-size: 11.5px; white-space: nowrap; }
 #vooraf h2 { margin-bottom: 14px; letter-spacing: .16em; }
@@ -354,13 +356,13 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=67"></script>
-<script src="a/spel.js?v=67"></script>
-<script src="a/rollen.js?v=67"></script>
-<script src="a/firebase-config.js?v=67"></script>
-<script src="a/koppeling.js?v=67"></script>
-<script src="a/tafel.js?v=67"></script>
-<script src="a/voorbereiding.js?v=67"></script>
+<script src="a/wachters.js?v=68"></script>
+<script src="a/spel.js?v=68"></script>
+<script src="a/rollen.js?v=68"></script>
+<script src="a/firebase-config.js?v=68"></script>
+<script src="a/koppeling.js?v=68"></script>
+<script src="a/tafel.js?v=68"></script>
+<script src="a/voorbereiding.js?v=68"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -601,15 +603,16 @@ $("b-spreek").onclick = () => startIntro();
 function toonVooraf(aan) {
   for (const id of ["bevel", "spreek-rij", "hulp", "stap2"]) $(id).classList.toggle("verborgen", !aan || !wachter);
   if (!aan || !wachter) $("stap3").classList.add("verborgen"); // step 3 shows itself when its time has come
-  if (!aan || !wachter) { $("binnen").classList.add("verborgen"); return; }
+  if (!aan || !wachter) { $("binnen").classList.add("verborgen"); document.body.classList.remove("bevel-eerst"); return; }
   if (!publiekGeladen) return;
   if (!binnenGedaan && $("binnen").classList.contains("verborgen") && !document.hidden) $("binnen").classList.remove("verborgen");
   const test = +new URLSearchParams(location.search).get("stap") || 0; // ?stap=2 or ?stap=3 shows that step now, on this device only
   const nu = Date.now(), stap = test || (nu >= V.stap3 ? 3 : nu >= V.stap2 ? 2 : 1);
   const sleutelNu = `${wachter.naam}|${stap}|${JSON.stringify(mijnVooraf)}`;
   if (vooraafGetekend === sleutelNu) return; vooraafGetekend = sleutelNu;
-  const heeftBevel = !!V.bevelen?.[wachter.naam], bevelOpen = !heeftBevel || lokaal(`kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`) === "open";
-  $("vooraf").classList.toggle("na-zegel", !bevelOpen); // the countdown appears once the seal is broken
+  // the order comes first: seal broken ("open"), read, then Verder ("gelezen") brings the countdown and the rest
+  const heeftBevel = !!V.bevelen?.[wachter.naam], gelezen = !heeftBevel || lokaal(`kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`) === "gelezen";
+  document.body.classList.toggle("bevel-eerst", !gelezen);
   tekenBevel(); tekenHulp(); tekenStap2(stap); tekenStap3(stap);
 }
 // The wax seal, painted in its stages (scripts/zegel-brokken.mjs): whole, cracked, and four chunks plus crumbs on the same canvas.
@@ -634,7 +637,7 @@ function tekenBevel() {
   const b = V.bevelen?.[wachter.naam], el = $("bevel");
   if (!b) { el.classList.add("verborgen"); return; }
   if (bevelBezig) return;
-  const sleutel = () => `kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`, open = lokaal(sleutel()) === "open", ja = !!mijnVooraf.bevel?.aanvaard;
+  const sleutel = () => `kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`, stand = lokaal(sleutel()), open = stand === "open" || stand === "gelezen", ja = !!mijnVooraf.bevel?.aanvaard;
   el.innerHTML = `<h2 class="carved">Jouw bevel</h2>` + (!open
     ? `<div class="bevel-brief"><div class="vlak" style="justify-content:flex-start"><div class="van">Een bevel van Godfried</div></div>
          <button class="dicht-zegel" type="button" id="b-breek" aria-label="Breek het zegel">${zegelLagen()}</button>
@@ -644,9 +647,11 @@ function tekenBevel() {
          <div class="handtekening">Godfried</div>
          <p class="wat-nu ${ja ? "ja" : ""}">${ja ? "✓ Aanvaard<small>Godfried rekent op je</small>" : "Aanvaard je dit bevel?<br>Druk hieronder je zegel ↓"}</p></div>
          <button class="plek ${ja ? "gedrukt" : ""}" type="button" id="b-aanvaard" ${ja ? "disabled" : ""} aria-label="Druk je zegel: ik aanvaard het bevel">${ja ? `<img src="a/app/lakzegel.webp" alt="">` : "Druk<br>hier"}</button></div>
-       <p class="op-slot" style="font-size:14px;margin:0">Volbreng je het in het weekend, dan voedt het een Zegel.</p>`);
+       <p class="op-slot" style="font-size:14px;margin:0">Volbreng je het in het weekend, dan voedt het een Zegel.</p>
+       ${stand === "open" ? `<button class="bevel-verder" type="button" id="b-bevel-verder">Verder</button>` : ""}`);
   bevelNetOpen = false;
   const breek = $("b-breek"); if (breek) breek.onclick = () => breekZegel(breek, () => { lokaal(sleutel(), "open"); bevelNetOpen = true; vooraafGetekend = ""; toonVooraf(true); });
+  const verder = $("b-bevel-verder"); if (verder) verder.onclick = () => { lokaal(sleutel(), "gelezen"); vooraafGetekend = ""; toonVooraf(true); scrollTo({ top: 0, behavior: "smooth" }); };
   const plek = $("b-aanvaard"); if (plek && !ja) plek.onclick = async () => {
     bevelBezig = true; plek.disabled = true; plek.classList.add("gedrukt", "net"); plek.innerHTML = `<img src="a/app/lakzegel.webp" alt="">`;
     setTimeout(() => { const br = $("bevel-brief"); br?.classList.remove("ontvouw"); br?.classList.add("dreun"); piep("kracht", .7); if (navigator.vibrate) try { navigator.vibrate(120); } catch {} }, 380);
