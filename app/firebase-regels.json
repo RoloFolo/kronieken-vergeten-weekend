@@ -16,6 +16,14 @@
         ".read": "auth != null && auth.token.email.replace('.', ',') === $wie"
       }
     },
+    "vooraf": {
+      ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+      "$wie": {
+        ".read": "auth != null && auth.token.email.replace('.', ',') === $wie",
+        ".write": "auth != null && auth.token.email.replace('.', ',') === $wie",
+        "anekdotes": { "$id": { ".validate": "newData.child('tekst').isString() && newData.child('tekst').val().length <= 2000" } }
+      }
+    },
     "opdrachten": {
       ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
       ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",

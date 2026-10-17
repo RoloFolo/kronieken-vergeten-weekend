@@ -119,6 +119,45 @@ body.in-frame main { visibility: hidden; }
 .melding-groot { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 16px; background: rgba(5,2,3,.86); }
 .melding-groot .paneel { width: min(460px, 100%); text-align: center; display: grid; gap: 12px; }
 .melding-groot p { margin: 0; font: italic 16px/1.55 var(--display); }
+/* before the weekend: enter (music + Godfried), the order, the request for memories, step 2 and 3 */
+.binnen { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; align-content: center; gap: 18px; padding: 24px; text-align: center;
+  background: radial-gradient(ellipse at 50% 35%, rgba(70,9,14,.97), rgba(5,2,3,.99) 70%); }
+.binnen img { width: min(380px, 86vw); filter: drop-shadow(0 8px 24px #000); }
+.binnen p { margin: 0; max-width: 32ch; font: italic 16px/1.5 var(--display); color: var(--ash); }
+.binnen .knop { min-width: 220px; }
+.spreek { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px auto 0; padding: 8px 14px; min-height: 40px; cursor: pointer;
+  font: 700 12px/1 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: var(--bronze-hi); background: none; border: 1px solid rgba(184,149,95,.5); border-radius: 999px; }
+.spreek[aria-pressed="true"] { border-color: var(--ember); color: #ffd2d0; }
+.bevel .titel-bevel { margin: 4px 0 2px; font-size: clamp(20px, 6vw, 26px); text-align: center; }
+.bevel .tekst-bevel { margin: 8px 0 0; font: italic 17px/1.6 var(--display); text-align: center; }
+.bevel .zegel-knop { display: grid; justify-items: center; gap: 12px; width: 100%; padding: 6px 0 2px; background: none; border: 0; color: inherit; cursor: pointer; font: inherit; }
+.bevel .zegel-knop .was { width: 96px; }
+.bevel .zegel-knop span { font: 700 13px/1 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: var(--bronze-hi); }
+.bevel.open .inhoud { animation: onthul 1.4s cubic-bezier(.2,.9,.3,1) both; }
+.aanvaard { margin-top: 14px; text-align: center; color: #8fd493; font: 600 15px/1.4 var(--body); }
+.veld { display: grid; gap: 6px; margin-top: 12px; }
+.veld label { font: 700 11px/1 var(--carved); letter-spacing: .25em; text-transform: uppercase; color: var(--ash); }
+.veld select, .veld textarea, .veld input[type=text] { width: 100%; font: 16px/1.4 var(--body); color: var(--bone); background: rgba(0,0,0,.4); border: 1px solid rgba(184,149,95,.45); border-radius: 8px; padding: 10px 12px; }
+.veld textarea { min-height: 110px; resize: vertical; }
+.veld select:focus-visible, .veld textarea:focus-visible, .veld input:focus-visible { outline: 2px solid var(--bronze-hi); outline-offset: 1px; }
+.ingestuurd { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 8px; }
+.ingestuurd li { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: start; padding: 10px 12px; border: 1px solid rgba(184,149,95,.3); background: rgba(0,0,0,.3); font-size: 15px; }
+.ingestuurd b { color: var(--bronze-hi); }
+.ingestuurd button { background: none; border: 0; color: var(--ash); font-size: 20px; line-height: 1; cursor: pointer; padding: 0 4px; }
+.opties { display: grid; gap: 8px; margin-top: 8px; }
+.opties label { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid rgba(184,149,95,.3); border-radius: 8px; background: rgba(0,0,0,.3); font-size: 16px; cursor: pointer; }
+.opties input { accent-color: #b8955f; width: 18px; height: 18px; }
+.lijstje { margin: 6px 0 0; padding-left: 20px; display: grid; gap: 6px; }
+.lijstje.geregeld li::marker { content: "✓  "; color: #8fd493; }
+.sub-kop { margin: 16px 0 4px; font: 700 12px/1 var(--carved); letter-spacing: .25em; text-transform: uppercase; color: var(--ash); }
+.op-slot { text-align: center; color: var(--ash); font: italic 15px/1.5 var(--display); }
+.schaduw-vooraf { border-color: var(--ember); box-shadow: inset 0 0 0 1px rgba(226,50,60,.8), 0 0 40px rgba(226,50,60,.45), 0 16px 44px #000; text-align: center; }
+.schaduw-vooraf p { margin: 0 0 10px; font: italic 17px/1.6 var(--display); }
+.overname { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; padding: 24px; text-align: center; background: radial-gradient(ellipse at 50% 45%, rgba(120,0,10,.55), rgba(3,0,1,.97) 70%);
+  animation: overname 7s ease forwards; pointer-events: none; }
+.overname p { margin: 0; max-width: 28ch; font: italic clamp(20px, 6vw, 28px)/1.5 var(--display); color: #ffb3ad; text-shadow: 0 0 18px rgba(226,50,60,.8); animation: flakker 1.4s steps(2) 3; }
+@keyframes overname { 0%, 85% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+@keyframes flakker { 50% { opacity: .4; transform: translateX(2px); } }
 .verborgen, .tab-weg { display: none !important; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
 </style>
@@ -153,13 +192,30 @@ body.in-frame main { visibility: hidden; }
 
   <!-- before the weekend -->
   <section class="paneel verborgen" id="vooraf">
-    <div class="brief">
+    <div class="brief" id="welkom">
       <p>Het is het jaar 1096. Diep onder het kasteel van Bouillon slaapt iets wat niet mag ontwaken.</p>
       <p>Jij bent geroepen om te waken.</p>
     </div>
+    <button class="spreek" type="button" id="b-spreek" aria-pressed="false">▶ Laat Godfried spreken</button>
     <div class="klok" id="klok" aria-live="off"><div><b id="k-d">00</b><span>dagen</span></div><div><b id="k-u">00</b><span>uur</span></div><div><b id="k-m">00</b><span>min</span></div><div><b id="k-s">00</b><span>sec</span></div></div>
     <p class="wanneer">Vrijdag 13 november, 12:00 · de Ardennen</p>
   </section>
+
+  <!-- before the weekend: the order (homework), the request for memories, step 2 and step 3 -->
+  <section class="paneel bevel verborgen" id="bevel"></section>
+  <section class="paneel verborgen" id="hulp">
+    <h2 class="carved">Godfried vraagt je hulp</h2>
+    <p class="brief" style="text-align:center">In de laatste nacht moet het vuur de Wachters herkennen. Daarvoor heb ik herinneringen nodig. Vertel me iets over een andere Wachter: een avontuur van vroeger, een eigenaardigheid, iets wat de anderen misschien niet weten. Niemand ziet van wie het komt.</p>
+    <form id="hulp-form">
+      <div class="veld"><label for="hulp-over">Over wie</label><select id="hulp-over" required></select></div>
+      <div class="veld"><label for="hulp-tekst">Jouw herinnering</label><textarea id="hulp-tekst" maxlength="2000" required placeholder="Weet je nog toen…"></textarea></div>
+      <button class="knop" type="submit" id="hulp-stuur" style="width:100%">Verzegel en stuur naar Godfried</button>
+    </form>
+    <p class="op-slot verborgen" id="hulp-geen">Insturen kan zodra je online bent ingelogd.</p>
+    <ul class="ingestuurd" id="hulp-lijst"></ul>
+  </section>
+  <section class="paneel verborgen" id="stap2"></section>
+  <section class="paneel schaduw-vooraf verborgen" id="stap3"></section>
 
   <!-- sealed until the Guild Hall opens -->
   <section class="paneel zegel verborgen" id="verzegeld">
@@ -189,16 +245,18 @@ body.in-frame main { visibility: hidden; }
   <button type="button" data-tab="regie" hidden><img class="ico" src="a/medaillon-hoorn.webp" alt="">Regie</button>
   <button type="button" data-tab="verrader" class="rood" hidden><img class="ico" src="a/logo.webp" alt="">Verrader</button>
 </nav>
+<div class="binnen verborgen" id="binnen"><img src="a/logo.webp" alt=""><p>Godfried van Bouillon heeft een boodschap voor je. Zet je geluid aan.</p><button class="knop" type="button" id="b-binnen">Treed binnen</button></div>
 <div class="melding-groot verborgen" id="melding" role="alertdialog" aria-modal="true" aria-labelledby="melding-kop">
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=49"></script>
-<script src="a/spel.js?v=49"></script>
-<script src="a/rollen.js?v=49"></script>
-<script src="a/firebase-config.js?v=49"></script>
-<script src="a/koppeling.js?v=49"></script>
-<script src="a/tafel.js?v=49"></script>
+<script src="a/wachters.js?v=50"></script>
+<script src="a/spel.js?v=50"></script>
+<script src="a/rollen.js?v=50"></script>
+<script src="a/firebase-config.js?v=50"></script>
+<script src="a/koppeling.js?v=50"></script>
+<script src="a/tafel.js?v=50"></script>
+<script src="a/voorbereiding.js?v=50"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -265,7 +323,7 @@ function teken() {
   const nu = Date.now();
   const staat = !wachter ? (FIRE ? "laden" : "onbekend") : !halOpen() ? (nu < START ? "vooraf" : "wacht") : eedOpen() ? "eed" : "rol";
   $("onbekend").classList.toggle("verborgen", staat !== "onbekend");
-  $("vooraf").classList.toggle("verborgen", staat !== "vooraf");
+  $("vooraf").classList.toggle("verborgen", staat !== "vooraf"); toonVooraf(staat === "vooraf");
   $("verzegeld").classList.toggle("verborgen", staat !== "vooraf" && staat !== "wacht");
   $("rol-blok").classList.toggle("verborgen", staat !== "rol" && staat !== "eed");
   if (staat === "wacht") $("verzegeld-tekst").textContent = "Het weekend is begonnen. Het zegel breekt na de Eerste Dronk in de Guild Hall.";
@@ -326,7 +384,7 @@ function toonTab(t) {
   if (!beschikbaar(t)) t = "ik"; tabNu = t; try { localStorage.setItem("kronieken-tab", t); } catch {}
   document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-current", b.dataset.tab === t));
   const ik = t === "ik";
-  for (const id of ["schaduw", "vooraf", "verzegeld", "rol-blok", "onbekend"]) $(id).classList.toggle("tab-weg", !ik);
+  for (const id of ["schaduw", "vooraf", "bevel", "hulp", "stap2", "stap3", "verzegeld", "rol-blok", "onbekend"]) $(id).classList.toggle("tab-weg", !ik);
   document.querySelector(".slot").classList.toggle("tab-weg", !ik);
   $("tab-tafel").classList.toggle("verborgen", t !== "tafel"); $("tocht").classList.toggle("tab-weg", t !== "tocht");
   for (const naam of ["regie", "verrader"]) {
@@ -349,9 +407,117 @@ function tekenTafel() {
   $("tafel-onder").textContent = tafelOpen ? "Tik op een Wachter om zijn rol en kracht te zien." : "De rollen zijn nog verzegeld tot de Eerste Dronk.";
   Tafel.teken($("tafel-doos"), { open: tafelOpen, gekozen: tafelGekozen, opKies: (w, r) => { tafelGekozen = w.naam; $("tafel-kaart").innerHTML = Tafel.details(r, w); piep("kies", .5); } });
 }
+// ---------- before the weekend ----------
+// Step 1 right away: Godfried's welcome (voice + the hall music after one tap), the order, the request for memories.
+// Step 2 from VOORAF.stap2: what to bring, the room wish, the playlist. Step 3 from VOORAF.stap3: the Shadow King stirs.
+const V = window.VOORAF || {};
+let mijnVooraf = {}, vooraafGetekend = "", muziek = null, stem = null, binnenGedaan = false;
+const lokaal = (k, w) => { try { if (w === undefined) return localStorage.getItem(k); localStorage.setItem(k, w); } catch { return null; } };
+const naamKlein = () => (wachter?.naam || "").toLowerCase();
+function welkomTekst() {
+  return [`Wachter ${wachter.naam}. Ik ben Godfried van Bouillon.`, "Binnenkort ontwaakt de Schaduw onder mijn kasteel, en ik roep elf Wachters bijeen. Jij bent er één van.",
+    "Je rol rust nog onder mijn zegel… maar één bevel geef ik je nu al. En ik vraag je om hulp."];
+}
+function startMuziek() {
+  if (!geluidAan) return; if (!muziek) { muziek = new Audio("a/muziek-hal.mp3"); muziek.loop = true; muziek.volume = .32; }
+  muziek.play().catch(() => {});
+}
+function spreek(bestand, klaar) {
+  if (stem) { stem.pause(); stem = null; }
+  if (!geluidAan) return klaar?.();
+  if (muziek) muziek.volume = .1;
+  stem = new Audio(bestand); stem.play().catch(() => {});
+  const af = () => { if (muziek) muziek.volume = .32; $("b-spreek").setAttribute("aria-pressed", "false"); $("b-spreek").textContent = "▶ Laat Godfried spreken"; stem = null; klaar?.(); };
+  stem.addEventListener("ended", af); stem.addEventListener("error", af);
+  $("b-spreek").setAttribute("aria-pressed", "true"); $("b-spreek").textContent = "■ Godfried spreekt";
+}
+$("b-binnen").onclick = () => { binnenGedaan = true; $("binnen").classList.add("verborgen"); piep("onthul", .5); startMuziek(); setTimeout(() => spreek(`a/vooraf/welkom-${naamKlein()}.mp3`), 900); };
+$("b-spreek").onclick = () => { if (stem) { stem.pause(); stem.dispatchEvent(new Event("ended")); return; } startMuziek(); spreek(`a/vooraf/welkom-${naamKlein()}.mp3`); };
+function toonVooraf(aan) {
+  for (const id of ["bevel", "hulp", "stap2"]) $(id).classList.toggle("verborgen", !aan || !wachter);
+  if (!aan || !wachter) $("stap3").classList.add("verborgen"); // step 3 shows itself when its time has come
+  if (!aan || !wachter) { $("binnen").classList.add("verborgen"); return; }
+  if (!binnenGedaan && $("binnen").classList.contains("verborgen") && !document.hidden) $("binnen").classList.remove("verborgen");
+  const nu = Date.now(), stap = nu >= V.stap3 ? 3 : nu >= V.stap2 ? 2 : 1;
+  const sleutelNu = `${wachter.naam}|${stap}|${JSON.stringify(mijnVooraf)}`;
+  if (vooraafGetekend === sleutelNu) return; vooraafGetekend = sleutelNu;
+  $("welkom").innerHTML = welkomTekst().map((z) => `<p>${schoon(z)}</p>`).join("");
+  tekenBevel(); tekenHulp(); tekenStap2(stap); tekenStap3(stap);
+}
+function tekenBevel() {
+  const b = V.bevelen?.[wachter.naam], el = $("bevel");
+  if (!b) { el.classList.add("verborgen"); return; }
+  const open = lokaal(`kronieken-bevel-${wachter.naam}`) === "open", ja = !!mijnVooraf.bevel?.aanvaard;
+  el.classList.toggle("open", open);
+  el.innerHTML = `<h2 class="carved">Jouw bevel</h2>` + (!open
+    ? `<button class="zegel-knop" type="button" id="b-breek"><div class="was"><img src="a/medaillon-${b.zegel}.webp" alt=""></div><span>Breek het zegel</span></button>`
+    : `<div class="inhoud"><h3 class="titel-bevel carved">${schoon(b.titel)}</h3><p class="tekst-bevel">${schoon(b.tekst)}</p>
+       ${ja ? `<p class="aanvaard">✓ Aanvaard. Godfried rekent op je.</p>` : `<button class="knop" type="button" id="b-aanvaard" style="width:100%">Ik aanvaard het bevel</button>`}
+       <p class="op-slot" style="margin-top:12px;font-size:14px">Volbreng je het in het weekend, dan voedt het een Zegel.</p></div>`);
+  const breek = $("b-breek"); if (breek) breek.onclick = () => { lokaal(`kronieken-bevel-${wachter.naam}`, "open"); piep("onthul", .6); if (navigator.vibrate) try { navigator.vibrate([60, 40, 120]); } catch {} vooraafGetekend = ""; toonVooraf(true); };
+  const aanv = $("b-aanvaard"); if (aanv) aanv.onclick = async () => {
+    aanv.disabled = true; const ok = await Koppeling.vooraf("bevel", { aanvaard: true, t: Date.now() });
+    if (ok === false) { aanv.disabled = false; melding("Niet verstuurd", "Dat kwam niet aan. Controleer je verbinding en probeer het opnieuw."); return; }
+    piep("volbracht", .6); if (!FIRE) { mijnVooraf.bevel = { aanvaard: true }; vooraafGetekend = ""; toonVooraf(true); } };
+}
+function tekenHulp() {
+  const anders = (window.WACHTERS || []).filter((w) => w.naam !== wachter.naam), sel = $("hulp-over"), was = sel.value;
+  sel.innerHTML = `<option value="">Kies een Wachter</option>` + anders.map((w) => `<option>${schoon(w.naam)}</option>`).join(""); sel.value = was;
+  $("hulp-form").classList.toggle("verborgen", !FIRE); $("hulp-geen").classList.toggle("verborgen", FIRE);
+  const lijst = Object.entries(mijnVooraf.anekdotes || {}).sort((a, b) => (a[1].t || 0) - (b[1].t || 0));
+  $("hulp-lijst").innerHTML = lijst.length ? lijst.map(([id, a]) => `<li><div><b>Over ${schoon(a.over)}</b><br>${schoon(a.tekst)}</div><button type="button" data-weg="${id}" aria-label="Verwijder">×</button></li>`).join("") : "";
+}
+$("hulp-form").onsubmit = async (e) => {
+  e.preventDefault(); const over = $("hulp-over").value, tekst = $("hulp-tekst").value.trim(); if (!over || !tekst) return;
+  const knop = $("hulp-stuur"); knop.disabled = true;
+  const ok = await Koppeling.vooraf(`anekdotes/a${Date.now().toString(36)}`, { over, tekst: tekst.slice(0, 2000), t: Date.now() });
+  knop.disabled = false;
+  if (ok === false) return melding("Niet verstuurd", "Dat kwam niet aan. Controleer je verbinding en probeer het opnieuw.");
+  $("hulp-tekst").value = ""; $("hulp-over").value = ""; piep("volbracht", .6);
+  melding("Godfried dankt je", "Je herinnering is verzegeld en bewaard. Heb je er nog een? Je mag er zoveel sturen als je wilt.");
+};
+$("hulp-lijst").onclick = async (e) => { const b = e.target.closest("[data-weg]"); if (b) await Koppeling.vooraf(`anekdotes/${b.dataset.weg}`, null); };
+function tekenStap2(stap) {
+  const el = $("stap2");
+  if (stap < 2) { el.innerHTML = `<h2 class="carved">Binnenkort meer</h2><p class="op-slot">Kort voor het weekend stuurt Godfried je meer: wat je moet meenemen, waar je slaapt en de muziek van de Hall.</p>`; return; }
+  const k = mijnVooraf.kamer || {}, anders = (window.WACHTERS || []).filter((w) => w.naam !== wachter.naam);
+  el.innerHTML = `<h2 class="carved">Wat neem je mee</h2>
+    <div class="sub-kop">Geregeld</div><ul class="lijstje geregeld">${(V.geregeld || []).map((t) => `<li>${schoon(t)}</li>`).join("")}</ul>
+    <div class="sub-kop">Neem zelf mee</div><ul class="lijstje">${(V.meenemen || []).map((t) => `<li>${schoon(t)}</li>`).join("")}</ul>
+    <h2 class="carved" style="margin-top:22px">Waar slaap je</h2>
+    <p class="op-slot" style="margin:0">Er zijn acht kamers, elk met een eigen badkamer. Een paar Wachters slapen met z’n tweeën. Hoe sta jij erin?</p>
+    <div class="opties" id="kamer-keuze">${[["alleen", "Ik slaap het liefst alleen"], ["delen", "Een kamer delen vind ik prima"], ["maakt-niet-uit", "Maakt me niet uit"]].map(([w, t]) =>
+      `<label><input type="radio" name="kamer" value="${w}" ${k.wens === w ? "checked" : ""}>${t}</label>`).join("")}
+      <label><input type="checkbox" id="kamer-snurk" ${k.snurk ? "checked" : ""}>Ik snurk (eerlijk zijn)</label></div>
+    <div class="veld"><label for="kamer-met">Delen? Het liefst met</label><select id="kamer-met"><option value="">Maakt niet uit</option>${anders.map((w) => `<option ${k.met === w.naam ? "selected" : ""}>${schoon(w.naam)}</option>`).join("")}</select></div>
+    ${k.t ? `<p class="aanvaard">✓ Je wens is bewaard. Je kunt hem nog aanpassen.</p>` : ""}
+    ${V.playlist ? `<h2 class="carved" style="margin-top:22px">De muziek van de Hall</h2><p class="op-slot" style="margin:0">Voeg je eigen nummers toe aan de playlist van het weekend.</p><a class="knop" href="${schoon(V.playlist)}" target="_blank" rel="noopener">Open de playlist</a>` : ""}`;
+  const bewaar = async () => {
+    const wens = el.querySelector("input[name=kamer]:checked")?.value || "", data = { wens, snurk: $("kamer-snurk").checked, met: $("kamer-met").value, t: Date.now() };
+    const ok = await Koppeling.vooraf("kamer", data); if (ok === false) melding("Niet verstuurd", "Dat kwam niet aan. Controleer je verbinding en probeer het opnieuw."); else piep("kies", .5);
+  };
+  el.querySelectorAll("input, select").forEach((i) => (i.onchange = bewaar));
+  if (lokaal(`kronieken-stap2-${wachter.naam}`) !== "gezien") { lokaal(`kronieken-stap2-${wachter.naam}`, "gezien"); if (navigator.vibrate) try { navigator.vibrate([80, 60, 80]); } catch {} }
+}
+function tekenStap3(stap) {
+  const el = $("stap3"); el.classList.toggle("verborgen", stap < 3); if (stap < 3) return;
+  el.innerHTML = `<h2 class="carved">De Schaduw roert zich</h2>
+    <p>Wachter… Godfried heeft je geroepen. Maar ik hoorde het ook.</p><p>Morgen breekt zijn zegel. En dan… zien wij elkaar.</p>
+    <button class="spreek" type="button" id="b-schaduw">▶ Luister</button>`;
+  $("b-schaduw").onclick = () => { startMuziek(); spreek("a/vooraf/schaduw.mp3"); };
+  if (lokaal(`kronieken-stap3-${wachter.naam}`) !== "gezien") { // once: the Shadow King takes over the screen for a moment
+    lokaal(`kronieken-stap3-${wachter.naam}`, "gezien");
+    const o = document.createElement("div"); o.className = "overname"; o.innerHTML = "<p>Ik zie jou, Wachter.</p>"; document.body.appendChild(o);
+    if (navigator.vibrate) try { navigator.vibrate([400, 120, 400]); } catch {} setTimeout(() => o.remove(), 7200);
+  }
+}
+const oudGeluid = $("b-geluid").onclick;
+$("b-geluid").onclick = () => { oudGeluid(); if (!geluidAan) { muziek?.pause(); stem?.pause(); } else if (binnenGedaan) startMuziek(); };
+
 zetNaam(); klok(); teken(); tekenTabs(); toonTab(tabNu);
 setInterval(() => { klok(); teken(); }, 1000);
-Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; teken(); tekenTocht(); }, opVerraad: verraad }).then(() => {
+Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; teken(); tekenTocht(); }, opVerraad: verraad,
+  opVooraf: (v) => { mijnVooraf = v || {}; vooraafGetekend = ""; toonVooraf(!$("vooraf").classList.contains("verborgen")); } }).then(() => {
   const ik = Koppeling.ik; if (!ik) return;
   wachter = (window.WACHTERS || []).find((w) => w.naam === ik.naam) || { naam: ik.naam, token: ik.email }; token = wachter.token;
   kiesRol(); zetNaam(); getekend = ""; teken(); tekenTocht();

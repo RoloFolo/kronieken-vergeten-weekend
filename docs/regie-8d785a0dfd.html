@@ -52,6 +52,12 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
 .schermen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .schermen button.nu { border-color: var(--bronze); background: rgba(184,149,95,.2); color: var(--bronze-hi); }
 .lijst { display: grid; gap: 8px; }
+.vw { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: rgba(0,0,0,.25); }
+.vw .wie { font-weight: 700; } .vw .wat { grid-column: 1 / -1; font-size: 13px; color: var(--ash); }
+.vw .ok { color: var(--ok); } .vw button { padding: 8px 12px; font-size: 13px; }
+.vw.klaar { border-color: var(--ok); }
+.anek { padding: 10px; border-left: 2px solid var(--bronze); background: rgba(0,0,0,.25); font-size: 14px; }
+.anek b { color: var(--bronze-hi); }
 .toggle { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; text-align: left; }
 .toggle .vink { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--bronze); display: grid; place-items: center; font-weight: 700; }
 .toggle.aan { border-color: var(--bronze); background: rgba(184,149,95,.15); }
@@ -191,6 +197,13 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 
   <section class="kaart">
+    <h2>Voor het weekend</h2>
+    <p class="klein" style="margin:0 0 10px">Wat de Wachters vooraf op hun pagina deden: hun bevel aanvaard, herinneringen voor de finale ingestuurd, hun kamerwens. Volbrengt iemand zijn bevel in het weekend, druk dan op <b>Volbracht</b>: zijn Zegel krijgt 3 fiches.</p>
+    <div class="lijst" id="vooraf-lijst"><p class="klein">Laden…</p></div>
+    <details style="margin-top:10px"><summary class="klein" style="cursor:pointer">Alle herinneringen lezen (voor Akte I)</summary><div class="lijst" id="vooraf-anekdotes" style="margin-top:8px"></div></details>
+  </section>
+
+  <section class="kaart">
     <h2>Persoonlijke links</h2>
     <p class="klein" style="margin:0 0 10px">Stuur iedere Wachter vooraf zijn eigen link. Tot het weekend toont hij het aftellen; na de Eerste Dronk breekt het zegel en verschijnt zijn rol. In Akte III staat daar ook zijn stuk van de eed.</p>
     <div class="lijst" id="links"></div>
@@ -211,12 +224,13 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=49"></script>
-<script src="a/spel.js?v=49"></script>
-<script src="a/wachters.js?v=49"></script>
-<script src="a/rollen.js?v=49"></script>
-<script src="a/firebase-config.js?v=49"></script>
-<script src="a/koppeling.js?v=49"></script>
+<script src="a/events.js?v=50"></script>
+<script src="a/spel.js?v=50"></script>
+<script src="a/wachters.js?v=50"></script>
+<script src="a/rollen.js?v=50"></script>
+<script src="a/firebase-config.js?v=50"></script>
+<script src="a/koppeling.js?v=50"></script>
+<script src="a/voorbereiding.js?v=50"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -387,7 +401,23 @@ function tekenVerbinding() {
   $("verbinding").textContent = !kreegStand ? "Verbinden met de tv…" : !k.online ? "Geen internet: knoppen wachten tot de verbinding terug is" : k.kapot ? "Verbinding herstellen…" : k.fout ? "Laatste knop kwam niet aan. Probeer opnieuw." : "Verbonden";
 }
 addEventListener("koppeling-status", (e) => { kopStatus = e.detail; tekenVerbinding(); });
-Koppeling.start({ rol: "regie", opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); } })
+// before the weekend: per Wachter his order, accepted or not, his memories and his room wish; "Volbracht" during the weekend
+let vooraf = {}, bevelGedaan = new Set();
+const sleutelVan = (naam) => Koppeling.emailVan(naam).toLowerCase().replaceAll(".", ",");
+const KAMER = { alleen: "liever alleen", delen: "delen prima", "maakt-niet-uit": "maakt niet uit" };
+function tekenVooraf() {
+  const V = window.VOORAF || {}, esc = (t) => String(t ?? "").replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[k]);
+  $("vooraf-lijst").innerHTML = (window.WACHTERS || []).map((w) => {
+    const v = vooraf[sleutelVan(w.naam)] || {}, b = V.bevelen?.[w.naam], n = Object.keys(v.anekdotes || {}).length, k = v.kamer, klaar = bevelGedaan.has(w.naam);
+    const wat = [b ? `Bevel: ${esc(b.titel)} ${v.bevel?.aanvaard ? '<span class="ok">✓ aanvaard</span>' : "· nog niet aanvaard"}` : "Geen bevel",
+      `${n} herinnering${n === 1 ? "" : "en"}`, k ? `Kamer: ${KAMER[k.wens] || "?"}${k.met ? ` (met ${esc(k.met)})` : ""}${k.snurk ? " · snurkt" : ""}` : "Kamer: nog geen wens"].join(" · ");
+    return `<div class="vw ${klaar ? "klaar" : ""}"><span class="wie">${esc(w.naam)}</span>${b ? `<button type="button" data-bevel="${esc(w.naam)}" ${klaar ? "disabled" : ""}>${klaar ? "Volbracht ✓" : "Volbracht"}</button>` : "<span></span>"}<span class="wat">${wat}</span></div>`;
+  }).join("");
+  const alle = (window.WACHTERS || []).flatMap((w) => Object.values(vooraf[sleutelVan(w.naam)]?.anekdotes || {}));
+  $("vooraf-anekdotes").innerHTML = alle.length ? alle.sort((a, b) => a.over.localeCompare(b.over)).map((a) => `<div class="anek"><b>Over ${esc(a.over)}</b><br>${esc(a.tekst)}</div>`).join("") : '<p class="klein">Nog geen herinneringen ingestuurd.</p>';
+}
+$("vooraf-lijst").onclick = (e) => { const b = e.target.closest("[data-bevel]"); if (b && !b.disabled) stuur({ cmd: "bevel", naam: b.dataset.bevel }); };
+Koppeling.start({ rol: "regie", opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; });
 
 $("b-start").onclick = () => stuur({ cmd: "start" });

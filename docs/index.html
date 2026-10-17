@@ -950,13 +950,14 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=49"></script>
-<script src="a/spel.js?v=49"></script>
-<script src="a/wachters.js?v=49"></script>
-<script src="a/firebase-config.js?v=49"></script>
-<script src="a/koppeling.js?v=49"></script>
-<script src="a/rollen.js?v=49"></script>
-<script src="a/tafel.js?v=49"></script>
+<script src="a/events.js?v=50"></script>
+<script src="a/spel.js?v=50"></script>
+<script src="a/voorbereiding.js?v=50"></script>
+<script src="a/wachters.js?v=50"></script>
+<script src="a/firebase-config.js?v=50"></script>
+<script src="a/koppeling.js?v=50"></script>
+<script src="a/rollen.js?v=50"></script>
+<script src="a/tafel.js?v=50"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1595,7 +1596,7 @@ function kasteelUit() {
   $("tocht-decor").classList.remove("aan", "loop"); stage.classList.remove("in-kasteel");
   setTimeout(() => stage.classList.remove("inzoom"), 900); halMuziek.vol(.5, 3000); fade(wind, .2, 2500); fade(vuur, .12, 2500);
 }
-let fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }, ere = { i: -1, namen: {} }, paneelNu = null;
+let fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }, ere = { i: -1, namen: {} }, paneelNu = null, bevelGedaan = new Set();
 // the weekend's log (for Akte II and IV) and the traitor periods
 let logboek = [], verraders = [], verrader = null;
 function log(type, data = {}) { logboek.push({ t: Date.now(), type, ...data }); if (logboek.length > 800) logboek.shift(); }
@@ -2258,7 +2259,7 @@ function meld() {
     tv: tvId, tvInfo: { apparaat: tvApparaat, versie: tvVersie, sinds: geladenOp, gemeld: Date.now() }, fiches: Object.fromEntries(ZEGELS.map((z) => [z.id, z.fiches])), gebruikt: [...gebruikt],
     event: wakker() && EVENT ? { id: EVENT.id, naam: EVENT.naam, regel: EVENT.regel, soort: EVENT.soort, zegel: EVENT.zegel, verlies: EVENT.verlies * extra } : null,
     scherm: schermNu(), d20: !$("b-d20").disabled,
-    tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
+    tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
     publiek: { hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
@@ -2272,6 +2273,9 @@ const OPDRACHTEN = {
   verder: () => paneelNu === "finale" ? gSla() : paneelNu === "einde" ? envelop() : verderIntro(),
   schaduw: () => schaduw(), d20: () => werpD20(), goed: () => uitslag(true), fout: () => uitslag(false), hal: () => hal(),
   fiche: (o) => fiche(o.id, o.n > 0 ? 1 : -1),
+  // a Wachter fulfilled the order he got before the weekend: his seal gets 3 fiches, one by one
+  bevel: (o) => { const b = window.VOORAF?.bevelen?.[o.naam]; if (!b || bevelGedaan.has(o.naam)) return; bevelGedaan.add(o.naam); log("bevel", { naam: o.naam, zegel: b.zegel });
+    for (let i = 0; i < 3; i++) setTimeout(() => fiche(b.zegel, 1), i * 700); },
   "events-opnieuw": () => { gebruikt.clear(); bewaar(); },
   scherm: (o) => { if (uitlegActief) stopUitleg(); if (dronkActief) { dronkActief = false; dronkKlaar = true; fade(dronkStem, 0, 300); }
     rollenOpen = true; if (binnen === null) { verhaalKlaar = true; proloog?.pause(); $("verhaal").hidden = true; betreden(); } if (wakker()) hal(); paneel(o.naam === "hal" ? null : o.naam); },
@@ -2294,7 +2298,7 @@ const OPDRACHTEN = {
   hint: () => hintVoor(),
   ere: (o) => { ere.i = Math.max(-1, Math.min(S.titels.length - 1, ere.i + o.d)); if (paneelNu !== "ere") paneel("ere"); else tekenEre(); speel("klok", .6, 1.1); meld(); },
   "ere-naam": (o) => { ere.namen[ere.i] = String(o.naam || "").slice(0, 40); tekenEre(); speel("donder", .4); meld(); },
-  "alles-opnieuw": () => { tochtOpen = false; kistGeopend = false; chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
+  "alles-opnieuw": () => { tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
     setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); }, // back to the welcome screen, so the regie shows "Start verhaal" again
 };
 // With Firebase only the tv laptop logs in (address ends in ?tv); public visitors just see the countdown.
@@ -2308,7 +2312,7 @@ function laadStand(s) {
   if (standGeladen) return bewaakTv(s); standGeladen = true; geladenOp = Date.now();
   for (const z of ZEGELS) z.fiches = s.fiches?.[z.id] ?? z.fiches;
   gebruikt = new Set(s.gebruikt || []); teller(); teken();
-  tochtOpen = !!s.tochtOpen; kistGeopend = !!s.kistGeopend; tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
+  tochtOpen = !!s.tochtOpen; kistGeopend = !!s.kistGeopend; bevelGedaan = new Set(s.bevelen || []); tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
   if (s.fin) fin = { nu: 0, open: {}, opgelost: {}, hint: {}, ...s.fin }; if (s.ere) ere = { i: -1, namen: {}, ...s.ere };
   if (s.chaos) { const { wacht: w, ...rest } = s.chaos; chaos = rest; Object.assign(wacht, w || {}); }
   ijs = s.ijs || {}; vloekD20 = !!s.vloekD20; vloek = s.vloek || null; tekenIjs();
