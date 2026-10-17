@@ -174,8 +174,6 @@ body.in-frame main { visibility: hidden; }
 body:has(#binnen:not(.verborgen)), body:has(#intro:not(.verborgen)) { overflow: hidden; }
 body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs { visibility: hidden; }
 .binnen, .intro { height: 100vh; height: 100lvh; bottom: auto; }
-.geluid-weg { position: fixed; z-index: 90; left: 50%; bottom: calc(var(--nav-h) + 16px); translate: -50% 0; padding: 14px 22px; cursor: pointer; font: 700 14px/1 var(--carved); letter-spacing: .12em; text-transform: uppercase;
-  color: #1a0f08; background: linear-gradient(180deg, #f1dfb6, #b8955f); border: 0; border-radius: 999px; box-shadow: 0 0 24px rgba(255,190,90,.6), 0 8px 24px #000; }
 .spreek { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px auto 0; padding: 8px 14px; min-height: 40px; cursor: pointer;
   font: 700 12px/1 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: var(--bronze-hi); background: none; border: 1px solid rgba(184,149,95,.5); border-radius: 999px; }
 .spreek[aria-pressed="true"] { border-color: var(--ember); color: #ffd2d0; }
@@ -350,19 +348,18 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   </div>
   <button class="intro-verder" type="button" id="intro-verder">Verder</button>
 </div>
-<button class="geluid-weg verborgen" type="button" id="geluid-weg">🔊 Tik om Godfried te horen</button>
 <div class="binnen verborgen" id="binnen"><img src="a/logo.webp" alt=""><p>Godfried van Bouillon heeft een boodschap voor je. Zet je geluid aan.</p><button class="knop" type="button" id="b-binnen">Treed binnen</button></div>
 <div class="melding-groot verborgen" id="melding" role="alertdialog" aria-modal="true" aria-labelledby="melding-kop">
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=69"></script>
-<script src="a/spel.js?v=69"></script>
-<script src="a/rollen.js?v=69"></script>
-<script src="a/firebase-config.js?v=69"></script>
-<script src="a/koppeling.js?v=69"></script>
-<script src="a/tafel.js?v=69"></script>
-<script src="a/voorbereiding.js?v=69"></script>
+<script src="a/wachters.js?v=70"></script>
+<script src="a/spel.js?v=70"></script>
+<script src="a/rollen.js?v=70"></script>
+<script src="a/firebase-config.js?v=70"></script>
+<script src="a/koppeling.js?v=70"></script>
+<script src="a/tafel.js?v=70"></script>
+<script src="a/voorbereiding.js?v=70"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -594,8 +591,10 @@ function sluitIntro() {
 }
 $("intro-verder").onclick = () => sluitIntro();
 // a phone that still refuses the sound: one more tap on this button counts as permission
-function geblokkeerd() { $("geluid-weg").classList.remove("verborgen"); }
-$("geluid-weg").onclick = () => { $("geluid-weg").classList.add("verborgen"); muziek?.hervat(); stem?.play().catch(() => {}); };
+// no extra button: the next tap anywhere counts as permission and brings music and voice back
+let wachtOpTik = false;
+function geblokkeerd() { wachtOpTik = true; }
+addEventListener("pointerdown", () => { if (!wachtOpTik) return; wachtOpTik = false; muziek?.hervat(); stem?.play().catch(() => {}); });
 $("b-binnen").onclick = () => { binnenGedaan = true; $("binnen").classList.add("verborgen"); // no click sound here: only the music and Godfried
   if (!geluidAan) { geluidAan = true; try { localStorage.setItem("kronieken-geluid", "aan"); } catch {} zetGeluidKnop(); } // entering means listening
   if (lokaal(`kronieken-intro-${wachter?.naam}-${publiek.ronde || 0}`) !== "gezien") startIntro(); else startMuziek(); };
