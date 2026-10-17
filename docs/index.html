@@ -640,7 +640,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .tocht-decor .pl-lucht.flits img { filter: brightness(1.9) saturate(1.3); transition: filter .05s; }
 .tocht-decor .pl-lucht img { transition: filter .6s ease; }
 .tocht-decor .vuur { mix-blend-mode: plus-lighter; }
-.tocht-decor .poort-raaf { left: 27.2%; top: 11.8%; width: 5.2%; }
+.tocht-decor .poort-raaf { left: 31.2%; top: 11.3%; width: 5.2%; } /* feet on the middle merlon of the left tower */
 .tocht-decor .fakkel { position: absolute; width: 26%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; mix-blend-mode: plus-lighter; pointer-events: none;
   background: radial-gradient(circle, rgba(255,190,110,.42), rgba(255,110,40,.18) 35%, transparent 68%); animation: fakkel 2.3s ease-in-out infinite; }
 .tocht-decor .fakkel.b { animation-duration: 1.9s; animation-delay: -.7s; }
@@ -746,6 +746,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <div class="layer" data-laag="kasteel">
       <img src="a/kasteel.webp" alt="">
       <canvas id="kasteel-mist"></canvas>
+      <canvas id="fakkeltocht"></canvas>
       <img class="glowlight a" src="a/licht-kasteel-a.webp" alt=""><img class="glowlight b" src="a/licht-kasteel-b.webp" alt="">
       <img class="glowlight bloom a" src="a/licht-kasteel-a.webp" alt=""><img class="glowlight bloom b" src="a/licht-kasteel-b.webp" alt="">
     </div>
@@ -949,13 +950,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=46"></script>
-<script src="a/spel.js?v=46"></script>
-<script src="a/wachters.js?v=46"></script>
-<script src="a/firebase-config.js?v=46"></script>
-<script src="a/koppeling.js?v=46"></script>
-<script src="a/rollen.js?v=46"></script>
-<script src="a/tafel.js?v=46"></script>
+<script src="a/events.js?v=47"></script>
+<script src="a/spel.js?v=47"></script>
+<script src="a/wachters.js?v=47"></script>
+<script src="a/firebase-config.js?v=47"></script>
+<script src="a/koppeling.js?v=47"></script>
+<script src="a/rollen.js?v=47"></script>
+<script src="a/tafel.js?v=47"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1498,6 +1499,7 @@ const poortKlaar = () => { const i = $("tocht-beeld"); return !!i && i.complete 
 // the camera flies into the castle; the first time with an intro, later straight to the tasks
 function kasteelIn(toonPaneel) {
   stage.classList.add("in-kasteel", "inzoom"); halMuziek.vol(.2, 2500); fade(wind, .5, 2500); fade(vuur, .3, 3000);
+  fakkelStart = 0; requestAnimationFrame(fakkeltocht);
   const metIntro = true; tochtOpen = true; meld();
   const t = (ms, fn) => tochtIntroTimers.push(setTimeout(fn, ms));
   t(metIntro ? 6500 : 2600, () => { if (poortKlaar()) { $("tocht-decor").classList.add("aan"); poortStart(); t(7600, () => $("tocht-decor").classList.add("loop")); } });
@@ -1505,6 +1507,32 @@ function kasteelIn(toonPaneel) {
   tochtIntroLoopt = true; speel("donder", .5);
   // Godfried speaks over the gate; when he is done the tasks come in
   t(14000, () => { $("tocht-intro").hidden = false; tochtStem = stemMet("tocht-intro", 1, () => t(1500, () => tochtIntroKlaar(toonPaneel)), 30000); });
+}
+// the torch procession: eleven Wachters climb the castle rock while the camera flies in, and reach the gate as it appears
+// (coordinates on the castle layer, so it moves with that layer)
+const FAKKEL_PAD = [[.4165, .734], [.344, .656], [.395, .5625], [.302, .516], [.344, .4375], [.25, .39], [.2085, .3125]];
+let fakkelStart = 0;
+function fakkeltocht(nu) {
+  const c = $("fakkeltocht"), x = c.getContext("2d");
+  if (!stage.classList.contains("in-kasteel")) return x.clearRect(0, 0, c.width, c.height);
+  if (!fakkelStart) fakkelStart = nu;
+  const d = Math.min(2, devicePixelRatio || 1), W = Math.round(c.offsetWidth * d), H = Math.round(c.offsetHeight * d);
+  if (c.width !== W || c.height !== H) { c.width = W; c.height = H; }
+  x.clearRect(0, 0, W, H);
+  const p = FAKKEL_PAD.map(([a, b]) => [a * W, b * H]), len = [0];
+  for (let i = 1; i < p.length; i++) len.push(len[i - 1] + Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]));
+  const op = (s) => { s *= len.at(-1); let i = 1; while (i < len.length - 1 && len[i] < s) i++; const f = (s - len[i - 1]) / (len[i] - len[i - 1]); return [p[i - 1][0] + (p[i][0] - p[i - 1][0]) * f, p[i - 1][1] + (p[i][1] - p[i - 1][1]) * f]; };
+  const t = (nu - fakkelStart) / 1000, kop = .1 + t * .17;
+  x.globalCompositeOperation = "lighter";
+  for (let i = 0; i < 11; i++) {
+    const s = kop - i * .03; if (s < 0 || s > 1) continue; // not yet on the path, or already through the gate
+    const [px, py0] = op(s), fl = .75 + Math.random() * .35, r = W * .0026 * fl, py = py0 - Math.abs(Math.sin(t * 5 + i * 1.7)) * W * .0008;
+    const g = x.createRadialGradient(px, py, 0, px, py, r * 3);
+    g.addColorStop(0, `rgba(255,238,195,${.95 * fl})`); g.addColorStop(.25, `rgba(255,160,60,${.7 * fl})`); g.addColorStop(1, "rgba(255,90,20,0)");
+    x.fillStyle = g; x.beginPath(); x.arc(px, py, r * 3, 0, Math.PI * 2); x.fill();
+  }
+  x.globalCompositeOperation = "source-over";
+  requestAnimationFrame(fakkeltocht);
 }
 let tochtStem = null;
 function tochtIntroKlaar(toonPaneel = tochtIntroVerder) {
@@ -1625,16 +1653,16 @@ function kistRitueel() {
   tekenKistzaal(); halMuziek.vol(.06, 1500); fade(wind, .45, 2000); speel("knars", .5, .7);
   setTimeout(() => stemMet("kist-intro", 1, () => {
     // the lid
-    speel("donder-hard", .8); speel("klok", .9, .7); $("kistzaal").classList.add("open");
+    speel("kist/hemel", .95); $("kistzaal").classList.add("open"); // a revelation: a choir swelling into light
     const g = $("k-gloed"); g.classList.remove("flits"); void g.offsetWidth; g.classList.add("flits");
     let t = 2600;
     S.relieken.forEach((k, i) => {
       const p = $(`kp-${k.id}`);
       setTimeout(() => { p.classList.add("spanning"); speel("hartslag", .9); setTimeout(() => speel("hartslag", .9), 700); }, t);
       setTimeout(() => { p.classList.remove("spanning");
-        if (gewonnen.has(k.id)) { p.classList.add("gewonnen"); $(`ks-${i}`).classList.add("aan"); speel("klok", .9, 1.25); speel("glazen", .5, 1.4); setTimeout(() => speel("gejuich", .45), 300);
+        if (gewonnen.has(k.id)) { p.classList.add("gewonnen"); $(`ks-${i}`).classList.add("aan"); speel("kist/reliek", .9);
           const g2 = $("k-gloed"); g2.classList.remove("flits"); void g2.offsetWidth; g2.classList.add("flits"); }
-        else { p.classList.add("leeg"); p.querySelector("b").textContent = "Niet gevonden"; speel("klok", .5, .45); speel("donder", .5); }
+        else { p.classList.add("leeg"); p.querySelector("b").textContent = "Niet gevonden"; speel("kist/leeg", .8); }
       }, t + 1500);
       t += 3400;
     });
@@ -2263,7 +2291,8 @@ const OPDRACHTEN = {
   hint: () => hintVoor(),
   ere: (o) => { ere.i = Math.max(-1, Math.min(S.titels.length - 1, ere.i + o.d)); if (paneelNu !== "ere") paneel("ere"); else tekenEre(); speel("klok", .6, 1.1); meld(); },
   "ere-naam": (o) => { ere.namen[ere.i] = String(o.naam || "").slice(0, 40); tekenEre(); speel("donder", .4); meld(); },
-  "alles-opnieuw": () => { tochtOpen = false; kistGeopend = false; chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; bewaar(); },
+  "alles-opnieuw": () => { tochtOpen = false; kistGeopend = false; chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
+    setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); }, // back to the welcome screen, so the regie shows "Start verhaal" again
 };
 // With Firebase only the tv laptop logs in (address ends in ?tv); public visitors just see the countdown.
 let standGeladen = false, geladenOp = 0, passief = false;
