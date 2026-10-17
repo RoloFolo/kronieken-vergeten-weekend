@@ -146,6 +146,8 @@ body.in-frame main { visibility: hidden; }
 .intro-verder { position: absolute; z-index: 3; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); padding: 12px 22px; cursor: pointer; font: 700 12px/1 var(--carved); letter-spacing: .2em; text-transform: uppercase;
   color: var(--bronze-hi); background: rgba(10,5,6,.6); border: 1px solid rgba(184,149,95,.5); border-radius: 6px; opacity: .7; }
 .intro-verder.klaar { opacity: 1; border-color: var(--bronze); box-shadow: 0 0 18px rgba(255,190,90,.45); animation: adem 2.4s ease-in-out infinite; }
+.geluid-weg { position: fixed; z-index: 90; left: 50%; bottom: calc(var(--nav-h) + 16px); translate: -50% 0; padding: 14px 22px; cursor: pointer; font: 700 14px/1 var(--carved); letter-spacing: .12em; text-transform: uppercase;
+  color: #1a0f08; background: linear-gradient(180deg, #f1dfb6, #b8955f); border: 0; border-radius: 999px; box-shadow: 0 0 24px rgba(255,190,90,.6), 0 8px 24px #000; }
 .spreek { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px auto 0; padding: 8px 14px; min-height: 40px; cursor: pointer;
   font: 700 12px/1 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: var(--bronze-hi); background: none; border: 1px solid rgba(184,149,95,.5); border-radius: 999px; }
 .spreek[aria-pressed="true"] { border-color: var(--ember); color: #ffd2d0; }
@@ -273,18 +275,19 @@ body.in-frame main { visibility: hidden; }
     <div class="intro-zegels" id="intro-zegels"><img src="a/medaillon-vlam.webp" alt=""><img src="a/medaillon-hoorn.webp" alt=""><img src="a/medaillon-schild.webp" alt=""><img src="a/medaillon-hart.webp" alt=""></div></div>
   <button class="intro-verder" type="button" id="intro-verder">Verder</button>
 </div>
+<button class="geluid-weg verborgen" type="button" id="geluid-weg">🔊 Tik om Godfried te horen</button>
 <div class="binnen verborgen" id="binnen"><img src="a/logo.webp" alt=""><p>Godfried van Bouillon heeft een boodschap voor je. Zet je geluid aan.</p><button class="knop" type="button" id="b-binnen">Treed binnen</button></div>
 <div class="melding-groot verborgen" id="melding" role="alertdialog" aria-modal="true" aria-labelledby="melding-kop">
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=54"></script>
-<script src="a/spel.js?v=54"></script>
-<script src="a/rollen.js?v=54"></script>
-<script src="a/firebase-config.js?v=54"></script>
-<script src="a/koppeling.js?v=54"></script>
-<script src="a/tafel.js?v=54"></script>
-<script src="a/voorbereiding.js?v=54"></script>
+<script src="a/wachters.js?v=55"></script>
+<script src="a/spel.js?v=55"></script>
+<script src="a/rollen.js?v=55"></script>
+<script src="a/firebase-config.js?v=55"></script>
+<script src="a/koppeling.js?v=55"></script>
+<script src="a/tafel.js?v=55"></script>
+<script src="a/voorbereiding.js?v=55"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -450,13 +453,13 @@ function welkomTekst() {
 }
 function startMuziek() {
   if (!geluidAan) return; if (!muziek) { muziek = new Audio("a/muziek-hal.mp3"); muziek.loop = true; muziek.volume = .32; }
-  muziek.play().catch(() => {});
+  muziek.play().catch(geblokkeerd);
 }
 function spreek(bestand, klaar) {
   if (stem) { stem.pause(); stem = null; }
   if (!geluidAan) { klaar?.(); return null; }
   if (muziek) muziek.volume = .1;
-  stem = new Audio(bestand); stem.play().catch(() => {});
+  stem = new Audio(bestand); stem.play().catch(geblokkeerd);
   const af = () => { if (muziek) muziek.volume = .32; $("b-spreek").setAttribute("aria-pressed", "false"); $("b-spreek").textContent = "▶ Laat Godfried spreken"; stem = null; klaar?.(); };
   stem.addEventListener("ended", af); stem.addEventListener("error", af);
   $("b-spreek").setAttribute("aria-pressed", "true"); $("b-spreek").textContent = "■ Godfried spreekt";
@@ -496,7 +499,12 @@ function sluitIntro() {
   scrollTo(0, 0);
 }
 $("intro-verder").onclick = () => { piep("tik", .4); sluitIntro(); };
-$("b-binnen").onclick = () => { binnenGedaan = true; $("binnen").classList.add("verborgen"); piep("onthul", .5);
+// a phone that still refuses the sound: one more tap on this button counts as permission
+function geblokkeerd() { $("geluid-weg").classList.remove("verborgen"); }
+$("geluid-weg").onclick = () => { $("geluid-weg").classList.add("verborgen"); muziek?.play().catch(() => {}); stem?.play().catch(() => {}); };
+$("b-binnen").onclick = () => { binnenGedaan = true; $("binnen").classList.add("verborgen");
+  if (!geluidAan) { geluidAan = true; try { localStorage.setItem("kronieken-geluid", "aan"); } catch {} zetGeluidKnop(); } // entering means listening
+  piep("onthul", .5);
   if (lokaal(`kronieken-intro-${wachter?.naam}`) !== "gezien") startIntro(); else startMuziek(); };
 $("b-spreek").onclick = () => startIntro();
 function toonVooraf(aan) {
