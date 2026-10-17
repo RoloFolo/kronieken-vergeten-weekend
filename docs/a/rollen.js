@@ -49,14 +49,14 @@ window.ROLLEN = [
     kracht: ["Ritueel van Herstel", "Herstel 2 fiches die de Schaduw eerder vandaag heeft weggenomen, in een Zegel naar keuze."] },
 ];
 
-// Wie krijgt welke rol. VOORLOPIG: in te vullen door de organisatoren (naam uit wachters.js → rol-id hierboven).
+// Wie krijgt welke rol. VOORSTEL (zie Drive: 09 Voorstel rollen en bevelen), nog te bevestigen door Roland en Jean.
 window.ROL_VAN = {
-  Geert: "firekeeper", Roy: "quartermaster", Martin: "feastlord", Stefan: "shieldbearer", Jeroen: "bard", Ivo: "diplomat",
-  Johan: "shadow", Robin: "ranger", Rob: "alchemist", Jean: "priester", Roland: "warlord",
+  Robin: "firekeeper", Martin: "alchemist", Jeroen: "feastlord", Roy: "quartermaster", Ivo: "priester", Stefan: "ranger",
+  Johan: "warlord", Geert: "bard", Rob: "diplomat", Jean: "shadow", Roland: "shieldbearer",
 };
 
 // Wanneer de persoonlijke pagina de rol laat zien: zodra de tv de Guild Hall opent (na de Eerste Dronk).
 // Zonder verbinding met de tv gaat hij uiterlijk op dit moment vanzelf open.
 window.ROL_UITERLIJK = new Date("2026-11-13T21:00:00+01:00");
 // Het eed-fragment verschijnt pas als de regie Akte III opent; zonder verbinding uiterlijk op dit moment.
-window.EED_UITERLIJK = new Date("2026-11-15T08:00:00+01:00");
+window.EED_UITERLIJK = new Date("2026-11-15T14:00:00+01:00"); // de finale is zondagochtend

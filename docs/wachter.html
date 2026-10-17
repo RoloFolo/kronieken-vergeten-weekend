@@ -234,7 +234,7 @@ body.in-frame main { visibility: hidden; }
     <p>Deze boodschap is niet voor jou bestemd. Open de link die je van de organisatoren kreeg.</p>
   </section>
 
-  <p class="slot tab-ik">De Kronieken van het Vergeten Weekend · Bouillon<span id="uit" class="verborgen"><br><button type="button" class="uitlog" id="b-uit">Niet jij? Log uit</button></span><br><button type="button" class="uitlog" id="b-geluid"></button></p>
+  <p class="slot tab-ik">De Kronieken van het Vergeten Weekend · Bouillon<span id="uit" class="verborgen"><br><button type="button" class="uitlog" id="b-uit">Niet jij? Log uit</button></span><br><button type="button" class="uitlog" id="b-geluid"></button><br><button type="button" class="uitlog verborgen" id="b-speler"></button></p>
 </main>
 <div class="frame verborgen" id="frame-regie"><iframe title="Regie" data-src="regie-8d785a0dfd.html"></iframe></div>
 <div class="frame verborgen" id="frame-verrader"><iframe title="Verraderspaneel" data-src="chaos-06d0ece377.html"></iframe></div>
@@ -250,13 +250,13 @@ body.in-frame main { visibility: hidden; }
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=51"></script>
-<script src="a/spel.js?v=51"></script>
-<script src="a/rollen.js?v=51"></script>
-<script src="a/firebase-config.js?v=51"></script>
-<script src="a/koppeling.js?v=51"></script>
-<script src="a/tafel.js?v=51"></script>
-<script src="a/voorbereiding.js?v=51"></script>
+<script src="a/wachters.js?v=52"></script>
+<script src="a/spel.js?v=52"></script>
+<script src="a/rollen.js?v=52"></script>
+<script src="a/firebase-config.js?v=52"></script>
+<script src="a/koppeling.js?v=52"></script>
+<script src="a/tafel.js?v=52"></script>
+<script src="a/voorbereiding.js?v=52"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -379,7 +379,9 @@ function verraadEcht(info) {
 // ---------- tabs ----------
 let tabNu = "ik";
 try { tabNu = localStorage.getItem("kronieken-tab") || "ik"; } catch {}
-const beschikbaar = (t) => t === "ik" || t === "tafel" || (t === "tocht" && !!publiek.tocht) || (t === "regie" && !!Koppeling.ik?.admin) || (t === "verrader" && isVerrader);
+// test mode: an organiser can play as an ordinary Wachter on this phone (the regie tab is hidden)
+let alsSpeler = false; try { alsSpeler = localStorage.getItem("kronieken-als-speler") === "ja"; } catch {}
+const beschikbaar = (t) => t === "ik" || t === "tafel" || (t === "tocht" && !!publiek.tocht) || (t === "regie" && !!Koppeling.ik?.admin && !alsSpeler) || (t === "verrader" && isVerrader);
 function toonTab(t) {
   if (!beschikbaar(t)) t = "ik"; tabNu = t; try { localStorage.setItem("kronieken-tab", t); } catch {}
   document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-current", b.dataset.tab === t));
@@ -438,7 +440,8 @@ function toonVooraf(aan) {
   if (!aan || !wachter) $("stap3").classList.add("verborgen"); // step 3 shows itself when its time has come
   if (!aan || !wachter) { $("binnen").classList.add("verborgen"); return; }
   if (!binnenGedaan && $("binnen").classList.contains("verborgen") && !document.hidden) $("binnen").classList.remove("verborgen");
-  const nu = Date.now(), stap = nu >= V.stap3 ? 3 : nu >= V.stap2 ? 2 : 1;
+  const test = +new URLSearchParams(location.search).get("stap") || 0; // ?stap=2 or ?stap=3 shows that step now, on this device only
+  const nu = Date.now(), stap = test || (nu >= V.stap3 ? 3 : nu >= V.stap2 ? 2 : 1);
   const sleutelNu = `${wachter.naam}|${stap}|${JSON.stringify(mijnVooraf)}`;
   if (vooraafGetekend === sleutelNu) return; vooraafGetekend = sleutelNu;
   $("welkom").innerHTML = welkomTekst().map((z) => `<p>${schoon(z)}</p>`).join("");
@@ -523,6 +526,11 @@ Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : 
   kiesRol(); zetNaam(); getekend = ""; teken(); tekenTocht();
   $("uit").classList.remove("verborgen"); tekenTabs(); toonTab(tabNu);
   $("b-uit").onclick = async () => { await Koppeling.uitloggen(); location.reload(); };
+  if (ik.admin) { const k = $("b-speler"); k.classList.remove("verborgen"); k.textContent = alsSpeler ? "Test: je speelt als gewone Wachter. Regie terug" : "Test: speel als gewone Wachter (regie verbergen)";
+    k.onclick = () => { try { localStorage.setItem("kronieken-als-speler", alsSpeler ? "nee" : "ja"); } catch {} location.reload(); }; }
+  if (new URLSearchParams(location.search).has("opnieuw")) { // ?opnieuw: the seal, step 2 and the Shadow's takeover show again on this phone
+    for (const k of ["bevel", "stap2", "stap3"]) try { localStorage.removeItem(`kronieken-${k}-${wachter.naam}`); } catch {}
+    vooraafGetekend = ""; teken(); }
 });
 </script>
 </body>
