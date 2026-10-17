@@ -514,6 +514,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 @keyframes titel { 0% { opacity: 0; transform: scale(.6); filter: brightness(3); } }
 .ere .voor { margin: 0; font: clamp(16px, 1.5vw, 30px)/1.4 var(--body); color: var(--bone); opacity: .85; }
 .ere .spreuk { margin: 0; font: italic clamp(18px, 1.8vw, 36px)/1.4 var(--display); color: #fbe3b4; }
+.ere .wie.verborgen-wie { visibility: hidden; }
 .ere .wie { font-size: clamp(36px, 5vw, 100px); filter: drop-shadow(0 0 30px rgba(255,190,90,.8)); animation: titel 1.2s cubic-bezier(.2,1.2,.3,1); }
 .einde-kop { font-size: clamp(34px, 4.6vw, 96px); animation: titel 2.4s cubic-bezier(.2,1.2,.3,1); }
 .stage.omen .scene { animation: tremor .4s linear 3; }
@@ -952,14 +953,14 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=59"></script>
-<script src="a/spel.js?v=59"></script>
-<script src="a/voorbereiding.js?v=59"></script>
-<script src="a/wachters.js?v=59"></script>
-<script src="a/firebase-config.js?v=59"></script>
-<script src="a/koppeling.js?v=59"></script>
-<script src="a/rollen.js?v=59"></script>
-<script src="a/tafel.js?v=59"></script>
+<script src="a/events.js?v=60"></script>
+<script src="a/spel.js?v=60"></script>
+<script src="a/voorbereiding.js?v=60"></script>
+<script src="a/wachters.js?v=60"></script>
+<script src="a/firebase-config.js?v=60"></script>
+<script src="a/koppeling.js?v=60"></script>
+<script src="a/rollen.js?v=60"></script>
+<script src="a/tafel.js?v=60"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1976,12 +1977,30 @@ function envelop() { // after the gifts: the certificates
   setTimeout(() => { $("d-zin").textContent = "Open de envelop op de schoorsteen."; $("d-zin").style.opacity = ""; }, 1300);
   zegeStem = stemMet("fin/einde-envelop", 1, null, 20000);
 }
-function tekenEre() {
-  const t = S.titels[ere.i];
-  if (!t) { $("ere").innerHTML = `<h1 class="kop carved">Ere van de Wachters</h1><p class="onder">Wie heeft dit weekend zijn plek in de Kronieken verdiend?</p>`; return; }
-  const wie = ere.namen[ere.i];
-  $("ere").innerHTML = `<div class="nr carved">Titel ${ere.i + 1} van ${S.titels.length}</div><h2 class="carved">${t.naam}</h2>
-    <p class="voor">${t.voor}</p><p class="spreuk">“${t.spreuk}”</p>${wie ? `<div class="wie carved">${wie.replace(/[<>&]/g, "")}</div>` : ""}`;
+// Ere van de Wachters: the organisers assign the titles beforehand (regie, stored in /ere); here they are only played.
+// "Speel af" runs through every assigned title by itself: the title and what it is for, a short tension, then the name
+// with cheering. Pause, next and previous from the regie.
+let toewijzing = {}, ereTimers = [];
+const ereLijst = () => S.titels.map((t, i) => ({ t, i, wie: toewijzing[`t${i}`] || ere.toewijzing?.[`t${i}`] })).filter((x) => x.wie);
+function tekenEre(onthul = true) {
+  const lijst = ereLijst(), x = lijst[ere.stap];
+  if (ere.stap == null || ere.stap < 0 || !x) {
+    $("ere").innerHTML = ere.stap >= lijst.length && lijst.length ? `<h1 class="kop carved">Lang leve de Wachters</h1><p class="onder">Hun namen staan voor altijd in de Kronieken.</p>`
+      : `<h1 class="kop carved">Ere van de Wachters</h1><p class="onder">Wie heeft dit weekend zijn plek in de Kronieken verdiend?</p>`; return;
+  }
+  $("ere").innerHTML = `<div class="nr carved">Titel ${ere.stap + 1} van ${lijst.length}</div><h2 class="carved">${x.t.naam}</h2>
+    <p class="voor">${x.t.voor}</p><p class="spreuk">“${x.t.spreuk}”</p><div class="wie carved ${onthul ? "" : "verborgen-wie"}">${String(x.wie).replace(/[<>&]/g, "")}</div>`;
+}
+function ereStop() { ereTimers.forEach(clearTimeout); ereTimers = []; }
+function ereStap(n, auto) { // show title n, reveal the name after a moment, then (when playing) go on
+  ereStop(); const lijst = ereLijst(); ere.stap = n; meld();
+  if (paneelNu !== "ere") paneel("ere");
+  if (n >= lijst.length) { tekenEre(); speel("gejuich", .6); ere.speelt = false; meld(); return; }
+  tekenEre(false); speel("fin/sfx-akte", .7);
+  const t = (ms, fn) => ereTimers.push(setTimeout(fn, ms));
+  t(4500, () => { speel("hartslag", .8); }); t(5400, () => speel("hartslag", .9));
+  t(6600, () => { document.querySelector("#ere .wie")?.classList.remove("verborgen-wie"); speel("fin/sfx-goed", .9); speel("gejuich", .55); });
+  if (auto) t(14000, () => { if (ere.speelt) ereStap(n + 1, true); });
 }
 
 /* ================= the Chaos Lord ================= */
@@ -2308,8 +2327,11 @@ const OPDRACHTEN = {
   "geen-verrader": () => { eindigVerraad("regie"); meld(); },
   ontdooi: (o) => { if (ijs[o.id]) { ijs[o.id] = Date.now() - 1; tekenIjs(); } },
   hint: () => hintVoor(),
-  ere: (o) => { ere.i = Math.max(-1, Math.min(S.titels.length - 1, ere.i + o.d)); if (paneelNu !== "ere") paneel("ere"); else tekenEre(); speel("klok", .6, 1.1); meld(); },
-  "ere-naam": (o) => { ere.namen[ere.i] = String(o.naam || "").slice(0, 40); tekenEre(); speel("donder", .4); meld(); },
+  "ere-speel": () => { ere.speelt = true; const n = ere.stap == null || ere.stap < 0 || ere.stap >= ereLijst().length ? 0 : ere.stap; ereStap(n, true); },
+  "ere-pauze": () => { ere.speelt = false; ereStop(); tekenEre(); meld(); },
+  ere: (o) => { const n = Math.max(0, Math.min(ereLijst().length, (ere.stap ?? -1) + o.d)); ereStap(n, ere.speelt); },
+  // without Firebase the regie stores the assignment here, in the tv's own state
+  "ere-toewijs": (o) => { ere.toewijzing ||= {}; if (o.naam) ere.toewijzing[`t${o.i}`] = String(o.naam).slice(0, 40); else delete ere.toewijzing[`t${o.i}`]; meld(); },
   "alles-opnieuw": () => { ronde = Date.now(); tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
     setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); }, // back to the welcome screen, so the regie shows "Start verhaal" again
 };
@@ -2347,7 +2369,7 @@ function bewaakTv(s) {
   document.body.appendChild(el); el.querySelector("button").onclick = () => location.reload();
 }
 if (!window.FIREBASE_CONFIG || new URLSearchParams(location.search).has("tv"))
-  Koppeling.start({ rol: "tv", opStand: laadStand, opOpdracht: (o) => { if (!passief) OPDRACHTEN[o.cmd]?.(o); } }).then((v) => { server = !!v; });
+  Koppeling.start({ rol: "tv", opStand: laadStand, opOpdracht: (o) => { if (!passief) OPDRACHTEN[o.cmd]?.(o); }, opEre: (t) => { toewijzing = t || {}; } }).then((v) => { server = !!v; });
 
 /* ================= Schaduw-event ================= */
 let stem = null, typer = null, stormTimer = null, beslist = false;

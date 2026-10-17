@@ -4,6 +4,7 @@
 //     /publiek     tv schrijft, iedereen leest (hal open, eed)
 //     /verraad/<e> tv schrijft alleen voor de huidige verrader; ieder leest alleen zijn eigen plek
 //     /opdrachten  admins sturen alles, de huidige verrader alleen chaos-opdrachten
+//     /ere         de eretitels: welke Wachter welke titel krijgt (alleen admins)
 //     /vooraf/<e>  ieder schrijft en leest alleen zijn eigen plek (bevel aanvaard, herinneringen, kamerwens); admins lezen alles
 //   Anders de lokale server (app/server.mjs): /api/stand en /api/stroom.
 //   Anders niets: de pagina werkt dan alleen op zichzelf.
@@ -62,7 +63,7 @@ function geenToegang(email) {
   });
 }
 
-async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraad, opVooraf }) {
+async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraad, opVooraf, opEre }) {
   const [{ initializeApp }, auth, db] = await Promise.all([import(FB + "firebase-app.js"), import(FB + "firebase-auth.js"), import(FB + "firebase-database.js")]);
   const app = initializeApp(window.FIREBASE_CONFIG);
   const a = auth.getAuth(app); await auth.setPersistence(a, auth.browserLocalPersistence);
@@ -110,6 +111,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
   if (rol === "wachter" || rol === "chaos") luister(db.onValue, `verraad/${sleutel(email)}`, (s) => { opVerraad?.(s.val()); if (rol === "chaos") opStand?.(s.val() || {}); });
   if (rol === "wachter") luister(db.onValue, `vooraf/${sleutel(email)}`, (s) => opVooraf?.(s.val() || {}));
   if (rol === "regie") luister(db.onValue, "vooraf", (s) => opVooraf?.(s.val() || {}));
+  if (alleenAdmin) luister(db.onValue, "ere/toewijzing", (s) => opEre?.(s.val() || {}));
   return {
     soort: "firebase",
     meldStand: (stand) => {
@@ -123,6 +125,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
     stuur: (o) => metToken(() => db.push(db.ref(d, "opdrachten"), { ...o, van: email, t: Date.now() })),
     uitloggen: () => auth.signOut(a),
     vooraf: (pad, waarde) => metToken(() => db.set(db.ref(d, `vooraf/${sleutel(email)}/${pad}`), waarde)),
+    ere: alleenAdmin ? (i, naam) => metToken(() => db.set(db.ref(d, `ere/toewijzing/t${i}`), naam || null)) : null,
   };
 }
 
@@ -147,6 +150,7 @@ window.Koppeling = {
   meldStand(s) { this.verbinding?.meldStand(s); },
   stuur(o) { return this.verbinding?.stuur(o); },
   uitloggen() { return this.verbinding?.uitloggen?.(); },
+  ere(i, naam) { return this.verbinding?.ere ? this.verbinding.ere(i, naam) : null; },
   vooraf(pad, waarde) { return this.verbinding?.vooraf ? this.verbinding.vooraf(pad, waarde) : Promise.resolve(false); },
 };
 window.dispatchEvent(new Event("koppeling-klaar"));

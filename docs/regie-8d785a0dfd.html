@@ -59,6 +59,11 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
 .fases button.tv::after { content: " ●"; color: var(--ember); }
 .fase-weg { display: none !important; }
 .lijst { display: grid; gap: 8px; }
+.ere-rij { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: rgba(0,0,0,.25); }
+.ere-rij b { color: var(--bronze-hi); font-family: var(--carved); font-size: 14px; letter-spacing: .04em; }
+.ere-rij span { font-size: 13px; color: var(--ash); }
+.ere-rij select { width: 100%; font: 16px var(--body); color: var(--bone); background: rgba(0,0,0,.4); border: 1px solid var(--line); border-radius: 8px; padding: 9px 10px; }
+.ere-rij.gekozen { border-color: var(--bronze); }
 .vw { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: rgba(0,0,0,.25); }
 .vw .wie { font-weight: 700; } .vw .wat { grid-column: 1 / -1; font-size: 13px; color: var(--ash); }
 .vw .ok { color: var(--ok); } .vw button { padding: 8px 12px; font-size: 13px; }
@@ -202,14 +207,21 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 
   <section class="kaart" id="s-ere" data-fase="ere">
-    <h2>Ere van de Wachters</h2>
-    <p class="klein" id="ere-titel"></p>
-    <div class="rij" style="margin:10px 0">
-      <button id="b-ere-terug" type="button">Vorige titel</button>
-      <button class="goud" id="b-ere-volgende" type="button">Volgende titel</button>
+    <h2>Ere van de Wachters · afspelen</h2>
+    <p class="klein" id="ere-titel" style="margin:0 0 10px"></p>
+    <button class="goud groot" id="b-ere-speel" type="button">Speel de eretitels af</button>
+    <div class="rij" style="margin-top:10px">
+      <button id="b-ere-terug" type="button">Vorige</button>
+      <button id="b-ere-volgende" type="button">Volgende</button>
     </div>
-    <input type="text" id="ere-naam" placeholder="Naam van de winnaar" autocomplete="off">
-    <button class="goud groot" id="b-ere-naam" type="button" style="margin-top:8px">Toon de winnaar</button>
+    <p class="klein">De tv toont elke toegewezen titel, wacht even, onthult de naam met gejuich en gaat zelf door. Titels zonder naam worden overgeslagen.</p>
+  </section>
+
+  <section class="kaart" data-fase="ere">
+    <h2>Wie krijgt welke titel</h2>
+    <p class="klein" style="margin:0 0 10px">Vul dit vooraf samen in; jullie zien elkaars keuzes meteen. Een Wachter mag meer titels krijgen.</p>
+    <p class="klein" id="ere-telling" style="margin:0 0 10px"></p>
+    <div class="lijst" id="ere-lijst"></div>
   </section>
 
   <section class="kaart" data-fase="vooraf">
@@ -240,13 +252,13 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=59"></script>
-<script src="a/spel.js?v=59"></script>
-<script src="a/wachters.js?v=59"></script>
-<script src="a/rollen.js?v=59"></script>
-<script src="a/firebase-config.js?v=59"></script>
-<script src="a/koppeling.js?v=59"></script>
-<script src="a/voorbereiding.js?v=59"></script>
+<script src="a/events.js?v=60"></script>
+<script src="a/spel.js?v=60"></script>
+<script src="a/wachters.js?v=60"></script>
+<script src="a/rollen.js?v=60"></script>
+<script src="a/firebase-config.js?v=60"></script>
+<script src="a/koppeling.js?v=60"></script>
+<script src="a/voorbereiding.js?v=60"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -405,7 +417,7 @@ function toon(s) {
   const vrij = [...gevonden].filter((k) => !op.has(k)).length;
   $("b-hint").disabled = !vrij || fin.hint?.[p.zegel] === (fin.voortgang?.[p.zegel]?.length ?? 0) || klaar || !open;
   $("b-hint").textContent = `Hint (${vrij} reliek${vrij === 1 ? "" : "en"} over)`;
-  const ere = s.ere || { i: -1 }; $("ere-titel").textContent = ere.i < 0 ? "Nog geen titel getoond." : `Nu op de tv: ${S.titels[ere.i].naam} (${ere.i + 1} van ${S.titels.length})`;
+  ereStand = s.ere || {}; tekenEreRegie();
   const totaal = (window.SCHADUW_EVENTS || []).length, over = totaal - (s.gebruikt?.length ?? 0);
   $("teller").textContent = `Nog ${over} van de ${totaal} events over.`;
 }
@@ -434,7 +446,7 @@ function tekenVooraf() {
   $("vooraf-anekdotes").innerHTML = alle.length ? alle.sort((a, b) => a.over.localeCompare(b.over)).map((a) => `<div class="anek"><b>Over ${esc(a.over)}</b><br>${esc(a.tekst)}</div>`).join("") : '<p class="klein">Nog geen herinneringen ingestuurd.</p>';
 }
 $("vooraf-lijst").onclick = (e) => { const b = e.target.closest("[data-bevel]"); if (b && !b.disabled) stuur({ cmd: "bevel", naam: b.dataset.bevel }); };
-Koppeling.start({ rol: "regie", opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); } })
+Koppeling.start({ rol: "regie", opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); }, opEre: (t) => { ereToewijzing = t || {}; tekenEreRegie(); } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; });
 
 $("b-start").onclick = () => stuur({ cmd: "start" });
@@ -463,9 +475,30 @@ $("b-hal").onclick = () => stuur({ cmd: "hal" });
 $("b-reset").onclick = () => ($("reset-vraag").hidden = false);
 $("b-beproeving").onclick = () => stuur({ cmd: "beproeving" });
 $("b-hint").onclick = () => stuur({ cmd: "hint" });
-$("b-ere-terug").onclick = () => { stuur({ cmd: "ere", d: -1 }); $("ere-naam").value = ""; };
-$("b-ere-volgende").onclick = () => { stuur({ cmd: "ere", d: 1 }); $("ere-naam").value = ""; };
-$("b-ere-naam").onclick = () => { const n = $("ere-naam").value.trim(); if (n) stuur({ cmd: "ere-naam", naam: n }); };
+// ---------- Ere van de Wachters: assign beforehand (Firebase /ere, or the tv's state without Firebase), play during the game ----------
+let ereToewijzing = null, ereStand = {};
+const ereVan = () => ereToewijzing || ereStand.toewijzing || {};
+function tekenEreRegie() {
+  const tw = ereVan(), namen = (window.WACHTERS || []).map((w) => w.naam), esc = (t) => String(t ?? "").replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[k]);
+  const open = document.activeElement?.closest?.("#ere-lijst"); // do not redraw a list someone is choosing in
+  if (!open) $("ere-lijst").innerHTML = S.titels.map((t, i) => { const wie = tw[`t${i}`] || "";
+    return `<label class="ere-rij ${wie ? "gekozen" : ""}"><b>${esc(t.naam)}</b><span>${esc(t.voor)}</span>
+      <select data-i="${i}"><option value="">Niemand (overslaan)</option>${namen.map((n) => `<option ${n === wie ? "selected" : ""}>${esc(n)}</option>`).join("")}</select></label>`; }).join("");
+  const tel = {}; Object.values(tw).forEach((n) => (tel[n] = (tel[n] || 0) + 1));
+  const toegewezen = Object.keys(tw).length;
+  $("ere-telling").textContent = `${toegewezen} van de ${S.titels.length} titels toegewezen. ` + (namen.map((n) => `${n} ${tel[n] || 0}`).join(" · "));
+  const stap = ereStand.stap, lijst = S.titels.map((t, i) => ({ t, wie: tw[`t${i}`] })).filter((x) => x.wie);
+  $("ere-titel").textContent = !toegewezen ? "Nog geen titels toegewezen: doe dat hieronder." : stap == null || stap < 0 ? `Klaar om af te spelen: ${toegewezen} titels.`
+    : stap >= lijst.length ? "Alle titels zijn uitgereikt." : `Nu op de tv: ${lijst[stap].t.naam} → ${lijst[stap].wie} (${stap + 1} van ${lijst.length})${ereStand.speelt ? "" : " · gepauzeerd"}`;
+  $("b-ere-speel").textContent = ereStand.speelt ? "Pauzeer" : stap >= 0 && stap < lijst.length ? "Verder afspelen" : "Speel de eretitels af";
+  $("b-ere-speel").disabled = !toegewezen;
+}
+$("ere-lijst").onchange = async (e) => { const s = e.target.closest("select"); if (!s) return; const i = +s.dataset.i, naam = s.value;
+  const via = Koppeling.ere(i, naam); if (via) { const ok = await via; if (ok === false) $("ere-telling").textContent = "Niet bewaard: controleer de verbinding en kies opnieuw."; } else stuur({ cmd: "ere-toewijs", i, naam });
+  s.closest(".ere-rij").classList.toggle("gekozen", !!naam); };
+$("b-ere-speel").onclick = () => stuur({ cmd: ereStand.speelt ? "ere-pauze" : "ere-speel" });
+$("b-ere-terug").onclick = () => stuur({ cmd: "ere", d: -1 });
+$("b-ere-volgende").onclick = () => stuur({ cmd: "ere", d: 1 });
 $("b-alles").onclick = () => ($("alles-vraag").hidden = false);
 $("b-alles-nee").onclick = () => ($("alles-vraag").hidden = true);
 $("b-alles-ja").onclick = () => { stuur({ cmd: "alles-opnieuw" }); $("alles-vraag").hidden = true; };

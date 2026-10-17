@@ -16,6 +16,10 @@
         ".read": "auth != null && auth.token.email.replace('.', ',') === $wie"
       }
     },
+    "ere": {
+      ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+      ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)"
+    },
     "vooraf": {
       ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
       "$wie": {
