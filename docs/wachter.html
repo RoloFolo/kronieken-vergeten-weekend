@@ -187,12 +187,19 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
 /* closed: Godfried's wax seal, big, in the middle */
 .bevel-brief .dicht-zegel { position: absolute; left: 50%; top: 47%; width: 46%; aspect-ratio: 1; translate: -50% -50%; border: 0; padding: 0; background: none; cursor: pointer; }
 .bevel-brief .dicht-zegel img { position: absolute; inset: 0; width: 100%; filter: drop-shadow(0 6px 10px rgba(40,0,0,.6)); }
-.bevel-brief .dicht-zegel .scherf { transition: transform .9s cubic-bezier(.25,.6,.35,1), opacity .9s ease-in; }
-.bevel-brief .dicht-zegel:not(.breekt) { animation: wenk 2s ease-in-out infinite; }
-.bevel-brief .dicht-zegel.breekt .scherf { transform: translate(var(--tx), var(--ty)) rotate(var(--r)); opacity: 0; }
-.bevel-brief .kruimel { position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; border-radius: 40%; background: #8f141c; box-shadow: 0 0 3px rgba(60,0,0,.6); pointer-events: none;
-  animation: kruimel .9s cubic-bezier(.2,.7,.4,1) forwards; }
-@keyframes kruimel { to { transform: translate(var(--tx), var(--ty)) rotate(200deg); opacity: 0; } }
+/* the seal breaks like real wax: it strains, cracks (painted cracks), pops into its painted chunks, and they fall off the letter */
+.bevel-brief .dicht-zegel .barst, .bevel-brief .dicht-zegel .brok, .bevel-brief .dicht-zegel .kruim { opacity: 0; }
+.bevel-brief .dicht-zegel.trekt .heel { animation: trek .28s ease-in-out; }
+@keyframes trek { 30% { transform: scale(1.04, .97); } 60% { transform: rotate(-2deg) scale(.99); } }
+.bevel-brief .dicht-zegel.barst-nu .heel { opacity: 0; }
+.bevel-brief .dicht-zegel.barst-nu .barst { opacity: 1; animation: barst .25s ease-out; }
+@keyframes barst { 40% { transform: translate(1.5%, -1%) rotate(1.5deg); } }
+.bevel-brief .dicht-zegel.valt .barst { opacity: 0; }
+.bevel-brief .dicht-zegel.valt .brok, .bevel-brief .dicht-zegel.valt .kruim { opacity: 1; animation: val 1.05s cubic-bezier(.45,0,.9,.55) forwards; }
+@keyframes val { 0% { transform: none; } 18% { transform: translate(calc(var(--dx) * .35), -5%) rotate(calc(var(--rot) * .2)); }
+  100% { transform: translate(var(--dx), 190%) rotate(var(--rot)); opacity: 0; } }
+.bevel-brief .dicht-zegel:not(.trekt) { animation: wenk 2s ease-in-out infinite; }
+
 .bevel-brief .tik { position: absolute; left: 13%; right: 13%; top: 72%; text-align: center; font: 700 clamp(12px, 3.4vw, 14px)/1.3 var(--carved); letter-spacing: .1em; text-transform: uppercase; color: #7a1016; }
 @keyframes wenk { 50% { transform: scale(1.05); filter: drop-shadow(0 0 14px rgba(226,50,60,.7)); } }
 /* open: the empty spot for the seal, on the border at the bottom, clearly asking to be pressed */
@@ -328,13 +335,13 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=62"></script>
-<script src="a/spel.js?v=62"></script>
-<script src="a/rollen.js?v=62"></script>
-<script src="a/firebase-config.js?v=62"></script>
-<script src="a/koppeling.js?v=62"></script>
-<script src="a/tafel.js?v=62"></script>
-<script src="a/voorbereiding.js?v=62"></script>
+<script src="a/wachters.js?v=63"></script>
+<script src="a/spel.js?v=63"></script>
+<script src="a/rollen.js?v=63"></script>
+<script src="a/firebase-config.js?v=63"></script>
+<script src="a/koppeling.js?v=63"></script>
+<script src="a/tafel.js?v=63"></script>
+<script src="a/voorbereiding.js?v=63"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -581,23 +588,15 @@ function toonVooraf(aan) {
   if (vooraafGetekend === sleutelNu) return; vooraafGetekend = sleutelNu;
   tekenBevel(); tekenHulp(); tekenStap2(stap); tekenStap3(stap);
 }
-// the wax seal as 9 irregular shards around an off-centre point; on breaking each flies outward along its own direction.
-// Jagged crack lines run from that point to the rim; neighbouring shards share a line, so the seal is whole until it breaks.
-function scherven() {
-  const n = 9, cx = 47 + Math.random() * 6, cy = 46 + Math.random() * 8, hoek = [];
-  for (let i = 0; i < n; i++) hoek.push((i / n) * Math.PI * 2 + (Math.random() - .5) * .45);
-  const pt = (a, r) => `${(cx + Math.cos(a) * r).toFixed(1)}% ${(cy + Math.sin(a) * r).toFixed(1)}%`;
-  const lijn = hoek.map((a) => [pt(a + (Math.random() - .5) * .35, 14 + Math.random() * 8), pt(a + (Math.random() - .5) * .25, 32 + Math.random() * 10), pt(a, 95)]);
-  const scherf = (poly, mid, d) => `<img class="scherf" src="a/app/lakzegel.webp" alt="" style="clip-path:polygon(${poly});--tx:${(Math.cos(mid) * d).toFixed(0)}%;--ty:${(Math.sin(mid) * d + 25).toFixed(0)}%;--r:${Math.round((Math.random() - .5) * 140)}deg">`;
-  return hoek.map((a, i) => { const j = (i + 1) % n, b = hoek[j] + (j === 0 ? Math.PI * 2 : 0), mid = (a + b) / 2;
-    const rand = [1, 2].map((k) => pt(a + (b - a) * k / 3, 95));
-    // each wedge breaks once more along a ring: an inner chunk that stays close, an outer chunk that flies further
-    const binnen = [`${cx}% ${cy}%`, lijn[i][0], lijn[i][1], lijn[j][1], lijn[j][0]].join(", ");
-    const buiten = [lijn[i][1], lijn[i][2], ...rand, lijn[j][2], lijn[j][1]].join(", ");
-    return scherf(binnen, mid + (Math.random() - .5) * .6, 25 + Math.random() * 30) + scherf(buiten, mid, 70 + Math.random() * 70); }).join("");
+// The wax seal, painted in its stages (scripts/zegel-brokken.mjs): whole, cracked, and four chunks plus crumbs on the same canvas.
+// Each chunk falls away from the middle, along its own side, with gravity.
+const ZEGEL_BROKKEN = [{"src":"a/app/zegel-brok-1.webp","cx":0.338,"cy":0.304},{"src":"a/app/zegel-brok-2.webp","cx":0.356,"cy":0.716},{"src":"a/app/zegel-brok-3.webp","cx":0.705,"cy":0.331},{"src":"a/app/zegel-brok-4.webp","cx":0.71,"cy":0.659}];
+function zegelLagen() {
+  return `<img class="heel" src="a/app/zegel-heel.webp" alt=""><img class="barst" src="a/app/zegel-gebarsten.webp" alt="">`
+    + ZEGEL_BROKKEN.map((k) => { const dx = Math.round((k.cx - .5) * 160 + (Math.random() - .5) * 30), rot = Math.round((k.cx < .5 ? -1 : 1) * (25 + Math.random() * 45));
+      return `<img class="brok" src="${k.src}" alt="" style="transform-origin:${k.cx * 100}% ${k.cy * 100}%;--dx:${dx}%;--rot:${rot}deg;animation-delay:${(Math.random() * .08).toFixed(2)}s">`; }).join("")
+    + `<img class="kruim" src="a/app/zegel-kruimels.webp" alt="" style="--dx:0%;--rot:0deg">`;
 }
-function kruimels(knop) { for (let i = 0; i < 16; i++) { const k = document.createElement("span"), a = Math.random() * Math.PI * 2, d = 50 + Math.random() * 90;
-  k.className = "kruimel"; k.style.setProperty("--tx", `${Math.round(Math.cos(a) * d)}px`); k.style.setProperty("--ty", `${Math.round(Math.sin(a) * d + 30)}px`); k.style.animationDelay = `${Math.random() * .1}s`; knop.appendChild(k); } }
 let bevelNetOpen = false, bevelBezig = false; // while the seal is being pressed, a quick answer from the database must not redraw it
 function tekenBevel() {
   const b = V.bevelen?.[wachter.naam], el = $("bevel");
@@ -606,7 +605,7 @@ function tekenBevel() {
   const sleutel = () => `kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`, open = lokaal(sleutel()) === "open", ja = !!mijnVooraf.bevel?.aanvaard;
   el.innerHTML = `<h2 class="carved">Jouw bevel</h2>` + (!open
     ? `<div class="bevel-brief"><div class="vlak" style="justify-content:flex-start"><div class="van">Een bevel van Godfried</div></div>
-         <button class="dicht-zegel" type="button" id="b-breek" aria-label="Breek het zegel">${scherven()}</button>
+         <button class="dicht-zegel" type="button" id="b-breek" aria-label="Breek het zegel">${zegelLagen()}</button>
          <div class="tik">Tik op het zegel<br>om het te breken</div></div>`
     : `<div class="bevel-brief ${bevelNetOpen ? "ontvouw" : ""}" id="bevel-brief"><div class="vlak">
          <div class="van">Een bevel van Godfried</div><h3>${schoon(b.titel)}</h3><p class="opdracht">${schoon(b.tekst)}</p>
@@ -615,8 +614,11 @@ function tekenBevel() {
        <p class="op-slot" style="font-size:14px;margin:0">Volbreng je het in het weekend, dan voedt het een Zegel.</p>`);
   bevelNetOpen = false;
   const breek = $("b-breek"); if (breek) breek.onclick = () => {
-    breek.classList.add("breekt"); kruimels(breek); piep("onthul", .6); if (navigator.vibrate) try { navigator.vibrate([60, 40, 120]); } catch {}
-    setTimeout(() => { lokaal(sleutel(), "open"); bevelNetOpen = true; vooraafGetekend = ""; toonVooraf(true); }, 750);
+    if (breek.classList.contains("trekt")) return; breek.classList.add("trekt"); // strain
+    if (navigator.vibrate) try { navigator.vibrate(30); } catch {}
+    setTimeout(() => { breek.classList.add("barst-nu"); piep("knak", .7); if (navigator.vibrate) try { navigator.vibrate(40); } catch {} }, 280); // crack
+    setTimeout(() => { breek.classList.add("valt"); piep("knak", .45); if (navigator.vibrate) try { navigator.vibrate([20, 30, 60]); } catch {} }, 620); // pop and fall
+    setTimeout(() => { lokaal(sleutel(), "open"); bevelNetOpen = true; vooraafGetekend = ""; toonVooraf(true); }, 1550);
   };
   const plek = $("b-aanvaard"); if (plek && !ja) plek.onclick = async () => {
     bevelBezig = true; plek.disabled = true; plek.classList.add("gedrukt", "net"); plek.innerHTML = `<img src="a/app/lakzegel.webp" alt="">`;
