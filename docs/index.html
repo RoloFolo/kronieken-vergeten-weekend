@@ -544,6 +544,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .enter:hover, .enter:focus-visible { filter: drop-shadow(0 8px 18px rgba(0,0,0,.8)) drop-shadow(0 0 30px rgba(255,80,60,.7)); transform: scale(1.03); outline: none; }
 .verhaal { position: absolute; inset: 0; z-index: 19; display: grid; place-items: center; padding: calc(2.2vh + clamp(220px, 27vw, 620px) * .667 + 2vh) 10vw 10vh; background: #070405; transition: opacity 1.6s; }
 .verhaal.weg { opacity: 0; pointer-events: none; }
+.klik-geluid { position: fixed; z-index: 95; left: 50%; bottom: 6vh; translate: -50% 0; padding: 1.2em 2.4em; cursor: pointer; font: 700 clamp(14px, 1.3vw, 24px)/1 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: #1a0f08; background: linear-gradient(180deg, #f1dfb6, #b8955f); border: 0; border-radius: 999px; box-shadow: 0 0 30px rgba(255,190,90,.6); }
 .verhaal-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.32) saturate(.9) blur(1.5px); }
 .verhaal::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 60% at 50% 55%, transparent 30%, rgba(7,4,5,.85) 100%); pointer-events: none; }
 .brief { position: relative; z-index: 2; width: min(58vw, 1150px); margin-inline: auto; text-align: center; display: grid; justify-items: center; padding: 3.2vh 3vw 3.6vh; background: linear-gradient(180deg, rgba(30,10,12,.9), rgba(10,5,6,.94)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 20px 60px #000; font: italic 400 clamp(19px, 1.9vw, 38px)/1.5 var(--display); }
@@ -905,6 +906,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     </section>
   </div>
 
+  <button class="klik-geluid" id="klik-geluid" type="button" hidden>Klik hier voor geluid</button>
   <div class="verhaal" id="verhaal" hidden>
     <video class="verhaal-bg" id="verhaal-bg" src="a/storm.mp4" muted loop playsinline preload="auto"></video>
     <div class="zegel-kant l"><div class="vz" data-z="0"></div><div class="vz" data-z="2"></div></div>
@@ -950,14 +952,14 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=56"></script>
-<script src="a/spel.js?v=56"></script>
-<script src="a/voorbereiding.js?v=56"></script>
-<script src="a/wachters.js?v=56"></script>
-<script src="a/firebase-config.js?v=56"></script>
-<script src="a/koppeling.js?v=56"></script>
-<script src="a/rollen.js?v=56"></script>
-<script src="a/tafel.js?v=56"></script>
+<script src="a/events.js?v=57"></script>
+<script src="a/spel.js?v=57"></script>
+<script src="a/voorbereiding.js?v=57"></script>
+<script src="a/wachters.js?v=57"></script>
+<script src="a/firebase-config.js?v=57"></script>
+<script src="a/koppeling.js?v=57"></script>
+<script src="a/rollen.js?v=57"></script>
+<script src="a/tafel.js?v=57"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1356,17 +1358,25 @@ function zegelFlits(el) {
   }
 }
 for (const [, tekst] of BRIEF) { const p = document.createElement("p"); p.innerHTML = tekst; $("brief").appendChild(p); }
+// may this tv play sound yet? (a browser only allows it after someone clicked the page once)
+const tvMagGeluid = () => navigator.userActivation ? navigator.userActivation.hasBeenActive : true;
+document.addEventListener("click", () => setTimeout(meld, 100), { once: true });
 function startVerhaal() {
   setTimeout(meld, 200);
   $("start").classList.add("weg"); setTimeout(() => ($("start").hidden = true), 1300);
   const c = $("crest"); c.style.transition = "transform 2.4s cubic-bezier(.65,0,.2,1)"; c.style.transform = "none";
   $("verhaal").hidden = false; $("verhaal-bg").play().catch(() => {});
   speel("donder", .35); startMuziek(); halMuziek.vol(.07, 2500);
-  proloog = new Audio("a/proloog.mp3"); proloog.play().catch(() => {});
+  // a reloaded tv may not play sound until someone clicks it: then the letter runs on the clock, and a click brings Godfried in at that moment
+  proloog = new Audio("a/proloog.mp3"); const begin = performance.now(); let opKlok = false;
+  proloog.play().catch(() => { opKlok = true; $("klik-geluid").hidden = false; });
+  const klikVoorGeluid = () => { if (!opKlok) return; opKlok = false; $("klik-geluid").hidden = true; proloog.currentTime = (performance.now() - begin) / 1000; proloog.play().catch(() => {}); startMuziek(); };
+  document.addEventListener("click", klikVoorGeluid);
   proloog.addEventListener("ended", naarHal);
   (function volg() {
     if (verhaalKlaar) return;
-    const t = proloog.currentTime; let i = -1; BRIEF.forEach(([s], n) => { if (t >= s) i = n; });
+    const t = opKlok ? (performance.now() - begin) / 1000 : proloog.currentTime;
+    if (opKlok && proloog.duration && t >= proloog.duration) return naarHal(); let i = -1; BRIEF.forEach(([s], n) => { if (t >= s) i = n; });
     if (i !== briefIdx) { briefIdx = i; [...$("brief").children].forEach((p, n) => p.classList.toggle("aan", n === i)); }
     document.querySelectorAll(".vz").forEach((el) => {
       const zin = t >= ZEGEL_IN[+el.dataset.z] && t < ZEGEL_UIT;
@@ -1596,6 +1606,8 @@ function kasteelUit() {
   $("tocht-decor").classList.remove("aan", "loop"); stage.classList.remove("in-kasteel");
   setTimeout(() => stage.classList.remove("inzoom"), 900); halMuziek.vol(.5, 3000); fade(wind, .2, 2500); fade(vuur, .12, 2500);
 }
+// the round of the game: a new one after "Hele spel opnieuw beginnen", so the personal pages show their intro and seals again
+let ronde = 1;
 let fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }, ere = { i: -1, namen: {} }, paneelNu = null, bevelGedaan = new Set();
 // the weekend's log (for Akte II and IV) and the traitor periods
 let logboek = [], verraders = [], verrader = null;
@@ -2256,13 +2268,13 @@ function schermNu() { return dronkActief && dronkWacht ? "dronk-wacht" : dronkAc
 function meld() {
   if (!server || passief || !standGeladen) return; clearTimeout(meldTimer);
   meldTimer = setTimeout(() => Koppeling.meldStand(({
-    tv: tvId, tvInfo: { apparaat: tvApparaat, versie: tvVersie, sinds: geladenOp, gemeld: Date.now() }, fiches: Object.fromEntries(ZEGELS.map((z) => [z.id, z.fiches])), gebruikt: [...gebruikt],
+    tv: tvId, tvInfo: { apparaat: tvApparaat, versie: tvVersie, sinds: geladenOp, gemeld: Date.now(), geluid: tvMagGeluid() }, fiches: Object.fromEntries(ZEGELS.map((z) => [z.id, z.fiches])), gebruikt: [...gebruikt],
     event: wakker() && EVENT ? { id: EVENT.id, naam: EVENT.naam, regel: EVENT.regel, soort: EVENT.soort, zegel: EVENT.zegel, verlies: EVENT.verlies * extra } : null,
     scherm: schermNu(), d20: !$("b-d20").disabled,
-    tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
+    tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], ronde, fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
-    publiek: { hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
+    publiek: { ronde, hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
     tochtOpen, kistGeopend,
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   })), 150);
@@ -2298,7 +2310,7 @@ const OPDRACHTEN = {
   hint: () => hintVoor(),
   ere: (o) => { ere.i = Math.max(-1, Math.min(S.titels.length - 1, ere.i + o.d)); if (paneelNu !== "ere") paneel("ere"); else tekenEre(); speel("klok", .6, 1.1); meld(); },
   "ere-naam": (o) => { ere.namen[ere.i] = String(o.naam || "").slice(0, 40); tekenEre(); speel("donder", .4); meld(); },
-  "alles-opnieuw": () => { tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
+  "alles-opnieuw": () => { ronde = Date.now(); tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
     setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); }, // back to the welcome screen, so the regie shows "Start verhaal" again
 };
 // With Firebase only the tv laptop logs in (address ends in ?tv); public visitors just see the countdown.
@@ -2313,6 +2325,7 @@ function laadStand(s) {
   for (const z of ZEGELS) z.fiches = s.fiches?.[z.id] ?? z.fiches;
   gebruikt = new Set(s.gebruikt || []); teller(); teken();
   tochtOpen = !!s.tochtOpen; kistGeopend = !!s.kistGeopend; bevelGedaan = new Set(s.bevelen || []); tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
+  ronde = s.ronde || 1;
   if (s.fin) fin = { nu: 0, open: {}, opgelost: {}, hint: {}, ...s.fin }; if (s.ere) ere = { i: -1, namen: {}, ...s.ere };
   if (s.chaos) { const { wacht: w, ...rest } = s.chaos; chaos = rest; Object.assign(wacht, w || {}); }
   ijs = s.ijs || {}; vloekD20 = !!s.vloekD20; vloek = s.vloek || null; tekenIjs();

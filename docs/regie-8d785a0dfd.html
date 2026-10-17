@@ -51,6 +51,13 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
 .klein { font-size: 13px; color: var(--ash); margin: 8px 0 0; }
 .schermen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .schermen button.nu { border-color: var(--bronze); background: rgba(184,149,95,.2); color: var(--bronze-hi); }
+/* one tab per phase of the weekend; the status, the tv warnings and the screen switch stay above the tabs */
+.fases { position: sticky; top: 0; z-index: 10; display: flex; gap: 6px; overflow-x: auto; padding: 8px 2px; margin: 0 -2px; background: var(--bg); scrollbar-width: none; }
+.fases::-webkit-scrollbar { display: none; }
+.fases button { flex: none; padding: 9px 13px; border-radius: 999px; font: 700 12px/1 var(--carved); letter-spacing: .1em; text-transform: uppercase; color: var(--ash); background: rgba(0,0,0,.3); border: 1px solid var(--line); }
+.fases button[aria-selected="true"] { color: #1a0f08; background: linear-gradient(180deg, var(--bronze-hi), var(--bronze)); border-color: var(--bronze); }
+.fases button.tv::after { content: " ●"; color: var(--ember); }
+.fase-weg { display: none !important; }
 .lijst { display: grid; gap: 8px; }
 .vw { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: rgba(0,0,0,.25); }
 .vw .wie { font-weight: 700; } .vw .wat { grid-column: 1 / -1; font-size: 13px; color: var(--ash); }
@@ -94,8 +101,16 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   <p class="klein" id="tv-info" style="margin:-8px 4px 0"></p>
   <div class="kaart" id="tv-alarm" hidden style="border-color:var(--ember);color:#ffd2d0"></div>
   <div class="kaart" id="tv-dood" hidden style="border-color:var(--ember);color:#ffd2d0"></div>
+  <div class="kaart" id="tv-stil" hidden style="border-color:var(--bronze);color:var(--bronze-hi)">De tv mag nog geen geluid afspelen. Klik één keer op het tv-scherm (met de muis van de laptop), anders hoort niemand Godfried.</div>
 
-  <section class="kaart" id="intro">
+  <nav class="fases" id="fases" role="tablist" aria-label="Fases">
+    <button type="button" role="tab" data-fase="vooraf">Vooraf</button><button type="button" role="tab" data-fase="start">Start</button>
+    <button type="button" role="tab" data-fase="hall">Hall</button><button type="button" role="tab" data-fase="tocht">Tocht</button>
+    <button type="button" role="tab" data-fase="finale">Finale</button><button type="button" role="tab" data-fase="ere">Ere</button>
+    <button type="button" role="tab" data-fase="beheer">Beheer</button>
+  </nav>
+
+  <section class="kaart" id="intro" data-fase="start">
     <h2>Intro</h2>
     <div class="rij">
       <button class="goud" id="b-start" type="button">Start verhaal</button>
@@ -109,14 +124,14 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div class="schermen" id="schermen"></div>
   </section>
 
-  <section class="kaart event" id="event" hidden>
+  <section class="kaart event" id="event" hidden data-fase="hall">
     <div class="soort" id="ev-soort"></div>
     <div class="naam" id="ev-naam"></div>
     <div class="regel" id="ev-regel"></div>
     <div class="prijs" id="ev-prijs"></div>
   </section>
 
-  <section class="kaart">
+  <section class="kaart" data-fase="hall">
     <h2>De Schaduw</h2>
     <button class="rood groot" id="b-schaduw" type="button">De Schaduw beweegt</button>
     <div class="rij" style="margin-top:10px">
@@ -128,19 +143,19 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <p class="klein" id="teller"></p>
   </section>
 
-  <section class="kaart">
+  <section class="kaart" data-fase="hall">
     <h2>De Zegels</h2>
     <div class="zegels" id="zegels"></div>
     <p class="klein" id="sabotage-status" hidden></p>
   </section>
 
-  <section class="kaart" id="s-tocht" hidden>
+  <section class="kaart" id="s-tocht" data-fase="tocht">
     <h2>Wachterstocht · gelukt?</h2>
     <div class="lijst" id="tocht"></div>
     <p class="klein">Vink aan wat de groep in het kasteel heeft volbracht. Elke vink opent straks een reliek.</p>
   </section>
 
-  <section class="kaart" id="s-kist" hidden>
+  <section class="kaart" id="s-kist" data-fase="tocht">
     <h2>Reliekenkist</h2>
     <p class="klein" id="kist-verdiend" style="margin:0 0 10px"></p>
     <button class="goud groot" id="b-kist-open" type="button">Open de Reliekenkist</button>
@@ -149,8 +164,9 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
       <div class="lijst" id="kist" style="margin-top:8px"></div></details>
   </section>
 
-  <section class="kaart" id="s-finale" hidden>
+  <section class="kaart" id="s-finale" data-fase="finale">
     <h2>Finale</h2>
+    <button class="groot" id="b-fin-verder" type="button" style="margin-bottom:10px">Volgende stap</button>
     <div class="puzzels" id="puzzels"></div>
     <p class="klein" id="fin-status"></p>
     <div class="rij" style="margin:10px 0">
@@ -167,7 +183,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <p class="klein" id="a-uitleg"></p>
   </section>
 
-  <section class="kaart">
+  <section class="kaart" data-fase="hall">
     <h2>De Verrader</h2>
     <p class="klein" id="verrader-nu">Nog geen verrader aangewezen.</p>
     <button class="rood groot" id="b-v-geen" type="button" style="margin-top:10px" hidden>Geen verrader (bijvoorbeeld 's nachts)</button>
@@ -185,7 +201,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <p class="klein" id="v-fire" hidden>Kies een Wachter: alleen hij ziet op zijn eigen pagina dat de Schaduw hem gekozen heeft, met de knop naar zijn verraderspaneel. Wie je niet meer kiest, verliest zijn rechten meteen.</p>
   </section>
 
-  <section class="kaart" id="s-ere" hidden>
+  <section class="kaart" id="s-ere" data-fase="ere">
     <h2>Ere van de Wachters</h2>
     <p class="klein" id="ere-titel"></p>
     <div class="rij" style="margin:10px 0">
@@ -196,20 +212,20 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <button class="goud groot" id="b-ere-naam" type="button" style="margin-top:8px">Toon de winnaar</button>
   </section>
 
-  <section class="kaart">
+  <section class="kaart" data-fase="vooraf">
     <h2>Voor het weekend</h2>
     <p class="klein" style="margin:0 0 10px">Wat de Wachters vooraf op hun pagina deden: hun bevel aanvaard, herinneringen voor de finale ingestuurd, hun kamerwens. Volbrengt iemand zijn bevel in het weekend, druk dan op <b>Volbracht</b>: zijn Zegel krijgt 3 fiches.</p>
     <div class="lijst" id="vooraf-lijst"><p class="klein">Laden…</p></div>
     <details style="margin-top:10px"><summary class="klein" style="cursor:pointer">Alle herinneringen lezen (voor Akte I)</summary><div class="lijst" id="vooraf-anekdotes" style="margin-top:8px"></div></details>
   </section>
 
-  <section class="kaart">
+  <section class="kaart" data-fase="vooraf">
     <h2>Persoonlijke links</h2>
     <p class="klein" style="margin:0 0 10px">Stuur iedere Wachter vooraf zijn eigen link. Tot het weekend toont hij het aftellen; na de Eerste Dronk breekt het zegel en verschijnt zijn rol. In Akte III staat daar ook zijn stuk van de eed.</p>
     <div class="lijst" id="links"></div>
   </section>
 
-  <section class="kaart">
+  <section class="kaart" data-fase="beheer">
     <h2>Beheer</h2>
     <button id="b-reset" type="button">Alle events weer beschikbaar maken</button>
     <div class="bevestig" id="reset-vraag" hidden>
@@ -224,13 +240,13 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=56"></script>
-<script src="a/spel.js?v=56"></script>
-<script src="a/wachters.js?v=56"></script>
-<script src="a/rollen.js?v=56"></script>
-<script src="a/firebase-config.js?v=56"></script>
-<script src="a/koppeling.js?v=56"></script>
-<script src="a/voorbereiding.js?v=56"></script>
+<script src="a/events.js?v=57"></script>
+<script src="a/spel.js?v=57"></script>
+<script src="a/wachters.js?v=57"></script>
+<script src="a/rollen.js?v=57"></script>
+<script src="a/firebase-config.js?v=57"></script>
+<script src="a/koppeling.js?v=57"></script>
+<script src="a/voorbereiding.js?v=57"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -315,7 +331,7 @@ const schrijvers = new Map(); let laatsteStand = null;
 // no heartbeat from the tv for 75 seconds: nothing will execute the buttons
 setInterval(() => {
   const g = laatsteStand?.tvInfo?.gemeld, dood = !g || Date.now() - g > 75000;
-  $("tv-dood").hidden = !dood;
+  $("tv-dood").hidden = !dood; $("tv-stil").hidden = dood || laatsteStand?.tvInfo?.geluid !== false;
   if (dood) $("tv-dood").textContent = `Geen actieve tv${g ? ` sinds ${new Date(g).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}` : ""}. Open de tv (adres met ?tv) op de laptop, of tik daar op "Dit scherm wordt de tv". Tot dan voeren de knoppen niets uit: de tv doet het werk.`;
 }, 5000);
 function bewaakTvs(s) {
@@ -341,7 +357,8 @@ function toon(s) {
   $("b-verder").classList.toggle("goud", s.scherm === "dronk-wacht");
   for (const z of ZEGELS) $(`n-${z.id}`).textContent = s.fiches?.[z.id] ?? 0;
   const actief = s.scherm === "schaduw";
-  $("intro").hidden = !["start", "verhaal", "dronk", "dronk-wacht", "uitleg"].includes(s.scherm);
+  $("b-fin-verder").textContent = s.scherm === "einde" && s.fin?.einde === 1 ? "Kist is open: de envelop" : s.scherm === "einde" ? "Volgende stap" : "Volgende stap (slaat het lopende deel over)";
+  volgFase(s.scherm);
   $("b-schaduw").disabled = actief;
   for (const id of ["b-goed", "b-fout", "b-hal"]) $(id).disabled = !actief;
   $("b-d20").disabled = !s.d20;
@@ -355,11 +372,11 @@ function toon(s) {
   laatste = s;
   const paneel = ["tocht", "kist", "finale", "ere"].includes(s.scherm) ? s.scherm : null;
   document.querySelectorAll("#schermen button").forEach((b) => b.classList.toggle("nu", b.dataset.s === (paneel || (s.scherm === "hal" ? "hal" : ""))));
-  $("s-tocht").hidden = s.scherm !== "tocht"; $("s-kist").hidden = !["tocht", "kist"].includes(s.scherm);
+
   { const verdiend = S.relieken.filter((k) => (s.tochtGedaan || []).includes(k.id) || (s.relieken || []).includes(k.id)).map((k) => k.naam);
     $("kist-verdiend").textContent = s.kistGeopend ? `De kist is geopend: ${(s.relieken || []).length} van de 5 relieken.` : `Verdiend op de tocht (nog geheim): ${verdiend.length ? verdiend.join(", ") : "nog niets"} (${verdiend.length} van de 5).`;
     $("b-kist-open").textContent = s.kistGeopend ? "Ritueel opnieuw afspelen" : "Open de Reliekenkist"; }
-  $("s-finale").hidden = s.scherm !== "finale"; $("s-ere").hidden = s.scherm !== "ere";
+
   const gedaan = new Set(s.tochtGedaan || []), gevonden = new Set(s.relieken || []), op = new Set(s.reliekGebruikt || []);
   document.querySelectorAll("#tocht .toggle").forEach((b) => b.classList.toggle("aan", gedaan.has(b.dataset.id)));
   document.querySelectorAll("#kist .toggle").forEach((b) => b.classList.toggle("aan", gevonden.has(b.dataset.id)));
@@ -422,6 +439,22 @@ Koppeling.start({ rol: "regie", opStand: (s) => { kreegStand = true; tekenVerbin
 
 $("b-start").onclick = () => stuur({ cmd: "start" });
 $("b-verder").onclick = () => stuur({ cmd: "verder" });
+$("b-fin-verder").onclick = () => stuur({ cmd: "verder" });
+// ---------- tabs per phase ----------
+const FASE_VAN = { start: "start", verhaal: "start", dronk: "start", "dronk-wacht": "start", uitleg: "start", hal: "hall", schaduw: "hall", tafel: "hall", tocht: "tocht", kist: "tocht", finale: "finale", einde: "finale", ere: "ere" };
+let fase = null, tvFase = null, vorigScherm = null;
+function kiesFase(f) {
+  fase = f; try { localStorage.setItem("kronieken-regie-fase", f); } catch {}
+  document.querySelectorAll("#fases button").forEach((b) => { b.setAttribute("aria-selected", b.dataset.fase === f); if (b.dataset.fase === f) b.scrollIntoView({ block: "nearest", inline: "nearest" }); });
+  document.querySelectorAll("main [data-fase]:not(button)").forEach((el) => el.classList.toggle("fase-weg", el.dataset.fase !== f));
+}
+function volgFase(scherm) { // mark the tab of what the tv shows, and jump there when the tv changes screen
+  tvFase = FASE_VAN[scherm] || null;
+  document.querySelectorAll("#fases button").forEach((b) => b.classList.toggle("tv", b.dataset.fase === tvFase));
+  if (scherm !== vorigScherm) { if (vorigScherm !== null && tvFase) kiesFase(tvFase); vorigScherm = scherm; }
+}
+$("fases").onclick = (e) => { const b = e.target.closest("button"); if (b) kiesFase(b.dataset.fase); };
+{ let f = null; try { f = localStorage.getItem("kronieken-regie-fase"); } catch {} kiesFase(f || "hall"); }
 $("b-schaduw").onclick = () => stuur({ cmd: "schaduw" });
 $("b-goed").onclick = () => stuur({ cmd: "goed" });
 $("b-fout").onclick = () => stuur({ cmd: "fout" });

@@ -146,6 +146,10 @@ body.in-frame main { visibility: hidden; }
 .intro-verder { position: absolute; z-index: 3; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); padding: 12px 22px; cursor: pointer; font: 700 12px/1 var(--carved); letter-spacing: .2em; text-transform: uppercase;
   color: var(--bronze-hi); background: rgba(10,5,6,.6); border: 1px solid rgba(184,149,95,.5); border-radius: 6px; opacity: .7; }
 .intro-verder.klaar { opacity: 1; border-color: var(--bronze); box-shadow: 0 0 18px rgba(255,190,90,.45); animation: adem 2.4s ease-in-out infinite; }
+/* while the entry or the intro is open, the page behind stays still and the menu hides (a phone that scrolls its address bar away showed it) */
+body:has(#binnen:not(.verborgen)), body:has(#intro:not(.verborgen)) { overflow: hidden; }
+body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs { visibility: hidden; }
+.binnen, .intro { height: 100vh; height: 100lvh; bottom: auto; }
 .geluid-weg { position: fixed; z-index: 90; left: 50%; bottom: calc(var(--nav-h) + 16px); translate: -50% 0; padding: 14px 22px; cursor: pointer; font: 700 14px/1 var(--carved); letter-spacing: .12em; text-transform: uppercase;
   color: #1a0f08; background: linear-gradient(180deg, #f1dfb6, #b8955f); border: 0; border-radius: 999px; box-shadow: 0 0 24px rgba(255,190,90,.6), 0 8px 24px #000; }
 .spreek { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px auto 0; padding: 8px 14px; min-height: 40px; cursor: pointer;
@@ -281,13 +285,13 @@ body.in-frame main { visibility: hidden; }
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=56"></script>
-<script src="a/spel.js?v=56"></script>
-<script src="a/rollen.js?v=56"></script>
-<script src="a/firebase-config.js?v=56"></script>
-<script src="a/koppeling.js?v=56"></script>
-<script src="a/tafel.js?v=56"></script>
-<script src="a/voorbereiding.js?v=56"></script>
+<script src="a/wachters.js?v=57"></script>
+<script src="a/spel.js?v=57"></script>
+<script src="a/rollen.js?v=57"></script>
+<script src="a/firebase-config.js?v=57"></script>
+<script src="a/koppeling.js?v=57"></script>
+<script src="a/tafel.js?v=57"></script>
+<script src="a/voorbereiding.js?v=57"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -494,7 +498,7 @@ function introKlaar() { $("intro-verder").classList.add("klaar"); }
 function sluitIntro() {
   introTimers.forEach(clearTimeout); introTimers = [];
   if (stem) { stem.pause(); stem.dispatchEvent(new Event("ended")); }
-  lokaal(`kronieken-intro-${wachter?.naam}`, "gezien");
+  lokaal(`kronieken-intro-${wachter?.naam}-${publiek.ronde || 0}`, "gezien");
   const el = $("intro"); el.classList.add("weg"); setTimeout(() => { el.classList.add("verborgen"); $("intro-bg").pause(); }, 1400);
   scrollTo(0, 0);
 }
@@ -505,7 +509,7 @@ $("geluid-weg").onclick = () => { $("geluid-weg").classList.add("verborgen"); mu
 $("b-binnen").onclick = () => { binnenGedaan = true; $("binnen").classList.add("verborgen");
   if (!geluidAan) { geluidAan = true; try { localStorage.setItem("kronieken-geluid", "aan"); } catch {} zetGeluidKnop(); } // entering means listening
   piep("onthul", .5);
-  if (lokaal(`kronieken-intro-${wachter?.naam}`) !== "gezien") startIntro(); else startMuziek(); };
+  if (lokaal(`kronieken-intro-${wachter?.naam}-${publiek.ronde || 0}`) !== "gezien") startIntro(); else startMuziek(); };
 $("b-spreek").onclick = () => startIntro();
 function toonVooraf(aan) {
   for (const id of ["bevel", "hulp", "stap2"]) $(id).classList.toggle("verborgen", !aan || !wachter);
@@ -522,14 +526,14 @@ function toonVooraf(aan) {
 function tekenBevel() {
   const b = V.bevelen?.[wachter.naam], el = $("bevel");
   if (!b) { el.classList.add("verborgen"); return; }
-  const open = lokaal(`kronieken-bevel-${wachter.naam}`) === "open", ja = !!mijnVooraf.bevel?.aanvaard;
+  const open = lokaal(`kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`) === "open", ja = !!mijnVooraf.bevel?.aanvaard;
   el.classList.toggle("open", open);
   el.innerHTML = `<h2 class="carved">Jouw bevel</h2>` + (!open
     ? `<button class="zegel-knop" type="button" id="b-breek"><div class="was"><img src="a/medaillon-${b.zegel}.webp" alt=""></div><span>Breek het zegel</span></button>`
     : `<div class="inhoud"><h3 class="titel-bevel carved">${schoon(b.titel)}</h3><p class="tekst-bevel">${schoon(b.tekst)}</p>
        ${ja ? `<p class="aanvaard">✓ Aanvaard. Godfried rekent op je.</p>` : `<button class="knop" type="button" id="b-aanvaard" style="width:100%">Ik aanvaard het bevel</button>`}
        <p class="op-slot" style="margin-top:12px;font-size:14px">Volbreng je het in het weekend, dan voedt het een Zegel.</p></div>`);
-  const breek = $("b-breek"); if (breek) breek.onclick = () => { lokaal(`kronieken-bevel-${wachter.naam}`, "open"); piep("onthul", .6); if (navigator.vibrate) try { navigator.vibrate([60, 40, 120]); } catch {} vooraafGetekend = ""; toonVooraf(true); };
+  const breek = $("b-breek"); if (breek) breek.onclick = () => { lokaal(`kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`, "open"); piep("onthul", .6); if (navigator.vibrate) try { navigator.vibrate([60, 40, 120]); } catch {} vooraafGetekend = ""; toonVooraf(true); };
   const aanv = $("b-aanvaard"); if (aanv) aanv.onclick = async () => {
     aanv.disabled = true; const ok = await Koppeling.vooraf("bevel", { aanvaard: true, t: Date.now() });
     if (ok === false) { aanv.disabled = false; melding("Niet verstuurd", "Dat kwam niet aan. Controleer je verbinding en probeer het opnieuw."); return; }
@@ -572,7 +576,7 @@ function tekenStap2(stap) {
     const ok = await Koppeling.vooraf("kamer", data); if (ok === false) melding("Niet verstuurd", "Dat kwam niet aan. Controleer je verbinding en probeer het opnieuw."); else piep("kies", .5);
   };
   el.querySelectorAll("input, select").forEach((i) => (i.onchange = bewaar));
-  if (lokaal(`kronieken-stap2-${wachter.naam}`) !== "gezien") { lokaal(`kronieken-stap2-${wachter.naam}`, "gezien"); if (navigator.vibrate) try { navigator.vibrate([80, 60, 80]); } catch {} }
+  if (lokaal(`kronieken-stap2-${wachter.naam}-${publiek.ronde || 0}`) !== "gezien") { lokaal(`kronieken-stap2-${wachter.naam}-${publiek.ronde || 0}`, "gezien"); if (navigator.vibrate) try { navigator.vibrate([80, 60, 80]); } catch {} }
 }
 function tekenStap3(stap) {
   const el = $("stap3"); el.classList.toggle("verborgen", stap < 3); if (stap < 3) return;
@@ -580,8 +584,8 @@ function tekenStap3(stap) {
     <p>Wachter… Godfried heeft je geroepen. Maar ik hoorde het ook.</p><p>Morgen breekt zijn zegel. En dan… zien wij elkaar.</p>
     <button class="spreek" type="button" id="b-schaduw">▶ Luister</button>`;
   $("b-schaduw").onclick = () => { startMuziek(); spreek("a/vooraf/schaduw.mp3"); };
-  if (lokaal(`kronieken-stap3-${wachter.naam}`) !== "gezien") { // once: the Shadow King takes over the screen for a moment
-    lokaal(`kronieken-stap3-${wachter.naam}`, "gezien");
+  if (lokaal(`kronieken-stap3-${wachter.naam}-${publiek.ronde || 0}`) !== "gezien") { // once: the Shadow King takes over the screen for a moment
+    lokaal(`kronieken-stap3-${wachter.naam}-${publiek.ronde || 0}`, "gezien");
     const o = document.createElement("div"); o.className = "overname"; o.innerHTML = "<p>Ik zie jou, Wachter.</p>"; document.body.appendChild(o);
     if (navigator.vibrate) try { navigator.vibrate([400, 120, 400]); } catch {} setTimeout(() => o.remove(), 7200);
   }
@@ -601,7 +605,7 @@ Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : 
   if (ik.admin) { const k = $("b-speler"); k.classList.remove("verborgen"); k.textContent = alsSpeler ? "Test: je speelt als gewone Wachter. Regie terug" : "Test: speel als gewone Wachter (regie verbergen)";
     k.onclick = () => { try { localStorage.setItem("kronieken-als-speler", alsSpeler ? "nee" : "ja"); } catch {} location.reload(); }; }
   if (new URLSearchParams(location.search).has("opnieuw")) { // ?opnieuw: the seal, step 2 and the Shadow's takeover show again on this phone
-    for (const k of ["intro", "bevel", "stap2", "stap3"]) try { localStorage.removeItem(`kronieken-${k}-${wachter.naam}`); } catch {}
+    for (const k of ["intro", "bevel", "stap2", "stap3"]) try { localStorage.removeItem(`kronieken-${k}-${wachter.naam}-${publiek.ronde || 0}`); } catch {}
     vooraafGetekend = ""; teken(); }
 });
 </script>
