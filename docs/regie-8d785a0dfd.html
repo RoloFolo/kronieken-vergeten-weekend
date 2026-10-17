@@ -214,7 +214,11 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
       <button id="b-ere-terug" type="button">Vorige</button>
       <button id="b-ere-volgende" type="button">Volgende</button>
     </div>
-    <p class="klein">De tv toont elke toegewezen titel, wacht even, onthult de naam met gejuich en gaat zelf door. Titels zonder naam worden overgeslagen.</p>
+    <div class="rij" style="margin-top:10px">
+      <button id="b-aftiteling" type="button">Aftiteling afspelen</button>
+      <button id="b-aftiteling-uit" type="button">Aftiteling stoppen</button>
+    </div>
+    <p class="klein">De tv toont elke toegewezen titel, wacht even, onthult de naam met gejuich en gaat zelf door. Titels zonder naam worden overgeslagen. Na de laatste titel wordt het stil en rolt de aftiteling vanzelf; met de knop kun je hem ook los starten. Portretten: op de tv-laptop zelf, in het uitklapmenu "Regie" onderin, knop "Portretten laden" (kies de map print/portretten). Ze blijven alleen op die laptop.</p>
   </section>
 
   <section class="kaart" data-fase="ere">
@@ -252,13 +256,13 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=73"></script>
-<script src="a/spel.js?v=73"></script>
-<script src="a/wachters.js?v=73"></script>
-<script src="a/rollen.js?v=73"></script>
-<script src="a/firebase-config.js?v=73"></script>
-<script src="a/koppeling.js?v=73"></script>
-<script src="a/voorbereiding.js?v=73"></script>
+<script src="a/events.js?v=74"></script>
+<script src="a/spel.js?v=74"></script>
+<script src="a/wachters.js?v=74"></script>
+<script src="a/rollen.js?v=74"></script>
+<script src="a/firebase-config.js?v=74"></script>
+<script src="a/koppeling.js?v=74"></script>
+<script src="a/voorbereiding.js?v=74"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -438,7 +442,7 @@ function tekenVooraf() {
   const V = window.VOORAF || {}, esc = (t) => String(t ?? "").replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[k]);
   $("vooraf-lijst").innerHTML = (window.WACHTERS || []).map((w) => {
     const v = vooraf[sleutelVan(w.naam)] || {}, b = V.bevelen?.[w.naam], n = Object.keys(v.anekdotes || {}).length, k = v.kamer, klaar = bevelGedaan.has(w.naam);
-    const wat = [b ? `Bevel: ${esc(b.titel)} ${v.bevel?.aanvaard ? '<span class="ok">✓ aanvaard</span>' : "· nog niet aanvaard"}` : "Geen bevel",
+    const wat = [b ? `Bevel: ${esc(b.titel)} ${v.bevel?.aanvaard && (v.bevel.ronde ?? -1) === (laatsteStand?.ronde || 0) ? '<span class="ok">✓ aanvaard</span>' : "· nog niet aanvaard"}` : "Geen bevel",
       `${n} herinnering${n === 1 ? "" : "en"}`, k ? `Kamer: ${KAMER[k.wens] || "?"}${k.met ? ` (met ${esc(k.met)})` : ""}${k.snurk ? " · snurkt" : ""}` : "Kamer: nog geen wens"].join(" · ");
     return `<div class="vw ${klaar ? "klaar" : ""}"><span class="wie">${esc(w.naam)}</span>${b ? `<button type="button" data-bevel="${esc(w.naam)}" ${klaar ? "disabled" : ""}>${klaar ? "Volbracht ✓" : "Volbracht"}</button>` : "<span></span>"}<span class="wat">${wat}</span></div>`;
   }).join("");
@@ -496,6 +500,8 @@ function tekenEreRegie() {
 $("ere-lijst").onchange = async (e) => { const s = e.target.closest("select"); if (!s) return; const i = +s.dataset.i, naam = s.value;
   const via = Koppeling.ere(i, naam); if (via) { const ok = await via; if (ok === false) $("ere-telling").textContent = "Niet bewaard: controleer de verbinding en kies opnieuw."; } else stuur({ cmd: "ere-toewijs", i, naam });
   s.closest(".ere-rij").classList.toggle("gekozen", !!naam); };
+$("b-aftiteling").onclick = () => stuur({ cmd: "aftiteling" });
+$("b-aftiteling-uit").onclick = () => stuur({ cmd: "aftiteling-uit" });
 $("b-ere-speel").onclick = () => stuur({ cmd: ereStand.speelt ? "ere-pauze" : "ere-speel" });
 $("b-ere-terug").onclick = () => stuur({ cmd: "ere", d: -1 });
 $("b-ere-volgende").onclick = () => stuur({ cmd: "ere", d: 1 });

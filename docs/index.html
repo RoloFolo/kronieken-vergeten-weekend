@@ -524,13 +524,44 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .periode .wie-was { font: 700 clamp(18px, 1.8vw, 36px)/1 var(--carved); text-align: center; color: #6e5230; }
 .periode.ontmaskerd .wie-was { color: #fbe3b4; filter: drop-shadow(0 0 12px rgba(255,190,90,.7)); }
 .woud { width: min(76vw, 1240px, 96vh); aspect-ratio: 16 / 7; border: 2px solid #6e5230; box-shadow: 0 10px 30px rgba(0,0,0,.6); }
-.ere { display: grid; justify-items: center; gap: 2.6vh; max-width: 70vw; }
+.ere { display: grid; justify-items: center; gap: 1.8vh; max-width: 74vw; }
 .ere .nr { font-size: clamp(14px, 1.2vw, 24px); letter-spacing: .3em; }
-.ere h2 { margin: 0; font-size: clamp(32px, 4.4vw, 90px); line-height: 1.1; animation: titel 1.6s cubic-bezier(.2,1.2,.3,1); }
+.ere h2 { margin: 0; font-size: clamp(30px, 3.6vw, 76px); line-height: 1.1; animation: titel 1.6s cubic-bezier(.2,1.2,.3,1); }
 @keyframes titel { 0% { opacity: 0; transform: scale(.6); filter: brightness(3); } }
 .ere .voor { margin: 0; font: clamp(16px, 1.5vw, 30px)/1.4 var(--body); color: var(--bone); opacity: .85; }
 .ere .spreuk { margin: 0; font: italic clamp(18px, 1.8vw, 36px)/1.4 var(--display); color: #fbe3b4; }
 .ere .wie.verborgen-wie { visibility: hidden; }
+/* the honours play over the dawn city: the Shadow is gone */
+.stage.in-ere .paneel { background: linear-gradient(180deg, rgba(14,8,4,.6), rgba(14,8,4,.38) 38%, rgba(14,8,4,.8)), url(a/fin/dageraad.webp) center / cover; }
+.ere .wie { display: flex; align-items: center; justify-content: center; gap: 2vw; }
+.ere .portret { width: clamp(90px, 15vh, 240px); aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 3px solid #d9b77a; box-shadow: 0 0 0 6px rgba(20,10,4,.55), 0 0 50px rgba(255,190,90,.7); }
+.ere.stil > * { opacity: 0; transition: opacity 3s ease; }
+/* the credits: rolling slowly over the dawn city, then "Wie volgt?" */
+.aftiteling { position: absolute; inset: 0; z-index: 40; overflow: hidden; background: #0b0604; opacity: 0; transition: opacity 3s ease; pointer-events: none; }
+.aftiteling.aan { opacity: 1; }
+.af-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.42) saturate(.9); animation: afZweef 160s linear both; }
+@keyframes afZweef { from { transform: scale(1.12) translateY(2%); } to { transform: scale(1.02) translateY(-2%); } }
+.aftiteling::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, #0b0604 0%, transparent 18%, transparent 82%, #0b0604 100%); }
+.af-rol { position: absolute; z-index: 1; left: 50%; top: 100%; width: min(72vw, 1150px); translate: -50% 0; display: grid; gap: 1.1vh; text-align: center; }
+.af-rol.loopt { animation: aftitel var(--duur, 90s) linear forwards; }
+@keyframes aftitel { to { transform: translateY(calc(-100% - 100vh)); } }
+.af-rol .af-logo { width: min(34vw, 560px); justify-self: center; filter: drop-shadow(0 8px 30px #000); }
+.af-rol .af-datum { font: italic clamp(16px, 1.6vw, 32px)/1.4 var(--display); color: #fbe3b4; margin-bottom: 10vh; }
+.af-rol h2 { margin: 9vh 0 2vh; font-size: clamp(22px, 2.4vw, 50px); letter-spacing: .14em; }
+.af-regel { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2vw; align-items: center; }
+.af-regel span { text-align: right; font: italic clamp(15px, 1.45vw, 30px)/1.3 var(--display); color: #e8d6b4; }
+.af-regel b { display: flex; align-items: center; gap: 1vw; text-align: left; font: 700 clamp(17px, 1.7vw, 36px)/1.2 var(--carved); letter-spacing: .06em; color: #fff3dc; }
+.af-regel img { width: clamp(44px, 6.5vh, 110px); aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 2px solid #d9b77a; }
+.af-slot { position: absolute; z-index: 1; inset: 0; display: grid; place-content: center; justify-items: center; gap: 3vh; text-align: center; }
+.af-slot h1 { margin: 0; font-size: clamp(40px, 5.4vw, 120px); opacity: 0; transition: opacity 3s ease; filter: drop-shadow(0 0 40px rgba(255,190,90,.5)); }
+.af-slot p { margin: 0; font: italic clamp(22px, 2.4vw, 50px)/1.3 var(--display); color: #fbe3b4; opacity: 0; transition: opacity 3s ease; }
+.af-slot.aan h1, .af-slot.tot p { opacity: 1; }
+/* the traitor's cursed die: now and then, for a blink, it is not quite itself */
+.d20.besmet.rol svg { animation: rol 1.8s cubic-bezier(.2,.7,.2,1), besmet 1.8s linear; }
+@keyframes besmet { 0%, 27%, 33%, 58%, 61%, 84%, 88%, 100% { filter: drop-shadow(0 0 30px rgba(255,190,90,.55)) drop-shadow(0 10px 30px #000); }
+  29%, 31% { filter: hue-rotate(95deg) saturate(2.6) brightness(1.2) drop-shadow(0 0 34px rgba(120,255,120,.7)); }
+  59.5% { filter: hue-rotate(-60deg) saturate(3) brightness(.8) drop-shadow(0 0 30px rgba(170,60,255,.7)); }
+  86% { filter: hue-rotate(95deg) saturate(2) drop-shadow(0 0 30px rgba(120,255,120,.6)); } }
 .ere .wie { font-size: clamp(36px, 5vw, 100px); filter: drop-shadow(0 0 30px rgba(255,190,90,.8)); animation: titel 1.2s cubic-bezier(.2,1.2,.3,1); }
 .einde-kop { font-size: clamp(34px, 4.6vw, 96px); animation: titel 2.4s cubic-bezier(.2,1.2,.3,1); }
 .stage.omen .scene { animation: tremor .4s linear 3; }
@@ -884,6 +915,8 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <div class="g-titel" id="g-titel"><span class="carved" id="g-titel-nr"></span><h2 class="carved" id="g-titel-naam"></h2></div>
     <div class="g-kaart" id="g-kaart"><div class="g-inhoud" id="g-inhoud"></div><div class="g-stempel carved" id="g-stempel"></div></div>
   </div>
+  <div class="aftiteling" id="aftiteling" hidden><img class="af-bg" src="a/fin/dageraad.webp" alt=""><div class="af-rol" id="af-rol"></div>
+    <div class="af-slot" id="af-slot"><h1 class="carved">Wie volgt?</h1><p>Tot in 2027…</p></div></div>
   <div class="dageraad" id="dageraad" aria-live="polite">
     <img src="a/fin/dageraad.webp" alt="">
     <div class="d-tekst"><h1 class="carved">De Schaduwkoning is verslagen</h1><p id="d-zin"></p><div class="d-code carved" id="d-code"></div></div>
@@ -966,19 +999,20 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
         <button class="btn" id="b-reset" type="button" title="Alle events weer beschikbaar maken">Events opnieuw</button>
       </div>
       <p class="hint" id="ev-teller"></p>
+      <button class="btn" id="b-portret" type="button" title="Kies de portretten (bijv. print/portretten): ze blijven alleen in deze browser">Portretten laden</button><input type="file" id="portret-kies" accept="image/*" multiple hidden>
       <button class="btn" id="b-full" type="button">Volledig scherm <kbd>F</kbd></button>
     </div>
   </details>
 </div>
 
-<script src="a/events.js?v=73"></script>
-<script src="a/spel.js?v=73"></script>
-<script src="a/voorbereiding.js?v=73"></script>
-<script src="a/wachters.js?v=73"></script>
-<script src="a/firebase-config.js?v=73"></script>
-<script src="a/koppeling.js?v=73"></script>
-<script src="a/rollen.js?v=73"></script>
-<script src="a/tafel.js?v=73"></script>
+<script src="a/events.js?v=74"></script>
+<script src="a/spel.js?v=74"></script>
+<script src="a/voorbereiding.js?v=74"></script>
+<script src="a/wachters.js?v=74"></script>
+<script src="a/firebase-config.js?v=74"></script>
+<script src="a/koppeling.js?v=74"></script>
+<script src="a/rollen.js?v=74"></script>
+<script src="a/tafel.js?v=74"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1647,7 +1681,8 @@ function log(type, data = {}) { logboek.push({ t: Date.now(), type, ...data }); 
 const medaille = (id) => ZEGELS.find((z) => z.id === id)?.medaille;
 function paneel(naam) {
   const wasTocht = paneelNu === "tocht", wasFinale = paneelNu;
-  paneelNu = naam; const p = $("paneel"); stage.classList.toggle("met-paneel", !!naam);
+  paneelNu = naam; const p = $("paneel"); stage.classList.toggle("met-paneel", !!naam); stage.classList.toggle("in-ere", naam === "ere");
+  if (naam !== "ere" && !$("aftiteling").hidden) aftitelingUit();
   document.querySelectorAll(".sub").forEach((s) => s.classList.toggle("aan", s.id === `p-${naam}`));
   if (wasTocht && naam !== "tocht") kasteelUit();
   if (!naam) { p.classList.remove("aan"); setTimeout(() => { if (!paneelNu) p.hidden = true; }, 1000); }
@@ -2024,13 +2059,68 @@ function tekenEre(onthul = true) {
       : `<h1 class="kop carved">Ere van de Wachters</h1><p class="onder">Wie heeft dit weekend zijn plek in de Kronieken verdiend?</p>`; return;
   }
   $("ere").innerHTML = `<div class="nr carved">Titel ${ere.stap + 1} van ${lijst.length}</div><h2 class="carved">${x.t.naam}</h2>
-    <p class="voor">${x.t.voor}</p><p class="spreuk">“${x.t.spreuk}”</p><div class="wie carved ${onthul ? "" : "verborgen-wie"}">${String(x.wie).replace(/[<>&]/g, "")}</div>`;
+    <p class="voor">${x.t.voor}</p><p class="spreuk">“${x.t.spreuk}”</p><div class="wie carved ${onthul ? "" : "verborgen-wie"}">${PORTRET[x.wie] ? `<img class="portret" src="${PORTRET[x.wie]}" alt="">` : ""}<span>${String(x.wie).replace(/[<>&]/g, "")}</span></div>`;
 }
 function ereStop() { ereTimers.forEach(clearTimeout); ereTimers = []; }
+// The credits, like at the end of a film: the Wachters and their roles, the honours, the weekend in numbers, then "Wie volgt?".
+let afTimers = [];
+function aftitelingHtml() {
+  const tel = (type, f = () => true) => logboek.filter((l) => l.type === type && f(l)).length;
+  const rol = (n) => (window.ROLLEN || []).find((r) => r.id === (window.ROL_VAN || {})[n]);
+  const regel = (links, rechts, naam) => `<div class="af-regel"><span>${links}</span><b>${naam && PORTRET[naam] ? `<img src="${PORTRET[naam]}" alt="">` : ""}${rechts}</b></div>`;
+  const blok = (kop, regels) => regels.length ? `<h2 class="carved">${kop}</h2>${regels.join("")}` : "";
+  const plus = logboek.filter((l) => l.type === "fiche" && l.n > 0).length, min = logboek.filter((l) => l.type === "fiche" && l.n < 0).length;
+  const cijfers = [
+    ...ZEGELS.map((z) => regel(z.naam, `${z.fiches} fiches`)),
+    regel("Fiches verdiend", plus), regel("Fiches verloren aan de Schaduw", min),
+    regel("Schaduw-events doorstaan", tel("uitslag", (l) => l.goed)), regel("Keren dat de Schaduw zich voedde", tel("uitslag", (l) => !l.goed)),
+    regel("Keren de D20 geworpen", tel("d20")), regel("Natuurlijke twintigen", tel("d20", (l) => l.worp === 20)),
+    regel("Bevelen volbracht", bevelGedaan.size), regel("Relieken gevonden", `${relieken.size} van de ${S.relieken.length}`),
+    regel("Verraders onder de Wachters", verraders.length), regel("Sabotages in het duister", tel("chaos")),
+  ];
+  return `<img class="af-logo" src="a/logo.webp" alt=""><div class="af-datum">Bouillon · 13 tot 16 november 2026</div>`
+    + blok("De Wachters", NAMEN.map((n) => regel(rol(n) ? `${schoon(rol(n).naam)}<br><small>${schoon(rol(n).titel)}</small>` : "Wachter", schoon(n), n)))
+    + blok("Ere van de Wachters", ereLijst().slice(0, 15).map((x) => regel(schoon(x.t.naam), schoon(x.wie), x.wie)))
+    + blok("Het weekend in cijfers", cijfers)
+    + blok("Met de stemmen van", [regel("De verteller", "Godfried van Bouillon"), regel("De vijand", "De Schaduwkoning")])
+    + blok("Bedacht en geregeld door", [regel("De hoeders van de Hall", "Rob, Jean en Roland")])
+    + `<div style="height:30vh"></div>`;
+}
+function aftiteling() {
+  afTimers.forEach(clearTimeout); afTimers = []; if (paneelNu !== "ere") paneel("ere");
+  const a = $("aftiteling"), r = $("af-rol"), s = $("af-slot"), t = (ms, fn) => afTimers.push(setTimeout(fn, ms));
+  r.innerHTML = aftitelingHtml(); r.classList.remove("loopt"); s.classList.remove("aan", "tot");
+  a.hidden = false; void a.offsetWidth; a.classList.add("aan"); halMuziek.vol(.45, 5000);
+  const duur = (r.offsetHeight + innerHeight) / (innerHeight * .055); r.style.setProperty("--duur", `${duur}s`); // about 5.5% of the screen per second
+  t(2500, () => r.classList.add("loopt"));
+  t(2500 + duur * 1000 - 2000, () => { s.classList.add("aan"); halMuziek.vol(.25, 6000); });
+  t(2500 + duur * 1000 + 3500, () => s.classList.add("tot"));
+}
+function aftitelingUit() { afTimers.forEach(clearTimeout); afTimers = []; const a = $("aftiteling"); a.classList.remove("aan"); setTimeout(() => { if (!a.classList.contains("aan")) a.hidden = true; }, 3000); }
+// Portraits of the heroes stay private (public repo): the tv loads them once from a folder on this laptop and keeps them
+// in this browser only. File names are the Wachter's name (roland.jpg, or roland-a.png).
+const PORTRET = {};
+const idb = (r) => new Promise((ok, nee) => { r.onsuccess = () => ok(r.result); r.onerror = () => nee(r.error); });
+const portretDb = () => { const r = indexedDB.open("kronieken", 1); r.onupgradeneeded = () => r.result.createObjectStore("portretten"); return idb(r); };
+function portretKnop() { $("b-portret").textContent = `Portretten laden (${Object.keys(PORTRET).length}/${NAMEN.length})`; }
+(async () => { try { const st = (await portretDb()).transaction("portretten").objectStore("portretten"); const [k, v] = await Promise.all([idb(st.getAllKeys()), idb(st.getAll())]);
+  k.forEach((n, i) => (PORTRET[n] = URL.createObjectURL(v[i]))); } catch {} portretKnop(); })();
+$("b-portret").onclick = () => $("portret-kies").click();
+$("portret-kies").onchange = async (e) => {
+  const db = await portretDb().catch(() => null);
+  for (const f of e.target.files) {
+    const basis = f.name.toLowerCase().replace(/\.[a-z0-9]+$/, "").replace(/-[ab]$/, ""), naam = NAMEN.find((n) => n.toLowerCase() === basis); if (!naam) continue;
+    PORTRET[naam] = URL.createObjectURL(f); try { db?.transaction("portretten", "readwrite").objectStore("portretten").put(f, naam); } catch {}
+  }
+  e.target.value = ""; portretKnop(); if (paneelNu === "ere") tekenEre(!document.querySelector("#ere .verborgen-wie"));
+};
 function ereStap(n, auto) { // show title n, reveal the name after a moment, then (when playing) go on
   ereStop(); const lijst = ereLijst(); ere.stap = n; meld();
   if (paneelNu !== "ere") paneel("ere");
-  if (n >= lijst.length) { tekenEre(); speel("gejuich", .6); ere.speelt = false; meld(); return; }
+  if (n >= lijst.length) { tekenEre(); speel("gejuich", .6); ere.speelt = false; meld();
+    if (auto) { const t = (ms, fn) => ereTimers.push(setTimeout(fn, ms)); t(9000, () => { $("ere").classList.add("stil"); halMuziek.vol(0, 3500); }); t(13500, aftiteling); } // then it is quiet… and the credits roll
+    return; }
+  $("ere").classList.remove("stil");
   tekenEre(false); speel("fin/sfx-akte", .7);
   const t = (ms, fn) => ereTimers.push(setTimeout(fn, ms));
   t(4500, () => { speel("hartslag", .8); }); t(5400, () => speel("hartslag", .9));
@@ -2363,6 +2453,8 @@ const OPDRACHTEN = {
   ontdooi: (o) => { if (ijs[o.id]) { ijs[o.id] = Date.now() - 1; tekenIjs(); } },
   hint: () => hintVoor(),
   "ere-speel": () => { ere.speelt = true; const n = ere.stap == null || ere.stap < 0 || ere.stap >= ereLijst().length ? 0 : ere.stap; ereStap(n, true); },
+  aftiteling: () => { ereStop(); aftiteling(); },
+  "aftiteling-uit": () => aftitelingUit(),
   "ere-pauze": () => { ere.speelt = false; ereStop(); tekenEre(); meld(); },
   ere: (o) => { const n = Math.max(0, Math.min(ereLijst().length, (ere.stap ?? -1) + o.d)); ereStap(n, ere.speelt); },
   // without Firebase the regie stores the assignment here, in the tv's own state
@@ -2477,7 +2569,7 @@ function werpD20() {
   const zegel = d20Zegel(r.soort === "nat20"), n = r.soort === "nat1" ? (EVENT?.verlies || 2) * 2 : r.soort === "faal" ? (EVENT?.verlies || 2) : 2;
   log("d20", { worp, vervloekt, uitkomst: r.soort }); meld();
   fade(stem, 0, 300); $("event").classList.remove("show");
-  d.hidden = false; d.className = "d20 rol"; u.innerHTML = "";
+  d.hidden = false; d.className = vervloekt ? "d20 rol besmet" : "d20 rol"; u.innerHTML = "";
   speel("klok", .5, .7);
   const flikker = setInterval(() => (g.textContent = 1 + Math.floor(Math.random() * 20)), 70);
   setTimeout(() => {

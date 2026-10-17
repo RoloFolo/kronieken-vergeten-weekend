@@ -353,13 +353,13 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=73"></script>
-<script src="a/spel.js?v=73"></script>
-<script src="a/rollen.js?v=73"></script>
-<script src="a/firebase-config.js?v=73"></script>
-<script src="a/koppeling.js?v=73"></script>
-<script src="a/tafel.js?v=73"></script>
-<script src="a/voorbereiding.js?v=73"></script>
+<script src="a/wachters.js?v=74"></script>
+<script src="a/spel.js?v=74"></script>
+<script src="a/rollen.js?v=74"></script>
+<script src="a/firebase-config.js?v=74"></script>
+<script src="a/koppeling.js?v=74"></script>
+<script src="a/tafel.js?v=74"></script>
+<script src="a/voorbereiding.js?v=74"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -636,7 +636,7 @@ function tekenBevel() {
   const b = V.bevelen?.[wachter.naam], el = $("bevel");
   if (!b) { el.classList.add("verborgen"); return; }
   if (bevelBezig) return;
-  const sleutel = () => `kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`, stand = lokaal(sleutel()), open = stand === "open" || stand === "gelezen", ja = !!mijnVooraf.bevel?.aanvaard;
+  const sleutel = () => `kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`, stand = lokaal(sleutel()), open = stand === "open" || stand === "gelezen", ja = !!mijnVooraf.bevel?.aanvaard && (mijnVooraf.bevel.ronde ?? -1) === (publiek.ronde || 0); // an acceptance from an earlier test round does not count
   el.innerHTML = `<h2 class="carved">Jouw bevel</h2>` + (!open
     ? `<div class="bevel-brief"><div class="vlak" style="justify-content:flex-start"><div class="van">Een bevel van Godfried</div></div>
          <button class="dicht-zegel" type="button" id="b-breek" aria-label="Breek het zegel">${zegelLagen()}</button>
@@ -654,9 +654,9 @@ function tekenBevel() {
   const plek = $("b-aanvaard"); if (plek && !ja) plek.onclick = async () => {
     bevelBezig = true; plek.disabled = true; plek.classList.add("gedrukt", "net"); plek.innerHTML = `<img src="a/app/lakzegel.webp" alt="">`;
     setTimeout(() => { const br = $("bevel-brief"); br?.classList.remove("ontvouw"); br?.classList.add("dreun"); piep("kracht", .7); if (navigator.vibrate) try { navigator.vibrate(120); } catch {} }, 380);
-    const ok = await Koppeling.vooraf("bevel", { aanvaard: true, t: Date.now() });
+    const ok = await Koppeling.vooraf("bevel", { aanvaard: true, t: Date.now(), ronde: publiek.ronde || 0 });
     if (ok === false) { bevelBezig = false; melding("Niet verstuurd", "Je zegel kwam niet aan. Controleer je verbinding en druk opnieuw."); vooraafGetekend = ""; toonVooraf(true); return; }
-    setTimeout(() => { bevelBezig = false; piep("volbracht", .6); if (!FIRE) mijnVooraf.bevel = { aanvaard: true }; vooraafGetekend = ""; toonVooraf(true); }, 1300);
+    setTimeout(() => { bevelBezig = false; piep("volbracht", .6); if (!FIRE) mijnVooraf.bevel = { aanvaard: true, ronde: publiek.ronde || 0 }; vooraafGetekend = ""; toonVooraf(true); }, 1300);
   };
 }
 function tekenHulp() {
