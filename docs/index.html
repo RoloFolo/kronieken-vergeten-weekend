@@ -552,6 +552,14 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .af-regel span { text-align: right; font: italic clamp(15px, 1.45vw, 30px)/1.3 var(--display); color: #e8d6b4; }
 .af-regel b { display: flex; align-items: center; gap: 1vw; text-align: left; font: 700 clamp(17px, 1.7vw, 36px)/1.2 var(--carved); letter-spacing: .06em; color: #fff3dc; }
 .af-regel img { width: clamp(44px, 6.5vh, 110px); aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 2px solid #d9b77a; }
+.af-regel small { font-size: .75em; opacity: .8; }
+.af-anekdote { margin: 0 auto 2.4vh; max-width: 62vw; }
+.af-anekdote p { margin: 0 0 .6vh; font: italic clamp(15px, 1.45vw, 30px)/1.45 var(--display); color: #fff3dc; }
+.af-anekdote b { font: 700 clamp(13px, 1.2vw, 24px)/1.2 var(--carved); letter-spacing: .08em; color: #d9b77a; }
+.af-anekdote b small { font: italic 400 .85em var(--display); letter-spacing: 0; color: #e8d6b4; opacity: .8; }
+.af-fotos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3vh 2.4vw; padding: 1vh 0 2vh; }
+.af-fotos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; padding: .8vh .8vh 3vh; background: #f4ead6; box-shadow: 0 12px 30px rgba(0,0,0,.7); }
+.af-fotos img:nth-child(3n + 1) { rotate: -2.5deg; } .af-fotos img:nth-child(3n + 2) { rotate: 1.5deg; translate: 0 3vh; } .af-fotos img:nth-child(3n) { rotate: 3deg; }
 .af-slot { position: absolute; z-index: 1; inset: 0; display: grid; place-content: center; justify-items: center; gap: 3vh; text-align: center; }
 .af-slot h1 { margin: 0; font-size: clamp(40px, 5.4vw, 120px); opacity: 0; transition: opacity 3s ease; filter: drop-shadow(0 0 40px rgba(255,190,90,.5)); }
 .af-slot p { margin: 0; font: italic clamp(22px, 2.4vw, 50px)/1.3 var(--display); color: #fbe3b4; opacity: 0; transition: opacity 3s ease; }
@@ -1000,19 +1008,20 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
       </div>
       <p class="hint" id="ev-teller"></p>
       <button class="btn" id="b-portret" type="button" title="Kies de portretten (bijv. print/portretten): ze blijven alleen in deze browser">Portretten laden</button><input type="file" id="portret-kies" accept="image/*" multiple hidden>
+      <button class="btn" id="b-fotos" type="button" title="Kies de foto's van het weekend: ze komen in de aftiteling en blijven alleen in deze browser">Foto's laden</button><input type="file" id="fotos-kies" accept="image/*" multiple hidden>
       <button class="btn" id="b-full" type="button">Volledig scherm <kbd>F</kbd></button>
     </div>
   </details>
 </div>
 
-<script src="a/events.js?v=74"></script>
-<script src="a/spel.js?v=74"></script>
-<script src="a/voorbereiding.js?v=74"></script>
-<script src="a/wachters.js?v=74"></script>
-<script src="a/firebase-config.js?v=74"></script>
-<script src="a/koppeling.js?v=74"></script>
-<script src="a/rollen.js?v=74"></script>
-<script src="a/tafel.js?v=74"></script>
+<script src="a/events.js?v=75"></script>
+<script src="a/spel.js?v=75"></script>
+<script src="a/voorbereiding.js?v=75"></script>
+<script src="a/wachters.js?v=75"></script>
+<script src="a/firebase-config.js?v=75"></script>
+<script src="a/koppeling.js?v=75"></script>
+<script src="a/rollen.js?v=75"></script>
+<script src="a/tafel.js?v=75"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2081,10 +2090,20 @@ function aftitelingHtml() {
   return `<img class="af-logo" src="a/logo.webp" alt=""><div class="af-datum">Bouillon · 13 tot 16 november 2026</div>`
     + blok("De Wachters", NAMEN.map((n) => regel(rol(n) ? `${schoon(rol(n).naam)}<br><small>${schoon(rol(n).titel)}</small>` : "Wachter", schoon(n), n)))
     + blok("Ere van de Wachters", ereLijst().slice(0, 15).map((x) => regel(schoon(x.t.naam), schoon(x.wie), x.wie)))
+    + blok("De bevelen van Godfried", NAMEN.filter((n) => window.VOORAF?.bevelen?.[n]).map((n) => regel(`${schoon(window.VOORAF.bevelen[n].titel)}${bevelGedaan.has(n) ? " ✓" : ""}`, schoon(n), n)))
+    + blok("Herinneringen uit de Kronieken", anekdotes().map((a) => `<div class="af-anekdote"><p>“${schoon(a.tekst)}”</p><b>over ${schoon(a.over)}${a.van ? ` <small>· ingestuurd door ${schoon(a.van)}</small>` : ""}</b></div>`))
+    + (FOTOS.length ? `<h2 class="carved">Het weekend in beeld</h2><div class="af-fotos">${FOTOS.map((u) => `<img src="${u}" alt="">`).join("")}</div>` : "")
     + blok("Het weekend in cijfers", cijfers)
     + blok("Met de stemmen van", [regel("De verteller", "Godfried van Bouillon"), regel("De vijand", "De Schaduwkoning")])
     + blok("Bedacht en geregeld door", [regel("De hoeders van de Hall", "Rob, Jean en Roland")])
     + `<div style="height:30vh"></div>`;
+}
+// every memory the Wachters sent in before the weekend (Firebase /vooraf, read by the tv for the credits only)
+let voorafAlles = {};
+function anekdotes() {
+  const naamVan = (k) => NAMEN.find((n) => Koppeling.emailVan(n).toLowerCase().replaceAll(".", ",") === k);
+  return Object.entries(voorafAlles).flatMap(([k, v]) => Object.values(v?.anekdotes || {}).map((a) => ({ ...a, van: naamVan(k) })))
+    .filter((a) => a.tekst).sort((a, b) => String(a.over).localeCompare(String(b.over)) || (a.t || 0) - (b.t || 0));
 }
 function aftiteling() {
   afTimers.forEach(clearTimeout); afTimers = []; if (paneelNu !== "ere") paneel("ere");
@@ -2101,7 +2120,20 @@ function aftitelingUit() { afTimers.forEach(clearTimeout); afTimers = []; const 
 // in this browser only. File names are the Wachter's name (roland.jpg, or roland-a.png).
 const PORTRET = {};
 const idb = (r) => new Promise((ok, nee) => { r.onsuccess = () => ok(r.result); r.onerror = () => nee(r.error); });
-const portretDb = () => { const r = indexedDB.open("kronieken", 1); r.onupgradeneeded = () => r.result.createObjectStore("portretten"); return idb(r); };
+const portretDb = () => { const r = indexedDB.open("kronieken", 2); r.onupgradeneeded = () => { for (const s of ["portretten", "fotos"]) if (!r.result.objectStoreNames.contains(s)) r.result.createObjectStore(s); }; return idb(r); };
+const FOTOS = [];
+function fotoKnop() { $("b-fotos").textContent = `Foto's laden (${FOTOS.length})`; }
+(async () => { try { const st = (await portretDb()).transaction("fotos").objectStore("fotos"); (await idb(st.getAll())).forEach((b) => FOTOS.push(URL.createObjectURL(b))); } catch {} fotoKnop(); })();
+// a phone photo is big: keep a 1600 px copy, light enough to roll by smoothly
+async function verklein(f) { try { const bm = await createImageBitmap(f), s = Math.min(1, 1600 / Math.max(bm.width, bm.height)), c = document.createElement("canvas");
+  c.width = Math.round(bm.width * s); c.height = Math.round(bm.height * s); c.getContext("2d").drawImage(bm, 0, 0, c.width, c.height);
+  return await new Promise((ok) => c.toBlob((b) => ok(b || f), "image/jpeg", .85)); } catch { return f; } }
+$("b-fotos").onclick = () => $("fotos-kies").click();
+$("fotos-kies").onchange = async (e) => {
+  const db = await portretDb().catch(() => null);
+  for (const f of e.target.files) { const b = await verklein(f); FOTOS.push(URL.createObjectURL(b)); try { db?.transaction("fotos", "readwrite").objectStore("fotos").put(b, `${f.name}-${f.size}`); } catch {} fotoKnop(); }
+  e.target.value = "";
+};
 function portretKnop() { $("b-portret").textContent = `Portretten laden (${Object.keys(PORTRET).length}/${NAMEN.length})`; }
 (async () => { try { const st = (await portretDb()).transaction("portretten").objectStore("portretten"); const [k, v] = await Promise.all([idb(st.getAllKeys()), idb(st.getAll())]);
   k.forEach((n, i) => (PORTRET[n] = URL.createObjectURL(v[i]))); } catch {} portretKnop(); })();
@@ -2496,7 +2528,7 @@ function bewaakTv(s) {
   document.body.appendChild(el); el.querySelector("button").onclick = () => location.reload();
 }
 if (!window.FIREBASE_CONFIG || new URLSearchParams(location.search).has("tv"))
-  Koppeling.start({ rol: "tv", opStand: laadStand, opOpdracht: (o) => { if (!passief) OPDRACHTEN[o.cmd]?.(o); }, opEre: (t) => { toewijzing = t || {}; } }).then((v) => { server = !!v; });
+  Koppeling.start({ rol: "tv", opStand: laadStand, opOpdracht: (o) => { if (!passief) OPDRACHTEN[o.cmd]?.(o); }, opEre: (t) => { toewijzing = t || {}; }, opVooraf: (v) => { voorafAlles = v || {}; } }).then((v) => { server = !!v; });
 
 /* ================= Schaduw-event ================= */
 let stem = null, typer = null, stormTimer = null, beslist = false;
