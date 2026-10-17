@@ -792,8 +792,41 @@
        "license": "CC0 1.0",
        "url": "https://freesound.org/people/bevibeldesign/sounds/315852/",
        "seconds": 12.2485
+      },
+      {
+       "file": "fin-licht-r1.mp3",
+       "source": "AI (Lyria 2)",
+       "title": "Lyria · elfenkoor en harp (1)",
+       "author": "gemaakt voor de Kronieken",
+       "license": "eigen",
+       "round": 2
+      },
+      {
+       "file": "fin-licht-r2.mp3",
+       "source": "AI (Lyria 2)",
+       "title": "Lyria · elfenkoor en harp (2)",
+       "author": "gemaakt voor de Kronieken",
+       "license": "eigen",
+       "round": 2
+      },
+      {
+       "file": "fin-licht-r3.mp3",
+       "source": "AI (Lyria 2)",
+       "title": "Lyria · elfenkoor en harp (3)",
+       "author": "gemaakt voor de Kronieken",
+       "license": "eigen",
+       "round": 2
+      },
+      {
+       "file": "fin-licht-r4.mp3",
+       "source": "AI (MusicGen)",
+       "title": "MusicGen · elfenkoor en harp",
+       "author": "gemaakt voor de Kronieken",
+       "license": "eigen",
+       "round": 2
       }
-     ]
+     ],
+     "round": 2
     }
    ]
   }

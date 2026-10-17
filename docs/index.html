@@ -950,13 +950,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=48"></script>
-<script src="a/spel.js?v=48"></script>
-<script src="a/wachters.js?v=48"></script>
-<script src="a/firebase-config.js?v=48"></script>
-<script src="a/koppeling.js?v=48"></script>
-<script src="a/rollen.js?v=48"></script>
-<script src="a/tafel.js?v=48"></script>
+<script src="a/events.js?v=49"></script>
+<script src="a/spel.js?v=49"></script>
+<script src="a/wachters.js?v=49"></script>
+<script src="a/firebase-config.js?v=49"></script>
+<script src="a/koppeling.js?v=49"></script>
+<script src="a/rollen.js?v=49"></script>
+<script src="a/tafel.js?v=49"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1915,7 +1915,7 @@ function cijferValt(i) {
     r.classList.add("draai"); r.style.setProperty("--i", 21 + S.slotcode[i]);
     let t = 0; const tik = () => { speel("fin/sfx-tik", .55, .9 + Math.random() * .2); t++; gTik = setTimeout(tik, 70 + t * t * 4); }; tik();
   });
-  gT(7400, () => { clearTimeout(gTik); r.classList.remove("draai"); r.classList.add("vast", "klank"); speel("fin/sfx-klank", 1); speel("fin/sfx-slot", .8); flits("goud");
+  gT(7400, () => { clearTimeout(gTik); r.classList.remove("draai"); r.classList.add("vast", "klank"); speel("fin/sfx-klank", 1); flits("goud");
     setTimeout(() => r.classList.remove("klank"), 600);
     gT(600, () => gZeg(`cijfer-${i + 1}`, () => {
       gCam(""); gT(1600, () => { const n = $(`g-nis-${i}`); n.classList.remove("actief"); n.classList.add("vast", "net"); speel("fin/sfx-open", .7); setTimeout(() => n.classList.remove("net"), 1800); });
@@ -1941,13 +1941,15 @@ let zegeStem = null;
 function overwinning() {
   gStop(); fin.einde = 1; meld();
   const w = $("witlicht"); w.classList.remove("weg"); w.classList.add("aan");
-  halMuziek.vol(0, 2000); schaduwMuziek?.stop(1000); speel("donder-hard", .8);
+  halMuziek.vol(0, 2000); schaduwMuziek?.stop(1000);
+  const licht = speel("fin/sfx-licht", .9); setTimeout(() => fade(licht, .35, 4000), 9000); // high-elven dawn music under the light, softer once Godfried speaks
   $("dageraad").classList.add("stil"); $("d-code").classList.remove("aan");
   zegeStem = stemMet("einde-schaduw", 1, () => setTimeout(() => {
     zegeStem = stemMet("fin/einde-kist", 1, () => { $("d-zin").textContent = "Open de kist met de vier cijfers."; $("d-code").classList.add("aan"); }, 40000);
   }, 1800), 16000);
   setTimeout(() => { paneel("einde"); stage.classList.add("zege"); $("d-zin").textContent = ""; }, 2900);
-  setTimeout(() => { w.classList.remove("aan"); w.classList.add("weg"); halMuziek.vol(.3, 8000); }, 4200);
+  setTimeout(() => w.classList.remove("aan") || w.classList.add("weg"), 4200);
+  setTimeout(() => halMuziek.vol(.3, 8000), 30000); // the hall music comes back when the dawn music fades out
   setTimeout(() => $("dageraad").classList.remove("stil"), 9000);
 }
 function tekenEinde() {

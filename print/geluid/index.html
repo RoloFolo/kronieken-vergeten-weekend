@@ -100,7 +100,9 @@ button:disabled { opacity: .5; cursor: default }
     audio.pause(); setPlaying(btn); audio.src = c.file; audio.currentTime = 0;
     audio.play().catch(() => { if (playing === btn) setPlaying(null) });
   }
-  const statusOf = (id) => picks[id]?.status || "open";
+  // a moment with round-2 candidates that was rejected before counts as open again until it is chosen anew
+  let byId = {};
+  function statusOf(id) { const p = picks[id], m = byId[id]; if (!p || !p.status) return "open"; if (m && m.round === 2 && !p.round2) return "open"; return p.status; }
   function tally() {
     let c = 0, n = 0, o = 0;
     for (const g of data.groups) for (const m of g.moments) { const s = statusOf(m.id); if (s === "chosen") c++; else if (s === "none") n++; else o++ }
@@ -108,6 +110,7 @@ button:disabled { opacity: .5; cursor: default }
   }
   async function save(id, body) {
     picks[id] = { ...(picks[id] || {}), ...body, at: new Date().toISOString() };
+    if (byId[id]?.round === 2) picks[id].round2 = true;
     render();
     if (!db) return;
     try { await db.collection("picks").doc(id).set(picks[id]) }
@@ -132,7 +135,8 @@ button:disabled { opacity: .5; cursor: default }
       for (const m of ms) {
         const st = statusOf(m.id), p = picks[m.id] || {};
         const row = el("section", "moment " + st); row.id = m.id;
-        const what = el("div", "what", `<h3>${esc(m.name)}</h3><div class="id">${esc(m.id)}</div><p>${esc(m.feel)}</p>`);
+        const what = el("div", "what", `<h3>${esc(m.name)}</h3><div class="id">${esc(m.id)}${m.round === 2 ? " · ronde 2" : ""}</div><p>${esc(m.feel)}</p>`);
+        if (m.round === 2 && p.note) what.append(el("p", null, "Jouw notitie: " + esc(p.note)));
         what.append(el("div", "state", st === "chosen" ? "gekozen" : st === "none" ? "geen goed" : "open"));
         const cands = el("div", "cands");
         if (!m.cands.length) cands.append(el("div", "empty", "Geen kandidaat gevonden."));
@@ -140,8 +144,8 @@ button:disabled { opacity: .5; cursor: default }
           const picked = st === "chosen" && p.pick === c.file, nu = c.source === "Nu in het spel";
           const r = el("div", "cand" + (picked ? " picked" : ""));
           const b = el("button", "play", PLAY); b.setAttribute("aria-label", "Afspelen"); b.onclick = () => play(b, c);
-          const meta = el("div", "meta", `<div class="t">${nu ? '<span class="badge nu">nu</span>Het huidige geluid' : `<span class="badge">${esc(c.source)}</span>${esc(c.title)}`}</div>`
-            + (nu ? "" : `<div class="s">${esc(c.author)} · ${esc(c.license)}${c.seconds != null ? " · " + secs(c.seconds) : ""} · <a href="${esc(c.url)}" target="_blank" rel="noopener">bron</a></div>`));
+          const meta = el("div", "meta", `<div class="t">${nu ? '<span class="badge nu">nu</span>Het huidige geluid' : `${c.round === 2 ? '<span class="badge nu">ronde 2</span>' : ""}<span class="badge">${esc(c.source)}</span>${esc(c.title)}`}</div>`
+            + (nu ? "" : `<div class="s">${esc(c.author)} · ${esc(c.license)}${c.seconds != null ? " · " + secs(c.seconds) : ""}${c.url ? ` · <a href="${esc(c.url)}" target="_blank" rel="noopener">bron</a>` : ""}</div>`));
           const k = el("button", "pick", picked ? "Gekozen" : "Kies"); k.disabled = !canWrite;
           k.onclick = () => save(m.id, picked ? { status: "open", pick: null } : { status: "chosen", pick: c.file });
           r.append(b, meta, k); cands.append(r);
@@ -158,7 +162,7 @@ button:disabled { opacity: .5; cursor: default }
     if (!canWrite) list.prepend(el("p", "ro", "Alleen-lezen: keuzes kunnen hier niet bewaard worden."));
     tally();
   }
-  fetch("sounds.json").then((r) => r.json()).then((d) => { data = d; renderGroups(); render(); connect() })
+  fetch("sounds.json").then((r) => r.json()).then((d) => { data = d; for (const g of d.groups) for (const m of g.moments) byId[m.id] = m; renderGroups(); render(); connect() })
     .catch(() => { document.getElementById("list").innerHTML = '<p class="empty">De lijst met geluiden kon niet laden.</p>' });
   async function connect() {
     try {
