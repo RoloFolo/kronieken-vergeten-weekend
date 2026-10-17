@@ -553,6 +553,12 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .af-regel b { display: flex; align-items: center; gap: 1vw; text-align: left; font: 700 clamp(17px, 1.7vw, 36px)/1.2 var(--carved); letter-spacing: .06em; color: #fff3dc; }
 .af-regel img { width: clamp(44px, 6.5vh, 110px); aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 2px solid #d9b77a; }
 .af-regel small { font-size: .75em; opacity: .8; }
+/* long lists in two columns, so the credits stay short */
+.af-twee { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1vh 4vw; width: min(90vw, 1500px); justify-self: center; }
+.af-twee .af-regel { gap: 1.4vw; }
+.af-twee .af-regel span { font-size: clamp(13px, 1.2vw, 26px); }
+.af-twee .af-regel b { font-size: clamp(15px, 1.4vw, 30px); }
+.af-twee .af-anekdote { max-width: none; margin: 0 0 1.6vh; text-align: left; }
 .af-anekdote { margin: 0 auto 2.4vh; max-width: 62vw; }
 .af-anekdote p { margin: 0 0 .6vh; font: italic clamp(15px, 1.45vw, 30px)/1.45 var(--display); color: #fff3dc; }
 .af-anekdote b { font: 700 clamp(13px, 1.2vw, 24px)/1.2 var(--carved); letter-spacing: .08em; color: #d9b77a; }
@@ -1014,14 +1020,14 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=75"></script>
-<script src="a/spel.js?v=75"></script>
-<script src="a/voorbereiding.js?v=75"></script>
-<script src="a/wachters.js?v=75"></script>
-<script src="a/firebase-config.js?v=75"></script>
-<script src="a/koppeling.js?v=75"></script>
-<script src="a/rollen.js?v=75"></script>
-<script src="a/tafel.js?v=75"></script>
+<script src="a/events.js?v=76"></script>
+<script src="a/spel.js?v=76"></script>
+<script src="a/voorbereiding.js?v=76"></script>
+<script src="a/wachters.js?v=76"></script>
+<script src="a/firebase-config.js?v=76"></script>
+<script src="a/koppeling.js?v=76"></script>
+<script src="a/rollen.js?v=76"></script>
+<script src="a/tafel.js?v=76"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2077,7 +2083,7 @@ function aftitelingHtml() {
   const tel = (type, f = () => true) => logboek.filter((l) => l.type === type && f(l)).length;
   const rol = (n) => (window.ROLLEN || []).find((r) => r.id === (window.ROL_VAN || {})[n]);
   const regel = (links, rechts, naam) => `<div class="af-regel"><span>${links}</span><b>${naam && PORTRET[naam] ? `<img src="${PORTRET[naam]}" alt="">` : ""}${rechts}</b></div>`;
-  const blok = (kop, regels) => regels.length ? `<h2 class="carved">${kop}</h2>${regels.join("")}` : "";
+  const blok = (kop, regels, twee) => regels.length ? `<h2 class="carved">${kop}</h2>${twee && regels.length > 3 ? `<div class="af-twee">${regels.join("")}</div>` : regels.join("")}` : "";
   const plus = logboek.filter((l) => l.type === "fiche" && l.n > 0).length, min = logboek.filter((l) => l.type === "fiche" && l.n < 0).length;
   const cijfers = [
     ...ZEGELS.map((z) => regel(z.naam, `${z.fiches} fiches`)),
@@ -2088,12 +2094,12 @@ function aftitelingHtml() {
     regel("Verraders onder de Wachters", verraders.length), regel("Sabotages in het duister", tel("chaos")),
   ];
   return `<img class="af-logo" src="a/logo.webp" alt=""><div class="af-datum">Bouillon · 13 tot 16 november 2026</div>`
-    + blok("De Wachters", NAMEN.map((n) => regel(rol(n) ? `${schoon(rol(n).naam)}<br><small>${schoon(rol(n).titel)}</small>` : "Wachter", schoon(n), n)))
+    + blok("De Wachters", NAMEN.map((n) => regel(rol(n) ? `${schoon(rol(n).naam)}<br><small>${schoon(rol(n).titel)}</small>` : "Wachter", schoon(n), n)), true)
     + blok("Ere van de Wachters", ereLijst().slice(0, 15).map((x) => regel(schoon(x.t.naam), schoon(x.wie), x.wie)))
-    + blok("De bevelen van Godfried", NAMEN.filter((n) => window.VOORAF?.bevelen?.[n]).map((n) => regel(`${schoon(window.VOORAF.bevelen[n].titel)}${bevelGedaan.has(n) ? " ✓" : ""}`, schoon(n), n)))
-    + blok("Herinneringen uit de Kronieken", anekdotes().map((a) => `<div class="af-anekdote"><p>“${schoon(a.tekst)}”</p><b>over ${schoon(a.over)}${a.van ? ` <small>· ingestuurd door ${schoon(a.van)}</small>` : ""}</b></div>`))
+    + blok("De bevelen van Godfried", NAMEN.filter((n) => window.VOORAF?.bevelen?.[n]).map((n) => regel(`${schoon(window.VOORAF.bevelen[n].titel)}${bevelGedaan.has(n) ? " ✓" : ""}`, schoon(n), n)), true)
+    + blok("Herinneringen uit de Kronieken", anekdotes().map((a) => `<div class="af-anekdote"><p>“${schoon(a.tekst)}”</p><b>over ${schoon(a.over)}${a.van ? ` <small>· ingestuurd door ${schoon(a.van)}</small>` : ""}</b></div>`), true)
     + (FOTOS.length ? `<h2 class="carved">Het weekend in beeld</h2><div class="af-fotos">${FOTOS.map((u) => `<img src="${u}" alt="">`).join("")}</div>` : "")
-    + blok("Het weekend in cijfers", cijfers)
+    + blok("Het weekend in cijfers", cijfers, true)
     + blok("Met de stemmen van", [regel("De verteller", "Godfried van Bouillon"), regel("De vijand", "De Schaduwkoning")])
     + blok("Bedacht en geregeld door", [regel("De hoeders van de Hall", "Rob, Jean en Roland")])
     + `<div style="height:30vh"></div>`;
