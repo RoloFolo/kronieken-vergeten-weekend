@@ -953,14 +953,14 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=68"></script>
-<script src="a/spel.js?v=68"></script>
-<script src="a/voorbereiding.js?v=68"></script>
-<script src="a/wachters.js?v=68"></script>
-<script src="a/firebase-config.js?v=68"></script>
-<script src="a/koppeling.js?v=68"></script>
-<script src="a/rollen.js?v=68"></script>
-<script src="a/tafel.js?v=68"></script>
+<script src="a/events.js?v=69"></script>
+<script src="a/spel.js?v=69"></script>
+<script src="a/voorbereiding.js?v=69"></script>
+<script src="a/wachters.js?v=69"></script>
+<script src="a/firebase-config.js?v=69"></script>
+<script src="a/koppeling.js?v=69"></script>
+<script src="a/rollen.js?v=69"></script>
+<script src="a/tafel.js?v=69"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1282,6 +1282,7 @@ function muziekLus(naam, vol) {
       const glij = (van, naar, duur, klaar) => { const s = performance.now(); const stap = (nu) => { const p = Math.min(1, (nu - s) / duur); zet(van + (naar - van) * p); if (p < 1) requestAnimationFrame(stap); else klaar?.(); }; requestAnimationFrame(stap); };
       glij(1, laag, 1800, () => setTimeout(() => glij(laag, 1, 2200), ms));
     },
+    hapert() { return actief && spelers[i].paused; }, // should be playing, but the browser refused it (no click on the tv yet)
     stop(ms = 1500) { actief = false; clearTimeout(timer); spelers.forEach((a) => fade(a, 0, ms)); setTimeout(() => spelers.forEach((a) => a.pause()), ms + 50); },
   };
 }
@@ -1289,7 +1290,9 @@ const lus = (n, v) => { const a = new Audio(bron(n)); a.loop = true; a.volume = 
 const vuur = lus("vuur", .12), wind = lus("wind", .2);
 const halMuziek = muziekLus("muziek-hal", .5);
 let schaduwMuziek = null, muziekAan = false;
-function startMuziek() { if (muziekAan) return; muziekAan = true; halMuziek.play(); }
+function startMuziek() { if (muziekAan && !halMuziek.hapert()) return; muziekAan = true; halMuziek.play(); }
+// a tv started from the regie without a click has no sound yet: the first click anywhere brings the hall music in after all
+addEventListener("pointerdown", () => { if (muziekAan && halMuziek.hapert()) halMuziek.play(); });
 const probeer = new Audio("a/muziek-hal.mp3"); probeer.volume = 0;
 probeer.play().then(() => { probeer.pause(); startMuziek(); }).catch(() => {
   const eerste = () => { startMuziek(); removeEventListener("pointerdown", eerste); removeEventListener("keydown", eerste); };
