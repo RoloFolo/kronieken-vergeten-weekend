@@ -328,13 +328,13 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=60"></script>
-<script src="a/spel.js?v=60"></script>
-<script src="a/rollen.js?v=60"></script>
-<script src="a/firebase-config.js?v=60"></script>
-<script src="a/koppeling.js?v=60"></script>
-<script src="a/tafel.js?v=60"></script>
-<script src="a/voorbereiding.js?v=60"></script>
+<script src="a/wachters.js?v=61"></script>
+<script src="a/spel.js?v=61"></script>
+<script src="a/rollen.js?v=61"></script>
+<script src="a/firebase-config.js?v=61"></script>
+<script src="a/koppeling.js?v=61"></script>
+<script src="a/tafel.js?v=61"></script>
+<script src="a/voorbereiding.js?v=61"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -544,7 +544,7 @@ function startIntro() {
   const plan = (duur) => { // each paragraph gets a share of the voice by its length
     const totaal = zinnen.reduce((s, z) => s + z.length, 0); let t = 0;
     zinnen.forEach((z, i) => { introTimers.push(setTimeout(() => toon(i), t * 1000)); t += duur * z.length / totaal; });
-    zegels.forEach((z, i) => introTimers.push(setTimeout(() => { z.classList.add("aan"); piep("tik", .25); }, (duur * (.15 + i * .2)) * 1000)));
+    zegels.forEach((z, i) => introTimers.push(setTimeout(() => z.classList.add("aan"), (duur * (.15 + i * .2)) * 1000)));
   };
   startMuziek();
   const a = spreek(`a/vooraf/welkom-${naamKlein()}.mp3`, () => introTimers.push(setTimeout(introKlaar, 600)));
@@ -561,13 +561,12 @@ function sluitIntro() {
   const el = $("intro"); el.classList.add("weg"); setTimeout(() => { el.classList.add("verborgen"); $("intro-bg").pause(); }, 1400);
   scrollTo(0, 0);
 }
-$("intro-verder").onclick = () => { piep("tik", .4); sluitIntro(); };
+$("intro-verder").onclick = () => sluitIntro();
 // a phone that still refuses the sound: one more tap on this button counts as permission
 function geblokkeerd() { $("geluid-weg").classList.remove("verborgen"); }
 $("geluid-weg").onclick = () => { $("geluid-weg").classList.add("verborgen"); muziek?.hervat(); stem?.play().catch(() => {}); };
-$("b-binnen").onclick = () => { binnenGedaan = true; $("binnen").classList.add("verborgen");
+$("b-binnen").onclick = () => { binnenGedaan = true; $("binnen").classList.add("verborgen"); // no click sound here: only the music and Godfried
   if (!geluidAan) { geluidAan = true; try { localStorage.setItem("kronieken-geluid", "aan"); } catch {} zetGeluidKnop(); } // entering means listening
-  piep("onthul", .5);
   if (lokaal(`kronieken-intro-${wachter?.naam}-${publiek.ronde || 0}`) !== "gezien") startIntro(); else startMuziek(); };
 $("b-spreek").onclick = () => startIntro();
 function toonVooraf(aan) {
