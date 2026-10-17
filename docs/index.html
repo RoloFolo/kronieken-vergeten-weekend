@@ -193,27 +193,36 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .seal-name { font-size: clamp(11px, 1.08vw, 21px); line-height: 1.25; text-align: center; padding: 0 12%; white-space: nowrap; }
 
 /* ---------- Schaduw-event ---------- */
-.event { position: absolute; inset: 0; display: grid; place-items: start center; padding: calc(2.2vh + clamp(220px, 27vw, 620px) * .667 + 3vh) 8vw 3vh; text-align: center; background: rgba(7,4,5,0); transition: background 1.2s; pointer-events: none; z-index: 5; }
+.event { position: absolute; inset: 0; display: grid; place-items: start center; padding: calc(2.2vh + clamp(220px, 27vw, 620px) * .667 + 1vh) 8vw 2vh; text-align: center; background: rgba(7,4,5,0); transition: background 1.2s; pointer-events: none; z-index: 5; }
 .event.show { background: rgba(7,4,5,.7); pointer-events: auto; }
 .stage.awake .scene { animation: tremor .5s linear 4; }
 @keyframes tremor { 25% { translate: 4px -3px; } 50% { translate: -4px 3px; } 75% { translate: 3px 4px; } }
-.event-inner { display: grid; gap: 2.6vh; justify-items: center; opacity: 0; transform: scale(.96); transition: opacity 1s, transform 1s; max-width: 1400px; }
+.event-inner { display: grid; gap: 1.6vh; justify-items: center; opacity: 0; transform: scale(.96); transition: opacity 1s, transform 1s; max-width: 1400px; }
 .event.show .event-inner { opacity: 1; transform: none; }
 .st-bars { display: flex; align-items: center; gap: 2vw; width: min(84vw, 1400px); }
 .st-bars::before, .st-bars::after { content: ""; flex: 1; height: 3px; background: var(--ember); box-shadow: 0 0 12px var(--glow); }
 .st-small { font: 700 clamp(14px, 1.8vw, 34px)/1 var(--display); letter-spacing: .4em; padding-left: .4em; text-transform: uppercase; color: transparent; -webkit-text-stroke: 1.2px var(--ember); text-shadow: 0 0 14px var(--glow); }
-.st-title { margin: 0; font: 700 clamp(36px, 6.2vw, 130px)/.95 var(--display); text-transform: uppercase; letter-spacing: .03em; color: transparent; -webkit-text-stroke: 2px var(--ember); text-shadow: 0 0 20px var(--glow), 0 0 60px rgba(226,50,60,.4); animation: neon 3s steps(1) infinite; }
+.st-title { margin: 0; font: 700 clamp(34px, 5.2vw, 110px)/.95 var(--display); text-transform: uppercase; letter-spacing: .03em; color: transparent; -webkit-text-stroke: 2px var(--ember); text-shadow: 0 0 20px var(--glow), 0 0 60px rgba(226,50,60,.4); animation: neon 3s steps(1) infinite; }
 @keyframes neon { 41% { opacity: .35; } 43% { opacity: 1; } 71% { opacity: .6; } 72% { opacity: 1; } }
 .st-title .big { font-size: 1.25em; }
-.card { width: min(78vw, 1100px); padding: 3.2vh 3vw; display: grid; gap: 1.6vh; background: linear-gradient(180deg, rgba(40,10,14,.88), rgba(15,6,8,.92)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.5), 0 0 60px rgba(226,50,60,.25); }
+.card { width: min(78vw, 1100px); padding: 2.4vh 3vw; display: grid; gap: 1.3vh; background: linear-gradient(180deg, rgba(40,10,14,.88), rgba(15,6,8,.92)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.5), 0 0 60px rgba(226,50,60,.25); }
 .card .label { font: 600 clamp(11px, 1.05vw, 20px)/1 var(--body); letter-spacing: .3em; text-transform: uppercase; color: var(--ash); }
 .card .name { font-size: clamp(22px, 2.6vw, 52px); line-height: 1.1; }
 .card .rule { font: 400 clamp(18px, 2.1vw, 42px)/1.35 var(--display); font-style: italic; color: var(--bone); min-height: 2.7em; }
 .card .stake { font: 600 clamp(13px, 1.25vw, 24px)/1.4 var(--body); color: var(--ash); }
 .card .stake b { color: var(--ember); }
+.card .stake .win { color: #ffd98a; }
+/* beside the card: a die that invites the group to gamble */
+.card { position: relative; }
+.ev-d20 { position: absolute; left: calc(100% + 1.6vw); top: 50%; translate: 0 -50%; width: clamp(80px, 8.5vw, 170px); display: grid; justify-items: center; gap: 1vh; text-align: center; opacity: 0; transition: opacity 1s; }
+.ev-d20.aan { opacity: 1; }
+.ev-d20 svg { width: 100%; filter: drop-shadow(0 0 16px rgba(255,190,90,.6)); animation: d20wenk 2.6s ease-in-out infinite; }
+@keyframes d20wenk { 50% { transform: rotate(-10deg) scale(1.07); filter: drop-shadow(0 0 28px rgba(255,200,110,.95)); } }
+.ev-d20 .vraag { font: italic 400 clamp(13px, 1.25vw, 26px)/1.25 var(--display); color: var(--bronze-hi); }
 .caret { display: inline-block; width: .5ch; background: var(--ember); animation: caret 1s steps(1) infinite; }
 @keyframes caret { 50% { opacity: 0; } }
 .verdict { font-size: clamp(26px, 3.6vw, 70px); line-height: 1; }
+.verdict small { display: block; margin-top: 1.4vh; font: italic 400 clamp(16px, 1.8vw, 36px)/1.3 var(--display); text-transform: none; letter-spacing: 0; color: var(--bone); -webkit-text-stroke: 0; }
 .verdict.bad { background: none; color: transparent; -webkit-text-stroke: 1.5px var(--ember); filter: drop-shadow(0 0 18px var(--glow)); }
 
 .d20 { position: absolute; inset: 0; z-index: 7; display: grid; place-items: center; pointer-events: none; background: radial-gradient(ellipse 60% 55% at 50% 50%, rgba(7,4,5,.55), rgba(7,4,5,.85)); }
@@ -221,7 +230,14 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .d20.rol svg { animation: rol 1.8s cubic-bezier(.2,.7,.2,1); }
 @keyframes rol { 0% { transform: translateY(-60vh) rotate(-540deg) scale(.4); } 55% { transform: translateY(4vh) rotate(-40deg) scale(1.05); } 70% { transform: translateY(-3vh) rotate(12deg); } 85% { transform: translateY(1vh) rotate(-4deg); } 100% { transform: none; } }
 .d20-getal { position: absolute; font-size: min(9vh, 100px); line-height: 1; translate: 0 1.5vh; }
-.d20-uitslag { position: absolute; top: 68%; font-size: clamp(22px, 3vw, 58px); text-align: center; opacity: 0; transition: opacity .8s; }
+.d20-uitslag { position: absolute; top: 67%; width: min(80vw, 1300px); display: grid; gap: 1.2vh; justify-items: center; text-align: center; opacity: 0; transition: opacity .8s; }
+.d20-uitslag .kop { font-size: clamp(26px, 3.6vw, 72px); line-height: 1; }
+.d20-uitslag .regel { font: italic 400 clamp(17px, 2vw, 40px)/1.35 var(--display); color: var(--bone); text-transform: none; letter-spacing: 0; }
+.d20.faal .d20-uitslag .kop, .d20.nat1 .d20-uitslag .kop { color: transparent; -webkit-text-stroke: 1.5px var(--ember); filter: drop-shadow(0 0 18px var(--glow)); }
+.d20.grap .d20-uitslag .kop { color: #ffd98a; }
+.d20.grap .d20-uitslag .regel { font-size: clamp(22px, 2.7vw, 54px); color: #fff3d6; }
+.d20.faal svg { filter: drop-shadow(0 0 40px rgba(226,50,60,.8)) drop-shadow(0 10px 30px #000); }
+.d20.gered svg, .d20.grap svg { filter: drop-shadow(0 0 45px rgba(255,210,120,.9)) drop-shadow(0 10px 30px #000); }
 .d20.klaar .d20-uitslag { opacity: 1; }
 .d20.nat20 svg { filter: drop-shadow(0 0 50px rgba(255,220,120,1)) drop-shadow(0 0 120px rgba(255,190,90,.8)); }
 .d20.nat1 svg { filter: drop-shadow(0 0 50px rgba(255,40,30,1)) drop-shadow(0 0 120px rgba(200,10,10,.8)); }
@@ -797,6 +813,8 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
         <div class="name carved" id="ev-name">De Gestolen Stem</div>
         <div class="rule" id="ev-rule"></div>
         <div class="stake" id="ev-stake"></div>
+        <div class="ev-d20" id="ev-d20"><svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="50,3 91,26 91,74 50,97 9,74 9,26" fill="#170e0e" stroke="url(#brons)" stroke-width="4"/><polygon points="50,24 76,68 24,68" fill="#2a1214" stroke="url(#brons)" stroke-width="3"/><path d="M50 3 L50 24 M91 26 L76 68 M91 74 L76 68 M50 97 L76 68 M50 97 L24 68 M9 74 L24 68 M9 26 L24 68 M9 26 L50 24 M91 26 L50 24" stroke="url(#brons)" stroke-width="2" fill="none" opacity=".85"/><text x="50" y="58" text-anchor="middle" font-family="Cinzel, serif" font-weight="900" font-size="17" fill="#f1dfb6">20</text></svg>
+          <div class="vraag">Of dobbel voor geluk…</div></div>
       </div>
       <div class="verdict carved" id="verdict" hidden></div>
     </div>
@@ -953,14 +971,14 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=71"></script>
-<script src="a/spel.js?v=71"></script>
-<script src="a/voorbereiding.js?v=71"></script>
-<script src="a/wachters.js?v=71"></script>
-<script src="a/firebase-config.js?v=71"></script>
-<script src="a/koppeling.js?v=71"></script>
-<script src="a/rollen.js?v=71"></script>
-<script src="a/tafel.js?v=71"></script>
+<script src="a/events.js?v=72"></script>
+<script src="a/spel.js?v=72"></script>
+<script src="a/voorbereiding.js?v=72"></script>
+<script src="a/wachters.js?v=72"></script>
+<script src="a/firebase-config.js?v=72"></script>
+<script src="a/koppeling.js?v=72"></script>
+<script src="a/rollen.js?v=72"></script>
+<script src="a/tafel.js?v=72"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1539,13 +1557,23 @@ function fakkeltocht(nu) {
   const op = (s) => { s *= len.at(-1); let i = 1; while (i < len.length - 1 && len[i] < s) i++; const f = (s - len[i - 1]) / (len[i] - len[i - 1]); return [p[i - 1][0] + (p[i][0] - p[i - 1][0]) * f, p[i - 1][1] + (p[i][1] - p[i - 1][1]) * f]; };
   const t = (nu - fakkelStart) / 1000, zicht = Math.min(1, Math.max(0, (t - 1.2) / 1.4)), kop = .6 + Math.max(0, t - 1.2) * .028;
   if (!zicht) return requestAnimationFrame(fakkeltocht);
-  x.globalCompositeOperation = "lighter";
+  // each torch: a warm glow on the rock, then a real little flame (a flickering teardrop, white-yellow core, orange to red tip)
   for (let i = 0; i < 11; i++) {
     const s = kop - i * .055; if (s < 0 || s > 1) continue;
-    const [px, py0] = op(s), fl = (.75 + Math.random() * .3) * zicht, r = W * .0021 * fl, py = py0 - Math.abs(Math.sin(t * 2.6 + i * 1.7)) * W * .0005;
-    const g = x.createRadialGradient(px, py, 0, px, py, r * 3);
-    g.addColorStop(0, `rgba(255,238,195,${.95 * fl})`); g.addColorStop(.25, `rgba(255,160,60,${.7 * fl})`); g.addColorStop(1, "rgba(255,90,20,0)");
-    x.fillStyle = g; x.beginPath(); x.arc(px, py, r * 3, 0, Math.PI * 2); x.fill();
+    const [px, py0] = op(s), py = py0 - Math.abs(Math.sin(t * 2.6 + i * 1.7)) * W * .0005; // a small step up and down while walking
+    const fl = .8 + .2 * Math.sin(t * 17 + i * 3.1) + Math.random() * .12, r = W * .0018, h = r * (2.9 + .8 * Math.sin(t * 11 + i)) * fl, w = r * .95;
+    const zwaai = Math.sin(t * 6 + i * 2.3) * r * .45; // the tip leans with the wind and the walking
+    x.globalCompositeOperation = "lighter";
+    const gloed = x.createRadialGradient(px, py - h * .3, 0, px, py - h * .3, r * 5.5);
+    gloed.addColorStop(0, `rgba(255,150,60,${.5 * zicht})`); gloed.addColorStop(.4, `rgba(255,90,20,${.18 * zicht})`); gloed.addColorStop(1, "rgba(255,60,10,0)");
+    x.fillStyle = gloed; x.beginPath(); x.arc(px, py - h * .3, r * 5.5, 0, Math.PI * 2); x.fill();
+    x.globalCompositeOperation = "source-over"; x.globalAlpha = zicht;
+    const vlam = (hh, ww, kleur) => { x.fillStyle = kleur; x.beginPath(); x.moveTo(px + zwaai * hh / h, py - hh);
+      x.bezierCurveTo(px + ww * .9, py - hh * .55, px + ww, py - hh * .05, px, py + ww * .35);
+      x.bezierCurveTo(px - ww, py - hh * .05, px - ww * .9, py - hh * .55, px + zwaai * hh / h, py - hh); x.fill(); };
+    const buiten = x.createLinearGradient(px, py, px, py - h); buiten.addColorStop(0, "#ffb347"); buiten.addColorStop(.55, "#ff6a1a"); buiten.addColorStop(1, "rgba(200,30,10,.85)");
+    vlam(h, w, buiten); vlam(h * .62, w * .55, "#fff2b0"); vlam(h * .3, w * .3, "#ffffff");
+    x.globalAlpha = 1;
   }
   x.globalCompositeOperation = "source-over";
   requestAnimationFrame(fakkeltocht);
@@ -2391,44 +2419,84 @@ const zegelNaam = (id) => ZEGELS.find((z) => z.id === id)?.naam ?? "";
 function inzet(e) {
   if (e.soort === "dilemma") return "Kies samen. De gevolgen staan hierboven.";
   const n = e.verlies * extra;
-  return `Faalt de groep, dan verliest het <b>${zegelNaam(e.zegel)}</b> ${n} fiche${n > 1 ? "s" : ""}.`;
+  return `<span class="win">Doorstaan: +1 fiche voor het ${zegelNaam(e.zegel)}.</span> Faalt de groep, dan verliest het <b>${zegelNaam(e.zegel)}</b> ${n} fiche${n > 1 ? "s" : ""}.`;
 }
 function toonEvent(e, metStem = true) {
   EVENT = e; $("verdict").hidden = true; meld();
   $("ev-label").textContent = SOORT[e.soort] ?? "Schaduw-event";
-  $("ev-name").textContent = e.naam; $("ev-rule").textContent = ""; $("ev-stake").innerHTML = "";
+  $("ev-name").textContent = e.naam; $("ev-rule").textContent = ""; $("ev-stake").innerHTML = ""; $("ev-d20").classList.remove("aan");
   clearInterval(typer); fade(stem, 0, 400);
   if (metStem) setTimeout(() => { stem = speel(`events/${e.id}`, 1); schaduwMuziek?.vol(.2, 800); }, 300);
   setTimeout(() => {
     if (!wakker() || EVENT !== e) return;
     const doel = $("ev-rule"), tekst = e.regel; let i = 0;
     doel.innerHTML = '<span></span><span class="caret">&nbsp;</span>';
-    typer = setInterval(() => { doel.firstChild.textContent = tekst.slice(0, ++i); if (i >= tekst.length) { clearInterval(typer); $("ev-stake").innerHTML = inzet(e); } }, 40);
+    typer = setInterval(() => { doel.firstChild.textContent = tekst.slice(0, ++i); if (i >= tekst.length) { clearInterval(typer); $("ev-stake").innerHTML = inzet(e); setTimeout(() => { if (EVENT === e && !beslist) $("ev-d20").classList.add("aan"); }, 900); } }, 40);
   }, metStem ? 4200 : 600);
 }
-// the D20: a new event; a natural 20 drives the Shadow back, a natural 1 doubles the price
-let rollend = false;
+// The D20: the group dares fate instead of doing the event. Low rolls fail, the middle is a new event or a whim of fate
+// (a silly task, then the Shadow sleeps), high rolls save them, and a natural 20 also pours 2 fiches into a Seal that is not full.
+// While the result is on screen the die may be thrown again (the Chaosshot power): the second throw counts.
+const D20_UITKOMST = [
+  { tot: 1, soort: "nat1", kop: "Kritieke misser!", regel: (z, n) => `De Schaduw lacht. Dubbele straf: het ${z} verliest ${n} fiches.` },
+  { tot: 6, soort: "faal", kop: "Gefaald", regel: (z, n) => `Het lot kiest tegen jullie. Het ${z} verliest ${n} fiche${n > 1 ? "s" : ""}.` },
+  { tot: 10, soort: "nieuw", kop: "Het lot kiest opnieuw", regel: () => "Een ander event…" },
+  { tot: 14, soort: "grap", kop: "Een gril van het lot", regel: () => GRILLEN[Math.floor(Math.random() * GRILLEN.length)] },
+  { tot: 19, soort: "gered", kop: "Gered!", regel: () => "De Schaduw deinst terug. Het event vervalt." },
+  { tot: 20, soort: "nat20", kop: "Natuurlijke twintig!", regel: (z) => `De Schaduw vlucht, en het ${z} krijgt 2 fiches.` },
+];
+const GRILLEN = [
+  "De werper spreekt tot het volgende event over zichzelf in de derde persoon.",
+  "De werper geeft de dobbelsteen een naam. Iedereen spreekt hem voortaan zo aan.",
+  "De werper brengt een plechtige toost uit op de Schaduwkoning. Met buiging.",
+  "De werper laat zijn beste drakengebrul horen. De groep beoordeelt het met een cijfer.",
+  "De werper wisselt van stoel met de Wachter die het langst niets zei.",
+  "De werper vertelt een mop. Lacht niemand, dan neemt hij een slok.",
+  "Iedereen klinkt met de werper. Wie als laatste klinkt, neemt een slok.",
+  "De werper zingt de eerste regel van een liedje dat de groep kiest.",
+  "De werper is tot het volgende event de hofnar: elke opdracht beantwoordt hij met ‘Zoals mijn koning wenst’.",
+  "De werper mag één Wachter aanwijzen die zijn glas bijvult.",
+];
+let rollend = false, d20Na = null;
+function d20Zegel(goed) { // the Seal a roll touches: the event's own one, else (a dilemma) a random one
+  const kies = (l) => l[Math.floor(Math.random() * l.length)]?.id;
+  if (goed) return kies(ZEGELS.filter((z) => z.fiches < S.drempel && !bevroren(z.id))) || kies(ZEGELS.filter((z) => z.fiches < S.drempel)) || kies(ZEGELS);
+  return EVENT?.zegel || kies(ZEGELS.filter((z) => z.fiches > 0)) || kies(ZEGELS);
+}
 function werpD20() {
-  if (!wakker() || beslist || rollend) return; rollend = true;
+  if (!wakker() || beslist || rollend) return;
+  if (d20Na) { clearTimeout(d20Na); d20Na = null; } // a second throw while the first result is still showing: that one counts
+  rollend = true;
   const d = $("d20"), g = $("d20-getal"), u = $("d20-uitslag");
   const vervloekt = vloekD20; vloekD20 = false; // the traitor's cursed die rolls no higher than 10
-  const worp = 1 + Math.floor(Math.random() * (vervloekt ? 10 : 20)); log("d20", { worp, vervloekt }); meld();
+  const worp = 1 + Math.floor(Math.random() * (vervloekt ? 10 : 20)), r = D20_UITKOMST.find((x) => worp <= x.tot);
+  const zegel = d20Zegel(r.soort === "nat20"), n = r.soort === "nat1" ? (EVENT?.verlies || 2) * 2 : r.soort === "faal" ? (EVENT?.verlies || 2) : 2;
+  log("d20", { worp, vervloekt, uitkomst: r.soort }); meld();
   fade(stem, 0, 300); $("event").classList.remove("show");
-  d.hidden = false; d.className = "d20 rol"; u.textContent = "";
+  d.hidden = false; d.className = "d20 rol"; u.innerHTML = "";
   speel("klok", .5, .7);
   const flikker = setInterval(() => (g.textContent = 1 + Math.floor(Math.random() * 20)), 70);
   setTimeout(() => {
-    clearInterval(flikker); g.textContent = worp; d.classList.add("klaar");
-    if (worp === 20) { d.classList.add("nat20"); u.textContent = "Natuurlijke twintig! De Schaduw deinst terug."; speel("klok", .9, 1.3); }
-    else if (worp === 1) { d.classList.add("nat1"); u.textContent = "Een één… de Schaduw lacht. De prijs verdubbelt."; speel("donder-hard", 1); bliksem(0); }
-    else { u.textContent = "Het lot kiest opnieuw…"; speel("donder", .5); }
+    clearInterval(flikker); g.textContent = worp; rollend = false;
+    d.classList.add("klaar", r.soort);
+    u.innerHTML = `<div class="kop carved"></div><div class="regel"></div>`;
+    u.querySelector(".kop").textContent = r.kop; u.querySelector(".regel").textContent = r.regel(zegelNaam(zegel), n);
+    if (r.soort === "nat20") { speel("klok", .9, 1.3); setTimeout(() => speel("gejuich", .7), 400); }
+    else if (r.soort === "nat1") { speel("donder-hard", 1); bliksem(0); }
+    else if (r.soort === "faal") { speel("donder-hard", .8); bliksem(0); }
+    else if (r.soort === "gered") speel("klok", .7, 1.25);
+    else if (r.soort === "grap") speel("klok", .6, 1.5);
+    else speel("donder", .5);
+    d20Na = setTimeout(() => d20Gevolg(r, zegel, n), r.soort === "grap" ? 9000 : 4200);
   }, 1800);
-  setTimeout(() => {
-    d.hidden = true; rollend = false;
-    if (worp === 20) { beslist = true; knoppen(false); hal(); return; }
-    extra = worp === 1 ? 2 : 1;
-    $("event").classList.add("show"); toonEvent(trekEvent());
-  }, 4600);
+}
+function d20Gevolg(r, zegel, n) {
+  d20Na = null; if (!wakker()) return;
+  if (r.soort === "nieuw") { $("d20").hidden = true; extra = 1; $("event").classList.add("show"); return toonEvent(trekEvent()); }
+  beslist = true; knoppen(false);
+  if (r.soort === "nat1" || r.soort === "faal") { for (let i = 0; i < n; i++) setTimeout(() => fiche(zegel, -1), i * 450); return setTimeout(hal, 1500 + n * 450); }
+  if (r.soort === "nat20") { fiche(zegel, 1); setTimeout(() => fiche(zegel, 1), 700); return setTimeout(hal, 3000); }
+  hal();
 }
 function schaduw() {
   if (wakker()) return;
@@ -2449,15 +2517,17 @@ function schaduw() {
 function uitslag(goed) {
   if (!wakker() || beslist) return; beslist = true; knoppen(false); log("uitslag", { goed, event: EVENT?.id });
   const v = $("verdict"); v.hidden = false; v.className = `verdict carved ${goed ? "good" : "bad"}`;
-  v.textContent = goed ? "Doorstaan" : "De Schaduw voedt zich";
-  if (goed) speel("klok", .6, 1.25);
-  else { speel("donder-hard", 1); bliksem(0); if (EVENT.zegel) setTimeout(() => { for (let i = 0; i < EVENT.verlies * extra; i++) fiche(EVENT.zegel, -1); }, 1200); }
-  setTimeout(hal, goed ? 3500 : 4500);
+  const n = EVENT?.zegel ? (goed ? 1 : EVENT.verlies * extra) : 0, wat = n ? `Het ${zegelNaam(EVENT.zegel)} ${goed ? "krijgt" : "verliest"} ${n} fiche${n > 1 ? "s" : ""}.` : "";
+  v.textContent = goed ? "Doorstaan" : "De Schaduw voedt zich"; if (wat) { const s = document.createElement("small"); s.textContent = wat; v.appendChild(s); }
+  if (goed) { speel("klok", .6, 1.25); if (EVENT?.zegel) setTimeout(() => fiche(EVENT.zegel, 1), 1200); }
+  else { speel("donder-hard", 1); bliksem(0); if (EVENT.zegel) for (let i = 0; i < n; i++) setTimeout(() => fiche(EVENT.zegel, -1), 1200 + i * 600); }
+  setTimeout(hal, goed ? 3500 : 4500 + n * 600);
 }
 function hal() {
   if (!wakker()) return;
   clearInterval(typer); clearInterval(stormTimer); fade(stem, 0, 800);
   schaduwMuziek?.stop(2000); schaduwMuziek = null;
+  clearTimeout(d20Na); d20Na = null;
   $("event").classList.remove("show"); $("d20").hidden = true; rollend = false; stage.classList.remove("awake"); knoppen(false); $("storm").playbackRate = 1;
   $("status").textContent = "De Schaduw slaapt"; meld();
   fade(vuur, .12, 2500); fade(wind, .2, 2500); setTimeout(() => halMuziek.play(), 1200);
