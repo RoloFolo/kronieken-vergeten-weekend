@@ -250,13 +250,13 @@ body.in-frame main { visibility: hidden; }
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=52"></script>
-<script src="a/spel.js?v=52"></script>
-<script src="a/rollen.js?v=52"></script>
-<script src="a/firebase-config.js?v=52"></script>
-<script src="a/koppeling.js?v=52"></script>
-<script src="a/tafel.js?v=52"></script>
-<script src="a/voorbereiding.js?v=52"></script>
+<script src="a/wachters.js?v=53"></script>
+<script src="a/spel.js?v=53"></script>
+<script src="a/rollen.js?v=53"></script>
+<script src="a/firebase-config.js?v=53"></script>
+<script src="a/koppeling.js?v=53"></script>
+<script src="a/tafel.js?v=53"></script>
+<script src="a/voorbereiding.js?v=53"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -277,7 +277,7 @@ const schoon = (t) => String(t).replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": 
 
 let publiek = {}, getekend = "", vorige = null;
 const halOpen = () => !!publiek.hal || Date.now() >= window.ROL_UITERLIJK;
-const eedOpen = () => !!publiek.eed || Date.now() >= window.EED_UITERLIJK;
+const eedOpen = () => !!publiek.eed; // only when the regie opens Act III (the finale runs on the tv anyway)
 
 // the power can be used once a day; the mark resets at midnight
 const vandaag = () => new Date().toLocaleDateString("nl-NL");
