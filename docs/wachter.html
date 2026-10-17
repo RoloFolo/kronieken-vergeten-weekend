@@ -41,6 +41,10 @@ html, body { overflow-x: hidden; }
 .klok b { font: 700 clamp(26px, 8vw, 36px)/1 var(--carved); color: var(--bronze-hi); text-shadow: 0 0 14px rgba(226,50,60,.6); font-variant-numeric: tabular-nums; }
 .klok span { font: 600 10px/1 var(--carved); letter-spacing: .2em; color: var(--ash); text-transform: uppercase; }
 /* before the weekend the countdown is the heart of the page */
+#vooraf.na-zegel { display: none !important; }
+#vooraf:not(.na-zegel) { animation: onthul 1.2s cubic-bezier(.2,.9,.3,1) both; }
+.spreek-rij { display: flex; justify-content: center; margin-top: -4px; }
+.spreek-rij .spreek { margin: 0; letter-spacing: .06em; font-size: 11.5px; white-space: nowrap; }
 #vooraf h2 { margin-bottom: 14px; letter-spacing: .16em; }
 #vooraf .spreek { letter-spacing: .06em; font-size: 11.5px; white-space: nowrap; }
 #vooraf .klok b { font-size: clamp(36px, 12vw, 52px); }
@@ -273,11 +277,11 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
     <h2 class="carved">De Schaduw ontwaakt over</h2>
     <div class="klok" id="klok" aria-live="off"><div><b id="k-d">00</b><span>dagen</span></div><div><b id="k-u">00</b><span>uur</span></div><div><b id="k-m">00</b><span>min</span></div><div><b id="k-s">00</b><span>sec</span></div></div>
     <p class="wanneer">Vrijdag 13 november, 16:00 · de Ardennen</p>
-    <button class="spreek" type="button" id="b-spreek" aria-pressed="false">▶ Laat Godfried opnieuw spreken</button>
   </section>
 
   <!-- before the weekend: the order (homework), the request for memories, step 2 and step 3 -->
   <section class="paneel bevel verborgen" id="bevel"></section>
+  <div class="spreek-rij verborgen" id="spreek-rij"><button class="spreek" type="button" id="b-spreek" aria-pressed="false">▶ Laat Godfried opnieuw spreken</button></div>
   <section class="paneel verborgen" id="hulp">
     <h2 class="carved">Godfried vraagt je hulp</h2>
     <p class="brief" style="text-align:center">In de laatste nacht moet het vuur de Wachters herkennen. Daarvoor heb ik herinneringen nodig. Vertel me iets over een andere Wachter: een avontuur van vroeger, een eigenaardigheid, iets wat de anderen misschien niet weten. Niemand ziet van wie het komt.</p>
@@ -335,13 +339,13 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=63"></script>
-<script src="a/spel.js?v=63"></script>
-<script src="a/rollen.js?v=63"></script>
-<script src="a/firebase-config.js?v=63"></script>
-<script src="a/koppeling.js?v=63"></script>
-<script src="a/tafel.js?v=63"></script>
-<script src="a/voorbereiding.js?v=63"></script>
+<script src="a/wachters.js?v=64"></script>
+<script src="a/spel.js?v=64"></script>
+<script src="a/rollen.js?v=64"></script>
+<script src="a/firebase-config.js?v=64"></script>
+<script src="a/koppeling.js?v=64"></script>
+<script src="a/tafel.js?v=64"></script>
+<script src="a/voorbereiding.js?v=64"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -471,7 +475,7 @@ function toonTab(t) {
   if (!beschikbaar(t)) t = "ik"; tabNu = t; try { localStorage.setItem("kronieken-tab", t); } catch {}
   document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-current", b.dataset.tab === t));
   const ik = t === "ik";
-  for (const id of ["schaduw", "vooraf", "bevel", "hulp", "stap2", "stap3", "verzegeld", "rol-blok", "onbekend"]) $(id).classList.toggle("tab-weg", !ik);
+  for (const id of ["schaduw", "vooraf", "bevel", "spreek-rij", "hulp", "stap2", "stap3", "verzegeld", "rol-blok", "onbekend"]) $(id).classList.toggle("tab-weg", !ik);
   document.querySelector(".slot").classList.toggle("tab-weg", !ik);
   $("tab-tafel").classList.toggle("verborgen", t !== "tafel"); $("tocht").classList.toggle("tab-weg", t !== "tocht");
   for (const naam of ["regie", "verrader"]) {
@@ -577,7 +581,7 @@ $("b-binnen").onclick = () => { binnenGedaan = true; $("binnen").classList.add("
   if (lokaal(`kronieken-intro-${wachter?.naam}-${publiek.ronde || 0}`) !== "gezien") startIntro(); else startMuziek(); };
 $("b-spreek").onclick = () => startIntro();
 function toonVooraf(aan) {
-  for (const id of ["bevel", "hulp", "stap2"]) $(id).classList.toggle("verborgen", !aan || !wachter);
+  for (const id of ["bevel", "spreek-rij", "hulp", "stap2"]) $(id).classList.toggle("verborgen", !aan || !wachter);
   if (!aan || !wachter) $("stap3").classList.add("verborgen"); // step 3 shows itself when its time has come
   if (!aan || !wachter) { $("binnen").classList.add("verborgen"); return; }
   if (!publiekGeladen) return;
@@ -586,6 +590,8 @@ function toonVooraf(aan) {
   const nu = Date.now(), stap = test || (nu >= V.stap3 ? 3 : nu >= V.stap2 ? 2 : 1);
   const sleutelNu = `${wachter.naam}|${stap}|${JSON.stringify(mijnVooraf)}`;
   if (vooraafGetekend === sleutelNu) return; vooraafGetekend = sleutelNu;
+  const heeftBevel = !!V.bevelen?.[wachter.naam], bevelOpen = !heeftBevel || lokaal(`kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`) === "open";
+  $("vooraf").classList.toggle("na-zegel", !bevelOpen); // the countdown appears once the seal is broken
   tekenBevel(); tekenHulp(); tekenStap2(stap); tekenStap3(stap);
 }
 // The wax seal, painted in its stages (scripts/zegel-brokken.mjs): whole, cracked, and four chunks plus crumbs on the same canvas.
