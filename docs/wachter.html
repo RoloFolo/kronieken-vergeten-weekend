@@ -149,18 +149,21 @@ body.in-frame main { visibility: hidden; }
 /* candle light on the parchment where the writing sits: the burnt paper stays visible at the edges, the ink reads in the middle */
 .intro-brief::before, .bevel-brief::before { content: ""; position: absolute; left: 8%; right: 8%; top: 6%; bottom: 10%; pointer-events: none; mix-blend-mode: screen;
   background: radial-gradient(ellipse 60% 52% at 50% 46%, rgba(255,226,180,.62), rgba(240,200,150,.34) 55%, rgba(200,150,110,0) 80%); }
-.intro-brief .vlak { position: absolute; left: 13%; right: 13%; top: 11%; bottom: 20%; display: grid; grid-template-rows: auto 1fr; justify-items: center; text-align: center; }
-.intro-kop { font: 900 clamp(11px, 3.1vw, 14px)/1.25 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: #7a0e15; }
+.intro-brief .vlak { position: absolute; left: 13%; right: 13%; top: 10%; bottom: 15%; display: grid; grid-template-rows: auto auto auto 1fr auto; justify-items: center; text-align: center; }
+.intro-kop { font: 900 clamp(9.5px, 2.75vw, 13px)/1.25 var(--carved); letter-spacing: .1em; white-space: nowrap; text-transform: uppercase; color: #7a0e15; }
 .bevel-brief .van::before, .bevel-brief .van::after { content: "✦"; font-size: .8em; color: #9b111e; }
 .intro-tekst { display: grid; align-items: center; width: 100%; }
-.intro-tekst p { grid-area: 1 / 1; margin: 0; font: italic 400 clamp(15px, 4.8vw, 21px)/1.5 var(--display); color: #170a03; text-shadow: 0 0 8px rgba(255,236,205,.55); opacity: 0; transform: translateY(8px); filter: blur(3px); transition: opacity 1.2s, transform 1.2s, filter 1.2s; }
+.intro-tekst p { grid-area: 1 / 1; margin: 0; text-align: left; hyphens: auto; font: italic 400 clamp(15px, 4.8vw, 21px)/1.5 var(--display); color: #170a03; text-shadow: 0 0 8px rgba(255,236,205,.55); opacity: 0; transform: translateY(8px); filter: blur(3px); transition: opacity 1.2s, transform 1.2s, filter 1.2s; }
 .intro-tekst p.aan { opacity: 1; transform: none; filter: none; }
-.intro-brief .zegel-was { position: absolute; left: 50%; bottom: 3.5%; width: 19%; translate: -50% 0; filter: drop-shadow(0 3px 5px rgba(40,0,0,.6)); }
-/* the corner medallions wake one by one: a deep red glow, never yellow */
-.intro-brief .hoek { position: absolute; width: 30%; aspect-ratio: 1; translate: -50% -50%; border-radius: 50%; pointer-events: none; opacity: 0; mix-blend-mode: screen;
-  background: radial-gradient(circle, rgba(255,40,40,.0) 30%, rgba(226,30,40,.55) 46%, rgba(160,0,10,.25) 58%, transparent 70%); transition: opacity 1.4s ease; }
-.intro-brief .hoek.aan { opacity: 1; animation: hoekpuls 2.6s ease-in-out infinite alternate; }
-@keyframes hoekpuls { to { filter: brightness(1.5); } }
+.intro-tekst p::first-letter { float: left; margin: .04em .1em 0 0; font: 900 3.05em/.8 var(--carved); font-style: normal; color: #8f141c; text-shadow: 0 1px 0 rgba(255,236,205,.6); }
+/* the intro letter arrives sealed: only the heading and Godfried's seal; breaking it opens the letter */
+.intro-brief .vlak > * { transition: opacity 1s ease .2s; }
+.intro-brief.dicht .vlak > :not(.intro-kop) { opacity: 0; transition: none; }
+.intro:has(.intro-brief.dicht) .intro-verder { visibility: hidden; }
+.intro-aan { margin: 6px 0 0; font: 900 clamp(19px, 6vw, 26px)/1.1 var(--carved); letter-spacing: .04em; text-transform: uppercase; color: #8f141c; text-shadow: 0 1px 0 rgba(255,236,205,.6), 0 0 10px rgba(255,236,205,.45); }
+.intro-brief .sier { margin: 6px 0 2px; }
+.intro-brief .handtekening { justify-self: end; margin: 0 4% 0 0; font: 400 clamp(24px, 7vw, 31px)/1 "Pinyon Script", cursive; color: #2a1206; transform: rotate(-4deg); }
+.intro-brief:not(.klaar) .handtekening { opacity: 0; }
 .intro .sintel { position: absolute; z-index: 1; bottom: -10px; width: 4px; height: 4px; border-radius: 50%; background: #ff5a3c; box-shadow: 0 0 8px 2px rgba(226,50,60,.8); opacity: 0; animation: stijg linear infinite; }
 @keyframes stijg { 0% { opacity: 0; transform: translate(0, 0); } 10% { opacity: .9; } 100% { opacity: 0; transform: translate(var(--dx), -105vh); } }
 .intro-verder { position: relative; z-index: 3; padding: 13px 34px; cursor: pointer; font: 700 13px/1 var(--carved); letter-spacing: .22em; text-transform: uppercase;
@@ -190,9 +193,9 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
 .bevel-brief .vlak { position: absolute; left: 13%; right: 13%; top: 9%; bottom: 22%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; color: #170a03; }
 .bevel-brief .van { display: flex; align-items: center; gap: 7px; font: 900 clamp(10px, 2.8vw, 12px)/1.2 var(--carved); letter-spacing: .16em; text-transform: uppercase; color: #7a0e15; }
 .bevel-brief h3 { margin: 2px 0 0; font: 900 clamp(19px, 6vw, 26px)/1.1 var(--carved); letter-spacing: .04em; text-transform: uppercase; color: #8f141c; text-shadow: 0 1px 0 rgba(255,236,205,.6), 0 0 10px rgba(255,236,205,.45); }
-.bevel-brief .sier { display: flex; align-items: center; gap: 8px; width: 78%; margin: 0 0 4px; color: #8f141c; font-size: clamp(14px, 4vw, 17px); line-height: 1; }
-.bevel-brief .sier::before, .bevel-brief .sier::after { content: ""; flex: 1; height: 1.5px; background: linear-gradient(90deg, transparent, currentColor); }
-.bevel-brief .sier::after { background: linear-gradient(90deg, currentColor, transparent); }
+.sier { display: flex; align-items: center; gap: 8px; width: 78%; margin: 0 0 4px; justify-content: center; color: #8f141c; font-size: clamp(14px, 4vw, 17px); line-height: 1; }
+.sier::before, .sier::after { content: ""; flex: 1; height: 1.5px; background: linear-gradient(90deg, transparent, currentColor); }
+.sier::after { background: linear-gradient(90deg, currentColor, transparent); }
 .bevel-brief .opdracht { margin: 0; text-align: left; hyphens: auto; font: italic 400 clamp(14.5px, 4.3vw, 18px)/1.5 var(--display); color: #170a03; text-shadow: 0 0 8px rgba(255,236,205,.6); }
 .bevel-brief .opdracht::first-letter { float: left; margin: .04em .1em 0 0; font: 900 3.05em/.8 var(--carved); font-style: normal; color: #8f141c; text-shadow: 0 1px 0 rgba(255,236,205,.6); }
 .bevel-brief .handtekening { align-self: flex-end; margin: -2px 4% 0 0; font: 400 clamp(22px, 6.6vw, 29px)/1 "Pinyon Script", cursive; color: #2a1206; transform: rotate(-4deg); }
@@ -200,22 +203,22 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
 .bevel-brief .wat-nu.ja { padding: 3px 14px; border: 2px solid #8f141c; border-radius: 3px; letter-spacing: .22em; font-size: clamp(12px, 3.5vw, 15px); transform: rotate(-3deg); box-shadow: inset 0 0 0 2px rgba(255,236,205,.35); }
 .bevel-brief .wat-nu.ja small { display: block; font: italic 400 clamp(10.5px, 2.9vw, 12px)/1.3 var(--display); letter-spacing: 0; text-transform: none; }
 /* closed: Godfried's wax seal, big, in the middle */
-.bevel-brief .dicht-zegel { position: absolute; left: 50%; top: 47%; width: 46%; aspect-ratio: 1; translate: -50% -50%; border: 0; padding: 0; background: none; cursor: pointer; }
-.bevel-brief .dicht-zegel img { position: absolute; inset: 0; width: 100%; filter: drop-shadow(0 6px 10px rgba(40,0,0,.6)); }
+.dicht-zegel { position: absolute; left: 50%; top: 47%; width: 46%; aspect-ratio: 1; translate: -50% -50%; border: 0; padding: 0; background: none; cursor: pointer; }
+.dicht-zegel img { position: absolute; inset: 0; width: 100%; filter: drop-shadow(0 6px 10px rgba(40,0,0,.6)); }
 /* the seal breaks like real wax: it strains, cracks (painted cracks), pops into its painted chunks, and they fall off the letter */
-.bevel-brief .dicht-zegel .barst, .bevel-brief .dicht-zegel .brok, .bevel-brief .dicht-zegel .kruim { opacity: 0; }
-.bevel-brief .dicht-zegel.trekt .heel { animation: trek .28s ease-in-out; }
+.dicht-zegel .barst, .dicht-zegel .brok, .dicht-zegel .kruim { opacity: 0; }
+.dicht-zegel.trekt .heel { animation: trek .28s ease-in-out; }
 @keyframes trek { 30% { transform: scale(1.04, .97); } 60% { transform: rotate(-2deg) scale(.99); } }
-.bevel-brief .dicht-zegel.barst-nu .heel { opacity: 0; }
-.bevel-brief .dicht-zegel.barst-nu .barst { opacity: 1; animation: barst .25s ease-out; }
+.dicht-zegel.barst-nu .heel { opacity: 0; }
+.dicht-zegel.barst-nu .barst { opacity: 1; animation: barst .25s ease-out; }
 @keyframes barst { 40% { transform: translate(1.5%, -1%) rotate(1.5deg); } }
-.bevel-brief .dicht-zegel.valt .barst { opacity: 0; }
-.bevel-brief .dicht-zegel.valt .brok, .bevel-brief .dicht-zegel.valt .kruim { opacity: 1; animation: val 1.05s cubic-bezier(.45,0,.9,.55) forwards; }
+.dicht-zegel.valt .barst { opacity: 0; }
+.dicht-zegel.valt .brok, .dicht-zegel.valt .kruim { opacity: 1; animation: val 1.05s cubic-bezier(.45,0,.9,.55) forwards; }
 @keyframes val { 0% { transform: none; } 18% { transform: translate(calc(var(--dx) * .35), -5%) rotate(calc(var(--rot) * .2)); }
   100% { transform: translate(var(--dx), 190%) rotate(var(--rot)); opacity: 0; } }
-.bevel-brief .dicht-zegel:not(.trekt) { animation: wenk 2s ease-in-out infinite; }
+.dicht-zegel:not(.trekt) { animation: wenk 2s ease-in-out infinite; }
 
-.bevel-brief .tik { position: absolute; left: 13%; right: 13%; top: 72%; text-align: center; font: 700 clamp(12px, 3.4vw, 14px)/1.3 var(--carved); letter-spacing: .1em; text-transform: uppercase; color: #7a1016; }
+.tik { position: absolute; left: 13%; right: 13%; top: 72%; text-align: center; font: 700 clamp(12px, 3.4vw, 14px)/1.3 var(--carved); letter-spacing: .1em; text-transform: uppercase; color: #7a1016; }
 @keyframes wenk { 50% { transform: scale(1.05); filter: drop-shadow(0 0 14px rgba(226,50,60,.7)); } }
 /* open: the empty spot for the seal, on the border at the bottom, clearly asking to be pressed */
 .bevel-brief .plek { position: absolute; left: 50%; bottom: 4%; width: 23%; aspect-ratio: 1; translate: -50% 0; border-radius: 50%; padding: 0; cursor: pointer;
@@ -339,8 +342,10 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <video class="intro-bg" id="intro-bg" src="a/storm.mp4" poster="a/plaat.jpg" muted loop playsinline preload="none"></video>
   <img class="intro-logo" src="a/logo.webp" alt="">
   <div class="intro-brief" id="intro-brief">
-    <div class="vlak"><div class="intro-kop">Een boodschap van Godfried</div><div class="intro-tekst" id="intro-tekst" aria-live="polite"></div></div>
-    <img class="zegel-was" src="a/app/lakzegel.webp" alt="">
+    <div class="vlak"><div class="intro-kop">Een boodschap van Godfried</div><h3 class="intro-aan" id="intro-aan"></h3><div class="sier">❦</div>
+      <div class="intro-tekst" id="intro-tekst" aria-live="polite"></div><div class="handtekening">Godfried</div></div>
+    <button class="dicht-zegel" type="button" id="intro-zegel" aria-label="Breek het zegel" hidden></button>
+    <div class="tik" id="intro-tik" hidden>Tik op het zegel<br>om het te breken</div>
   </div>
   <button class="intro-verder" type="button" id="intro-verder">Verder</button>
 </div>
@@ -350,13 +355,13 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=65"></script>
-<script src="a/spel.js?v=65"></script>
-<script src="a/rollen.js?v=65"></script>
-<script src="a/firebase-config.js?v=65"></script>
-<script src="a/koppeling.js?v=65"></script>
-<script src="a/tafel.js?v=65"></script>
-<script src="a/voorbereiding.js?v=65"></script>
+<script src="a/wachters.js?v=66"></script>
+<script src="a/spel.js?v=66"></script>
+<script src="a/rollen.js?v=66"></script>
+<script src="a/firebase-config.js?v=66"></script>
+<script src="a/koppeling.js?v=66"></script>
+<script src="a/tafel.js?v=66"></script>
+<script src="a/voorbereiding.js?v=66"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -551,31 +556,43 @@ function spreek(bestand, klaar) {
 // Music and voice start inside the tap itself (a phone refuses sound that starts later), the first visit only;
 // "Laat Godfried spreken" plays it again.
 let introTimers = [];
-function startIntro() {
+function startIntro(metZegel = false) {
   introTimers.forEach(clearTimeout); introTimers = [];
   const el = $("intro"), zinnen = welkomTekst();
   el.classList.remove("verborgen", "weg"); $("intro-verder").classList.remove("klaar");
   $("intro-bg").play().catch(() => {});
   $("intro-tekst").innerHTML = zinnen.map((z) => `<p>${schoon(z)}</p>`).join("");
-  const ps = [...$("intro-tekst").children], zegels = [...document.querySelectorAll("#intro-brief .hoek")];
+  $("intro-aan").textContent = `Aan ${wachter.naam}`;
+  const ps = [...$("intro-tekst").children];
   const b = $("intro-brief"); b.style.animation = "none"; void b.offsetWidth; b.style.animation = ""; // the letter unfolds again on a replay
   if (!el.querySelector(".sintel")) for (let i = 0; i < 14; i++) { const s = document.createElement("span"); s.className = "sintel";
     s.style.left = `${Math.random() * 100}%`; s.style.animationDuration = `${7 + Math.random() * 7}s`; s.style.animationDelay = `${-Math.random() * 12}s`; s.style.setProperty("--dx", `${Math.round((Math.random() - .5) * 120)}px`); el.appendChild(s); }
-  zegels.forEach((z) => z.classList.remove("aan"));
+  b.classList.remove("klaar"); b.classList.toggle("dicht", metZegel);
   const toon = (i) => ps.forEach((p, n) => p.classList.toggle("aan", n === i));
   const plan = (duur) => { // each paragraph gets a share of the voice by its length
     const totaal = zinnen.reduce((s, z) => s + z.length, 0); let t = 0;
     zinnen.forEach((z, i) => { introTimers.push(setTimeout(() => toon(i), t * 1000)); t += duur * z.length / totaal; });
-    zegels.forEach((z, i) => introTimers.push(setTimeout(() => z.classList.add("aan"), (duur * (.15 + i * .2)) * 1000)));
   };
+  const begin = (a) => { // the letter is open: text in time with the voice
+    if (!a) { plan(15); introTimers.push(setTimeout(introKlaar, 15500)); return; }
+    let gepland = false; const metDuur = () => { if (!gepland && isFinite(a.duration) && a.duration > 0) { gepland = true; plan(a.duration); } };
+    a.addEventListener("loadedmetadata", metDuur); metDuur();
+    introTimers.push(setTimeout(() => { if (!gepland) { gepland = true; plan(15); } }, 1500));
+  };
+  const stemNa = () => introTimers.push(setTimeout(introKlaar, 600));
   startMuziek();
-  const a = spreek(`a/vooraf/welkom-${naamKlein()}.mp3`, () => introTimers.push(setTimeout(introKlaar, 600)));
-  if (!a) { plan(15); introTimers.push(setTimeout(introKlaar, 15500)); return; }
-  let gepland = false; const metDuur = () => { if (!gepland && isFinite(a.duration) && a.duration > 0) { gepland = true; plan(a.duration); } };
-  a.addEventListener("loadedmetadata", metDuur); metDuur();
-  introTimers.push(setTimeout(() => { if (!gepland) { gepland = true; plan(15); } }, 1500));
+  const zegel = $("intro-zegel"), tik = $("intro-tik");
+  zegel.hidden = tik.hidden = !metZegel;
+  if (!metZegel) { begin(spreek(`a/vooraf/welkom-${naamKlein()}.mp3`, stemNa)); return; }
+  zegel.className = "dicht-zegel"; zegel.innerHTML = zegelLagen();
+  zegel.onclick = () => { if (zegel.classList.contains("trekt")) return;
+    // the voice starts in this tap (a phone refuses sound that starts later), silent until the seal has fallen, then from the top
+    const a = spreek(`a/vooraf/welkom-${naamKlein()}.mp3`, stemNa); if (a) a.muted = true;
+    breekZegel(zegel, () => { zegel.hidden = tik.hidden = true; b.classList.remove("dicht"); if (a) { a.currentTime = 0; a.muted = false; } begin(a); });
+    tik.hidden = true;
+  };
 }
-function introKlaar() { $("intro-verder").classList.add("klaar"); }
+function introKlaar() { $("intro-verder").classList.add("klaar"); $("intro-brief").classList.add("klaar"); }
 function sluitIntro() {
   introTimers.forEach(clearTimeout); introTimers = [];
   if (stem) { stem.pause(); stem.dispatchEvent(new Event("ended")); }
@@ -589,7 +606,7 @@ function geblokkeerd() { $("geluid-weg").classList.remove("verborgen"); }
 $("geluid-weg").onclick = () => { $("geluid-weg").classList.add("verborgen"); muziek?.hervat(); stem?.play().catch(() => {}); };
 $("b-binnen").onclick = () => { binnenGedaan = true; $("binnen").classList.add("verborgen"); // no click sound here: only the music and Godfried
   if (!geluidAan) { geluidAan = true; try { localStorage.setItem("kronieken-geluid", "aan"); } catch {} zetGeluidKnop(); } // entering means listening
-  if (lokaal(`kronieken-intro-${wachter?.naam}-${publiek.ronde || 0}`) !== "gezien") startIntro(); else startMuziek(); };
+  if (lokaal(`kronieken-intro-${wachter?.naam}-${publiek.ronde || 0}`) !== "gezien") startIntro(true); else startMuziek(); };
 $("b-spreek").onclick = () => startIntro();
 function toonVooraf(aan) {
   for (const id of ["bevel", "spreek-rij", "hulp", "stap2"]) $(id).classList.toggle("verborgen", !aan || !wachter);
@@ -614,6 +631,14 @@ function zegelLagen() {
       return `<img class="brok" src="${k.src}" alt="" style="transform-origin:${k.cx * 100}% ${k.cy * 100}%;--dx:${dx}%;--rot:${rot}deg;animation-delay:${(Math.random() * .08).toFixed(2)}s">`; }).join("")
     + `<img class="kruim" src="a/app/zegel-kruimels.webp" alt="" style="--dx:0%;--rot:0deg">`;
 }
+// The seal breaks like real wax: it strains, cracks with a snap, pops into its chunks and they fall off the letter; then klaar().
+function breekZegel(knop, klaar) {
+  if (knop.classList.contains("trekt")) return; knop.classList.add("trekt"); // strain
+  if (navigator.vibrate) try { navigator.vibrate(30); } catch {}
+  setTimeout(() => { knop.classList.add("barst-nu"); piep("knak", .7); if (navigator.vibrate) try { navigator.vibrate(40); } catch {} }, 280); // crack
+  setTimeout(() => { knop.classList.add("valt"); piep("knak", .45); if (navigator.vibrate) try { navigator.vibrate([20, 30, 60]); } catch {} }, 620); // pop and fall
+  setTimeout(klaar, 1550);
+}
 let bevelNetOpen = false, bevelBezig = false; // while the seal is being pressed, a quick answer from the database must not redraw it
 function tekenBevel() {
   const b = V.bevelen?.[wachter.naam], el = $("bevel");
@@ -631,13 +656,7 @@ function tekenBevel() {
          <button class="plek ${ja ? "gedrukt" : ""}" type="button" id="b-aanvaard" ${ja ? "disabled" : ""} aria-label="Druk je zegel: ik aanvaard het bevel">${ja ? `<img src="a/app/lakzegel.webp" alt="">` : "Druk<br>hier"}</button></div>
        <p class="op-slot" style="font-size:14px;margin:0">Volbreng je het in het weekend, dan voedt het een Zegel.</p>`);
   bevelNetOpen = false;
-  const breek = $("b-breek"); if (breek) breek.onclick = () => {
-    if (breek.classList.contains("trekt")) return; breek.classList.add("trekt"); // strain
-    if (navigator.vibrate) try { navigator.vibrate(30); } catch {}
-    setTimeout(() => { breek.classList.add("barst-nu"); piep("knak", .7); if (navigator.vibrate) try { navigator.vibrate(40); } catch {} }, 280); // crack
-    setTimeout(() => { breek.classList.add("valt"); piep("knak", .45); if (navigator.vibrate) try { navigator.vibrate([20, 30, 60]); } catch {} }, 620); // pop and fall
-    setTimeout(() => { lokaal(sleutel(), "open"); bevelNetOpen = true; vooraafGetekend = ""; toonVooraf(true); }, 1550);
-  };
+  const breek = $("b-breek"); if (breek) breek.onclick = () => breekZegel(breek, () => { lokaal(sleutel(), "open"); bevelNetOpen = true; vooraafGetekend = ""; toonVooraf(true); });
   const plek = $("b-aanvaard"); if (plek && !ja) plek.onclick = async () => {
     bevelBezig = true; plek.disabled = true; plek.classList.add("gedrukt", "net"); plek.innerHTML = `<img src="a/app/lakzegel.webp" alt="">`;
     setTimeout(() => { const br = $("bevel-brief"); br?.classList.remove("ontvouw"); br?.classList.add("dreun"); piep("kracht", .7); if (navigator.vibrate) try { navigator.vibrate(120); } catch {} }, 380);
