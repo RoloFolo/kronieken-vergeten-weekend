@@ -1,67 +1,99 @@
-// Inkooplijst voor De Kronieken van het Vergeten Weekend → Excel (Drive opent hem in Google Sheets)
+// Inkooplijst voor De Kronieken van het Vergeten Weekend → Excel (Drive opent hem in Google Sheets).
+// Nagelopen tegen alle onderdelen: de Wachterstocht, de 26 Schaduw-events, de 40 quests, de rollen, de finale, het
+// einde en de eretitels. Wat de organisatoren al invulden (status, wie, prijs, opmerking) blijft per regel staan.
+//   node scripts/inkooplijst.js <uit.xlsx> [bestaande.xlsx]   (exceljs nodig)
 const ExcelJS = require("exceljs");
-const uit = process.argv[2];
+const [uit, oud] = process.argv.slice(2);
 const L = [
   // [categorie, wat, aantal, waarvoor, opmerking]
-  ["De kist", "Houten schatkist met beugel voor een hangslot", "1", "Finale: gaat open met de code van de tv, cadeaus erin", "Groot genoeg voor de cadeaus"],
-  ["De kist", "Cijferhangslot, 4 cijfers, zelf in te stellen", "1", "Op de kist", "Code instellen op 7698"],
-  ["De kist", "Cadeaus voor de groep", "?", "In de kist, na de overwinning", "Nog te bepalen"],
+  ["Kist & einde", "Houten schatkist met beugel voor een hangslot", "1", "Finale: gaat open met de code van de tv, cadeaus erin", "Groot genoeg voor de cadeaus"],
+  ["Kist & einde", "Cijferhangslot, 4 cijfers, zelf in te stellen", "1", "Op de kist", "Code instellen op 7698"],
+  ["Kist & einde", "Cadeaus voor de groep", "?", "In de kist, na de overwinning", "Nog te bepalen"],
+  ["Envelop & oorkondes", "Grote envelop (kraft of perkament)", "1", "Staat het hele weekend op de schoorsteen", "Pas open na de kist"],
+  ["Envelop & oorkondes", "Zegellak + lakstempel", "1", "Envelop verzegelen", ""],
+  ["Envelop & oorkondes", "Oorkondes laten printen (kleur, A4, 200–250 g mat)", "11", "06 Oorkondes.pdf, één per Wachter", "Na de portretten; printshop geeft mooiere kleuren"],
+  ["Envelop & oorkondes", "Fotolijstjes A4", "11", "Oorkonde mee naar huis", "Optioneel"],
   ["Relieken", "Lantaarn (LED of kaars)", "1", "Reliek: De Lantaarn van het Kasteel", "Mee op de fakkeltocht"],
   ["Relieken", "Drinkhoorn", "1", "Reliek: De Hoorn van de Herberg", ""],
   ["Relieken", "Zwaard (decor of speelgoed)", "1", "Reliek: Het Zwaard van Broederschap", ""],
   ["Relieken", "Stuk wortelhout of grillige wortel", "1", "Reliek: De Wortel van de Wildernis", "Kan ook uit het bos"],
   ["Relieken", "Zwarte kaars", "1", "Reliek: De Kaars van Stilte", ""],
-  ["Zegels", "Glazen potten of vazen", "4", "De vier Zegels op de schoorsteen", "Etiketten: 03 Vaas-etiketten.pdf"],
-  ["Zegels", "Fiches (houten munten of pokerchips)", "150", "In de Zegel-potten bij elke quest", "12 per Zegel opent zijn akte"],
-  ["Zegels", "Stickervel A4 (wit of kraft)", "1", "Vaas-etiketten printen", ""],
-  ["Envelop", "Grote envelop (kraft of perkament)", "1", "Staat het hele weekend op de schoorsteen", ""],
-  ["Envelop", "Zegellak + lakstempel", "1", "Envelop verzegelen", ""],
-  ["Envelop", "Perkamentpapier A4", "30 vel", "Oorkondes en eretitels", "Oorkondes nog te maken"],
+  ["Relieken", "Rugzak of tas voor de relieken", "1", "Relieken mee op de tocht, uitdelen per volbrachte opdracht", "Niet laten zien vooraf"],
+  ["Kasteeltocht", "Fakkels", "11", "Zaterdagavond kasteel, groepsfoto, De Stille Wachter", "Eerst checken of het kasteel ze levert"],
+  ["Kasteeltocht", "Shotglaasjes", "12", "De Dronk van de Kruisvaarder (toost in het kasteel), ook voor het Elixer", "Onbreekbaar is handig onderweg"],
+  ["Kasteeltocht", "Zakfles of klein flesje drank + iets zonder alcohol", "1 + 1", "De Dronk van de Kruisvaarder", ""],
+  ["Kasteeltocht", "Powerbank", "2", "Regie-telefoon (opdrachten afvinken) en foto's tijdens de tocht", ""],
+  ["Zegels & kaarten", "Glazen potten of vazen", "4", "De vier Zegels op de schoorsteen", "Etiketten: 03 Vaas-etiketten.pdf"],
+  ["Zegels & kaarten", "Fiches (houten munten of pokerchips)", "150", "In de Zegel-potten bij elke quest", "12 per Zegel opent zijn akte"],
+  ["Zegels & kaarten", "Stickervel A4 (wit of kraft)", "1", "Vaas-etiketten printen", ""],
+  ["Zegels & kaarten", "Twee bakjes of mandjes", "2", "Questkaarten-stapel en aflegstapel", ""],
   ["Printwerk", "Stevig papier A4 (250 g)", "20 vel", "02 Questkaarten (dubbelzijdig)", "40 kaarten, daarna snijden"],
   ["Printwerk", "Regelboek printen", "2", "01 Regelboek.pdf", "Eén voor de tafel, één reserve"],
   ["Printwerk", "Schaduw-events printen", "1", "04 Schaduw-events (alleen organisatoren)", "Niet laten slingeren"],
-  ["Events & quests", "Kaarsen (waxinelichtjes + dinerkaarsen)", "30 + 6", "Kring van Kaarsen, Sfeermeesters, Schaduwspel", ""],
-  ["Events & quests", "Aanstekers / lucifers", "3", "Kaarsen en vuur", ""],
-  ["Events & quests", "Haardhout + aanmaakblokjes", "", "Vuurwacht, Brandmeesters, Laatste Wacht", "Eerst checken wat het huisje heeft"],
+  ["Vuur & sfeer", "Kaarsen (waxinelichtjes + dinerkaarsen)", "30 + 6", "Kring van Kaarsen, Sfeermeesters, De Laatste Wacht", ""],
+  ["Vuur & sfeer", "Aanstekers / lucifers", "3", "Kaarsen en vuur", ""],
+  ["Vuur & sfeer", "Haardhout + aanmaakblokjes", "", "Vuurwacht, Brandmeesters, Kampvuurverhaal, Offer aan de Vlam", "Eerst checken wat het huisje heeft"],
+  ["Vuur & sfeer", "Vuurkorf of vuurschaal", "1", "Offer aan de Vlam, Kampvuurverhaal (buiten)", "Alleen als er geen open haard is"],
+  ["Vuur & sfeer", "Zaklamp of losse lamp", "1", "Schaduwspel (één lamp aan)", ""],
+  ["Vuur & sfeer", "Lichtslinger of LED-lantaarns", "1–2", "Sfeermeesters, Het Buitenkamp", "Optioneel"],
+  ["Vuur & sfeer", "Bluetooth-speaker", "1", "Lied van de Schaduw, Sfeermeesters, de Bard", "Neemt iemand er een mee?"],
   ["Events & quests", "Pennen + blokje papier", "11 + 1", "Offer aan de Vlam, De Biecht", ""],
-  ["Events & quests", "Twee schalen", "2", "Hongerige Schaduw, Schaal der Stilte", "Mag uit het huisje"],
+  ["Events & quests", "Kom of hoed voor de briefjes", "1", "De Biecht (anoniem)", "Mag uit het huisje"],
+  ["Events & quests", "Twee schalen", "2", "De Hongerige Schaduw, De Schaal der Stilte", "Mag uit het huisje"],
   ["Events & quests", "Blinddoek", "1", "Voorproever van de Koning", ""],
-  ["Events & quests", "A3-papier + stiften", "2 vel", "Het Wapenschild", ""],
-  ["Events & quests", "Kaart- of bordspel", "1", "Het Toernooi", "Neemt iemand er een mee?"],
-  ["Events & quests", "Ingrediënten duister elixer", "", "Het Elixer der Duisternis", "Bijv. cassis, cola, grenadine, iets vreemds"],
+  ["Events & quests", "A3-papier + stiften + plakband", "2 vel", "Het Wapenschild (ophangen in de Hall)", ""],
+  ["Events & quests", "Kaartspel + bordspel", "1 + 1", "Het Toernooi, De Spelleider, Het Duel", "Neemt iemand er een mee?"],
+  ["Events & quests", "Ingrediënten voor elixers", "", "Het Elixer der Duisternis, Het Elixer, Instabiel Mengsel (Alchemist)", "Bijv. cassis, cola, grenadine, gember, iets vreemds"],
+  ["Events & quests", "Serveerplank", "1", "De Hapjesbrigade", "Mag uit het huisje"],
+  ["Events & quests", "Telefoonstatief met afstandsbediening", "1", "Het Groepsportret, De Brandmeesters", ""],
+  ["Buiten", "Fleecedekens", "4–6", "Het Buitenkamp, De Rustbrengers", "Optioneel"],
+  ["Buiten", "Thermoskan + to-go bekers", "1 + 11", "De Ochtendmars, Het Buitenkamp (iets warms)", ""],
+  ["Eten & drinken", "Koffie, thee, melk, suiker", "", "Koffie voor de Wacht, De Hersteller, De Ochtendmars", "Naast de gewone boodschappen"],
+  ["Eten & drinken", "Snacks en hapjes", "", "De Snackroof, De Hongerige Schaduw, Voorproever, Hapjesbrigade", "Naast de gewone boodschappen"],
+  ["Eten & drinken", "Drank voor De Eerste Dronk", "", "De toost bij de start (vrijdag)", "Optioneel: iets feestelijks, bijv. bubbels"],
+  ["Eten & drinken", "Kater-kit: paracetamol, ORS-zakjes", "1", "De Hersteller, Hogepriester van de Kater", "Optioneel, wel handig"],
+  ["Ere van de Wachters", "Medailles of lintjes", "15", "De eretitels bij het ontbijt (zondag)", "Optioneel"],
   ["Techniek", "Laptop voor de tv", "1", "De tv draait index.html?tv", "Geluid via tv, eerst één keer klikken"],
   ["Techniek", "HDMI-kabel, lang (5 m)", "1", "Laptop naar tv", ""],
   ["Techniek", "Stekkerdoos + verlengsnoer", "2", "Laptop, telefoons laden", ""],
-  ["Fakkeltocht", "Fakkels", "11", "Zaterdagavond kasteel", "Eerst checken of het kasteel ze levert"],
 ];
 (async () => {
+  // what the organisers already filled in, per item
+  const eerder = {};
+  if (oud) {
+    const o = new ExcelJS.Workbook(); await o.xlsx.readFile(oud);
+    o.worksheets[0].eachRow((r, i) => { if (i < 4) return; const v = (n) => { const x = r.getCell(n).value; return x && x.result !== undefined ? x.result : x; };
+      if (v(2)) eerder[String(v(2)).trim()] = { wie: v(5), status: v(6), prijs: v(7), opm: v(8) }; });
+  }
   const wb = new ExcelJS.Workbook(); wb.creator = "De Kronieken";
   const ws = wb.addWorksheet("Inkooplijst", { views: [{ state: "frozen", ySplit: 3 }] });
-  ws.columns = [{ width: 18 }, { width: 46 }, { width: 10 }, { width: 46 }, { width: 16 }, { width: 16 }, { width: 11 }, { width: 40 }];
+  ws.columns = [{ width: 20 }, { width: 46 }, { width: 10 }, { width: 50 }, { width: 16 }, { width: 16 }, { width: 11 }, { width: 42 }];
   ws.mergeCells("A1:H1"); ws.getCell("A1").value = "Inkooplijst · De Kronieken van het Vergeten Weekend (13 tot 15 november)";
   ws.getCell("A1").font = { bold: true, size: 15, color: { argb: "FF7A1016" } };
-  ws.mergeCells("A2:H2"); ws.getCell("A2").value = "Zet bij Status wat er gekocht is en vul in wie het regelt. Alleen voor de organisatoren: hier staan de relieken en de kist in.";
+  ws.mergeCells("A2:H2"); ws.getCell("A2").value = "Zet bij Status wat er gekocht is en vul in wie het regelt. Alleen voor de organisatoren: hier staan de relieken, de kist en de oorkondes in.";
   ws.getCell("A2").font = { italic: true, color: { argb: "FF6E5230" } };
   const kop = ws.getRow(3); kop.values = ["Categorie", "Wat", "Aantal", "Waarvoor", "Wie regelt", "Status", "Prijs (€)", "Opmerking"];
-  kop.eachCell((c) => { c.font = { bold: true, color: { argb: "FFFBE3B4" } }; c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF3A0A0E" } }; c.alignment = { vertical: "middle" }; });
-  kop.height = 20;
+  kop.eachCell((c) => { c.font = { bold: true, color: { argb: "FFFBE3B4" } }; c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF3A0A0E" } }; });
   let vorige = "";
   L.forEach(([cat, wat, n, voor, opm], i) => {
-    const r = ws.addRow([cat === vorige ? "" : cat, wat, n, voor, "", "Nog kopen", null, opm]); vorige = cat;
+    const e = eerder[wat] || {};
+    const r = ws.addRow([cat === vorige ? "" : cat, wat, n, voor, e.wie ?? "", e.status || "Nog kopen", e.prijs ?? null, e.opm || opm]); vorige = cat;
     r.getCell(1).font = { bold: true, color: { argb: "FF7A1016" } };
     r.alignment = { vertical: "top", wrapText: true };
     if (i % 2) r.eachCell({ includeEmpty: true }, (c) => { c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFF7F0E6" } }; });
     r.getCell(6).dataValidation = { type: "list", allowBlank: true, formulae: ['"Nog kopen,Gekocht,Hebben we al,Niet nodig"'] };
-    r.getCell(7).numFmt = '€ #,##0.00';
+    r.getCell(7).numFmt = "€ #,##0.00";
   });
   const eind = ws.rowCount;
   const tot = ws.addRow(["", "Totaal", "", "", "", "", { formula: `SUM(G4:G${eind})` }, ""]);
-  tot.font = { bold: true }; tot.getCell(7).numFmt = '€ #,##0.00';
+  tot.font = { bold: true }; tot.getCell(7).numFmt = "€ #,##0.00";
   ws.autoFilter = { from: "A3", to: `H${eind}` };
   ws.addConditionalFormatting({ ref: `F4:F${eind}`, rules: [
     { type: "containsText", operator: "containsText", text: "Gekocht", style: { fill: { type: "pattern", pattern: "solid", bgColor: { argb: "FFCDEBC5" } } } },
     { type: "containsText", operator: "containsText", text: "Hebben we al", style: { fill: { type: "pattern", pattern: "solid", bgColor: { argb: "FFDCE7F3" } } } },
     { type: "containsText", operator: "containsText", text: "Nog kopen", style: { fill: { type: "pattern", pattern: "solid", bgColor: { argb: "FFF8DDD8" } } } },
   ] });
-  await wb.xlsx.writeFile(uit); console.log("ok", L.length, "regels");
+  await wb.xlsx.writeFile(uit);
+  const behouden = L.filter(([, wat]) => eerder[wat] && (eerder[wat].status !== "Nog kopen" || eerder[wat].wie || eerder[wat].prijs)).map(([, wat]) => `${wat}: ${eerder[wat].status}`);
+  console.log("ok", L.length, "regels; behouden:", behouden.join("; ") || "niets");
 })();

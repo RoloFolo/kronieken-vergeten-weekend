@@ -1,0 +1,756 @@
+[
+ {
+  "moment": "kist-reliek",
+  "file": "kist-reliek-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (kist/reliek.mp3)"
+ },
+ {
+  "moment": "kist-reliek",
+  "file": "kist-reliek-1.mp3",
+  "source": "Freesound",
+  "title": "cartoon_wink_magic_sparkle.wav",
+  "author": "MLaudio",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/MLaudio/sounds/511485/",
+  "seconds": 1.27129
+ },
+ {
+  "moment": "kist-reliek",
+  "file": "kist-reliek-2.mp3",
+  "source": "Freesound",
+  "title": "Sparkling Star 03.wav",
+  "author": "LilMati",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/LilMati/sounds/462093/",
+  "seconds": 3.54
+ },
+ {
+  "moment": "kist-reliek",
+  "file": "kist-reliek-3.mp3",
+  "source": "Freesound",
+  "title": "Adding an item to inventory",
+  "author": "randbsoundbites",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/randbsoundbites/sounds/791088/",
+  "seconds": 1.58685
+ },
+ {
+  "moment": "kist-reliek",
+  "file": "kist-reliek-4.mp3",
+  "source": "Freesound",
+  "title": "Adding an item to inventory 2",
+  "author": "randbsoundbites",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/randbsoundbites/sounds/829806/",
+  "seconds": 1.20372
+ },
+ {
+  "moment": "fin-goed",
+  "file": "fin-goed-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (fin/sfx-goed.mp3)"
+ },
+ {
+  "moment": "fin-goed",
+  "file": "fin-goed-1.mp3",
+  "source": "Freesound",
+  "title": "magic_game_win_success_2.wav",
+  "author": "MLaudio",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/MLaudio/sounds/615100/",
+  "seconds": 2.40143
+ },
+ {
+  "moment": "fin-goed",
+  "file": "fin-goed-2.mp3",
+  "source": "Freesound",
+  "title": "achievement-sparkle",
+  "author": "SkySpeira",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/SkySpeira/sounds/715067/",
+  "seconds": 1.75864
+ },
+ {
+  "moment": "fin-goed",
+  "file": "fin-goed-3.mp3",
+  "source": "Freesound",
+  "title": "Correct Bell",
+  "author": "Fupicat",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/Fupicat/sounds/538147/",
+  "seconds": 1.59782
+ },
+ {
+  "moment": "fin-goed",
+  "file": "fin-goed-4.mp3",
+  "source": "Freesound",
+  "title": "Correct-2.wav",
+  "author": "bwg2020",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/bwg2020/sounds/456162/",
+  "seconds": 1.41324
+ },
+ {
+  "moment": "fin-goed",
+  "file": "fin-goed-5.mp3",
+  "source": "Freesound",
+  "title": "jawsharp2.wav",
+  "author": "achintya",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/achintya/sounds/22379/",
+  "seconds": 2
+ },
+ {
+  "moment": "fin-fout",
+  "file": "fin-fout-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (fin/sfx-fout.mp3)"
+ },
+ {
+  "moment": "fin-fout",
+  "file": "fin-fout-1.mp3",
+  "source": "Freesound",
+  "title": "Wrong Answer",
+  "author": "-Andreas",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/-Andreas/sounds/648462/",
+  "seconds": 1.06306
+ },
+ {
+  "moment": "fin-fout",
+  "file": "fin-fout-2.mp3",
+  "source": "Freesound",
+  "title": "Wrong Buzzer",
+  "author": "KevinVG207",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/KevinVG207/sounds/331912/",
+  "seconds": 0.494308
+ },
+ {
+  "moment": "fin-fout",
+  "file": "fin-fout-3.mp3",
+  "source": "Freesound",
+  "title": "Negative.wav",
+  "author": "iwanPlays",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/iwanPlays/sounds/626085/",
+  "seconds": 0.472938
+ },
+ {
+  "moment": "fin-fout",
+  "file": "fin-fout-4.mp3",
+  "source": "Freesound",
+  "title": "Negative 2",
+  "author": "iwanPlays",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/iwanPlays/sounds/626084/",
+  "seconds": 0.514042
+ },
+ {
+  "moment": "fin-fout",
+  "file": "fin-fout-5.mp3",
+  "source": "Freesound",
+  "title": "Tremolo Strings 2",
+  "author": "nomiqbomi",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/nomiqbomi/sounds/578581/",
+  "seconds": 1.63372
+ },
+ {
+  "moment": "fin-cijfer",
+  "file": "fin-cijfer-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (fin/sfx-slot.mp3)"
+ },
+ {
+  "moment": "fin-cijfer",
+  "file": "fin-cijfer-1.mp3",
+  "source": "Freesound",
+  "title": "Fantasy_ui_Button_6.wav",
+  "author": "ZenithInfinitiveStudios",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/ZenithInfinitiveStudios/sounds/376748/",
+  "seconds": 1.42197
+ },
+ {
+  "moment": "fin-cijfer",
+  "file": "fin-cijfer-2.mp3",
+  "source": "Freesound",
+  "title": "Small Bell #2",
+  "author": "steffcaffrey",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/steffcaffrey/sounds/452379/",
+  "seconds": 1.93803
+ },
+ {
+  "moment": "fin-cijfer",
+  "file": "fin-cijfer-3.mp3",
+  "source": "Freesound",
+  "title": "Fantasy SFX 003.wav",
+  "author": "tec_studio",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/tec_studio/sounds/360830/",
+  "seconds": 2.54898
+ },
+ {
+  "moment": "fin-cijfer",
+  "file": "fin-cijfer-4.mp3",
+  "source": "Freesound",
+  "title": "Chippy alarm",
+  "author": "IanStarGem",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/IanStarGem/sounds/341819/",
+  "seconds": 0.556145
+ },
+ {
+  "moment": "fin-akte",
+  "file": "fin-akte-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (fin/sfx-akte.mp3)"
+ },
+ {
+  "moment": "fin-akte",
+  "file": "fin-akte-1.mp3",
+  "source": "Freesound",
+  "title": "Cinematic Hit With Horns.wav",
+  "author": "DeVern",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/DeVern/sounds/427803/",
+  "seconds": 4.36557
+ },
+ {
+  "moment": "fin-akte",
+  "file": "fin-akte-2.mp3",
+  "source": "Freesound",
+  "title": "Horn002.wav",
+  "author": "freefire66",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/freefire66/sounds/175946/",
+  "seconds": 4.51
+ },
+ {
+  "moment": "fin-akte",
+  "file": "fin-akte-3.mp3",
+  "source": "Freesound",
+  "title": "Horn.mp3",
+  "author": "rgeier2",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/rgeier2/sounds/156879/",
+  "seconds": 2.16588
+ },
+ {
+  "moment": "fin-akte",
+  "file": "fin-akte-4.mp3",
+  "source": "Freesound",
+  "title": "Cinematic Woosh SFX-003.wav",
+  "author": "AudioPapkin",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/AudioPapkin/sounds/648536/",
+  "seconds": 4.28466
+ },
+ {
+  "moment": "fin-akte",
+  "file": "fin-akte-5.mp3",
+  "source": "Freesound",
+  "title": "Cinematic Woosh SFX-012.wav",
+  "author": "AudioPapkin",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/AudioPapkin/sounds/648769/",
+  "seconds": 4.33516
+ },
+ {
+  "moment": "fin-open",
+  "file": "fin-open-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (fin/sfx-open.mp3)"
+ },
+ {
+  "moment": "fin-open",
+  "file": "fin-open-1.mp3",
+  "source": "Freesound",
+  "title": "Unlocking Door",
+  "author": "Buldfot",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/Buldfot/sounds/208805/",
+  "seconds": 2.84571
+ },
+ {
+  "moment": "fin-open",
+  "file": "fin-open-2.mp3",
+  "source": "Freesound",
+  "title": "Wood_Metal_Chain_Smash_Hall.aif",
+  "author": "RutgerMuller",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/RutgerMuller/sounds/104003/",
+  "seconds": 3.5
+ },
+ {
+  "moment": "fin-open",
+  "file": "fin-open-3.mp3",
+  "source": "Freesound",
+  "title": "open-encyclopedia.mp3",
+  "author": "Kneeling",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/Kneeling/sounds/448010/",
+  "seconds": 3.94837
+ },
+ {
+  "moment": "fin-open",
+  "file": "fin-open-4.mp3",
+  "source": "Freesound",
+  "title": "chains thick drop fall.flac",
+  "author": "kyles",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/kyles/sounds/453301/",
+  "seconds": 1.33642
+ },
+ {
+  "moment": "kist-open",
+  "file": "kist-open-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (kist/hemel.mp3)"
+ },
+ {
+  "moment": "kist-open",
+  "file": "kist-open-1.mp3",
+  "source": "Freesound",
+  "title": "Choir of Voices - Single Chord",
+  "author": "bone666138",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/bone666138/sounds/274121/",
+  "seconds": 6.30281
+ },
+ {
+  "moment": "kist-open",
+  "file": "kist-open-2.mp3",
+  "source": "Freesound",
+  "title": "Final angelic sound.wav",
+  "author": "hjohnl",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/hjohnl/sounds/61521/",
+  "seconds": 6.79184
+ },
+ {
+  "moment": "kist-open",
+  "file": "kist-open-3.mp3",
+  "source": "Freesound",
+  "title": "DO YOU SEE THE LIGHT!?",
+  "author": "HoBoTrails",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/HoBoTrails/sounds/424964/",
+  "seconds": 12.8435
+ },
+ {
+  "moment": "kist-open",
+  "file": "kist-open-4.mp3",
+  "source": "Freesound",
+  "title": "Angel Reveal.wav",
+  "author": "MarknKris1996",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/MarknKris1996/sounds/608892/",
+  "seconds": 3.97063
+ },
+ {
+  "moment": "kist-open",
+  "file": "kist-open-5.mp3",
+  "source": "Freesound",
+  "title": "high note.aiff",
+  "author": "bevibeldesign",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/bevibeldesign/sounds/315942/",
+  "seconds": 11.7145
+ },
+ {
+  "moment": "kist-open",
+  "file": "kist-open-6.mp3",
+  "source": "Freesound",
+  "title": "Choir Brass C.wav",
+  "author": "elektrokult",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/elektrokult/sounds/150413/",
+  "seconds": 6.12501
+ },
+ {
+  "moment": "kist-leeg",
+  "file": "kist-leeg-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (kist/leeg.mp3)"
+ },
+ {
+  "moment": "kist-leeg",
+  "file": "kist-leeg-1.mp3",
+  "source": "Freesound",
+  "title": "sadWhisle.wav",
+  "author": "Splashdust",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/Splashdust/sounds/84327/",
+  "seconds": 0.928798
+ },
+ {
+  "moment": "kist-leeg",
+  "file": "kist-leeg-2.mp3",
+  "source": "Freesound",
+  "title": "sad.wav",
+  "author": "the_sider95",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/the_sider95/sounds/394624/",
+  "seconds": 1.7619
+ },
+ {
+  "moment": "kist-leeg",
+  "file": "kist-leeg-3.mp3",
+  "source": "Freesound",
+  "title": "NEGATIVE.wav",
+  "author": "DExUS5",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/DExUS5/sounds/392183/",
+  "seconds": 1.07888
+ },
+ {
+  "moment": "kist-leeg",
+  "file": "kist-leeg-4.mp3",
+  "source": "Freesound",
+  "title": "Sad Ghost 01.wav",
+  "author": "LilMati",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/LilMati/sounds/448754/",
+  "seconds": 2
+ },
+ {
+  "moment": "kist-leeg",
+  "file": "kist-leeg-5.mp3",
+  "source": "Freesound",
+  "title": "Game over, you failed.MP3",
+  "author": "SoundsForHim",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/SoundsForHim/sounds/399637/",
+  "seconds": 3.69739
+ },
+ {
+  "moment": "kist-spanning",
+  "file": "kist-spanning-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (hartslag.mp3)"
+ },
+ {
+  "moment": "kist-spanning",
+  "file": "kist-spanning-1.mp3",
+  "source": "Freesound",
+  "title": "Four Heartbeats HQ_BeatSmith.wav",
+  "author": "Lunardrive",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/Lunardrive/sounds/22416/",
+  "seconds": 3.60667
+ },
+ {
+  "moment": "kist-spanning",
+  "file": "kist-spanning-2.mp3",
+  "source": "Freesound",
+  "title": "Single Heartbeat HQ_BeatSmith.wav",
+  "author": "Lunardrive",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/Lunardrive/sounds/22417/",
+  "seconds": 0.901667
+ },
+ {
+  "moment": "kist-spanning",
+  "file": "kist-spanning-3.mp3",
+  "source": "Freesound",
+  "title": "Futuristic Heartbeat 60 bpm.wav",
+  "author": "_MC5_",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/_MC5_/sounds/524936/",
+  "seconds": 6
+ },
+ {
+  "moment": "kist-spanning",
+  "file": "kist-spanning-4.mp3",
+  "source": "Freesound",
+  "title": "Futuristic Heartbeat 120 bpm.wav",
+  "author": "_MC5_",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/_MC5_/sounds/524935/",
+  "seconds": 6
+ },
+ {
+  "moment": "fin-tik",
+  "file": "fin-tik-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (fin/sfx-tik.mp3)"
+ },
+ {
+  "moment": "fin-tik",
+  "file": "fin-tik-1.mp3",
+  "source": "Freesound",
+  "title": "whoosh-click01.wav",
+  "author": "Qat",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/Qat/sounds/108334/",
+  "seconds": 0.701474
+ },
+ {
+  "moment": "fin-tik",
+  "file": "fin-tik-2.mp3",
+  "source": "Freesound",
+  "title": "front tick.wav",
+  "author": "Alexsani",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/Alexsani/sounds/117280/",
+  "seconds": 0.499977
+ },
+ {
+  "moment": "fin-tik",
+  "file": "fin-tik-3.mp3",
+  "source": "Freesound",
+  "title": "ClipLoad2.wav",
+  "author": "BMacZero",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/BMacZero/sounds/94119/",
+  "seconds": 0.20898
+ },
+ {
+  "moment": "fin-tik",
+  "file": "fin-tik-4.mp3",
+  "source": "Freesound",
+  "title": "Click9.wav",
+  "author": "stijn",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/stijn/sounds/43689/",
+  "seconds": 0.0266667
+ },
+ {
+  "moment": "fin-tik",
+  "file": "fin-tik-5.mp3",
+  "source": "Freesound",
+  "title": "ratchet.wav",
+  "author": "Nomadyag",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/Nomadyag/sounds/193058/",
+  "seconds": 0.626938
+ },
+ {
+  "moment": "fin-klank",
+  "file": "fin-klank-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (fin/sfx-klank.mp3)"
+ },
+ {
+  "moment": "fin-klank",
+  "file": "fin-klank-1.mp3",
+  "source": "Freesound",
+  "title": "jp_circuitbox_locked01.flac",
+  "author": "JPolito",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/JPolito/sounds/391724/",
+  "seconds": 0.741948
+ },
+ {
+  "moment": "fin-klank",
+  "file": "fin-klank-2.mp3",
+  "source": "Freesound",
+  "title": "High Clank.aif",
+  "author": "R_mac",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/R_mac/sounds/241156/",
+  "seconds": 0.512494
+ },
+ {
+  "moment": "fin-klank",
+  "file": "fin-klank-3.mp3",
+  "source": "Freesound",
+  "title": "Tea Cup Clank.wav",
+  "author": "RossBell",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/RossBell/sounds/389432/",
+  "seconds": 1.03333
+ },
+ {
+  "moment": "fin-klank",
+  "file": "fin-klank-4.mp3",
+  "source": "Freesound",
+  "title": "mixing_bowl_clunk.wav",
+  "author": "StarTowerStudio",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/StarTowerStudio/sounds/424983/",
+  "seconds": 0.394739
+ },
+ {
+  "moment": "fin-klank",
+  "file": "fin-klank-5.mp3",
+  "source": "Freesound",
+  "title": "Bank Vault Combination Lock Sound - V6",
+  "author": "Pixeliota",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/Pixeliota/sounds/678254/",
+  "seconds": 1.9737
+ },
+ {
+  "moment": "fin-hint",
+  "file": "fin-hint-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (fin/sfx-hint.mp3)"
+ },
+ {
+  "moment": "fin-hint",
+  "file": "fin-hint-1.mp3",
+  "source": "Freesound",
+  "title": "Coin Flip Shimmer",
+  "author": "dpren",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/dpren/sounds/248143/",
+  "seconds": 0.823107
+ },
+ {
+  "moment": "fin-hint",
+  "file": "fin-hint-2.mp3",
+  "source": "Freesound",
+  "title": "Ice Magic Arrow_type 01",
+  "author": "lotteria001",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/lotteria001/sounds/709888/",
+  "seconds": 2.39646
+ },
+ {
+  "moment": "fin-hint",
+  "file": "fin-hint-3.mp3",
+  "source": "Freesound",
+  "title": "Teleport",
+  "author": "LilMati",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/LilMati/sounds/441225/",
+  "seconds": 2.54578
+ },
+ {
+  "moment": "fin-hint",
+  "file": "fin-hint-4.mp3",
+  "source": "Freesound",
+  "title": "Magic Circle Short Ringing SFX.mp3",
+  "author": "Ari_Glitch",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/Ari_Glitch/sounds/432287/",
+  "seconds": 1.71698
+ },
+ {
+  "moment": "fin-hint",
+  "file": "fin-hint-5.mp3",
+  "source": "Freesound",
+  "title": "Fantasy_ui_Button_6.wav",
+  "author": "ZenithInfinitiveStudios",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/ZenithInfinitiveStudios/sounds/376748/",
+  "seconds": 1.42197
+ },
+ {
+  "moment": "fin-gerommel",
+  "file": "fin-gerommel-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (fin/sfx-gerommel.mp3)"
+ },
+ {
+  "moment": "fin-gerommel",
+  "file": "fin-gerommel-1.mp3",
+  "source": "Freesound",
+  "title": "Rumble · fade in 10s",
+  "author": "unfa",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/unfa/sounds/258341/",
+  "seconds": 10
+ },
+ {
+  "moment": "fin-gerommel",
+  "file": "fin-gerommel-2.mp3",
+  "source": "Freesound",
+  "title": "Sounds For Earthquakes - Radiator Metal Rumbling.wav",
+  "author": "RutgerMuller",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/RutgerMuller/sounds/51097/",
+  "seconds": 7.42195
+ },
+ {
+  "moment": "fin-gerommel",
+  "file": "fin-gerommel-3.mp3",
+  "source": "Freesound",
+  "title": "moving stone platform.wav",
+  "author": "patchytherat",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/patchytherat/sounds/530988/",
+  "seconds": 3.16383
+ },
+ {
+  "moment": "fin-gerommel",
+  "file": "fin-gerommel-4.mp3",
+  "source": "Freesound",
+  "title": "quake and break.wav",
+  "author": "cheetahzbrain",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/cheetahzbrain/sounds/431859/",
+  "seconds": 7.23995
+ },
+ {
+  "moment": "fin-gerommel",
+  "file": "fin-gerommel-5.mp3",
+  "source": "Freesound",
+  "title": "7_ground.wav",
+  "author": "mariiao2",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/mariiao2/sounds/240361/",
+  "seconds": 4.94005
+ },
+ {
+  "moment": "fin-licht",
+  "file": "fin-licht-0.mp3",
+  "source": "Nu in het spel",
+  "title": "Huidig (donder-hard.mp3)"
+ },
+ {
+  "moment": "fin-licht",
+  "file": "fin-licht-1.mp3",
+  "source": "Freesound",
+  "title": "DO YOU SEE THE LIGHT!?",
+  "author": "HoBoTrails",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/HoBoTrails/sounds/424964/",
+  "seconds": 12.8435
+ },
+ {
+  "moment": "fin-licht",
+  "file": "fin-licht-2.mp3",
+  "source": "Freesound",
+  "title": "angelic distorted arc .wav",
+  "author": "martian",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/martian/sounds/200257/",
+  "seconds": 15.3707
+ },
+ {
+  "moment": "fin-licht",
+  "file": "fin-licht-3.mp3",
+  "source": "Freesound",
+  "title": "Angelic Sweep.wav",
+  "author": ".Andre_Onate",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/.Andre_Onate/sounds/147580/",
+  "seconds": 19.5602
+ },
+ {
+  "moment": "fin-licht",
+  "file": "fin-licht-4.mp3",
+  "source": "Freesound",
+  "title": "high note.aiff",
+  "author": "bevibeldesign",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/bevibeldesign/sounds/315942/",
+  "seconds": 11.7145
+ },
+ {
+  "moment": "fin-licht",
+  "file": "fin-licht-5.mp3",
+  "source": "Freesound",
+  "title": "cluster chord reverb.aiff",
+  "author": "bevibeldesign",
+  "license": "CC0 1.0",
+  "url": "https://freesound.org/people/bevibeldesign/sounds/315852/",
+  "seconds": 12.2485
+ }
+]

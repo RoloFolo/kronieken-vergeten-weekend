@@ -1,0 +1,173 @@
+<title>Kronieken Soundboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column of sound moments, grouped like the game (the relic chest, the finale and the end); each moment a
+   ledger row: what it must sound like on the left, the candidates to play and pick on the right. */
+:root {
+  --bg: #f4ede4; --panel: #fbf7f1; --line: #dccfbf; --fg: #24120d; --muted: #6e5a50; --accent: #9b1c24;
+  --accent-ink: #fff6ee; --bronze: #8a6430; --good: #3d7d39; --bad: #a23b3a;
+  --display: "Cinzel", "Palatino Linotype", Georgia, serif;
+  --ui: "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d0708; --panel: #170d0f; --line: #33221f; --fg: #efe3d4; --muted: #a89488; --accent: #e2323c;
+  --accent-ink: #fff3ec; --bronze: #d6b273; --good: #6fae6a; --bad: #e0716e; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0d0708; --panel: #170d0f; --line: #33221f; --fg: #efe3d4; --muted: #a89488; --accent: #e2323c;
+  --accent-ink: #fff3ec; --bronze: #d6b273; --good: #6fae6a; --bad: #e0716e; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--fg); font: 15px/1.5 var(--ui); padding: 0 16px 64px }
+.wrap { max-width: 1060px; margin: 0 auto }
+header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg);
+  border-bottom: 1px solid var(--line); padding-block: 14px 10px; margin: 0 -16px; padding-inline: 16px }
+.top .wrap { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center }
+h1 { font: 900 1.7rem/1.1 var(--display); margin: 0; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); text-wrap: balance }
+h1 small { display: block; font: 500 .74rem var(--mono); color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin-top: 4px }
+.tally { display: flex; gap: 14px; font: 500 .8rem var(--mono); color: var(--muted); margin-left: auto; font-variant-numeric: tabular-nums }
+.tally b { color: var(--fg); font-weight: 500 }
+.tally .c b { color: var(--good) } .tally .n b { color: var(--bad) }
+nav.groups { display: flex; flex-wrap: wrap; gap: 6px; width: 100% }
+nav.groups button, .filter { font: 600 .82rem var(--ui); background: transparent; color: var(--muted); border: 1px solid var(--line);
+  border-radius: 999px; padding: 5px 12px; cursor: pointer }
+nav.groups button[aria-pressed="true"] { color: var(--accent-ink); background: var(--accent); border-color: var(--accent) }
+.filter { margin-left: auto } .filter[aria-pressed="true"] { color: var(--fg); border-color: var(--fg) }
+.intro { color: var(--muted); max-width: 70ch; margin: 18px 0 8px; font-size: .95rem }
+.intro strong { color: var(--fg) }
+h2 { font: 700 1.25rem/1.2 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--bronze); margin: 34px 0 10px; display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap }
+h2 span { font: 500 .75rem var(--mono); color: var(--muted); letter-spacing: .06em; text-transform: none }
+.moment { display: grid; grid-template-columns: minmax(0, 16rem) minmax(0, 1fr); gap: 14px 22px; padding: 16px 0; border-top: 1px solid var(--line) }
+.moment.chosen .state { color: var(--good) } .moment.none .state { color: var(--bad) }
+.what h3 { margin: 0; font: 700 1.02rem/1.3 var(--ui) }
+.what .id { font: 500 .72rem var(--mono); color: var(--muted) }
+.what p { margin: 6px 0 0; color: var(--muted); font-size: .9rem }
+.state { font: 600 .74rem var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-top: 8px }
+.cands { display: grid; gap: 6px; min-width: 0 }
+.cand { display: grid; grid-template-columns: 38px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 6px 8px 6px 6px;
+  border: 1px solid var(--line); border-radius: 6px; background: var(--panel) }
+.cand.picked { border-color: var(--good); box-shadow: inset 3px 0 0 var(--good) }
+.play { width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); color: var(--fg); cursor: pointer; display: grid; place-items: center }
+.play:hover { border-color: var(--accent) } .play.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent) }
+.play svg { width: 14px; height: 14px; fill: currentColor }
+.meta { min-width: 0 }
+.meta .t { font-weight: 600; font-size: .92rem; overflow-wrap: anywhere }
+.meta .s { font: 400 .72rem var(--mono); color: var(--muted); overflow-wrap: anywhere }
+.meta .s a { color: inherit }
+.badge { font: 600 .66rem var(--mono); letter-spacing: .05em; text-transform: uppercase; padding: 1px 5px; border-radius: 3px; border: 1px solid var(--line); color: var(--muted); margin-right: 6px }
+.badge.nu { color: var(--bronze); border-color: var(--bronze) }
+.pick { font: 700 .8rem var(--ui); border: 1px solid var(--line); background: transparent; color: var(--fg); border-radius: 4px; padding: 6px 12px; cursor: pointer; white-space: nowrap }
+.pick:hover { border-color: var(--good) } .cand.picked .pick { background: var(--good); border-color: var(--good); color: var(--bg) }
+.acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 2px }
+.reject { font: 700 .8rem var(--ui); border: 1px solid var(--line); background: transparent; color: var(--bad); border-radius: 4px; padding: 6px 12px; cursor: pointer }
+.moment.none .reject { background: var(--bad); color: var(--bg); border-color: var(--bad) }
+.note { flex: 1 1 14rem; min-width: 0; font: .88rem var(--ui); background: var(--bg); color: var(--fg); border: 1px solid var(--line); border-radius: 4px; padding: 6px 8px }
+.empty { color: var(--muted); font-size: .9rem; padding: 8px 0 }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+button:disabled { opacity: .5; cursor: default }
+.ro { color: var(--muted); font: .8rem var(--mono) }
+@media (max-width: 640px) { .moment { grid-template-columns: minmax(0, 1fr) } .tally { margin-left: 0 } }
+@media (prefers-reduced-motion: no-preference) { .play, .pick, .reject { transition: background .15s, border-color .15s } }
+</style>
+
+<header class="top"><div class="wrap">
+  <h1>Kronieken Soundboard <small>reliekenkist · finale · einde</small></h1>
+  <div class="tally" aria-live="polite"><span class="c">gekozen <b id="nChosen">0</b></span><span class="n">geen goed <b id="nNone">0</b></span><span>open <b id="nOpen">0</b></span></div>
+  <nav class="groups" id="groups"></nav>
+</div></header>
+
+<main class="wrap">
+  <p class="intro">Per geluidsmoment staat bovenaan het geluid dat nu in het spel zit (<span class="badge nu" style="margin:0">nu</span>),
+    daaronder kandidaten van Freesound (alleen <strong>CC0</strong>, vrij te gebruiken). Kies per moment er één, of <strong>Geen goed</strong>
+    met een notitie wat je wél zoekt. Je keuze wordt direct bewaard; ik zet de gekozen geluiden daarna in het spel, of zoek een nieuwe ronde.</p>
+  <div id="list"><p class="empty">Geluiden laden…</p></div>
+</main>
+
+<script>
+(() => {
+  const PLAY = '<svg viewBox="0 0 10 10"><path d="M2 1l7 4-7 4z"/></svg>';
+  const STOP = '<svg viewBox="0 0 10 10"><path d="M2 2h6v6H2z"/></svg>';
+  let data = null, picks = {}, group = "all", openOnly = false, db = null, canWrite = true;
+  const audio = new Audio(); let playing = null;
+  audio.addEventListener("ended", () => setPlaying(null));
+  function setPlaying(btn) {
+    if (playing) { playing.classList.remove("on"); playing.innerHTML = PLAY; playing.setAttribute("aria-label", "Afspelen") }
+    playing = btn;
+    if (btn) { btn.classList.add("on"); btn.innerHTML = STOP; btn.setAttribute("aria-label", "Stop") }
+  }
+  function play(btn, c) {
+    if (playing === btn) { audio.pause(); setPlaying(null); return }
+    audio.pause(); setPlaying(btn); audio.src = c.file; audio.currentTime = 0;
+    audio.play().catch(() => { if (playing === btn) setPlaying(null) });
+  }
+  const statusOf = (id) => picks[id]?.status || "open";
+  function tally() {
+    let c = 0, n = 0, o = 0;
+    for (const g of data.groups) for (const m of g.moments) { const s = statusOf(m.id); if (s === "chosen") c++; else if (s === "none") n++; else o++ }
+    nChosen.textContent = c; nNone.textContent = n; nOpen.textContent = o;
+  }
+  async function save(id, body) {
+    picks[id] = { ...(picks[id] || {}), ...body, at: new Date().toISOString() };
+    render();
+    if (!db) return;
+    try { await db.collection("picks").doc(id).set(picks[id]) }
+    catch (e) { canWrite = false; render() }
+  }
+  function el(tag, cls, html) { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e }
+  const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const secs = (s) => s == null ? "" : (s < 10 ? s.toFixed(1) : Math.round(s)) + " s";
+  function renderGroups() {
+    const nav = document.getElementById("groups"); nav.innerHTML = "";
+    const add = (id, name) => { const b = el("button", null, esc(name)); b.setAttribute("aria-pressed", group === id); b.onclick = () => { group = id; renderGroups(); render() }; nav.append(b) };
+    add("all", "Alles"); for (const g of data.groups) add(g.id, g.name);
+    const f = el("button", "filter", "Alleen open"); f.setAttribute("aria-pressed", openOnly); f.onclick = () => { openOnly = !openOnly; renderGroups(); render() }; nav.append(f);
+  }
+  function render() {
+    const list = document.getElementById("list"); list.innerHTML = "";
+    for (const g of data.groups) {
+      if (group !== "all" && group !== g.id) continue;
+      const ms = g.moments.filter((m) => !openOnly || statusOf(m.id) === "open");
+      if (!ms.length) continue;
+      list.append(el("h2", null, `${esc(g.name)} <span>${ms.length} momenten</span>`));
+      for (const m of ms) {
+        const st = statusOf(m.id), p = picks[m.id] || {};
+        const row = el("section", "moment " + st); row.id = m.id;
+        const what = el("div", "what", `<h3>${esc(m.name)}</h3><div class="id">${esc(m.id)}</div><p>${esc(m.feel)}</p>`);
+        what.append(el("div", "state", st === "chosen" ? "gekozen" : st === "none" ? "geen goed" : "open"));
+        const cands = el("div", "cands");
+        if (!m.cands.length) cands.append(el("div", "empty", "Geen kandidaat gevonden."));
+        for (const c of m.cands) {
+          const picked = st === "chosen" && p.pick === c.file, nu = c.source === "Nu in het spel";
+          const r = el("div", "cand" + (picked ? " picked" : ""));
+          const b = el("button", "play", PLAY); b.setAttribute("aria-label", "Afspelen"); b.onclick = () => play(b, c);
+          const meta = el("div", "meta", `<div class="t">${nu ? '<span class="badge nu">nu</span>Het huidige geluid' : `<span class="badge">${esc(c.source)}</span>${esc(c.title)}`}</div>`
+            + (nu ? "" : `<div class="s">${esc(c.author)} · ${esc(c.license)}${c.seconds != null ? " · " + secs(c.seconds) : ""} · <a href="${esc(c.url)}" target="_blank" rel="noopener">bron</a></div>`));
+          const k = el("button", "pick", picked ? "Gekozen" : "Kies"); k.disabled = !canWrite;
+          k.onclick = () => save(m.id, picked ? { status: "open", pick: null } : { status: "chosen", pick: c.file });
+          r.append(b, meta, k); cands.append(r);
+        }
+        const acts = el("div", "acts");
+        const rej = el("button", "reject", st === "none" ? "Afgewezen" : "Geen goed"); rej.disabled = !canWrite;
+        rej.onclick = () => save(m.id, st === "none" ? { status: "open" } : { status: "none", pick: null });
+        const note = el("input", "note"); note.id = "note-" + m.id; note.placeholder = "Notitie: wat zoek je wél?"; note.value = p.note || ""; note.disabled = !canWrite;
+        note.onchange = () => save(m.id, { status: st, note: note.value.trim() });
+        acts.append(rej, note); cands.append(acts);
+        row.append(what, cands); list.append(row);
+      }
+    }
+    if (!canWrite) list.prepend(el("p", "ro", "Alleen-lezen: keuzes kunnen hier niet bewaard worden."));
+    tally();
+  }
+  fetch("sounds.json").then((r) => r.json()).then((d) => { data = d; renderGroups(); render(); connect() })
+    .catch(() => { document.getElementById("list").innerHTML = '<p class="empty">De lijst met geluiden kon niet laden.</p>' });
+  async function connect() {
+    try {
+      db = await window.claude?.use?.("db");
+      const user = await window.claude?.use?.("user");
+      if (user) { const w = await user.can("data.write"); if (w === false) canWrite = false }
+    } catch { db = null }
+    if (!db) { render(); return }
+    db.collection("picks").onSnapshot((snap) => { const next = {}; for (const d of snap.docs) next[d.id] = d.data(); picks = next; render() }, () => {});
+  }
+})();
+</script>

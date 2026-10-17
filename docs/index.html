@@ -950,13 +950,13 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=47"></script>
-<script src="a/spel.js?v=47"></script>
-<script src="a/wachters.js?v=47"></script>
-<script src="a/firebase-config.js?v=47"></script>
-<script src="a/koppeling.js?v=47"></script>
-<script src="a/rollen.js?v=47"></script>
-<script src="a/tafel.js?v=47"></script>
+<script src="a/events.js?v=48"></script>
+<script src="a/spel.js?v=48"></script>
+<script src="a/wachters.js?v=48"></script>
+<script src="a/firebase-config.js?v=48"></script>
+<script src="a/koppeling.js?v=48"></script>
+<script src="a/rollen.js?v=48"></script>
+<script src="a/tafel.js?v=48"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1508,9 +1508,9 @@ function kasteelIn(toonPaneel) {
   // Godfried speaks over the gate; when he is done the tasks come in
   t(14000, () => { $("tocht-intro").hidden = false; tochtStem = stemMet("tocht-intro", 1, () => t(1500, () => tochtIntroKlaar(toonPaneel)), 30000); });
 }
-// the torch procession: eleven Wachters climb the castle rock while the camera flies in, and reach the gate as it appears
-// (coordinates on the castle layer, so it moves with that layer)
-const FAKKEL_PAD = [[.4165, .734], [.344, .656], [.395, .5625], [.302, .516], [.344, .4375], [.25, .39], [.2085, .3125]];
+// the torch procession: once the camera is a little closer, eleven Wachters walk calmly up the last slope towards the
+// castle, one slanting line (coordinates on the castle layer, so it moves with that layer). They need not arrive.
+const FAKKEL_PAD = [[.037, .461], [.104, .43], [.156, .406], [.208, .383], [.25, .352], [.2625, .3125], [.255, .281]]; // drawn by the organisers: along the ridge, then up into the castle
 let fakkelStart = 0;
 function fakkeltocht(nu) {
   const c = $("fakkeltocht"), x = c.getContext("2d");
@@ -1522,11 +1522,12 @@ function fakkeltocht(nu) {
   const p = FAKKEL_PAD.map(([a, b]) => [a * W, b * H]), len = [0];
   for (let i = 1; i < p.length; i++) len.push(len[i - 1] + Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]));
   const op = (s) => { s *= len.at(-1); let i = 1; while (i < len.length - 1 && len[i] < s) i++; const f = (s - len[i - 1]) / (len[i] - len[i - 1]); return [p[i - 1][0] + (p[i][0] - p[i - 1][0]) * f, p[i - 1][1] + (p[i][1] - p[i - 1][1]) * f]; };
-  const t = (nu - fakkelStart) / 1000, kop = .1 + t * .17;
+  const t = (nu - fakkelStart) / 1000, zicht = Math.min(1, Math.max(0, (t - 1.8) / 1.4)), kop = .42 + Math.max(0, t - 1.8) * .04;
+  if (!zicht) return requestAnimationFrame(fakkeltocht);
   x.globalCompositeOperation = "lighter";
   for (let i = 0; i < 11; i++) {
-    const s = kop - i * .03; if (s < 0 || s > 1) continue; // not yet on the path, or already through the gate
-    const [px, py0] = op(s), fl = .75 + Math.random() * .35, r = W * .0026 * fl, py = py0 - Math.abs(Math.sin(t * 5 + i * 1.7)) * W * .0008;
+    const s = kop - i * .038; if (s < 0 || s > 1) continue;
+    const [px, py0] = op(s), fl = (.75 + Math.random() * .3) * zicht, r = W * .0021 * fl, py = py0 - Math.abs(Math.sin(t * 2.6 + i * 1.7)) * W * .0005;
     const g = x.createRadialGradient(px, py, 0, px, py, r * 3);
     g.addColorStop(0, `rgba(255,238,195,${.95 * fl})`); g.addColorStop(.25, `rgba(255,160,60,${.7 * fl})`); g.addColorStop(1, "rgba(255,90,20,0)");
     x.fillStyle = g; x.beginPath(); x.arc(px, py, r * 3, 0, Math.PI * 2); x.fill();
