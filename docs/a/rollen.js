@@ -57,6 +57,6 @@ window.ROL_VAN = {
 
 // Wanneer de persoonlijke pagina de rol laat zien: zodra de tv de Guild Hall opent (na de Eerste Dronk).
 // Zonder verbinding met de tv gaat hij uiterlijk op dit moment vanzelf open.
-window.ROL_UITERLIJK = new Date("2026-11-13T18:00:00+01:00");
+window.ROL_UITERLIJK = new Date("2026-11-13T21:00:00+01:00");
 // Het eed-fragment verschijnt pas als de regie Akte III opent; zonder verbinding uiterlijk op dit moment.
 window.EED_UITERLIJK = new Date("2026-11-15T08:00:00+01:00");

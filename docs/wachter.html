@@ -198,7 +198,7 @@ body.in-frame main { visibility: hidden; }
     </div>
     <button class="spreek" type="button" id="b-spreek" aria-pressed="false">▶ Laat Godfried spreken</button>
     <div class="klok" id="klok" aria-live="off"><div><b id="k-d">00</b><span>dagen</span></div><div><b id="k-u">00</b><span>uur</span></div><div><b id="k-m">00</b><span>min</span></div><div><b id="k-s">00</b><span>sec</span></div></div>
-    <p class="wanneer">Vrijdag 13 november, 12:00 · de Ardennen</p>
+    <p class="wanneer">Vrijdag 13 november, 16:00 · de Ardennen</p>
   </section>
 
   <!-- before the weekend: the order (homework), the request for memories, step 2 and step 3 -->
@@ -250,13 +250,13 @@ body.in-frame main { visibility: hidden; }
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=50"></script>
-<script src="a/spel.js?v=50"></script>
-<script src="a/rollen.js?v=50"></script>
-<script src="a/firebase-config.js?v=50"></script>
-<script src="a/koppeling.js?v=50"></script>
-<script src="a/tafel.js?v=50"></script>
-<script src="a/voorbereiding.js?v=50"></script>
+<script src="a/wachters.js?v=51"></script>
+<script src="a/spel.js?v=51"></script>
+<script src="a/rollen.js?v=51"></script>
+<script src="a/firebase-config.js?v=51"></script>
+<script src="a/koppeling.js?v=51"></script>
+<script src="a/tafel.js?v=51"></script>
+<script src="a/voorbereiding.js?v=51"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -264,7 +264,7 @@ const $ = (id) => document.getElementById(id);
   if (eerste === null) eerste = v; else if (v && v !== eerste && !document.activeElement?.matches?.("input, textarea")) location.reload(); } catch {} };
   kijk(); setInterval(kijk, 60000); })();
 
-const START = new Date("2026-11-13T12:00:00+01:00");
+const START = new Date("2026-11-13T16:00:00+01:00");
 const ZEGEL = { vlam: "Vlam van Waakzaamheid", hoorn: "Hoorn van Overvloed", schild: "Schild van Broederschap", hart: "Hart van de Ardennen" };
 // Firebase: everyone logs in with his own account (#naam only prefills the e-mail address).
 // Without Firebase (local server): the personal token in the link decides who you are.

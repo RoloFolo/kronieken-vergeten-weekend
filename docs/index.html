@@ -819,7 +819,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
           <div><span class="carved" id="af-m">00</span><small>minuten</small></div><b class="carved">:</b>
           <div><span class="carved" id="af-s">00</span><small>seconden</small></div>
         </div>
-        <p class="welkom-sub">ontwaakt de Schaduw. Vrijdag 13 november, 12:00 uur, Bouillon.</p>
+        <p class="welkom-sub">ontwaakt de Schaduw. Vrijdag 13 november, 16:00 uur, Bouillon.</p>
       </div>
       <div class="binnen" id="binnen" hidden>
         <h1 class="welkom carved">Welkom, Wachters</h1>
@@ -950,14 +950,14 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=50"></script>
-<script src="a/spel.js?v=50"></script>
-<script src="a/voorbereiding.js?v=50"></script>
-<script src="a/wachters.js?v=50"></script>
-<script src="a/firebase-config.js?v=50"></script>
-<script src="a/koppeling.js?v=50"></script>
-<script src="a/rollen.js?v=50"></script>
-<script src="a/tafel.js?v=50"></script>
+<script src="a/events.js?v=51"></script>
+<script src="a/spel.js?v=51"></script>
+<script src="a/voorbereiding.js?v=51"></script>
+<script src="a/wachters.js?v=51"></script>
+<script src="a/firebase-config.js?v=51"></script>
+<script src="a/koppeling.js?v=51"></script>
+<script src="a/rollen.js?v=51"></script>
+<script src="a/tafel.js?v=51"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1310,7 +1310,7 @@ function flits() { const f = $("flash"); f.style.setProperty("--fx", `${20 + Mat
 if (new URLSearchParams(location.search).has("test")) $("regie").hidden = false;
 
 /* ================= countdown to the weekend ================= */
-const START = new Date("2026-11-13T12:00:00+01:00");
+const START = new Date("2026-11-13T16:00:00+01:00");
 const twee = (n) => String(n).padStart(2, "0");
 let aftelTimer = null;
 function aftellen() {
