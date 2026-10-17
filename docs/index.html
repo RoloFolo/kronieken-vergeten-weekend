@@ -971,14 +971,14 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=72"></script>
-<script src="a/spel.js?v=72"></script>
-<script src="a/voorbereiding.js?v=72"></script>
-<script src="a/wachters.js?v=72"></script>
-<script src="a/firebase-config.js?v=72"></script>
-<script src="a/koppeling.js?v=72"></script>
-<script src="a/rollen.js?v=72"></script>
-<script src="a/tafel.js?v=72"></script>
+<script src="a/events.js?v=73"></script>
+<script src="a/spel.js?v=73"></script>
+<script src="a/voorbereiding.js?v=73"></script>
+<script src="a/wachters.js?v=73"></script>
+<script src="a/firebase-config.js?v=73"></script>
+<script src="a/koppeling.js?v=73"></script>
+<script src="a/rollen.js?v=73"></script>
+<script src="a/tafel.js?v=73"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1861,7 +1861,9 @@ function aktePuzzelInfo() {
 // gold with a word from Godfried, a wrong one shakes the card while the Shadow King laughs. A finished act zooms into the
 // lock: its wheel spins, clanks onto the digit, Godfried names it and the medallion turns gold. Four digits: the door gives way.
 // Regie "Volgende stap" skips whatever is playing.
-const G_ROL = [.4302, .4768, .5239, .5708], G_NIS = [[.4219, .3517], [.5786, .3507], [.4214, .6455], [.5792, .6465]]; // measured on the painting
+const G_ROL = [.4302, .4768, .5239, .5708], G_NIS = [[.4206, .3499], [.5798, .3533], [.4208, .647], [.58, .6474]]; // measured on the painting (circle fits on the sockets' rims)
+// the medallion images fill their canvas differently; each is sized so its disc just covers the socket (about 5.6% of the door picture)
+const G_SCHIJF = { vlam: .905, hoorn: .971, schild: .971, hart: .89 };
 const ROMEIN = ["I", "II", "III", "IV"];
 let gTimers = [], gStem = null, gTik = null, gLaatste = {};
 const gT = (ms, fn) => gTimers.push(setTimeout(fn, ms));
@@ -1878,7 +1880,7 @@ function bouwGewelf() {
   if ($("g-rollen").children.length) return;
   const strip = `<b class="rune">ᛟ</b>` + [0, 1, 2].map(() => [...Array(10).keys()].map((d) => `<b>${d}</b>`).join("")).join("");
   $("g-rollen").innerHTML = G_ROL.map((x, i) => `<div class="g-rol" id="g-rol-${i}" style="left:${(x - .0132) * 100}%;top:46.34%;width:2.64%;height:7.16%"><div class="g-strip">${strip}</div></div>`).join("");
-  $("g-nissen").innerHTML = S.aktes.map((a, i) => `<div class="g-nis" id="g-nis-${i}" style="left:${G_NIS[i][0] * 100}%;top:${G_NIS[i][1] * 100}%"><img src="${medaille(a.zegel)}" alt=""></div>`).join("");
+  $("g-nissen").innerHTML = S.aktes.map((a, i) => `<div class="g-nis" id="g-nis-${i}" style="left:${G_NIS[i][0] * 100}%;top:${G_NIS[i][1] * 100}%;width:${(5.6 / (G_SCHIJF[a.zegel] || .93)).toFixed(2)}cqi"><img src="${medaille(a.zegel)}" alt=""></div>`).join("");
 }
 // the still picture of the current state (wheels, sockets); the card only when it is up
 function tekenFinale() {
@@ -1894,6 +1896,7 @@ function tekenFinale() {
 function kaartHtml() {
   const a = S.aktes[fin.nu], open = fin.open[a.zegel] || zegelVol(a.zegel), stap = fin.voortgang[a.zegel]?.length ?? 0;
   let h = `<div class="g-kop"><img src="${medaille(a.zegel)}" alt=""><span>Akte ${ROMEIN[fin.nu]}</span><b class="carved">${a.naam}</b></div>`;
+  if (fin.opgelost[a.zegel] && a.soort === "eed") h += `<p class="vraag eed">“${S.eed.fragmenten.join(" ")}”</p>`; // the sworn oath stays on the card
   if (fin.opgelost[a.zegel]) return h + `<p class="vraag">Volbracht. Het ${["eerste", "tweede", "derde", "vierde"][fin.nu]} cijfer is <b>${S.slotcode[fin.nu]}</b>.</p>`;
   if (!open) return h + `<p class="dichtbord">Dit Zegel is niet sterk genoeg om zijn geheim prijs te geven. Doorsta eerst een laatste beproeving.</p>`;
   const p = aktePuzzel(a);
@@ -1945,7 +1948,7 @@ function antwoord(w) {
   const k = $("g-kaart"); k.classList.remove("goed", "fout"); void k.offsetWidth;
   if (p.check(w)) {
     p.goed(); flits("goud"); k.classList.add("goed"); speel("fin/sfx-goed", .9);
-    if (aktePuzzel(a).klaar) { fin.opgelost[a.zegel] = true; meld(); return cijferValt(fin.nu); } // the act is complete: its digit falls into the lock
+    if (aktePuzzel(a).klaar) { fin.opgelost[a.zegel] = true; meld(); if (a.soort === "eed") { kaartWissel(); return cijferValt(fin.nu, 10000); } return cijferValt(fin.nu); } // the act is complete: its digit falls into the lock
     meld(); gT(350, () => gZeg(gWillekeurig("goed"), () => {}, 5000)); gT(2000, kaartWissel); gT(2400, () => { gTimers = []; });
   } else {
     flits("rood"); k.classList.add("fout"); speel("fin/sfx-fout", .8); speel("donder", .45);
@@ -1953,17 +1956,18 @@ function antwoord(w) {
     gT(450, () => gZeg(gWillekeurig("fout"), () => { gTimers = []; }, 7000));
   }
 }
-function cijferValt(i) {
+function cijferValt(i, lees = 0) {
+  if (lees) { gStop(); return gT(lees, () => cijferValt(i)); } // first time to read the card (the sworn oath)
   gStop(); const r = $(`g-rol-${i}`);
   gT(1500, () => { kaartWeg(); }); gT(2200, () => gCam("slot"));
   gT(4600, () => { // the wheel spins down onto its digit, ticking slower and slower
     r.classList.add("draai"); r.style.setProperty("--i", 21 + S.slotcode[i]);
     let t = 0; const tik = () => { speel("fin/sfx-tik", .55, .9 + Math.random() * .2); t++; gTik = setTimeout(tik, 70 + t * t * 4); }; tik();
   });
-  gT(7400, () => { clearTimeout(gTik); r.classList.remove("draai"); r.classList.add("vast", "klank"); speel("fin/sfx-klank", 1); flits("goud");
+  gT(7400, () => { clearTimeout(gTik); r.classList.remove("draai"); r.classList.add("vast", "klank"); const zwel = speel("fin/sfx-gewonnen", .65); setTimeout(() => fade(zwel, .22, 1500), 1800); flits("goud"); // a warm, long victory swell (no shrill clank), softer under Godfried
     setTimeout(() => r.classList.remove("klank"), 600);
     gT(600, () => gZeg(`cijfer-${i + 1}`, () => {
-      gCam(""); gT(1600, () => { const n = $(`g-nis-${i}`); n.classList.remove("actief"); n.classList.add("vast", "net"); speel("fin/sfx-open", .7); setTimeout(() => n.classList.remove("net"), 1800); });
+      gCam(""); gT(1600, () => { const n = $(`g-nis-${i}`); n.classList.remove("actief"); n.classList.add("vast", "net"); setTimeout(() => n.classList.remove("net"), 1800); });
       if (S.aktes.every((x) => fin.opgelost[x.zegel])) gT(4200, deurOpen);
       else gT(5200, () => { fin.nu = S.aktes.findIndex((x) => !fin.opgelost[x.zegel]); meld(); akteIn(); });
     }, 9000));
