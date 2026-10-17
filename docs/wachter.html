@@ -281,13 +281,13 @@ body.in-frame main { visibility: hidden; }
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=55"></script>
-<script src="a/spel.js?v=55"></script>
-<script src="a/rollen.js?v=55"></script>
-<script src="a/firebase-config.js?v=55"></script>
-<script src="a/koppeling.js?v=55"></script>
-<script src="a/tafel.js?v=55"></script>
-<script src="a/voorbereiding.js?v=55"></script>
+<script src="a/wachters.js?v=56"></script>
+<script src="a/spel.js?v=56"></script>
+<script src="a/rollen.js?v=56"></script>
+<script src="a/firebase-config.js?v=56"></script>
+<script src="a/koppeling.js?v=56"></script>
+<script src="a/tafel.js?v=56"></script>
+<script src="a/voorbereiding.js?v=56"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -384,7 +384,7 @@ function tekenTocht() {
 // small UI sounds (CC0, from Gloryfield). Off with the button at the bottom; remembered on this phone.
 let geluidAan = true; try { geluidAan = localStorage.getItem("kronieken-geluid") !== "uit"; } catch {}
 function piep(naam, vol = .55) { if (!geluidAan) return; const a = new Audio(naam === "klok" ? "a/klok.mp3" : `a/app/${naam}.mp3`); a.volume = vol; a.play().catch(() => {}); }
-function zetGeluidKnop() { $("b-geluid").textContent = geluidAan ? "Geluid: aan" : "Geluid: uit"; }
+function zetGeluidKnop() { $("b-geluid").textContent = geluidAan ? "🔊 Geluid staat aan · tik om uit te zetten" : "🔇 Geluid staat uit · tik om aan te zetten"; }
 $("b-geluid").onclick = () => { geluidAan = !geluidAan; try { localStorage.setItem("kronieken-geluid", geluidAan ? "aan" : "uit"); } catch {} zetGeluidKnop(); piep("tik", .4); };
 zetGeluidKnop();
 let wasVerrader = null, isVerrader = false;
