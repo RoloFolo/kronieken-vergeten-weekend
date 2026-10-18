@@ -7,7 +7,7 @@
   // per portrait: face centre (x, y as a fraction of the 2:3 painting) and face width (fraction of the painting's width),
   // so every face fills the same share of its circle however big it was painted
   const GEZICHT = { Geert: [.565, .165, .145], Roy: [.48, .13, .128], Martin: [.62, .29, .175], Stefan: [.52, .19, .235], Jeroen: [.5, .15, .128], Ivo: [.55, .3, .206],
-    Johan: [.57, .18, .1375], Robin: [.515, .225, .14], Rob: [.555, .182, .14], Jean: [.575, .27, .18], Roland: [.33, .24, .132] };
+    Johan: [.57, .18, .1375], Robin: [.515, .225, .118], Rob: [.555, .182, .12], Jean: [.575, .27, .18], Roland: [.33, .24, .132] };
   let data = {}; const wachters = [];
   window.Portret = {
     zet(p) { data = p || {}; wachters.forEach((fn) => { try { fn(); } catch {} }); },
