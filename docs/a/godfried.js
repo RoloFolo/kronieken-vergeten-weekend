@@ -9,7 +9,7 @@ window.GODFRIED = {
   hoofdstukken: [
     { nr: 1, titel: "Hoofdstuk I · De oproep", wanneer: "vrijdag, de opening", beeld: "a/godfried/kantelen.webp", stem: "godfried/hoofdstuk-1",
       // a small camera move per panel: pan from → to (object-position), or zoom in / out
-      vakken: [{ b: "a/strip/1a.webp", van: "88% 30%", naar: "52% 30%" }, { b: "a/strip/1b.webp", van: "50% 80%", naar: "50% 42%" }, { b: "a/godfried/strip/1c.webp", pos: "45% 45%", zoom: "in" }, { b: "a/godfried/strip/1d.webp", pos: "55% 28%", zoom: "uit" }], vakVan: [0, 1, 2, 3],
+      vakken: [{ b: "a/strip/1a.webp", van: "88% 30%", naar: "52% 30%" }, { b: "a/strip/1b.webp", van: "50% 80%", naar: "50% 26%" }, { b: "a/godfried/strip/1c.webp", pos: "45% 45%", zoom: "in" }, { b: "a/godfried/strip/1d.webp", pos: "55% 28%", zoom: "uit" }], vakVan: [0, 1, 2, 3],
       blad: { kol: "0.95fr 1fr 1.1fr", rij: "1fr 1fr", vlak: ["a b b", "a c d"] }, tekst: [
       "Het jaar des Heren 1096. Mijn naam is Godfried. Godfried van Bouillon.",
       "Hertog van Neder-Lotharingen. En heer van deze burcht, hoog op de rots boven de Semois, in het hart van de Ardennen.",
