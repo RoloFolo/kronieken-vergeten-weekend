@@ -1091,7 +1091,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <div class="g-titel" id="g-titel"><span class="carved" id="g-titel-nr"></span><h2 class="carved" id="g-titel-naam"></h2></div>
     <div class="g-kaart" id="g-kaart"><div class="g-inhoud" id="g-inhoud"></div><div class="g-stempel carved" id="g-stempel"></div></div>
   </div>
-  <div class="verteller" id="verteller" hidden aria-live="polite"><img class="vt-beeld" id="vt-beeld" alt=""><div class="vt-blad" id="vt-blad"></div><div class="vt-tekst"><div class="vt-kop carved" id="vt-kop"></div><div class="vt-zinnen" id="vt-zinnen"></div></div></div>
+  <div class="verteller" id="verteller" hidden aria-live="polite"><img class="vt-beeld" id="vt-beeld" alt=""><div class="vt-blad" id="vt-blad"></div><button class="enter sla-over" id="vt-verder" type="button"><span class="carved">Verder</span></button><div class="vt-tekst"><div class="vt-kop carved" id="vt-kop"></div><div class="vt-zinnen" id="vt-zinnen"></div></div></div>
   <div class="gquiz" id="gquiz" hidden aria-live="polite"><div class="gq-portret"><img src="a/godfried/portret.webp" alt="Godfried van Bouillon"></div>
     <div class="gq-kaart"><div class="gq-kop carved" id="gq-kop"></div><div class="gq-zegels" id="gq-zegels"></div><div class="gq-zegel" id="gq-zegel"></div><div class="gq-vraag" id="gq-vraag"></div><div class="gq-antwoord carved" id="gq-antwoord"></div></div></div>
   <div class="puntstrook" id="puntstrook" aria-live="polite"></div>
@@ -1192,16 +1192,16 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=110"></script>
-<script src="a/godfried.js?v=110"></script>
-<script src="a/spel.js?v=110"></script>
-<script src="a/voorbereiding.js?v=110"></script>
-<script src="a/wachters.js?v=110"></script>
-<script src="a/firebase-config.js?v=110"></script>
-<script src="a/portretten.js?v=110"></script>
-<script src="a/koppeling.js?v=110"></script>
-<script src="a/rollen.js?v=110"></script>
-<script src="a/tafel.js?v=110"></script>
+<script src="a/events.js?v=111"></script>
+<script src="a/godfried.js?v=111"></script>
+<script src="a/spel.js?v=111"></script>
+<script src="a/voorbereiding.js?v=111"></script>
+<script src="a/wachters.js?v=111"></script>
+<script src="a/firebase-config.js?v=111"></script>
+<script src="a/portretten.js?v=111"></script>
+<script src="a/koppeling.js?v=111"></script>
+<script src="a/rollen.js?v=111"></script>
+<script src="a/tafel.js?v=111"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1729,6 +1729,7 @@ function verderIntro() {
   if (uitlegActief) return volgendeUitleg();
 }
 $("sla-over").onclick = verderIntro;
+$("vt-verder").onclick = () => vertelSla(); // skip the chapter, the game goes on
 $("uitleg-verder").onclick = () => { if (uitlegActief) stopUitleg(); }; // skip the rest of the tutorial
 
 /* ================= entering ================= */
