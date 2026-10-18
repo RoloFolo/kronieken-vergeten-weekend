@@ -353,13 +353,13 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=76"></script>
-<script src="a/spel.js?v=76"></script>
-<script src="a/rollen.js?v=76"></script>
-<script src="a/firebase-config.js?v=76"></script>
-<script src="a/koppeling.js?v=76"></script>
-<script src="a/tafel.js?v=76"></script>
-<script src="a/voorbereiding.js?v=76"></script>
+<script src="a/wachters.js?v=77"></script>
+<script src="a/spel.js?v=77"></script>
+<script src="a/rollen.js?v=77"></script>
+<script src="a/firebase-config.js?v=77"></script>
+<script src="a/koppeling.js?v=77"></script>
+<script src="a/tafel.js?v=77"></script>
+<script src="a/voorbereiding.js?v=77"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -522,7 +522,7 @@ const lokaal = (k, w) => { try { if (w === undefined) return localStorage.getIte
 const naamKlein = () => (wachter?.naam || "").toLowerCase();
 function welkomTekst() {
   return [`Wachter ${wachter.naam}. Ik ben Godfried van Bouillon.`, "Binnenkort ontwaakt de Schaduw onder mijn kasteel, en ik roep elf Wachters bijeen. Jij bent er één van.",
-    "Je rol rust nog onder mijn zegel… maar één bevel geef ik je nu al. En ik vraag je om hulp."];
+    V.bevelen?.[wachter.naam] ? "Je rol rust nog onder mijn zegel… maar één bevel geef ik je nu al. En ik vraag je om hulp." : "Je rol rust nog onder mijn zegel… maar ik vraag je nu al om hulp."];
 }
 function maakLus(bron, vol) {
   const sp = [new Audio(bron), new Audio(bron)]; let i = 0, doel = vol, aan = false, timer = null;

@@ -51,8 +51,8 @@ window.ROLLEN = [
 
 // Wie krijgt welke rol. VOORSTEL (zie Drive: 09 Voorstel rollen en bevelen), nog te bevestigen door Roland en Jean.
 window.ROL_VAN = {
-  Robin: "firekeeper", Martin: "alchemist", Jeroen: "feastlord", Roy: "quartermaster", Ivo: "priester", Stefan: "ranger",
-  Johan: "warlord", Geert: "bard", Rob: "diplomat", Jean: "shadow", Roland: "shieldbearer",
+  Robin: "firekeeper", Martin: "alchemist", Jeroen: "feastlord", Roy: "quartermaster", Ivo: "bard", Stefan: "ranger",
+  Johan: "warlord", Geert: "priester", Rob: "diplomat", Jean: "shadow", Roland: "shieldbearer",
 };
 
 // Wanneer de persoonlijke pagina de rol laat zien: zodra de tv de Guild Hall opent (na de Eerste Dronk).
