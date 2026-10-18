@@ -429,6 +429,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .zaal .z-tafel { position: absolute; left: 35.57%; top: 35.26%; width: 29.17%; transform: scale(.4) rotate(-80deg); opacity: 0; transition: transform 2.4s cubic-bezier(.15,.85,.3,1) .9s, opacity 1.2s ease .9s; }
 .stage.in-zaal .zaal .z-tafel { transform: none; opacity: 1; }
 .zaal .z-ring { position: absolute; inset: 0; }
+.zaal .z-stoel { z-index: 1; } .zaal .z-zit { z-index: 2; } /* faces and names above the chairs */
 .zaal .z-zit.verschuif { transition: left 1.4s cubic-bezier(.5,0,.2,1), top 1.4s cubic-bezier(.5,0,.2,1); }
 .zaal .z-zit .gz { position: absolute; inset: 6%; border-radius: 50%; border: .22cqi solid #b8955f; background-color: #1a0d0e; box-shadow: 0 0 0 .15cqi #000, 0 .3cqi .6cqi rgba(0,0,0,.9); transition: transform .5s, box-shadow .5s; }
 .zaal .z-zit .m.met-gezicht > img { visibility: hidden; }
@@ -439,9 +440,25 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .zaal .z-licht { position: absolute; left: 2.5vw; top: 50%; translate: 0 -50%; height: 70vh; aspect-ratio: 2 / 3; opacity: 0; transition: opacity 1s ease; z-index: 3; }
 .stage.in-zaal .zaal .z-licht.aan { opacity: 1; }
 .zaal .z-licht img { width: 100%; height: 100%; object-fit: cover; border: 3px solid #d9b77a; box-shadow: 0 0 0 2px #000, 0 0 50px rgba(110,200,255,.35), 0 20px 40px #000; }
-.zaal .z-licht div { position: absolute; left: 0; right: 0; bottom: 0; padding: 4vh 1vw 2vh; text-align: center; background: linear-gradient(180deg, transparent, rgba(7,4,5,.92) 45%); }
+.zaal .z-licht > div { position: absolute; left: 0; right: 0; bottom: 0; padding: 9vh 1vw 2.2vh; text-align: center; background: linear-gradient(180deg, transparent, rgba(7,4,5,.92) 45%); }
 .zaal .z-licht b { display: block; font: 700 clamp(18px, 2vw, 42px)/1 var(--carved); letter-spacing: .06em; text-transform: uppercase; color: #fff3dc; }
 .zaal .z-licht span { display: block; margin-top: .8vh; font: 700 clamp(14px, 1.3vw, 28px)/1 var(--carved); color: #ffd98a; }
+.zaal .z-licht small { display: block; margin-top: .6vh; font: 600 clamp(11px, .95vw, 20px)/1.2 var(--carved); letter-spacing: .16em; text-transform: uppercase; color: var(--bone); }
+.zaal .z-licht .z-rol { display: flex; align-items: center; justify-content: center; gap: .6vw; margin-top: 1vh; font: italic clamp(13px, 1.15vw, 24px)/1.2 var(--display); color: #e8d6b4; }
+.zaal .z-licht .z-rol img { width: clamp(34px, 3.2vw, 66px); height: auto; border: 0; box-shadow: none; filter: drop-shadow(0 2px 6px #000); }
+/* right: everything he did for XP */
+.zaal .z-daden { position: absolute; right: 2.5vw; top: 50%; translate: 0 -50%; width: 25vw; max-height: 70vh; display: grid; align-content: start; gap: 1.2vh; padding: 2.4vh 1.4vw; overflow: hidden; opacity: 0; transition: opacity 1s ease; z-index: 3;
+  background: linear-gradient(180deg, rgba(30,10,12,.92), rgba(10,5,6,.95)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.4), 0 20px 50px #000; }
+.stage.in-zaal .zaal .z-daden.aan { opacity: 1; }
+.zaal .z-daden h3 { margin: 0; font: 700 clamp(13px, 1.15vw, 24px)/1 var(--carved); letter-spacing: .28em; text-transform: uppercase; color: var(--ash); text-align: center; }
+.zaal .z-daden .z-totaal { text-align: center; font: 700 clamp(22px, 2.2vw, 46px)/1 var(--carved); color: #ffd98a; }
+.zaal .z-daden .z-totaal small { display: block; margin-top: .6vh; font: 600 clamp(11px, .9vw, 18px)/1 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: var(--ash); }
+.zaal .z-daden ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 1vh; }
+.zaal .z-daden li { display: grid; grid-template-columns: auto 1fr; gap: .2vh .8vw; align-items: center; padding-bottom: 1vh; border-bottom: 1px solid rgba(184,149,95,.2); }
+.zaal .z-daden li img { grid-row: span 2; width: clamp(26px, 2.2vw, 46px); }
+.zaal .z-daden li b { font: 700 clamp(14px, 1.2vw, 26px)/1.1 var(--carved); color: #ffd98a; } .zaal .z-daden li b.min { color: #ff8a80; }
+.zaal .z-daden li span { font: italic clamp(13px, 1.1vw, 23px)/1.3 var(--display); color: var(--bone); }
+.zaal .z-daden .leeg { text-align: center; font: italic clamp(14px, 1.15vw, 24px)/1.4 var(--display); color: var(--ash); }
 .zaal .z-tijd { position: absolute; left: 30vw; right: 30vw; bottom: 2.5vh; height: 5px; background: rgba(255,255,255,.1); border-radius: 3px; overflow: hidden; opacity: 0; transition: opacity .6s; }
 .zaal .z-tijd.aan { opacity: 1; } .zaal .z-tijd i { display: block; height: 100%; background: linear-gradient(90deg, var(--ember), #ffb05a); transform-origin: left; }
 .zaal .z-stoel { position: absolute; width: 5.6cqi; translate: -50% -50%; filter: drop-shadow(0 .5cqi .8cqi #000); opacity: 0; transform: rotate(var(--hoek)) translateY(-2.5cqi) scale(.7);
@@ -1115,6 +1132,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
       <div class="z-kaart" id="z-kaart"></div>
     </div>
     <div class="z-licht" id="z-licht"></div>
+    <div class="z-daden" id="z-daden"></div>
     <div class="z-tijd" id="z-tijd"><i id="z-tijd-balk"></i></div>
     <h1 class="z-titel carved">De Ronde Tafel</h1>
   </div>
@@ -1192,16 +1210,16 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=112"></script>
-<script src="a/godfried.js?v=112"></script>
-<script src="a/spel.js?v=112"></script>
-<script src="a/voorbereiding.js?v=112"></script>
-<script src="a/wachters.js?v=112"></script>
-<script src="a/firebase-config.js?v=112"></script>
-<script src="a/portretten.js?v=112"></script>
-<script src="a/koppeling.js?v=112"></script>
-<script src="a/rollen.js?v=112"></script>
-<script src="a/tafel.js?v=112"></script>
+<script src="a/events.js?v=113"></script>
+<script src="a/godfried.js?v=113"></script>
+<script src="a/spel.js?v=113"></script>
+<script src="a/voorbereiding.js?v=113"></script>
+<script src="a/wachters.js?v=113"></script>
+<script src="a/firebase-config.js?v=113"></script>
+<script src="a/portretten.js?v=113"></script>
+<script src="a/koppeling.js?v=113"></script>
+<script src="a/rollen.js?v=113"></script>
+<script src="a/tafel.js?v=113"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1956,12 +1974,12 @@ function kistRitueel() {
     }, t + 1200);
   }, 12000), 1600);
 }
-// the standing at the tv table, like the app: the leader in the middle at the front, then alternately left and right; faces, place and XP
+// the standing at the tv table, like the app: number 1 at the head, the rest clockwise; faces, place and XP
 const ZAAL_PLEK = [];
 function zaalStand() {
   const W = window.WACHTERS || [], n = W.length, stand = scorebordData().stand;
   const volgorde = [...W].sort((a, b) => (stand[b.naam] || 0) - (stand[a.naam] || 0) || W.indexOf(a) - W.indexOf(b));
-  const stoelen = [...Array(n).keys()].sort((a, b) => Math.abs(a - (n - 1) / 2) - Math.abs(b - (n - 1) / 2) || a - b); // middle first
+  const stoelen = [...Array(n).keys()]; // like the app: number 1 at the top beside the hearth, then clockwise
   const iemand = Object.values(stand).some((x) => x);
   document.querySelectorAll("#z-ring .z-zit").forEach((z) => {
     const naam = z.dataset.naam, r = volgorde.findIndex((w) => w.naam === naam), [x, y] = ZAAL_PLEK[stoelen[r]] || [];
@@ -1975,7 +1993,14 @@ function zaalStand() {
 Portret.op(() => { if (paneelNu === "tafel") zaalStand(); });
 function zaalKaart(w) {
   const rol = Tafel.rolVan(w), lt = $("z-licht"), u = PORTRET[w.naam] || Portret.url(w.naam), xp = scorebordData().stand[w.naam] || 0;
-  lt.classList.toggle("aan", !!u); if (u) lt.innerHTML = `<img src="${u}" alt=""><div><b>${schoon(w.naam)}</b><span>${xp} XP</span></div>`; document.querySelectorAll("#z-ring .z-zit").forEach((z) => z.classList.toggle("licht", z.dataset.naam === w.naam));
+  const k = window.KARAKTER?.[w.naam];
+  lt.classList.toggle("aan", !!u); if (u) lt.innerHTML = `<img src="${u}" alt=""><div><b>${schoon(w.naam)}</b>${k ? `<small>${schoon(k.ras)} ${schoon(k.klasse)}</small>` : ""}${rol ? `<div class="z-rol"><img src="a/rollen/${rol.id}.webp" alt="">${schoon(rol.naam)}</div>` : ""}</div>`;
+  // right: his deeds, newest first, with the Seal and the reason; his total and his place
+  const daden = logboek.filter((l) => l.type === "punt" && l.naam === w.naam).reverse(), stand = scorebordData().stand;
+  const plek = Object.entries(stand).sort((a, b) => b[1] - a[1]).findIndex(([n]) => n === w.naam) + 1;
+  $("z-daden").innerHTML = `<h3>Zijn daden</h3><div class="z-totaal">${xp} XP<small>${plek}e plaats aan de tafel</small></div>`
+    + (daden.length ? `<ol>${daden.slice(0, 7).map((l) => { const x = xpVan(l), z = ZEGELS.find((q) => q.id === l.zegel); return `<li>${z ? `<img src="${z.medaille}" alt="">` : "<i></i>"}<b class="${x < 0 ? "min" : ""}">${x > 0 ? "+" : "−"}${Math.abs(x)} XP${z ? ` · ${schoon(z.naam.split(" ")[0])}` : ""}</b><span>${schoon(l.waarom || "")}</span></li>`; }).join("")}</ol>` : '<p class="leeg">Nog geen daden in de Kronieken.</p>');
+  $("z-daden").classList.add("aan"); document.querySelectorAll("#z-ring .z-zit").forEach((z) => z.classList.toggle("licht", z.dataset.naam === w.naam));
   $("z-kaart").innerHTML = `<div class="in">${rol ? `<div class="wie">${schoon(w.naam)}</div><h2 class="carved">${schoon(rol.naam)}</h2><div class="titel">${schoon(rol.titel)}</div><p>${schoon(rol.tekst)}</p>` : `<h2 class="carved">${schoon(w.naam)}</h2>`}</div>`;
 }
 function tekenTvTafel() {
