@@ -113,6 +113,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
   if (rol === "wachter") luister(db.onValue, `vooraf/${sleutel(email)}`, (s) => opVooraf?.(s.val() || {}));
   if (rol === "regie" || rol === "tv") luister(db.onValue, "vooraf", (s) => opVooraf?.(s.val() || {})); // the tv only reads it for the credits
   if (alleenAdmin) luister(db.onValue, "ere/toewijzing", (s) => opEre?.(s.val() || {}));
+  if (rol !== "chaos" && window.Portret) window.Portret.laadGroot = (naam) => db.get(db.ref(d, `portretten-groot/${naam}`)).then((s) => s.val());
   if (rol !== "chaos") db.onValue(db.ref(d, "portretten"), (s) => window.Portret?.zet(s.val() || {}), () => {}); // no access (rules not yet published): just no portraits, no connection alarm
   return {
     soort: "firebase",
@@ -128,7 +129,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
     uitloggen: () => auth.signOut(a),
     vooraf: (pad, waarde) => metToken(() => db.set(db.ref(d, `vooraf/${sleutel(email)}/${pad}`), waarde)),
     ere: alleenAdmin ? (i, naam) => metToken(() => db.set(db.ref(d, `ere/toewijzing/t${i}`), naam || null)) : null,
-    portret: alleenAdmin ? (naam, url) => metToken(() => db.set(db.ref(d, `portretten/${naam}`), url || null)) : null,
+    portret: alleenAdmin ? (naam, url, groot) => metToken(() => Promise.all([db.set(db.ref(d, `portretten/${naam}`), url || null), db.set(db.ref(d, `portretten-groot/${naam}`), groot || null)])) : null,
   };
 }
 
@@ -155,6 +156,6 @@ window.Koppeling = {
   uitloggen() { return this.verbinding?.uitloggen?.(); },
   ere(i, naam) { return this.verbinding?.ere ? this.verbinding.ere(i, naam) : null; },
   vooraf(pad, waarde) { return this.verbinding?.vooraf ? this.verbinding.vooraf(pad, waarde) : Promise.resolve(false); },
-  portret(naam, url) { return this.verbinding?.portret ? this.verbinding.portret(naam, url) : Promise.resolve(false); },
+  portret(naam, url, groot) { return this.verbinding?.portret ? this.verbinding.portret(naam, url, groot) : Promise.resolve(false); },
 };
 window.dispatchEvent(new Event("koppeling-klaar"));

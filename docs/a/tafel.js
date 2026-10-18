@@ -31,6 +31,11 @@
   .tafel .stoel.gekozen img { transform: scale(1.14); filter: drop-shadow(0 0 3cqi rgba(255,170,80,.95)) drop-shadow(0 4px 8px rgba(0,0,0,.85)); }
   .tafel .stoel.gekozen b { color: #ffd98a; }
   .rolkaart { display: grid; gap: 10px; text-align: left; }
+  .rk-held { position: relative; margin: -22px -20px 4px; aspect-ratio: 2 / 2.6; background: #0b0607 center 12% / cover no-repeat; }
+  .rk-held::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 60%, rgba(24,8,10,.6) 80%, rgba(30,10,12,.97) 100%); }
+  .rk-held b { position: absolute; z-index: 1; left: 0; right: 0; bottom: 34px; text-align: center; font: 700 30px/1 "Cinzel", Georgia, serif; letter-spacing: .06em; text-transform: uppercase; color: #f1dfb6; text-shadow: 0 2px 8px #000; }
+  .rk-held small { position: absolute; z-index: 1; left: 0; right: 0; bottom: 14px; text-align: center; font: 600 12px/1 "Cinzel", Georgia, serif; letter-spacing: .2em; text-transform: uppercase; color: #efe3d4; text-shadow: 0 1px 4px #000; }
+  .rolkaart.met-held .rk-kop { margin-top: -10px; }
   .rolkaart .rk-kop { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; }
   .rolkaart .rk-kop img { width: 64px; aspect-ratio: 1; object-fit: contain; }
   .rolkaart h3 { margin: 0; font: 700 20px/1.15 "Cinzel", Georgia, serif; color: #f1dfb6; }
@@ -71,6 +76,11 @@
       };
     },
     rolVan,
+    // the chosen Wachter's painting at the top of his card (small one at once, the large one when it has arrived)
+    vulPortret(doos, w) { const P = window.Portret, u = P?.url(w.naam), kaart = doos.querySelector(".rolkaart"); if (!u || !kaart) return;
+      const k = window.KARAKTER?.[w.naam], h = document.createElement("div"); h.className = "rk-held"; h.style.backgroundImage = `url(${u})`;
+      h.innerHTML = `<b>${schoon(w.naam)}</b>${k ? `<small>${schoon(k.ras)} ${schoon(k.klasse)}</small>` : ""}`; kaart.prepend(h); kaart.classList.add("met-held");
+      P.groot(w.naam).then((g) => { if (g && h.isConnected) h.style.backgroundImage = `url(${g})`; }); },
     details(rol, w) {
       if (!rol) return `<div class="rolkaart"><p class="rk-tekst">De rol van ${schoon(w?.naam ?? "deze Wachter")} is nog verzegeld.</p></div>`;
       return `<div class="rolkaart"><div class="rk-kop"><img src="a/rollen/${rol.id}.webp" alt=""><div><div class="rk-wie">${schoon(w?.naam ?? "")}</div><h3>${schoon(rol.naam)}</h3><div class="rk-wie">${schoon(rol.titel)}</div></div></div>

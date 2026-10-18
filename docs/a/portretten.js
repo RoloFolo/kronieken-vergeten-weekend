@@ -3,15 +3,18 @@
 //   Portret.url(naam)             → data URL or null
 //   Portret.rond(el, naam, ruimte) → turns el into a round face crop (background), the face in the middle at half the circle (ruimte > 1: more around it)
 //   Portret.op(fn)                → fn() runs whenever the portraits arrive or change
+//   Portret.groot(naam)           → promise of the large painting (1024 px, /portretten-groot), fetched only when shown; falls back to the small one
 (() => {
   // per portrait: face centre (x, y as a fraction of the 2:3 painting) and face width (fraction of the painting's width),
   // so every face fills the same share of its circle however big it was painted
   const GEZICHT = { Geert: [.565, .165, .145], Roy: [.48, .13, .128], Martin: [.62, .29, .175], Stefan: [.52, .19, .235], Jeroen: [.5, .15, .128], Ivo: [.55, .3, .206],
     Johan: [.57, .18, .1375], Robin: [.515, .225, .118], Rob: [.555, .182, .12], Jean: [.575, .27, .18], Roland: [.33, .24, .132] };
-  let data = {}; const wachters = [];
+  let data = {}; const wachters = [], groot = {};
   window.Portret = {
     zet(p) { data = p || {}; wachters.forEach((fn) => { try { fn(); } catch {} }); },
     url: (naam) => data[naam] || null,
+    laadGroot: null, // set by koppeling.js: (naam) => promise of the data URL
+    groot(naam) { if (!groot[naam]) groot[naam] = (this.laadGroot ? this.laadGroot(naam).catch(() => null) : Promise.resolve(null)).then((u) => u || data[naam] || null); return groot[naam]; },
     aantal: () => Object.keys(data).length,
     op(fn) { wachters.push(fn); },
     rond(el, naam, ruimte = 1) {
@@ -21,10 +24,10 @@
       return true;
     },
     // the regie: a picked file → a small webp (480 px wide) as data URL, for /portretten
-    async verklein(bestand, breed = 480) {
+    async verklein(bestand, breed = 480, kwaliteit = .8) {
       const img = await createImageBitmap(bestand), c = document.createElement("canvas");
       c.width = breed; c.height = Math.round(img.height * breed / img.width); c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
-      return c.toDataURL("image/webp", .74);
+      return c.toDataURL("image/webp", kwaliteit);
     },
   };
 })();

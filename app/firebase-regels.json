@@ -33,11 +33,16 @@
       ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
       "$naam": { ".validate": "newData.isString() && newData.val().beginsWith('data:image/') && newData.val().length < 300000" }
     },
+    "portretten-groot": {
+      ".read": "auth != null",
+      ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+      "$naam": { ".validate": "newData.isString() && newData.val().beginsWith('data:image/') && newData.val().length < 900000" }
+    },
     "opdrachten": {
       ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
       ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
       "$id": {
-        ".write": "auth != null && newData.child('van').val() === auth.token.email && root.child('verraad').child(auth.token.email.replace('.', ',')).exists() && newData.child('cmd').isString() && newData.child('cmd').val().beginsWith('chaos-') || auth != null && newData.child('van').val() === auth.token.email && newData.child('cmd').val() === 'scorebord'"
+        ".write": "auth != null && newData.child('van').val() === auth.token.email && root.child('verraad').child(auth.token.email.replace('.', ',')).exists() && newData.child('cmd').isString() && newData.child('cmd').val().beginsWith('chaos-') || auth != null && newData.child('van').val() === auth.token.email && (newData.child('cmd').val() === 'scorebord' || newData.child('cmd').val() === 'tafel-kies')"
       }
     }
   }

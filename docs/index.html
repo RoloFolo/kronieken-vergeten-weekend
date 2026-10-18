@@ -429,6 +429,21 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .zaal .z-tafel { position: absolute; left: 35.57%; top: 35.26%; width: 29.17%; transform: scale(.4) rotate(-80deg); opacity: 0; transition: transform 2.4s cubic-bezier(.15,.85,.3,1) .9s, opacity 1.2s ease .9s; }
 .stage.in-zaal .zaal .z-tafel { transform: none; opacity: 1; }
 .zaal .z-ring { position: absolute; inset: 0; }
+.zaal .z-zit.verschuif { transition: left 1.4s cubic-bezier(.5,0,.2,1), top 1.4s cubic-bezier(.5,0,.2,1); }
+.zaal .z-zit .gz { position: absolute; inset: 6%; border-radius: 50%; border: .22cqi solid #b8955f; background-color: #1a0d0e; box-shadow: 0 0 0 .15cqi #000, 0 .3cqi .6cqi rgba(0,0,0,.9); transition: transform .5s, box-shadow .5s; }
+.zaal .z-zit .m.met-gezicht > img { visibility: hidden; }
+.zaal .z-zit.licht .gz { transform: scale(1.18); box-shadow: 0 0 0 .15cqi #000, 0 0 1.4cqi rgba(110,200,255,.9); }
+.zaal .z-zit .z-plek { position: absolute; left: -10%; top: -6%; width: 1.7cqi; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; font: 700 .8cqi/1 var(--carved); color: var(--bronze-hi); background: #2a0c10; border: .1cqi solid #b8955f; z-index: 2; }
+.zaal .z-zit .z-xp { position: absolute; right: -22%; bottom: -4%; padding: .2cqi .4cqi; border-radius: 1cqi; font: 700 .78cqi/1 var(--carved); color: #170a03; background: linear-gradient(180deg, #f1dfb6, #c9a466); border: .08cqi solid #000; white-space: nowrap; z-index: 2; }
+.zaal .z-zit .z-kroon { position: absolute; left: 50%; top: -1.6cqi; translate: -50% 0; font-size: 1.6cqi; line-height: 1; color: #ffd98a; text-shadow: 0 0 .8cqi rgba(255,200,110,.9), 0 1px 2px #000; z-index: 2; }
+.zaal .z-licht { position: absolute; left: 2.5vw; top: 50%; translate: 0 -50%; height: 70vh; aspect-ratio: 2 / 3; opacity: 0; transition: opacity 1s ease; z-index: 3; }
+.stage.in-zaal .zaal .z-licht.aan { opacity: 1; }
+.zaal .z-licht img { width: 100%; height: 100%; object-fit: cover; border: 3px solid #d9b77a; box-shadow: 0 0 0 2px #000, 0 0 50px rgba(110,200,255,.35), 0 20px 40px #000; }
+.zaal .z-licht div { position: absolute; left: 0; right: 0; bottom: 0; padding: 4vh 1vw 2vh; text-align: center; background: linear-gradient(180deg, transparent, rgba(7,4,5,.92) 45%); }
+.zaal .z-licht b { display: block; font: 700 clamp(18px, 2vw, 42px)/1 var(--carved); letter-spacing: .06em; text-transform: uppercase; color: #fff3dc; }
+.zaal .z-licht span { display: block; margin-top: .8vh; font: 700 clamp(14px, 1.3vw, 28px)/1 var(--carved); color: #ffd98a; }
+.zaal .z-tijd { position: absolute; left: 30vw; right: 30vw; bottom: 2.5vh; height: 5px; background: rgba(255,255,255,.1); border-radius: 3px; overflow: hidden; opacity: 0; transition: opacity .6s; }
+.zaal .z-tijd.aan { opacity: 1; } .zaal .z-tijd i { display: block; height: 100%; background: linear-gradient(90deg, var(--ember), #ffb05a); transform-origin: left; }
 .zaal .z-stoel { position: absolute; width: 5.6cqi; translate: -50% -50%; filter: drop-shadow(0 .5cqi .8cqi #000); opacity: 0; transform: rotate(var(--hoek)) translateY(-2.5cqi) scale(.7);
   transition: transform 1.2s cubic-bezier(.2,.9,.3,1) var(--d), opacity .8s ease var(--d); }
 .stage.in-zaal .zaal .z-stoel { opacity: 1; transform: rotate(var(--hoek)); }
@@ -1099,6 +1114,8 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
       <div class="z-ring" id="z-ring"></div>
       <div class="z-kaart" id="z-kaart"></div>
     </div>
+    <div class="z-licht" id="z-licht"></div>
+    <div class="z-tijd" id="z-tijd"><i id="z-tijd-balk"></i></div>
     <h1 class="z-titel carved">De Ronde Tafel</h1>
   </div>
   <div class="paneel" id="paneel" hidden>
@@ -1175,16 +1192,16 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=109"></script>
-<script src="a/godfried.js?v=109"></script>
-<script src="a/spel.js?v=109"></script>
-<script src="a/voorbereiding.js?v=109"></script>
-<script src="a/wachters.js?v=109"></script>
-<script src="a/firebase-config.js?v=109"></script>
-<script src="a/portretten.js?v=109"></script>
-<script src="a/koppeling.js?v=109"></script>
-<script src="a/rollen.js?v=109"></script>
-<script src="a/tafel.js?v=109"></script>
+<script src="a/events.js?v=110"></script>
+<script src="a/godfried.js?v=110"></script>
+<script src="a/spel.js?v=110"></script>
+<script src="a/voorbereiding.js?v=110"></script>
+<script src="a/wachters.js?v=110"></script>
+<script src="a/firebase-config.js?v=110"></script>
+<script src="a/portretten.js?v=110"></script>
+<script src="a/koppeling.js?v=110"></script>
+<script src="a/rollen.js?v=110"></script>
+<script src="a/tafel.js?v=110"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1862,6 +1879,7 @@ let logboek = [], verraders = [], verrader = null;
 function log(type, data = {}) { logboek.push({ t: Date.now(), type, ...data }); if (logboek.length > 800) logboek.shift(); }
 const medaille = (id) => ZEGELS.find((z) => z.id === id)?.medaille;
 function paneel(naam) {
+  if (zaalTijdelijk && naam !== "tafel" && naam !== zaalTijdelijk.terug) { clearTimeout(zaalTijdelijk.timer); zaalTijdelijk = null; clearInterval(zaalTik); $("z-tijd").classList.remove("aan"); }
   const wasTocht = paneelNu === "tocht", wasFinale = paneelNu;
   paneelNu = naam; const p = $("paneel"); stage.classList.toggle("met-paneel", !!naam); stage.classList.toggle("in-ere", naam === "ere");
   if (naam !== "ere" && !$("aftiteling").hidden) aftitelingUit();
@@ -1937,8 +1955,26 @@ function kistRitueel() {
     }, t + 1200);
   }, 12000), 1600);
 }
+// the standing at the tv table, like the app: the leader in the middle at the front, then alternately left and right; faces, place and XP
+const ZAAL_PLEK = [];
+function zaalStand() {
+  const W = window.WACHTERS || [], n = W.length, stand = scorebordData().stand;
+  const volgorde = [...W].sort((a, b) => (stand[b.naam] || 0) - (stand[a.naam] || 0) || W.indexOf(a) - W.indexOf(b));
+  const stoelen = [...Array(n).keys()].sort((a, b) => Math.abs(a - (n - 1) / 2) - Math.abs(b - (n - 1) / 2) || a - b); // middle first
+  const iemand = Object.values(stand).some((x) => x);
+  document.querySelectorAll("#z-ring .z-zit").forEach((z) => {
+    const naam = z.dataset.naam, r = volgorde.findIndex((w) => w.naam === naam), [x, y] = ZAAL_PLEK[stoelen[r]] || [];
+    if (x != null) { z.style.left = `${x.toFixed(2)}%`; z.style.top = `${y.toFixed(2)}%`; }
+    const m = z.querySelector(".m"), gz = z.querySelector(".gz"), heeft = Portret.rond(gz, naam, 1.15); gz.hidden = !heeft; m.classList.toggle("met-gezicht", heeft);
+    m.querySelectorAll(".z-plek, .z-xp, .z-kroon").forEach((e) => e.remove());
+    m.insertAdjacentHTML("beforeend", `<span class="z-plek">${r + 1}</span><span class="z-xp">${stand[naam] || 0} XP</span>${iemand && r === 0 ? '<span class="z-kroon">♛</span>' : ""}`);
+  });
+  setTimeout(() => document.querySelectorAll("#z-ring .z-zit").forEach((z) => z.classList.add("verschuif")), 4000); // after the entrance, places glide
+}
+Portret.op(() => { if (paneelNu === "tafel") zaalStand(); });
 function zaalKaart(w) {
-  const rol = Tafel.rolVan(w); document.querySelectorAll("#z-ring .z-zit").forEach((z) => z.classList.toggle("licht", z.dataset.naam === w.naam));
+  const rol = Tafel.rolVan(w), lt = $("z-licht"), u = PORTRET[w.naam] || Portret.url(w.naam), xp = scorebordData().stand[w.naam] || 0;
+  lt.classList.toggle("aan", !!u); if (u) lt.innerHTML = `<img src="${u}" alt=""><div><b>${schoon(w.naam)}</b><span>${xp} XP</span></div>`; document.querySelectorAll("#z-ring .z-zit").forEach((z) => z.classList.toggle("licht", z.dataset.naam === w.naam));
   $("z-kaart").innerHTML = `<div class="in">${rol ? `<div class="wie">${schoon(w.naam)}</div><h2 class="carved">${schoon(rol.naam)}</h2><div class="titel">${schoon(rol.titel)}</div><p>${schoon(rol.tekst)}</p>` : `<h2 class="carved">${schoon(w.naam)}</h2>`}</div>`;
 }
 function tekenTvTafel() {
@@ -1951,12 +1987,13 @@ function tekenTvTafel() {
     $("z-ring").innerHTML = W.map((w, i) => {
       const a = plek(i), rol = Tafel.rolVan(w), sx = Math.sin(a), sy = -Math.cos(a);
       const mx = cx + sx * 17.7, my = cy + sy * 27.1, sxp = cx + sx * 21.6, syp = cy + sy * 31.2; // medallion and chair (percent of the painting)
+      ZAAL_PLEK[i] = [mx, my];
       return `<img class="z-stoel" src="a/zaal/stoel.webp" alt="" style="left:${sxp.toFixed(2)}%;top:${syp.toFixed(2)}%;--hoek:${(a * 180 / Math.PI).toFixed(1)}deg;--d:${(1.4 + i * .08).toFixed(2)}s">
-        <button class="z-zit" type="button" data-naam="${schoon(w.naam)}" style="left:${mx.toFixed(2)}%;top:${my.toFixed(2)}%;--d:${(2 + i * .08).toFixed(2)}s"><span class="m"><img src="${rol ? `a/rollen/${rol.id}.webp` : "a/medaillon-vlam.webp"}" alt=""><i class="ring"></i></span><b>${schoon(w.naam)}</b></button>`;
+        <button class="z-zit" type="button" data-naam="${schoon(w.naam)}" style="left:${mx.toFixed(2)}%;top:${my.toFixed(2)}%;--d:${(2 + i * .08).toFixed(2)}s"><span class="m"><img src="${rol ? `a/rollen/${rol.id}.webp` : "a/medaillon-vlam.webp"}" alt=""><span class="gz" data-n="${schoon(w.naam)}" hidden></span><i class="ring"></i></span><b>${schoon(w.naam)}</b></button>`;
     }).join("");
     $("z-ring").onclick = (e) => { const z = e.target.closest(".z-zit"); if (!z) return; tafelPauze = Date.now() + 30000; tafelI = W.findIndex((w) => w.naam === z.dataset.naam); zaalKaart(W[tafelI]); };
   }
-  zaalKaart(W[tafelI % n]); zaalVuurStart(); zaalGeluid(true);
+  zaalStand(); zaalKaart(W[tafelI % n]); zaalVuurStart(); zaalGeluid(true);
   clearInterval(tafelRonde); tafelRonde = setInterval(() => { if (Date.now() < tafelPauze) return; tafelI = (tafelI + 1) % n; zaalKaart(W[tafelI]); }, 9000);
 }
 // the hall sounds alive: crackling fire, chatter and laughter
@@ -2312,7 +2349,7 @@ function aftitelingUit() { afTimers.forEach(clearTimeout); afTimers = []; const 
 // Portraits of the heroes stay private (public repo): the tv loads them once from a folder on this laptop and keeps them
 // in this browser only. File names are the Wachter's name (roland.jpg, or roland-a.png).
 const PORTRET = {};
-Portret.op(() => { for (const n of NAMEN) if (Portret.url(n)) PORTRET[n] = Portret.url(n); portretKnop?.(); });
+Portret.op(() => { for (const n of NAMEN) if (Portret.url(n)) { PORTRET[n] = PORTRET[n] || Portret.url(n); Portret.groot(n).then((u) => { if (u) PORTRET[n] = u; }); } portretKnop?.(); });
 const idb = (r) => new Promise((ok, nee) => { r.onsuccess = () => ok(r.result); r.onerror = () => nee(r.error); });
 const portretDb = () => { const r = indexedDB.open("kronieken", 2); r.onupgradeneeded = () => { for (const s of ["portretten", "fotos"]) if (!r.result.objectStoreNames.contains(s)) r.result.createObjectStore(s); }; return idb(r); };
 const FOTOS = [];
@@ -2644,7 +2681,7 @@ function meld() {
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], ronde, fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
-    publiek: { ronde, levend: Date.now(), kroniek: [...kroniek], scores: scorebordData(), hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
+    publiek: { ronde, levend: Date.now(), tafel: paneelNu === "tafel", kroniek: [...kroniek], scores: scorebordData(), hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
     tochtOpen, kistGeopend,
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   })), 150);
@@ -2732,6 +2769,7 @@ function punt(o) {
   s.innerHTML = pu ? `<img class="ps-portret" src="${pu}" alt=""><div class="ps-tekst"><b class="${xp > 0 ? "plus" : "min"}">${schoon(o.naam)} ${xp > 0 ? "+" : "−"}${Math.abs(xp)} XP</b><span>${schoon(o.waarom || z.naam)}</span><img src="${z.medaille}" alt=""></div>`
     : `<img src="${z.medaille}" alt=""><b class="${xp > 0 ? "plus" : "min"}">${schoon(o.naam)} ${xp > 0 ? "+" : "−"}${Math.abs(xp)} XP</b><span>${schoon(o.waarom || z.naam)}</span>`;
   s.classList.add("aan"); clearTimeout(puntTimer); puntTimer = setTimeout(() => s.classList.remove("aan"), pu ? 11000 : 7000);
+  if (paneelNu === "tafel") zaalStand();
 }
 // personal XP: what the regie gave someone; a traitor scores with harm done while he was the traitor (and 10 per sabotage card)
 function scores() {
@@ -2749,6 +2787,21 @@ function scorebordData() {
   return { stand, recent: recent.slice(-6).reverse(), zegels: Object.fromEntries(ZEGELS.map((z) => [z.id, z.fiches])) };
 }
 let sbTimer = null, sbTik = null;
+let zaalTijdelijk = null, zaalTik = null;
+function tafelEven() { // a Wachter asked for the Round Table: 45 seconds, then the tv goes back
+  if (wakker() || gq || vertelLoopt || !$("verhaal").hidden || ["finale", "ere", "einde", "tocht", "kist"].includes(paneelNu) || !$("groot-moment").hidden) return; // busy: the tv keeps what it shows
+  if (paneelNu === "tafel" && !zaalTijdelijk) return; // the regie put it there: it stays
+  const terug = zaalTijdelijk ? zaalTijdelijk.terug : paneelNu, eind = Date.now() + 45000;
+  clearTimeout(zaalTijdelijk?.timer); clearInterval(zaalTik);
+  if (paneelNu !== "tafel") paneel("tafel");
+  zaalTijdelijk = { terug, timer: setTimeout(() => { zaalTijdelijk = null; clearInterval(zaalTik); $("z-tijd").classList.remove("aan"); if (paneelNu === "tafel") paneel(terug); }, 45000) };
+  const balk = $("z-tijd-balk"); $("z-tijd").classList.add("aan");
+  zaalTik = setInterval(() => { balk.style.transform = `scaleX(${Math.max(0, eind - Date.now()) / 45000})`; }, 200);
+}
+function tafelKies(naam) { // a Wachter tapped someone in his app while the hall is on screen
+  if (paneelNu !== "tafel") return; const W = window.WACHTERS || [], i = W.findIndex((w) => w.naam === naam); if (i < 0) return;
+  tafelPauze = Date.now() + 30000; tafelI = i; zaalKaart(W[i]);
+}
 function scorebord() {
   if (wakker() || gq || vertelLoopt || !$("verhaal").hidden || ["finale", "ere", "einde"].includes(paneelNu) || !$("groot-moment").hidden) return; // busy: the tv keeps what it shows
   const d = scorebordData(), rang = NAMEN.map((n) => [n, d.stand[n]]).sort((a, b) => b[1] - a[1]);
@@ -2810,7 +2863,8 @@ function oproep() { // all music falls silent, then three loud strokes of the ch
 }
 const OPDRACHTEN = {
   oproep: () => oproep(),
-  scorebord: () => scorebord(),
+  scorebord: () => tafelEven(), // the phones' button now opens the Round Table hall
+  "tafel-kies": (o) => tafelKies(o.naam),
   "scorebord-weg": () => scorebordWeg(),
   "verraders-toon": () => verradersToon(),
   "verrader-kroon": (o) => verraderKroon(o.naam),

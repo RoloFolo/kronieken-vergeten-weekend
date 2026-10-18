@@ -320,15 +320,15 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=109"></script>
-<script src="a/godfried.js?v=109"></script>
-<script src="a/spel.js?v=109"></script>
-<script src="a/wachters.js?v=109"></script>
-<script src="a/rollen.js?v=109"></script>
-<script src="a/firebase-config.js?v=109"></script>
-<script src="a/portretten.js?v=109"></script>
-<script src="a/koppeling.js?v=109"></script>
-<script src="a/voorbereiding.js?v=109"></script>
+<script src="a/events.js?v=110"></script>
+<script src="a/godfried.js?v=110"></script>
+<script src="a/spel.js?v=110"></script>
+<script src="a/wachters.js?v=110"></script>
+<script src="a/rollen.js?v=110"></script>
+<script src="a/firebase-config.js?v=110"></script>
+<script src="a/portretten.js?v=110"></script>
+<script src="a/koppeling.js?v=110"></script>
+<script src="a/voorbereiding.js?v=110"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -541,7 +541,7 @@ function tekenPortretten() { const W = window.WACHTERS || []; $("portret-status"
 Portret.op(tekenPortretten); tekenPortretten();
 $("portret-kies").onchange = async (e) => { const W = window.WACHTERS || [], los = [];
   for (const f of e.target.files) { const w = W.find((x) => f.name.toLowerCase().startsWith(x.naam.toLowerCase() + " ") || f.name.toLowerCase().startsWith(x.naam.toLowerCase() + ".")); if (!w) { los.push(f.name); continue; }
-    $("portret-status").textContent = `Bezig: ${w.naam}…`; const ok = await Koppeling.portret(w.naam, await Portret.verklein(f)); if (ok === false) los.push(`${f.name} (niet opgeslagen)`); }
+    $("portret-status").textContent = `Bezig: ${w.naam}…`; const ok = await Koppeling.portret(w.naam, await Portret.verklein(f), await Portret.verklein(f, 1024, .86)); if (ok === false) los.push(`${f.name} (niet opgeslagen)`); }
   e.target.value = ""; tekenPortretten(); if (los.length) $("portret-status").textContent += ` Niet gelukt: ${los.join(", ")}.`; };
 Koppeling.start({ rol: "regie", opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); tekenGodfried(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); }, opEre: (t) => { ereToewijzing = t || {}; tekenEreRegie(); } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; });

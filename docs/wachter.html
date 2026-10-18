@@ -447,15 +447,15 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=109"></script>
-<script src="a/godfried.js?v=109"></script>
-<script src="a/spel.js?v=109"></script>
-<script src="a/rollen.js?v=109"></script>
-<script src="a/firebase-config.js?v=109"></script>
-<script src="a/portretten.js?v=109"></script>
-<script src="a/koppeling.js?v=109"></script>
-<script src="a/tafel.js?v=109"></script>
-<script src="a/voorbereiding.js?v=109"></script>
+<script src="a/wachters.js?v=110"></script>
+<script src="a/godfried.js?v=110"></script>
+<script src="a/spel.js?v=110"></script>
+<script src="a/rollen.js?v=110"></script>
+<script src="a/firebase-config.js?v=110"></script>
+<script src="a/portretten.js?v=110"></script>
+<script src="a/koppeling.js?v=110"></script>
+<script src="a/tafel.js?v=110"></script>
+<script src="a/voorbereiding.js?v=110"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -621,7 +621,7 @@ function tekenTabs() {
 }
 $("tabs").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; if (b.dataset.tab !== tabNu) piep("tik", .35); toonTab(b.dataset.tab); };
 document.addEventListener("click", (e) => { const b = e.target.closest("[data-naar]"); if (b) toonTab(b.dataset.naar); });
-let tafelGekozen = null, tafelOpen = null;
+let tafelGekozen = null, tafelOpen = null, tafelGestuurd = 0;
 // the Guild's scoreboard: live at the Round Table, and anyone can put it on the tv for 45 seconds
 let sbGevraagd = 0;
 function tekenScorebord() {
@@ -632,20 +632,21 @@ function tekenScorebord() {
   el.innerHTML = `<h2 class="carved">De Zegels</h2>
     <div class="sb-z">${Z.map(([id, n]) => `<div><img src="a/medaillon-${id}.webp" alt="">${s.zegels?.[id] ?? 0}<small>${n}</small></div>`).join("")}</div>
     ${laatste ? `<p class="sb-laatst"><b>${schoon(laatste.naam)} ${lxp > 0 ? "+" : "−"}${Math.abs(lxp)} XP</b>${laatste.waarom ? ` · ${schoon(laatste.waarom)}` : ""}</p>` : ""}
-    <button class="knop" type="button" id="b-sb-tv">Toon op de tv (45 seconden)</button>`;
-  $("b-sb-tv").onclick = async () => { if (Date.now() - sbGevraagd < 50000) return melding("Even geduld", "Het scorebord staat al op de tv."); sbGevraagd = Date.now();
-    const ok = await Koppeling.stuur({ cmd: "scorebord" }); if (ok === false) melding("Niet gelukt", "De tv kon het niet ontvangen. Controleer je verbinding."); else melding("Op de tv", "Als de tv vrij is, staat het scorebord er nu 45 seconden op."); };
+    <button class="knop" type="button" id="b-sb-tv">Toon de Ronde Tafel op de tv (45 seconden)</button>
+    <p class="klein" style="margin:0;text-align:center;color:var(--ash)">Staat de tafel op de tv? Tik hierboven op een Wachter: de tv laat hem zien.</p>`;
+  $("b-sb-tv").onclick = async () => { if (Date.now() - sbGevraagd < 50000) return melding("Even geduld", "De Ronde Tafel staat al op de tv."); sbGevraagd = Date.now();
+    const ok = await Koppeling.stuur({ cmd: "scorebord" }); if (ok === false) melding("Niet gelukt", "De tv kon het niet ontvangen. Controleer je verbinding."); else melding("Op de tv", "Als de tv vrij is, staat de Ronde Tafel er nu 45 seconden op."); };
 }
 // his own painting at the top of the player card (from /portretten, once the regie has uploaded them)
 function tekenHeld() { const el = $("held"), u = wachter && Portret.url(wachter.naam); if (!el) return; el.classList.toggle("verborgen", !u); $("rol-blok").classList.toggle("met-held", !!u); if (!u) return;
-  const k = window.KARAKTER?.[wachter.naam]; el.style.backgroundImage = `url(${u})`;
+  const k = window.KARAKTER?.[wachter.naam]; el.style.backgroundImage = `url(${u})`; Portret.groot(wachter.naam).then((g) => { if (g) el.style.backgroundImage = `url(${g})`; });
   el.innerHTML = `<div class="held-lijst"></div><div class="held-naam"><div class="carved">${schoon(wachter.naam)}</div>${k ? `<small>${schoon(k.ras)} ${schoon(k.klasse)}</small>` : ""}</div>`; }
 Portret.op(() => { tekenHeld(); if (tabNu === "tafel") tekenTafel(); });
 function tekenTafel() {
   tafelOpen = halOpen();
   $("tafel-onder").textContent = tafelOpen ? "Tik op een Wachter om zijn rol en kracht te zien." : "De rollen zijn nog verzegeld tot de Eerste Dronk.";
   tekenScorebord();
-  Tafel.teken($("tafel-doos"), { open: tafelOpen, gekozen: tafelGekozen, stand: publiek.scores?.stand || null, opKies: (w, r) => { tafelGekozen = w.naam; $("tafel-kaart").innerHTML = Tafel.details(r, w); piep("kies", .5); } });
+  Tafel.teken($("tafel-doos"), { open: tafelOpen, gekozen: tafelGekozen, stand: publiek.scores?.stand || null, opKies: (w, r) => { tafelGekozen = w.naam; if (publiek.tafel && Date.now() - tafelGestuurd > 1500) { tafelGestuurd = Date.now(); Koppeling.stuur({ cmd: "tafel-kies", naam: w.naam }); } $("tafel-kaart").innerHTML = Tafel.details(r, w); Tafel.vulPortret($("tafel-kaart"), w); piep("kies", .5); } });
 }
 // ---------- before the weekend ----------
 // Step 1 right away: Godfried's welcome (voice + the hall music after one tap), the order, the request for memories.
