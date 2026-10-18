@@ -1172,16 +1172,16 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=102"></script>
-<script src="a/godfried.js?v=102"></script>
-<script src="a/spel.js?v=102"></script>
-<script src="a/voorbereiding.js?v=102"></script>
-<script src="a/wachters.js?v=102"></script>
-<script src="a/firebase-config.js?v=102"></script>
-<script src="a/portretten.js?v=102"></script>
-<script src="a/koppeling.js?v=102"></script>
-<script src="a/rollen.js?v=102"></script>
-<script src="a/tafel.js?v=102"></script>
+<script src="a/events.js?v=103"></script>
+<script src="a/godfried.js?v=103"></script>
+<script src="a/spel.js?v=103"></script>
+<script src="a/voorbereiding.js?v=103"></script>
+<script src="a/wachters.js?v=103"></script>
+<script src="a/firebase-config.js?v=103"></script>
+<script src="a/portretten.js?v=103"></script>
+<script src="a/koppeling.js?v=103"></script>
+<script src="a/rollen.js?v=103"></script>
+<script src="a/tafel.js?v=103"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2641,7 +2641,7 @@ function meld() {
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], ronde, fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
-    publiek: { ronde, kroniek: [...kroniek], scores: scorebordData(), hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
+    publiek: { ronde, levend: Date.now(), kroniek: [...kroniek], scores: scorebordData(), hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
     tochtOpen, kistGeopend,
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   })), 150);

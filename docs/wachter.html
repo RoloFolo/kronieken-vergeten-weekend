@@ -171,7 +171,10 @@ body { padding-bottom: var(--nav-h); }
   background: linear-gradient(180deg, rgba(20,8,9,.96), #070304); border-top: 1px solid #6e5230; box-shadow: 0 -8px 24px rgba(0,0,0,.6); }
 .tabs button { flex: 1; max-width: 120px; display: grid; place-items: center; align-content: center; gap: 3px; padding: 6px 2px; border: 0; background: none; color: var(--ash); cursor: pointer;
   font: 700 10.5px/1 var(--carved); letter-spacing: .12em; text-transform: uppercase; -webkit-tap-highlight-color: transparent; }
-.tabs button .ico { width: 26px; height: 26px; object-fit: contain; opacity: .55; filter: grayscale(.6); transition: opacity .2s, filter .2s; }
+.tabs button .ico { width: 44px; height: 44px; margin-top: -22px; object-fit: contain; opacity: .7; filter: grayscale(.5) drop-shadow(0 4px 8px rgba(0,0,0,.8)); transition: opacity .2s, filter .2s, transform .2s; }
+.tabs button { align-content: start; padding-top: 0; gap: 4px; }
+.tabs button[aria-current="true"] .ico { transform: scale(1.08); }
+.tabs button .ico.gezicht { border-radius: 50%; border: 2px solid #b8955f; background-color: #1a0d0e; box-shadow: 0 0 0 2px #070304; }
 .tabs button[hidden] { display: none; }
 .tabs button[aria-current="true"] { color: var(--bronze-hi); }
 .tabs button[aria-current="true"] .ico { opacity: 1; filter: drop-shadow(0 0 6px rgba(255,170,80,.7)); }
@@ -444,15 +447,15 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=102"></script>
-<script src="a/godfried.js?v=102"></script>
-<script src="a/spel.js?v=102"></script>
-<script src="a/rollen.js?v=102"></script>
-<script src="a/firebase-config.js?v=102"></script>
-<script src="a/portretten.js?v=102"></script>
-<script src="a/koppeling.js?v=102"></script>
-<script src="a/tafel.js?v=102"></script>
-<script src="a/voorbereiding.js?v=102"></script>
+<script src="a/wachters.js?v=103"></script>
+<script src="a/godfried.js?v=103"></script>
+<script src="a/spel.js?v=103"></script>
+<script src="a/rollen.js?v=103"></script>
+<script src="a/firebase-config.js?v=103"></script>
+<script src="a/portretten.js?v=103"></script>
+<script src="a/koppeling.js?v=103"></script>
+<script src="a/tafel.js?v=103"></script>
+<script src="a/voorbereiding.js?v=103"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -474,8 +477,10 @@ const schoon = (t) => String(t).replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": 
 let publiek = {}, getekend = "", vorige = null;
 const ORGANISATOREN = ["Rob", "Jean", "Roland"];
 const mijnBevel = () => wachter && (V.bevelen?.[wachter.naam] || (ORGANISATOREN.includes(wachter.naam) ? V.hoederBevel : null)); // the organisers get a symbolic order, so they walk the same flow (it counts for nothing)
-const halTest = ORGANISATOREN && new URLSearchParams(location.search).has("hal"); // organisers can see the Hall early with ?hal in the link (testing); otherwise nobody before the weekend
-const halOpen = () => Date.now() >= window.ROL_UITERLIJK || !!publiek.hal && (!FIRE || Date.now() >= START - 6 * 3600e3 || halTest && ORGANISATOREN.includes(wachter?.naam));
+const halTest = ORGANISATOREN && new URLSearchParams(location.search).has("hal"); // organisers: ?hal in the link shows the Hall early anyway
+// before the weekend: players never see an open Hall; organisers do while the tv is really running (a live test, publiek.levend is at most 3 minutes old)
+const tvLeeft = () => Date.now() - (publiek.levend || 0) < 3 * 60000;
+const halOpen = () => Date.now() >= window.ROL_UITERLIJK || !!publiek.hal && (!FIRE || Date.now() >= START - 6 * 3600e3 || ORGANISATOREN.includes(wachter?.naam) && (halTest || tvLeeft()));
 const eedOpen = () => !!publiek.eed; // only when the regie opens Act III (the finale runs on the tv anyway)
 
 // the power can be used once a day; the mark resets at midnight
@@ -604,8 +609,14 @@ function toonTab(t) {
   if (t === "tafel") tekenTafel();
   if (!document.body.classList.contains("in-frame")) scrollTo(0, 0);
 }
+// the Ik tab shows his own face once the portraits are there
+function tekenIkIcoon() { const b = document.querySelector('#tabs button[data-tab="ik"]'); if (!b || !wachter) return; const oud = b.querySelector(".ico"); if (!Portret.url(wachter.naam)) return;
+  if (!oud.classList.contains("gezicht")) { const el = document.createElement("span"); el.className = "ico gezicht"; oud.replaceWith(el); }
+  Portret.rond(b.querySelector(".ico"), wachter.naam); }
+Portret.op(tekenIkIcoon);
 function tekenTabs() {
   document.querySelectorAll("#tabs button").forEach((b) => (b.hidden = !beschikbaar(b.dataset.tab)));
+  tekenIkIcoon();
   if (!beschikbaar(tabNu)) toonTab("ik");
 }
 $("tabs").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; if (b.dataset.tab !== tabNu) piep("tik", .35); toonTab(b.dataset.tab); };
