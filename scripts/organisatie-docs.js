@@ -91,7 +91,6 @@ const beslissen = [
 
   h("3. Gedaanten en de LARP"),
   p([t("Iedereen krijgt vooraf zijn ras en class (en de bevelhouders hun bevel), met de uitdaging om verkleed te komen en het hele weekend in zijn rol te blijven. Alles per Wachter in "), link("10 LARP: gedaanten en props", MAP), t(".")]),
-  vink([b("Ras van Roland: "), t("nu Dwarf (Fighter); of toch Human?")]),
   vink([b("Punten en prijzen voor wie in zijn rol blijft: "), t("hoeveel fiches, wanneer, en welke ‘grote prijzen’? De app belooft het al.")]),
   vink([b("Bevelbonus: "), t("blijft het +3 fiches per volbracht bevel? Nu voedt elk Zegel twee bevelen.")]),
   vink([b("Props voor Stefans LARP: "), t("welke props geven wij, en wie regelt ze (zie 10).")]),

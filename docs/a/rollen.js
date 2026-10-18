@@ -50,7 +50,7 @@ window.ROLLEN = [
 ];
 
 // Ras en LARP-class per Wachter (Jean, 18 okt). Die krijgt iedereen al vooraf, met tips voor kostuum en attributen;
-// de rol zelf (naam, krachten, Zegels) blijft verborgen tot de Eerste Dronk. Bijgewerkt 18 okt; Roland: ras (Dwarf of Human) nog te bevestigen.
+// de rol zelf (naam, krachten, Zegels) blijft verborgen tot de Eerste Dronk. Definitief sinds 18 okt.
 window.KARAKTER = {
   Geert: { ras: "Half-Orc", klasse: "Cleric", props: "een pij of kap, een heilig symbool aan een koord, een flesje ‘heilwater’ en verband voor de gewonden" },
   Roy: { ras: "Human", klasse: "Fighter", props: "een tuniek met riem, een houten zwaard of strijdbijl, en een buidel voor de voorraad" },
