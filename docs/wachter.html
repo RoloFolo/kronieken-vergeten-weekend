@@ -219,12 +219,15 @@ body.in-frame main { visibility: hidden; }
 .intro .strip-kop { transition: opacity .8s ease; } .intro.na-eerste .strip-kop { opacity: 0; }
 .strip-kop small { font: 700 8px/1 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: var(--ash); }
 .strip-kop b { font: 900 clamp(14px, 4.2vw, 18px)/1 var(--carved); text-transform: uppercase; letter-spacing: .05em; background: linear-gradient(180deg, #f1dfb6, #d8bf8f 45%, #9b7a4c); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.strip-tekst { position: absolute; left: 16px; right: 16px; bottom: calc(max(20px, env(safe-area-inset-bottom)) + 62px); max-height: calc(30svh - 70px); overflow: hidden; z-index: 3; display: grid; padding: 14px 16px 15px;
+.strip-tekst { position: absolute; left: 16px; right: 16px; bottom: max(16px, env(safe-area-inset-bottom)); z-index: 3; display: grid; padding: 14px 16px 15px;
   background: linear-gradient(180deg, rgba(30,14,14,.94), rgba(12,6,7,.96)); border: 1px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.25), 0 0 30px rgba(226,50,60,.25), 0 10px 30px #000; }
 .strip-tekst p { grid-area: 1 / 1; margin: 0; font: italic 400 clamp(15px, 4.4vw, 19px)/1.5 var(--display); color: var(--bone); opacity: 0; transform: translateY(6px); transition: opacity .7s ease, transform .7s ease; }
 .strip-tekst p.aan { opacity: 1; transform: none; }
 .strip-tekst p::first-letter { float: left; margin: .04em .12em 0 0; font: 900 2.7em/.8 var(--carved); font-style: normal; color: var(--ember); text-shadow: 0 0 12px rgba(226,50,60,.6); }
-.intro .intro-verder { position: absolute; left: 50%; translate: -50% 0; bottom: max(20px, env(safe-area-inset-bottom)); background: rgba(7,4,5,.85); }
+/* Verder sits inside the caption box, bottom right, and only appears once Godfried has finished */
+.strip-zinnen { display: grid; }
+.intro .strip-tekst .intro-verder { position: static; translate: none; justify-self: end; margin-top: 10px; padding: 11px 26px; background: rgba(7,4,5,.85); opacity: 0; pointer-events: none; transform: translateY(6px); transition: opacity .8s ease, transform .8s ease; }
+.intro .strip-tekst .intro-verder.klaar { opacity: 1; pointer-events: auto; transform: none; }
 .intro-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.32) saturate(.9) blur(1.5px); }
 .intro::after { content: ""; position: absolute; inset: 0; z-index: 1; background: radial-gradient(ellipse 90% 75% at 50% 45%, transparent 50%, rgba(7,4,5,.55)); pointer-events: none; }
 
@@ -433,23 +436,22 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
 <div class="intro verborgen" id="intro" role="dialog" aria-label="Een boodschap van Godfried">
   <div class="strip" id="strip" aria-hidden="true"></div>
   <div class="strip-kop"><small>Een boodschap van Godfried</small><b id="intro-aan"></b></div>
-  <div class="strip-tekst" id="intro-tekst" aria-live="polite"></div>
-  <button class="intro-verder" type="button" id="intro-verder">Verder</button>
+  <div class="strip-tekst"><div class="strip-zinnen" id="intro-tekst" aria-live="polite"></div><button class="intro-verder" type="button" id="intro-verder">Verder</button></div>
 </div>
 <div class="binnen verborgen" id="binnen"><img src="a/logo.webp" alt=""><p>Godfried van Bouillon heeft een boodschap voor je. Zet je geluid aan.</p><button class="knop" type="button" id="b-binnen">Treed binnen</button></div>
 <div class="melding-groot verborgen" id="melding" role="alertdialog" aria-modal="true" aria-labelledby="melding-kop">
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=97"></script>
-<script src="a/godfried.js?v=97"></script>
-<script src="a/spel.js?v=97"></script>
-<script src="a/rollen.js?v=97"></script>
-<script src="a/firebase-config.js?v=97"></script>
-<script src="a/portretten.js?v=97"></script>
-<script src="a/koppeling.js?v=97"></script>
-<script src="a/tafel.js?v=97"></script>
-<script src="a/voorbereiding.js?v=97"></script>
+<script src="a/wachters.js?v=98"></script>
+<script src="a/godfried.js?v=98"></script>
+<script src="a/spel.js?v=98"></script>
+<script src="a/rollen.js?v=98"></script>
+<script src="a/firebase-config.js?v=98"></script>
+<script src="a/portretten.js?v=98"></script>
+<script src="a/koppeling.js?v=98"></script>
+<script src="a/tafel.js?v=98"></script>
+<script src="a/voorbereiding.js?v=98"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
