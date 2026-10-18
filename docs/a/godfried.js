@@ -3,12 +3,13 @@
 // Tijdlijn: zijn brief komt uit 1096 en spreekt over 930 jaar heen; als geest vertelt hij in hoofdstuk III ook hoe het
 // afliep (1099, 1100). Elke quizvraag is eerder verteld: vrijdag in de app-intro en hoofdstuk I, zaterdag in hoofdstuk II,
 // zondag in hoofdstuk III (zaterdagavond na de Reliekenkist).
-// vakken: de stripvakken op de tv (een bladzijde die zich vult terwijl hij vertelt): [beeld, uitsnede]; vakVan: welk vak bij welke zin hoort;
+// vakken: de stripvakken op de tv (een bladzijde die zich vult terwijl hij vertelt): [beeld, uitsnede] of { b, pos, zoom: in|uit } of { b, van, naar } (de camera schuift); vakVan: welk vak bij welke zin hoort;
 // blad: de indeling van de bladzijde (kolommen, rijen en per rij welk vak waar staat, a = het eerste vak), zodat elk hoofdstuk eigen maten heeft.
 window.GODFRIED = {
   hoofdstukken: [
     { nr: 1, titel: "Hoofdstuk I · De oproep", wanneer: "vrijdag, de opening", beeld: "a/godfried/kantelen.webp", stem: "godfried/hoofdstuk-1",
-      vakken: [["a/strip/1a.webp", "70% 30%"], ["a/strip/1b.webp", "50% 58%"], ["a/godfried/strip/1c.webp", "38% 50%"], ["a/godfried/strip/1d.webp", "55% 28%"]], vakVan: [0, 1, 2, 3],
+      // a small camera move per panel: pan from → to (object-position), or zoom in / out
+      vakken: [{ b: "a/strip/1a.webp", van: "88% 30%", naar: "18% 30%" }, { b: "a/strip/1b.webp", van: "50% 80%", naar: "50% 8%" }, { b: "a/godfried/strip/1c.webp", pos: "45% 45%", zoom: "in" }, { b: "a/godfried/strip/1d.webp", pos: "55% 28%", zoom: "uit" }], vakVan: [0, 1, 2, 3],
       blad: { kol: "0.95fr 1fr 1.1fr", rij: "1fr 1fr", vlak: ["a b b", "a c d"] }, tekst: [
       "Het jaar des Heren 1096. Mijn naam is Godfried. Godfried van Bouillon.",
       "Hertog van Neder-Lotharingen. En heer van deze burcht, hoog op de rots boven de Semois, in het hart van de Ardennen.",

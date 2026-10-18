@@ -627,7 +627,13 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .vt-vak.aan { border-color: #b8955f; } .vt-vak.aan img { clip-path: inset(0 0 0 0); }
 .vt-vak.nu { filter: none; box-shadow: 0 0 0 4px #070405, 0 0 0 5px #d9b77a, 0 0 40px rgba(226,50,60,.55); }
 .vt-vak img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; transform-origin: 50% 35%; }
-.vt-vak.nu img { animation: kenburns 20s ease-out both; }
+/* each panel moves a little once it is drawn: a slow zoom in (default) or out, or the camera pans */
+.vt-vak.aan img { animation: vtIn 22s ease-out both; }
+.vt-vak.aan img.uit { animation-name: vtUit; }
+.vt-vak.aan img.pan { animation: vtPan 18s ease-in-out both; transform: scale(1.04); }
+@keyframes vtIn { from { transform: scale(1); } to { transform: scale(1.12); } }
+@keyframes vtUit { from { transform: scale(1.16); } to { transform: scale(1); } }
+@keyframes vtPan { from { object-position: var(--van); } to { object-position: var(--naar); } }
 .verteller.strip .vt-tekst { bottom: 4vh; }
 .verteller.strip .vt-zinnen p { font-size: clamp(18px, 1.9vw, 40px); }
 /* Godfried's quiz before dinner: his portrait on the left, the question on the right */
@@ -653,7 +659,10 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 /* the toast: Godfried raises his goblet behind the words */
 .verhaal-toost { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: brightness(.6); transition: opacity 2.5s ease; }
 .verhaal.toost .verhaal-toost { opacity: 1; }
-.verhaal.toost .dronk { justify-self: start; margin-left: 2vw; }
+/* the toast: the crest fades away and the words stay in the middle (Godfried raises his goblet on the right) */
+.crest { transition: opacity 1.2s ease; }
+body:has(#verhaal.toost:not([hidden])) .crest { opacity: 0; }
+.verhaal.toost { place-items: end center; padding: 0 10vw 6vh; }
 /* the narrator's face above his explanation cards, and above the false Godfried's (who is not quite right) */
 #uitleg:not(.vloek) .uitleg-kaart, #vals .uitleg-kaart { position: relative; margin-top: 7vh; padding-top: 9vh; }
 #uitleg:not(.vloek) .uitleg-kaart::before, #vals .uitleg-kaart::before { content: ""; position: absolute; top: 0; left: 50%; width: clamp(90px, 9vw, 180px); aspect-ratio: 1; translate: -50% -55%; border-radius: 50%;
@@ -764,13 +773,13 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 @keyframes halo { 50% { opacity: .65; transform: scale(1.08); } }
 @keyframes flits { 0% { opacity: 1; transform: scale(.6); filter: blur(2px) brightness(2.2); } 30% { opacity: 1; transform: scale(1.45); } 100% { } }
 @keyframes zvonk { to { transform: translate(var(--dx), var(--dy)); opacity: 0; } }
-.dronk { position: relative; z-index: 2; width: fit-content; min-width: min(34vw, 640px); max-width: min(60vw, 1200px); display: grid; justify-items: center; gap: 2.6vh; text-align: center; padding: 3.2vh 3vw 3.6vh; background: linear-gradient(180deg, rgba(30,10,12,.9), rgba(10,5,6,.94)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 20px 60px #000; }
+.dronk { position: relative; z-index: 2; width: fit-content; min-width: min(34vw, 640px); max-width: min(60vw, 1200px); display: grid; justify-items: center; gap: 1.8vh; text-align: center; padding: 2.4vh 2.6vw 2.6vh; background: linear-gradient(180deg, rgba(30,10,12,.9), rgba(10,5,6,.94)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 20px 60px #000; }
 .dronk-kop { font-size: clamp(14px, 1.3vw, 26px); letter-spacing: .3em; }
-.dronk-regel { min-height: 1.2em; font-size: clamp(28px, 3.4vw, 72px); line-height: 1.15; max-width: 20ch; text-wrap: balance; opacity: 0; transform: scale(.94); transition: opacity .7s, transform .9s cubic-bezier(.2,1.2,.3,1); }
+.dronk-regel { min-height: 1.2em; font-size: clamp(26px, 2.9vw, 62px); line-height: 1.15; max-width: 20ch; text-wrap: balance; opacity: 0; transform: scale(.94); transition: opacity .7s, transform .9s cubic-bezier(.2,1.2,.3,1); }
 .dronk-regel.aan { opacity: 1; transform: none; }
 .dronk-regel.proost { font-size: clamp(44px, 5.6vw, 118px); filter: drop-shadow(0 0 24px rgba(255,200,110,.9)); animation: proost 1.4s ease-out; }
 @keyframes proost { 0% { transform: scale(.5); filter: brightness(3) drop-shadow(0 0 60px #ffd27a); } 40% { transform: scale(1.08); } }
-.dronk-tekst { margin: 0; max-width: 40ch; font: italic 400 clamp(19px, 1.9vw, 38px)/1.5 var(--display); color: var(--bone); text-wrap: balance; animation: subIn 1.2s ease-out; }
+.dronk-tekst { margin: 0; max-width: 46ch; font: italic 400 clamp(17px, 1.55vw, 32px)/1.45 var(--display); color: var(--bone); text-wrap: balance; animation: subIn 1.2s ease-out; }
 .dronk-hint { font: italic clamp(16px, 1.5vw, 30px)/1.45 var(--display); color: var(--bone); opacity: .85; min-height: 1.4em; }
 .verhaal.goud::before { content: ""; position: absolute; inset: 0; z-index: 1; background: radial-gradient(circle at 50% 50%, rgba(255,215,140,.55), transparent 60%); animation: goudflits 2.2s ease-out forwards; pointer-events: none; }
 @keyframes goudflits { from { opacity: 1; } to { opacity: 0; } }
@@ -1163,16 +1172,16 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=101"></script>
-<script src="a/godfried.js?v=101"></script>
-<script src="a/spel.js?v=101"></script>
-<script src="a/voorbereiding.js?v=101"></script>
-<script src="a/wachters.js?v=101"></script>
-<script src="a/firebase-config.js?v=101"></script>
-<script src="a/portretten.js?v=101"></script>
-<script src="a/koppeling.js?v=101"></script>
-<script src="a/rollen.js?v=101"></script>
-<script src="a/tafel.js?v=101"></script>
+<script src="a/events.js?v=102"></script>
+<script src="a/godfried.js?v=102"></script>
+<script src="a/spel.js?v=102"></script>
+<script src="a/voorbereiding.js?v=102"></script>
+<script src="a/wachters.js?v=102"></script>
+<script src="a/firebase-config.js?v=102"></script>
+<script src="a/portretten.js?v=102"></script>
+<script src="a/koppeling.js?v=102"></script>
+<script src="a/rollen.js?v=102"></script>
+<script src="a/tafel.js?v=102"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2645,9 +2654,9 @@ function vertel(h, klaar) {
   $("vt-beeld").src = h.beeld; $("vt-kop").textContent = h.titel;
   // comic page: 4 panels as 2 + 2, 5 as 2 + 3, otherwise one row
   // the page: a grid with its own sizes per chapter (h.blad), each panel in its area (a = first) with its own crop
-  const vk = (h.vakken || []).map((v) => Array.isArray(v) ? v : [v, "50% 40%"]), bl = h.blad || { kol: `repeat(${Math.min(vk.length, 3)}, 1fr)`, rij: "1fr", vlak: [vk.map((_, i) => "abcdef"[i]).join(" ")] };
+  const vk = (h.vakken || []).map((v) => Array.isArray(v) ? { b: v[0], pos: v[1] } : typeof v === "string" ? { b: v, pos: "50% 40%" } : v), bl = h.blad || { kol: `repeat(${Math.min(vk.length, 3)}, 1fr)`, rij: "1fr", vlak: [vk.map((_, i) => "abcdef"[i]).join(" ")] };
   const blad = $("vt-blad"); blad.style.gridTemplateColumns = bl.kol; blad.style.gridTemplateRows = bl.rij; blad.style.gridTemplateAreas = bl.vlak.map((r) => `"${r}"`).join(" ");
-  blad.innerHTML = vk.map(([b, pos], i) => `<div class="vt-vak" data-i="${i}" style="grid-area:${"abcdef"[i]}"><img src="${b}" alt="" style="object-position:${pos}"></div>`).join("");
+  blad.innerHTML = vk.map((v, i) => `<div class="vt-vak" data-i="${i}" style="grid-area:${"abcdef"[i]}"><img src="${v.b}" alt="" class="${v.van ? "pan" : v.zoom === "uit" ? "uit" : ""}" style="object-position:${v.van || v.pos || "50% 40%"};${v.van ? `--van:${v.van};--naar:${v.naar}` : ""}"></div>`).join("");
   v.classList.toggle("strip", vk.length > 0);
   const vakken = [...$("vt-blad").querySelectorAll(".vt-vak")];
   const toonVak = (i) => { const k = h.vakVan?.[i] ?? i; vakken.forEach((el) => { const n = +el.dataset.i; el.classList.toggle("aan", n <= k); el.classList.toggle("nu", n === k); }); };
