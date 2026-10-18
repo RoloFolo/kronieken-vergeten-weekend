@@ -104,6 +104,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <span class="scherm" id="scherm"></span>
   </div>
   <p class="klein" id="tv-info" style="margin:-8px 4px 0"></p>
+  <p class="klein" id="tv-oud" style="margin:4px 4px 0;color:#ff8a80" hidden></p>
   <div class="kaart" id="tv-alarm" hidden style="border-color:var(--ember);color:#ffd2d0"></div>
   <div class="kaart" id="tv-dood" hidden style="border-color:var(--ember);color:#ffd2d0"></div>
   <div class="kaart" id="tv-stil" hidden style="border-color:var(--bronze);color:var(--bronze-hi)">De tv mag nog geen geluid afspelen. Klik één keer op het tv-scherm (met de muis van de laptop), anders hoort niemand Godfried.</div>
@@ -310,6 +311,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
       <div class="rij"><button class="rood" id="b-reset-ja" type="button">Ja, opnieuw</button><button id="b-reset-nee" type="button">Annuleren</button></div>
     </div>
     <button id="b-alles" type="button" style="margin-top:10px">Hele spel opnieuw beginnen</button>
+    <p class="klein" id="alles-status" style="margin:8px 0 0" hidden></p>
     <div class="bevestig" id="alles-vraag" hidden>
       <span id="alles-tv" class="klein" style="display:block;color:#ff8a80;margin-bottom:6px" hidden>De tv staat niet aan. Het wissen gebeurt op de tv: open eerst de tv (index.html?tv op de laptop), anders gebeurt er niets.</span>
       <span>Alle fiches, events, relieken, de finale en de titels gaan terug naar nul, en de tv start opnieuw bij het welkomstscherm (klik daarna één keer op de tv-laptop voor geluid). Zeker weten?</span>
@@ -318,19 +320,20 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=96"></script>
-<script src="a/godfried.js?v=96"></script>
-<script src="a/spel.js?v=96"></script>
-<script src="a/wachters.js?v=96"></script>
-<script src="a/rollen.js?v=96"></script>
-<script src="a/firebase-config.js?v=96"></script>
-<script src="a/portretten.js?v=96"></script>
-<script src="a/koppeling.js?v=96"></script>
-<script src="a/voorbereiding.js?v=96"></script>
+<script src="a/events.js?v=97"></script>
+<script src="a/godfried.js?v=97"></script>
+<script src="a/spel.js?v=97"></script>
+<script src="a/wachters.js?v=97"></script>
+<script src="a/rollen.js?v=97"></script>
+<script src="a/firebase-config.js?v=97"></script>
+<script src="a/portretten.js?v=97"></script>
+<script src="a/koppeling.js?v=97"></script>
+<script src="a/voorbereiding.js?v=97"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
-(() => { let eerste = null; const kijk = async () => { try { const v = (await (await fetch(`a/versie.txt?t=${Date.now()}`, { cache: "no-store" })).text()).trim();
+let nieuwsteVersie = null;
+(() => { let eerste = null; const kijk = async () => { try { const v = (await (await fetch(`a/versie.txt?t=${Date.now()}`, { cache: "no-store" })).text()).trim(); nieuwsteVersie = v;
   if (eerste === null) eerste = v; else if (v && v !== eerste && !document.activeElement?.matches?.("input, textarea")) location.reload(); } catch {} };
   kijk(); setInterval(kijk, 60000); })();
 
@@ -435,6 +438,9 @@ function bewaakTvs(s) {
   const i = s.tvInfo;
   $("tv-info").textContent = s.tv ? `Tv: ${i?.apparaat || "?"}, versie ${i?.versie || "?"}, laatste melding ${new Date(i?.gemeld || nu).toLocaleTimeString("nl-NL")}` : "Tv: oude versie (zonder kenmerk)";
   laatsteStand = s;
+  const oud = i?.versie && nieuwsteVersie && String(i.versie) !== String(nieuwsteVersie);
+  $("tv-oud").hidden = !oud; if (oud) $("tv-oud").textContent = `De tv draait versie ${i.versie}, de nieuwste is ${nieuwsteVersie}: druk op de tv-laptop Ctrl+F5.`;
+  if (resetWacht && s.ronde && s.ronde !== resetWacht.ronde) { clearTimeout(resetWacht.timer); resetWacht = null; resetMelding("✓ Alles is gewist: een nieuwe ronde is begonnen. Telefoons beginnen opnieuw bij Treed binnen (zelf even herladen mag).", "goed"); }
   const twee = schrijvers.size > 1 || !s.tv;
   $("tv-alarm").hidden = !twee;
   if (twee) $("tv-alarm").textContent = schrijvers.has("oud") || !s.tv
@@ -633,7 +639,12 @@ $("b-ere-terug").onclick = () => stuur({ cmd: "ere", d: -1 });
 $("b-ere-volgende").onclick = () => stuur({ cmd: "ere", d: 1 });
 $("b-alles").onclick = () => { const g = laatsteStand?.tvInfo?.gemeld, dood = !g || Date.now() - g > 75000; $("alles-tv").hidden = !dood; $("b-alles-ja").disabled = dood; $("alles-vraag").hidden = false; };
 $("b-alles-nee").onclick = () => ($("alles-vraag").hidden = true);
-$("b-alles-ja").onclick = () => { stuur({ cmd: "alles-opnieuw" }); $("alles-vraag").hidden = true; };
+// a full reset happens on the tv: say so, and confirm when the tv really started a new round
+let resetWacht = null;
+function resetMelding(t, soort) { const el = $("alles-status"); el.hidden = false; el.textContent = t; el.style.color = soort === "goed" ? "#8fd493" : soort === "fout" ? "#ff8a80" : "#efe3d4"; }
+$("b-alles-ja").onclick = () => { $("alles-vraag").hidden = true;
+  clearTimeout(resetWacht?.timer); resetWacht = { ronde: laatsteStand?.ronde, timer: setTimeout(() => { resetWacht = null; resetMelding("✗ De tv reageerde niet. Staat de tv aan (index.html?tv op de laptop), is hij ingelogd en op de nieuwste versie (Ctrl+F5)? Probeer het daarna opnieuw.", "fout"); }, 15000) };
+  stuur({ cmd: "alles-opnieuw" }); resetMelding("Verstuurd naar de tv… even wachten op bevestiging.", ""); };
 $("b-reset-nee").onclick = () => ($("reset-vraag").hidden = true);
 $("b-reset-ja").onclick = () => { stuur({ cmd: "events-opnieuw" }); $("reset-vraag").hidden = true; };
 </script>
