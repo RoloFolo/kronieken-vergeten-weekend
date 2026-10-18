@@ -251,7 +251,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 
   <section class="kaart" data-fase="vooraf">
     <h2>Voor het weekend</h2>
-    <p class="klein" style="margin:0 0 10px">Wat de Wachters vooraf op hun pagina deden: hun bevel aanvaard, herinneringen voor de finale ingestuurd, hun kamerwens. Volbrengt iemand zijn bevel in het weekend, druk dan op <b>Volbracht</b>: zijn Zegel krijgt 3 fiches.</p>
+    <p class="klein" style="margin:0 0 10px">Wat de Wachters vooraf op hun pagina deden: hun bevel aanvaard en herinneringen voor de finale ingestuurd. Volbrengt iemand zijn bevel in het weekend, druk dan op <b>Volbracht</b>: zijn Zegel krijgt 3 fiches.</p>
     <div class="lijst" id="vooraf-lijst"><p class="klein">Laden…</p></div>
     <details style="margin-top:10px"><summary class="klein" style="cursor:pointer">Alle herinneringen lezen (voor Akte I)</summary><div class="lijst" id="vooraf-anekdotes" style="margin-top:8px"></div></details>
   </section>
@@ -277,14 +277,14 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=82"></script>
-<script src="a/godfried.js?v=82"></script>
-<script src="a/spel.js?v=82"></script>
-<script src="a/wachters.js?v=82"></script>
-<script src="a/rollen.js?v=82"></script>
-<script src="a/firebase-config.js?v=82"></script>
-<script src="a/koppeling.js?v=82"></script>
-<script src="a/voorbereiding.js?v=82"></script>
+<script src="a/events.js?v=83"></script>
+<script src="a/godfried.js?v=83"></script>
+<script src="a/spel.js?v=83"></script>
+<script src="a/wachters.js?v=83"></script>
+<script src="a/rollen.js?v=83"></script>
+<script src="a/firebase-config.js?v=83"></script>
+<script src="a/koppeling.js?v=83"></script>
+<script src="a/voorbereiding.js?v=83"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -474,13 +474,12 @@ addEventListener("koppeling-status", (e) => { kopStatus = e.detail; tekenVerbind
 // before the weekend: per Wachter his order, accepted or not, his memories and his room wish; "Volbracht" during the weekend
 let vooraf = {}, bevelGedaan = new Set();
 const sleutelVan = (naam) => Koppeling.emailVan(naam).toLowerCase().replaceAll(".", ",");
-const KAMER = { alleen: "liever alleen", delen: "delen prima", "maakt-niet-uit": "maakt niet uit" };
 function tekenVooraf() {
   const V = window.VOORAF || {}, esc = (t) => String(t ?? "").replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[k]);
   $("vooraf-lijst").innerHTML = (window.WACHTERS || []).map((w) => {
-    const v = vooraf[sleutelVan(w.naam)] || {}, b = V.bevelen?.[w.naam], n = Object.keys(v.anekdotes || {}).length, k = v.kamer, klaar = bevelGedaan.has(w.naam);
+    const v = vooraf[sleutelVan(w.naam)] || {}, b = V.bevelen?.[w.naam], n = Object.keys(v.anekdotes || {}).length, klaar = bevelGedaan.has(w.naam);
     const wat = [b ? `Bevel: ${esc(b.titel)} ${v.bevel?.aanvaard && (v.bevel.ronde ?? -1) === (laatsteStand?.ronde || 0) ? '<span class="ok">✓ aanvaard</span>' : "· nog niet aanvaard"}` : "Geen bevel",
-      `${n} herinnering${n === 1 ? "" : "en"}`, k ? `Kamer: ${KAMER[k.wens] || "?"}${k.met ? ` (met ${esc(k.met)})` : ""}${k.snurk ? " · snurkt" : ""}` : "Kamer: nog geen wens"].join(" · ");
+      `${n} herinnering${n === 1 ? "" : "en"}`].join(" · ");
     return `<div class="vw ${klaar ? "klaar" : ""}"><span class="wie">${esc(w.naam)}</span>${b ? `<button type="button" data-bevel="${esc(w.naam)}" ${klaar ? "disabled" : ""}>${klaar ? "Volbracht ✓" : "Volbracht"}</button>` : "<span></span>"}<span class="wat">${wat}</span></div>`;
   }).join("");
   const alle = (window.WACHTERS || []).flatMap((w) => Object.values(vooraf[sleutelVan(w.naam)]?.anekdotes || {}));

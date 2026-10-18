@@ -385,14 +385,14 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=82"></script>
-<script src="a/godfried.js?v=82"></script>
-<script src="a/spel.js?v=82"></script>
-<script src="a/rollen.js?v=82"></script>
-<script src="a/firebase-config.js?v=82"></script>
-<script src="a/koppeling.js?v=82"></script>
-<script src="a/tafel.js?v=82"></script>
-<script src="a/voorbereiding.js?v=82"></script>
+<script src="a/wachters.js?v=83"></script>
+<script src="a/godfried.js?v=83"></script>
+<script src="a/spel.js?v=83"></script>
+<script src="a/rollen.js?v=83"></script>
+<script src="a/firebase-config.js?v=83"></script>
+<script src="a/koppeling.js?v=83"></script>
+<script src="a/tafel.js?v=83"></script>
+<script src="a/voorbereiding.js?v=83"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -730,24 +730,11 @@ $("hulp-form").onsubmit = async (e) => {
 $("hulp-lijst").onclick = async (e) => { const b = e.target.closest("[data-weg]"); if (b) await Koppeling.vooraf(`anekdotes/${b.dataset.weg}`, null); };
 function tekenStap2(stap) {
   const el = $("stap2");
-  if (stap < 2) { el.innerHTML = `<h2 class="carved">Binnenkort meer</h2><p class="op-slot">Kort voor het weekend stuurt Godfried je meer: wat je moet meenemen, waar je slaapt en de muziek van de Hall.</p>`; return; }
-  const k = mijnVooraf.kamer || {}, anders = (window.WACHTERS || []).filter((w) => w.naam !== wachter.naam);
+  if (stap < 2) { el.innerHTML = `<h2 class="carved">Binnenkort meer</h2><p class="op-slot">Kort voor het weekend stuurt Godfried je meer: wat je moet meenemen en de muziek van de Hall.</p>`; return; }
   el.innerHTML = `<h2 class="carved">Wat neem je mee</h2>
     <div class="sub-kop">Geregeld</div><ul class="lijstje geregeld">${(V.geregeld || []).map((t) => `<li>${schoon(t)}</li>`).join("")}</ul>
     <div class="sub-kop">Neem zelf mee</div><ul class="lijstje">${(V.meenemen || []).map((t) => `<li>${schoon(t)}</li>`).join("")}</ul>
-    <h2 class="carved" style="margin-top:22px">Waar slaap je</h2>
-    <p class="op-slot" style="margin:0">Er zijn acht kamers, elk met een eigen badkamer. Een paar Wachters slapen met z’n tweeën. Hoe sta jij erin?</p>
-    <div class="opties" id="kamer-keuze">${[["alleen", "Ik slaap het liefst alleen"], ["delen", "Een kamer delen vind ik prima"], ["maakt-niet-uit", "Maakt me niet uit"]].map(([w, t]) =>
-      `<label><input type="radio" name="kamer" value="${w}" ${k.wens === w ? "checked" : ""}>${t}</label>`).join("")}
-      <label><input type="checkbox" id="kamer-snurk" ${k.snurk ? "checked" : ""}>Ik snurk (eerlijk zijn)</label></div>
-    <div class="veld"><label for="kamer-met">Delen? Het liefst met</label><select id="kamer-met"><option value="">Maakt niet uit</option>${anders.map((w) => `<option ${k.met === w.naam ? "selected" : ""}>${schoon(w.naam)}</option>`).join("")}</select></div>
-    ${k.t ? `<p class="aanvaard">✓ Je wens is bewaard. Je kunt hem nog aanpassen.</p>` : ""}
     ${V.playlist ? `<h2 class="carved" style="margin-top:22px">De muziek van de Hall</h2><p class="op-slot" style="margin:0">Voeg je eigen nummers toe aan de playlist van het weekend.</p><a class="knop" href="${schoon(V.playlist)}" target="_blank" rel="noopener">Open de playlist</a>` : ""}`;
-  const bewaar = async () => {
-    const wens = el.querySelector("input[name=kamer]:checked")?.value || "", data = { wens, snurk: $("kamer-snurk").checked, met: $("kamer-met").value, t: Date.now() };
-    const ok = await Koppeling.vooraf("kamer", data); if (ok === false) melding("Niet verstuurd", "Dat kwam niet aan. Controleer je verbinding en probeer het opnieuw."); else piep("kies", .5);
-  };
-  el.querySelectorAll("input, select").forEach((i) => (i.onchange = bewaar));
   if (lokaal(`kronieken-stap2-${wachter.naam}-${publiek.ronde || 0}`) !== "gezien") { lokaal(`kronieken-stap2-${wachter.naam}-${publiek.ronde || 0}`, "gezien"); if (navigator.vibrate) try { navigator.vibrate([80, 60, 80]); } catch {} }
 }
 function tekenStap3(stap) {
