@@ -1,5 +1,5 @@
 // Inkooplijst voor De Kronieken van het Vergeten Weekend → Excel (Drive opent hem in Google Sheets).
-// Nagelopen tegen alle onderdelen: de Wachterstocht, de 26 Schaduw-events, de 40 quests, de rollen, de finale, het
+// Nagelopen tegen alle onderdelen: de Wachterstocht, de 26 Schaduw-events, de 30 quests, de rollen, de finale, het
 // einde en de eretitels. Wat de organisatoren al invulden (status, wie, prijs, opmerking) blijft per regel staan.
 //   node scripts/inkooplijst.js <uit.xlsx> [bestaande.xlsx]   (exceljs nodig)
 const ExcelJS = require("exceljs");
@@ -22,7 +22,7 @@ const L = [
   ["Zegels & kaarten", "Fiches (houten munten of pokerchips)", "150", "In de Zegel-potten bij elke quest", "12 per Zegel opent zijn akte"],
   ["Zegels & kaarten", "Stickervel A4 (wit of kraft)", "1", "Vaas-etiketten printen", ""],
   ["Zegels & kaarten", "Twee bakjes of mandjes", "2", "Questkaarten-stapel en aflegstapel", ""],
-  ["Printwerk", "Stevig papier A4 (250 g)", "20 vel", "02 Questkaarten (dubbelzijdig)", "40 kaarten, daarna snijden"],
+  ["Printwerk", "Stevig papier A4 (250 g)", "8 vel", "02 Questkaarten (dubbelzijdig)", "30 quests + 6 eigen = 36 kaarten (4 vel voor, 4 achter), daarna snijden"],
   ["Printwerk", "Regelboek printen", "2", "01 Regelboek.pdf", "Eén voor de tafel, één reserve"],
   ["Printwerk", "Schaduw-events printen", "1", "04 Schaduw-events (alleen organisatoren)", "Niet laten slingeren"],
   ["Vuur & sfeer", "Kaarsen (waxinelichtjes + dinerkaarsen)", "30 + 6", "Kring van Kaarsen, Sfeermeesters, De Laatste Wacht", ""],
@@ -35,12 +35,9 @@ const L = [
   ["Events & quests", "Pennen + blokje papier", "11 + 1", "Offer aan de Vlam, De Biecht", ""],
   ["Events & quests", "Kom of hoed voor de briefjes", "1", "De Biecht (anoniem)", "Mag uit het huisje"],
   ["Events & quests", "Twee schalen", "2", "De Hongerige Schaduw, De Schaal der Stilte", "Mag uit het huisje"],
-  ["Events & quests", "Blinddoek", "1", "Voorproever van de Koning", ""],
-  ["Events & quests", "A3-papier + stiften + plakband", "2 vel", "Het Wapenschild (ophangen in de Hall)", ""],
-  ["Events & quests", "Kaartspel + bordspel", "1 + 1", "Het Toernooi, De Spelleider, Het Duel", "Neemt iemand er een mee?"],
   ["Events & quests", "Ingrediënten voor elixers", "", "Het Elixer der Duisternis, Het Elixer, Instabiel Mengsel (Alchemist)", "Bijv. cassis, cola, grenadine, gember, iets vreemds"],
-  ["Events & quests", "Serveerplank", "1", "De Hapjesbrigade", "Mag uit het huisje"],
-  ["Events & quests", "Telefoonstatief met afstandsbediening", "1", "Het Groepsportret, De Brandmeesters", ""],
+  ["Events & quests", "Serveerplank", "1", "De Legendarische Borrelplank (Robin en Geert)", "Mag uit het huisje"],
+  ["Events & quests", "Telefoonstatief met afstandsbediening", "1", "De Groepsfoto, De Influencer, foto’s voor de aftiteling", ""],
   ["Buiten", "Fleecedekens", "4–6", "Het Buitenkamp, De Rustbrengers", "Optioneel"],
   ["LARP", "Extra props om aan te vullen", "", "Voor wie iets mist in zijn gedaante", "Iedereen neemt zelf props mee; wij vullen aan (zie 10 LARP). Stefan weet dit niet."],
   ["Finale", "Zak veren", "1", "Akte I: pek en veren voor wie geen gênant moment instuurde", "Kussenveren of carnavalsveren"],
@@ -49,7 +46,7 @@ const L = [
   ["Eten & drinken", "Frituurpan (+ sauzen en frituurhapjes: Roy)", "1", "Frituur in het weekend", "Akkoord van de eigenaar (18 oktober)"],
   ["Buiten", "Thermoskan + to-go bekers", "1 + 11", "De Ochtendmars, Het Buitenkamp (iets warms)", ""],
   ["Eten & drinken", "Koffie, thee, melk, suiker", "", "Koffie voor de Wacht, De Hersteller, De Ochtendmars", "Naast de gewone boodschappen"],
-  ["Eten & drinken", "Snacks en hapjes", "", "De Snackroof, De Hongerige Schaduw, Voorproever, Hapjesbrigade", "Naast de gewone boodschappen"],
+  ["Eten & drinken", "Snacks en hapjes", "", "De Hongerige Schaduw, en gewoon trek", "Naast de gewone boodschappen"],
   ["Eten & drinken", "Drank voor De Eerste Dronk", "", "De toost bij de start (vrijdag)", "Optioneel: iets feestelijks, bijv. bubbels"],
   ["Eten & drinken", "Kater-kit: paracetamol, ORS-zakjes", "1", "De Hersteller, de Battle Healer", "Optioneel, wel handig"],
   ["Ere van de Wachters", "Medailles of lintjes", "15", "De eretitels, direct na de finale", "Optioneel"],
@@ -71,7 +68,7 @@ const L = [
   ws.columns = [{ width: 20 }, { width: 46 }, { width: 10 }, { width: 50 }, { width: 16 }, { width: 16 }, { width: 11 }, { width: 42 }];
   ws.mergeCells("A1:H1"); ws.getCell("A1").value = "Inkooplijst · De Kronieken van het Vergeten Weekend (13 tot 15 november)";
   ws.getCell("A1").font = { bold: true, size: 15, color: { argb: "FF7A1016" } };
-  ws.mergeCells("A2:H2"); ws.getCell("A2").value = "Zet bij Status wat er gekocht is en vul in wie het regelt. Alleen voor de organisatoren: hier staan de relieken, de kist en de oorkondes in.";
+  ws.mergeCells("A2:H2"); ws.getCell("A2").value = "Zet bij Status wat er gekocht is en vul in wie het regelt. Alleen voor de organisatoren: hier staan de relieken en de kist in.";
   ws.getCell("A2").font = { italic: true, color: { argb: "FF6E5230" } };
   const kop = ws.getRow(3); kop.values = ["Categorie", "Wat", "Aantal", "Waarvoor", "Wie regelt", "Status", "Prijs (€)", "Opmerking"];
   kop.eachCell((c) => { c.font = { bold: true, color: { argb: "FFFBE3B4" } }; c.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FF3A0A0E" } }; });

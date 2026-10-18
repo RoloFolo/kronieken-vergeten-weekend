@@ -1,53 +1,45 @@
-// De questkaarten: 10 per Zegel. soort: solo | duo | groep; fiches: wat de regie aftikt.
+// De questkaarten: Jeans 30 quests (okt 2026), verdeeld over de vier Zegels. soort: solo | duo | groep;
+// xp: Jeans moeilijkheid (5 makkelijk, 10 gemiddeld, 20 moeilijk, 30 legendarisch); fiches: wat de regie aftikt (5/10 = 1, 20 = 2, 30 = 3).
 // Een volbrachte kaart gaat in de vaas van zijn Zegel; een organisator tikt de fiches af in de regie.
+// Bewijs: een getuige, foto of filmpje, of de regie. Bij duo's telt het voor beiden, bij groepen voor wie actief meedeed.
 window.QUESTS = [
-  // ---------- Vlam van Waakzaamheid: vuur, warmte, het huis ----------
-  { zegel: "vlam", soort: "solo", fiches: 1, naam: "De Vuurwacht", tekst: "Houd het vuur een halfuur brandend zonder dat iemand anders eraan hoeft te zitten." },
-  { zegel: "vlam", soort: "solo", fiches: 1, naam: "Fluisteraar van de Vlam", tekst: "Vertel het vuur hardop een geheim van minstens drie zinnen. Iedereen mag meeluisteren." },
-  { zegel: "vlam", soort: "solo", fiches: 2, naam: "De Stille Opruimer", tekst: "Ruim tien dingen op zonder dat iemand het merkt. Pas als het gelukt is, mag je het verkondigen." },
-  { zegel: "vlam", soort: "solo", fiches: 1, naam: "Koffie voor de Wacht", tekst: "Zet koffie of thee voor minstens zes Wachters en serveer elk kopje met een buiging." },
-  { zegel: "vlam", soort: "solo", fiches: 2, naam: "De Laatste Wacht", tekst: "Wees vannacht degene die het vuur dooft en spreek plechtig: “De Vlam waakt.” Er moet een getuige zijn." },
-  { zegel: "vlam", soort: "duo", fiches: 2, naam: "Het Keukenduel", tekst: "Doe samen de afwas. Een van jullie geeft er live sportcommentaar bij, van aftrap tot laatste bord." },
-  { zegel: "vlam", soort: "duo", fiches: 2, naam: "De Sfeermeesters", tekst: "Maak de Guild Hall sfeervoller: kaarsen, licht, muziek. Het werk telt pas na applaus van de groep." },
-  { zegel: "vlam", soort: "duo", fiches: 2, naam: "De Brandmeesters", tekst: "Bouw samen het mooiste vuur van het weekend. Maak er een foto van voor de Kronieken." },
-  { zegel: "vlam", soort: "groep", fiches: 3, naam: "Het Kampvuurverhaal", tekst: "Rond het vuur vertelt iedereen om de beurt één zin van hetzelfde enge verhaal. Wie lacht bij het slot, begint opnieuw." },
-  { zegel: "vlam", soort: "groep", fiches: 3, naam: "De Grote Reset", tekst: "Binnen tien minuten is de Guild Hall weer spik en span. Zet een timer en ga." },
+  // ---------- Vlam van Waakzaamheid: scherp blijven, sluw spelen, niemand mag het doorhebben ----------
+  { zegel: "vlam", soort: "solo", xp: 20, fiches: 2, naam: "De Complottheorie", tekst: "Overtuig iemand dat een totaal onbelangrijk voorwerp in het huis een verborgen functie heeft." },
+  { zegel: "vlam", soort: "solo", xp: 20, fiches: 2, naam: "De Echo", tekst: "Verwerk vijf keer dezelfde vreemde uitdrukking in gesprekken, zonder dat iemand je erop aanspreekt." },
+  { zegel: "vlam", soort: "solo", xp: 10, fiches: 1, naam: "De Politicus", tekst: "Beantwoord drie directe vragen zonder daadwerkelijk antwoord te geven." },
+  { zegel: "vlam", soort: "duo", xp: 20, fiches: 2, naam: "De Nep-Ruzie", tekst: "Voer samen een bloedserieuze discussie over een volstrekt onzinnig onderwerp, totdat iemand zich ermee bemoeit." },
+  { zegel: "vlam", soort: "duo", xp: 20, fiches: 2, naam: "De Running Gag", tekst: "Laat los van elkaar steeds dezelfde bizarre zin vallen, tot iemand vraagt waarom jullie dat zeggen." },
+  { zegel: "vlam", soort: "duo", xp: 10, fiches: 1, naam: "De Slechte Cop", tekst: "Ondervraag een Wachter alsof hij verdacht wordt van een belachelijk misdrijf, zoals het stelen van de laatste bitterbal." },
+  { zegel: "vlam", soort: "duo", xp: 30, fiches: 3, naam: "De Telepathen", tekst: "Spreek minstens drie keer tegelijk dezelfde zin uit, zonder dat de rest doorheeft dat het afgesproken is." },
 
-  // ---------- Hoorn van Overvloed: eten, drinken, niemand komt tekort ----------
-  { zegel: "hoorn", soort: "solo", fiches: 1, naam: "De Schenker", tekst: "Vul bij iedereen het glas bij voordat het leeg is. Eén volle ronde, niemand overgeslagen." },
-  { zegel: "hoorn", soort: "solo", fiches: 1, naam: "Het Waterritueel", tekst: "Bezorg iedere Wachter een glas water. Ja, echt iedereen. Ook die ene." },
-  { zegel: "hoorn", soort: "solo", fiches: 2, naam: "Voorproever van de Koning", tekst: "Stel een proeverij samen van drie hapjes. De groep proeft geblinddoekt en raadt wat het is." },
-  { zegel: "hoorn", soort: "solo", fiches: 2, naam: "De Voorraadmeester", tekst: "Zoek uit wat er bijna op is en regel het, of zet het op de boodschappenlijst voordat iemand het mist." },
-  { zegel: "hoorn", soort: "solo", fiches: 2, naam: "De Grote Toost", tekst: "Breng een toost uit op een andere Wachter, met een anekdote die niet iedereen kent." },
-  { zegel: "hoorn", soort: "duo", fiches: 2, naam: "De Hapjesbrigade", tekst: "Maak samen een plank met hapjes voor de hele Guild. Presentatie telt mee." },
-  { zegel: "hoorn", soort: "duo", fiches: 2, naam: "Het Elixer", tekst: "Bedenk samen een huisdrankje (mag zonder alcohol), geef het een naam en laat drie Wachters proeven." },
-  { zegel: "hoorn", soort: "duo", fiches: 1, naam: "De Snackroof", tekst: "Breng ongezien snacks naar drie Wachters die met iets anders bezig zijn. Gezien? Dan telt het niet." },
-  { zegel: "hoorn", soort: "groep", fiches: 3, naam: "Het Feestmaal", tekst: "Eet samen aan één tafel, en niemand pakt zijn telefoon tot het dessert." },
-  { zegel: "hoorn", soort: "groep", fiches: 3, naam: "Ontbijt voor de Wachters", tekst: "Het ontbijt staat klaar voordat de laatste Wachter beneden komt." },
+  // ---------- Hoorn van Overvloed: drank, lof en eer, alles te veel ----------
+  { zegel: "hoorn", soort: "solo", xp: 5, fiches: 1, naam: "De Influencer", tekst: "Maak een bloedserieuze selfie met iemand en zeg: “Dit is echt content.”" },
+  { zegel: "hoorn", soort: "solo", xp: 10, fiches: 1, naam: "De Sommelier", tekst: "Beschrijf een goedkoop biertje alsof het een wijn van € 400 is. Minstens dertig seconden volhouden." },
+  { zegel: "hoorn", soort: "solo", xp: 10, fiches: 1, naam: "De Onzichtbare Dienaar", tekst: "Schenk drie keer ongemerkt iemands drankje bij, zonder dat hij erom vraagt." },
+  { zegel: "hoorn", soort: "duo", xp: 20, fiches: 2, naam: "De Bodyguards", tekst: "Begeleid een derde Wachter vijf minuten lang alsof hij een wereldberoemde VIP is." },
+  { zegel: "hoorn", soort: "duo", xp: 20, fiches: 2, naam: "De Fanclub", tekst: "Behandel één Wachter tien minuten lang als een levende legende. Vraag om een handtekening." },
+  { zegel: "hoorn", soort: "duo", xp: 10, fiches: 1, naam: "De Ceremonie", tekst: "Organiseer een plechtige huldiging van iemand, vanwege een volkomen nutteloze prestatie." },
+  { zegel: "hoorn", soort: "groep", xp: 20, fiches: 2, naam: "De Staande Ovatie", tekst: "Laat minstens vijf Wachters spontaan applaudisseren voor iets wat absoluut geen applaus verdient." },
+  { zegel: "hoorn", soort: "groep", xp: 20, fiches: 2, naam: "De Cultuurprijs", tekst: "Organiseer een prijsuitreiking voor de slechtste grap van het weekend. Minstens vijf Wachters stemmen." },
 
-  // ---------- Schild van Broederschap: samen, spel, verbinding ----------
-  { zegel: "schild", soort: "solo", fiches: 1, naam: "De Verbinder", tekst: "Breng twee Wachters die elkaar vandaag nog weinig spraken samen in één gesprek." },
-  { zegel: "schild", soort: "solo", fiches: 1, naam: "De Herinnering", tekst: "Vertel de groep je mooiste herinnering aan een eerder vriendenweekend." },
-  { zegel: "schild", soort: "solo", fiches: 2, naam: "De Spelleider", tekst: "Leg een spel uit dat de groep nog niet kent en speel een ronde met minstens vier Wachters." },
-  { zegel: "schild", soort: "duo", fiches: 2, naam: "Het Duel", tekst: "Daag iemand uit: armpje drukken, steen-papier-schaar best of five, of een spel naar keuze. De verliezer prijst de winnaar luid." },
-  { zegel: "schild", soort: "duo", fiches: 2, naam: "Het Gedeelde Geheim", tekst: "Vertel elkaar iets wat de ander nog niet van je wist. Vertel de groep daarna wat je hebt geleerd, met toestemming." },
-  { zegel: "schild", soort: "duo", fiches: 1, naam: "Het Wapenschild", tekst: "Ontwerp samen een wapenschild voor de Guild. Hang het op in de Hall." },
-  { zegel: "schild", soort: "groep", fiches: 3, naam: "Het Toernooi", tekst: "Speel een bord- of kaartspel met minstens zes Wachters. De winnaar krijgt de beste stoel tot de volgende maaltijd." },
-  { zegel: "schild", soort: "groep", fiches: 3, naam: "De Kring", tekst: "Iedereen noemt één ding dat hij waardeert aan de Wachter links van hem. Niet lachen, wel menen." },
-  { zegel: "schild", soort: "groep", fiches: 3, naam: "Het Groepsportret", tekst: "Een epische groepsfoto met iedereen erop, in een zo dramatisch mogelijke pose." },
-  { zegel: "schild", soort: "groep", fiches: 2, naam: "De Wet van de Tafel", tekst: "Kies samen een regel voor de volgende maaltijd, zoals ‘niemand zegt ik’, en houd hem de hele maaltijd vol." },
+  // ---------- Schild van Broederschap: samen, regels, de groep als één ----------
+  { zegel: "schild", soort: "solo", xp: 10, fiches: 1, naam: "De Manager", tekst: "Organiseer spontaan een evaluatie van een totaal onbelangrijke gebeurtenis. Gebruik minstens drie managementtermen." },
+  { zegel: "schild", soort: "duo", xp: 10, fiches: 1, naam: "De Geheime Groet", tekst: "Bedenk een belachelijke begroeting en voer hem minstens drie keer uit waar anderen bij zijn." },
+  { zegel: "schild", soort: "groep", xp: 30, fiches: 3, naam: "De Staatsgreep", tekst: "Overtuig minstens vier anderen om samen een nieuwe, belachelijke huisregel in te voeren." },
+  { zegel: "schild", soort: "groep", xp: 30, fiches: 3, naam: "De Sekte", tekst: "Zorg dat minstens vijf Wachters dezelfde onzinnige uitspraak als groepsmotto gaan gebruiken." },
+  { zegel: "schild", soort: "groep", xp: 20, fiches: 2, naam: "De Volksjury", tekst: "Organiseer een rechtszaak tegen een Wachter wegens een onbenullige overtreding. Minstens vier Wachters spelen een rol." },
+  { zegel: "schild", soort: "groep", xp: 20, fiches: 2, naam: "De Boyband", tekst: "Zorg dat minstens vier Wachters samen een boyband vormen en minstens één refrein opvoeren." },
+  { zegel: "schild", soort: "groep", xp: 10, fiches: 1, naam: "De Democratie", tekst: "Organiseer een officiële stemming over iets waar niemand ooit over zou moeten stemmen." },
+  { zegel: "schild", soort: "groep", xp: 20, fiches: 2, naam: "De Groepsfoto", tekst: "Maak een bloedserieuze groepsfoto waarop minstens zes Wachters exact dezelfde belachelijke pose aannemen." },
 
-  // ---------- Hart van de Ardennen: buiten, rust, herstel ----------
-  { zegel: "hart", soort: "solo", fiches: 1, naam: "Frisse Lucht", tekst: "Haal iemand van de bank voor tien minuten buiten. Hij mag er niet over zeuren." },
-  { zegel: "hart", soort: "solo", fiches: 2, naam: "De Sterrenkijker", tekst: "Wijs de groep ’s avonds buiten een sterrenbeeld aan, of verzin er heel overtuigend een." },
-  { zegel: "hart", soort: "solo", fiches: 1, naam: "De Hersteller", tekst: "Zorg dat een brakke Wachter ’s ochtends water, koffie en een bemoedigend woord krijgt." },
-  { zegel: "hart", soort: "solo", fiches: 2, naam: "De Gids", tekst: "Zoek een mooie wandelroute uit en leid de groep. Verdwalen kost een rondje." },
-  { zegel: "hart", soort: "duo", fiches: 2, naam: "De Verkenners", tekst: "Vind buiten iets bijzonders voor op de schoorsteen: een tak, steen of veer, mét een verzonnen legende." },
-  { zegel: "hart", soort: "duo", fiches: 2, naam: "Het Buitenkamp", tekst: "Maak buiten een plek klaar voor een buitenmoment: stoelen, licht, iets warms." },
-  { zegel: "hart", soort: "duo", fiches: 1, naam: "De Rustbrengers", tekst: "Zit samen tien minuten buiten zonder telefoon en zonder iets te hoeven." },
-  { zegel: "hart", soort: "groep", fiches: 3, naam: "De Expeditie", tekst: "Maak met minstens zes Wachters een wandeling van minimaal een halfuur." },
-  { zegel: "hart", soort: "groep", fiches: 3, naam: "De Ochtendmars", tekst: "Voor tien uur buiten, koffie in de hand, met minstens vijf Wachters." },
-  { zegel: "hart", soort: "groep", fiches: 2, naam: "De Roep van het Woud", tekst: "Ga met z’n allen naar buiten, adem diep in en roep samen ‘Ardennen!’ naar het bos." },
+  // ---------- Hart van de Ardennen: verhalen, legendes, wie we zijn ----------
+  { zegel: "hart", soort: "solo", xp: 20, fiches: 2, naam: "De Bijnaam", tekst: "Geef iemand een compleet idiote bijnaam en zorg dat minstens twee anderen hem overnemen." },
+  { zegel: "hart", soort: "solo", xp: 10, fiches: 1, naam: "De Filosoof", tekst: "Begin drie keer een gesprek met: “Weet je wat het probleem is met onze generatie?”" },
+  { zegel: "hart", soort: "solo", xp: 10, fiches: 1, naam: "De Expert", tekst: "Geef twee minuten lang ongevraagd deskundig advies over iets waar je aantoonbaar geen verstand van hebt." },
+  { zegel: "hart", soort: "solo", xp: 10, fiches: 1, naam: "De Excuses", tekst: "Bied oprecht je excuses aan voor iets van minstens tien jaar geleden, waar niemand nog aan denkt." },
+  { zegel: "hart", soort: "solo", xp: 20, fiches: 2, naam: "De Legende", tekst: "Zorg dat iemand anders spontaan een gênant verhaal over jou vertelt." },
+  { zegel: "hart", soort: "duo", xp: 20, fiches: 2, naam: "De Persconferentie", tekst: "Houd een geïmproviseerde persconferentie waarin één van jullie excuses aanbiedt voor een verzonnen schandaal." },
+  { zegel: "hart", soort: "duo", xp: 20, fiches: 2, naam: "De Historici", tekst: "Vertel samen een compleet verzonnen verhaal over een andere Wachter. Iemand moet vragen of het echt gebeurd is." },
 ];
-// Lege kaarten: de groep verzint zelf een quest; de Warlord of Games bepaalt Zegel en beloning.
-window.QUESTS_EIGEN = 5;
+// Lege kaarten: de groep verzint zelf een quest; The Dice Rogue bepaalt Zegel en beloning.
+window.QUESTS_EIGEN = 6;
