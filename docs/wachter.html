@@ -317,6 +317,7 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
 .bevel-brief.dreun { animation: dreun .35s ease-out; }
 @keyframes dreun { 30% { transform: translateY(4px) scale(.985); } }
 .lijstje li.extra { color: #ff8a80; font-weight: 700; letter-spacing: .02em; }
+.test-opnieuw { justify-self: center; margin-top: 10px; padding: 8px 14px; background: none; border: 1px dashed rgba(184,149,95,.5); color: var(--ash); font: 600 12px/1 var(--body); letter-spacing: .06em; cursor: pointer; }
 .aanvaard { margin-top: 14px; text-align: center; color: #8fd493; font: 600 15px/1.4 var(--body); }
 .veld { display: grid; gap: 6px; margin-top: 12px; }
 .veld label { font: 700 11px/1 var(--carved); letter-spacing: .25em; text-transform: uppercase; color: var(--ash); }
@@ -440,15 +441,15 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=92"></script>
-<script src="a/godfried.js?v=92"></script>
-<script src="a/spel.js?v=92"></script>
-<script src="a/rollen.js?v=92"></script>
-<script src="a/firebase-config.js?v=92"></script>
-<script src="a/portretten.js?v=92"></script>
-<script src="a/koppeling.js?v=92"></script>
-<script src="a/tafel.js?v=92"></script>
-<script src="a/voorbereiding.js?v=92"></script>
+<script src="a/wachters.js?v=93"></script>
+<script src="a/godfried.js?v=93"></script>
+<script src="a/spel.js?v=93"></script>
+<script src="a/rollen.js?v=93"></script>
+<script src="a/firebase-config.js?v=93"></script>
+<script src="a/portretten.js?v=93"></script>
+<script src="a/koppeling.js?v=93"></script>
+<script src="a/tafel.js?v=93"></script>
+<script src="a/voorbereiding.js?v=93"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -779,10 +780,16 @@ function tekenBevel() {
          <p class="wat-nu ${ja ? "ja" : ""}">${ja ? "✓ Aanvaard<small>Godfried rekent op je</small>" : "Aanvaard je dit bevel?<br>Druk hieronder je zegel ↓"}</p></div>
          <button class="plek ${ja ? "gedrukt" : ""}" type="button" id="b-aanvaard" ${ja ? "disabled" : ""} aria-label="Druk je zegel: ik aanvaard het bevel">${ja ? `<img src="a/app/lakzegel.webp" alt="">` : "Druk<br>hier"}</button></div>
        <p class="op-slot" style="font-size:14px;margin:0">${b.zegel ? "Volbreng je het in het weekend, dan voedt het een Zegel." : "Alleen de hoeders krijgen dit bevel. Het telt niet voor de Zegels."}</p>
+       ${ORGANISATOREN.includes(wachter.naam) && !bevelAltijdOpen && (open || ja) ? `<button class="test-opnieuw" type="button" id="b-test-opnieuw">↺ Opnieuw testen (alleen hoeders)</button>` : ""}
        ${stand === "open" && !bevelAltijdOpen ? `<button class="bevel-verder" type="button" id="b-bevel-verder">Verder</button>` : ""}`);
   bevelNetOpen = false;
   const breek = $("b-breek"); if (breek) breek.onclick = () => breekZegel(breek, () => { lokaal(sleutel(), "open"); bevelNetOpen = true; vooraafGetekend = ""; toonVooraf(true); });
   const verder = $("b-bevel-verder"); if (verder) verder.onclick = () => { lokaal(sleutel(), "gelezen"); vooraafGetekend = ""; toonVooraf(true); scrollTo({ top: 0, behavior: "smooth" }); };
+  // organisers only: walk the flow again (own intro, seal and acceptance), without the tv and without touching the players
+  const opnieuw = $("b-test-opnieuw"); if (opnieuw) opnieuw.onclick = async () => {
+    for (const k of ["intro", "bevel", "stap2"]) lokaal(`kronieken-${k}-${wachter.naam}-${publiek.ronde || 0}`, "");
+    await Koppeling.vooraf("bevel", null); location.reload();
+  };
   const plek = $("b-aanvaard"); if (plek && !ja) plek.onclick = async () => {
     bevelBezig = true; plek.disabled = true; plek.classList.add("gedrukt", "net"); plek.innerHTML = `<img src="a/app/lakzegel.webp" alt="">`;
     setTimeout(() => { const br = $("bevel-brief"); br?.classList.remove("ontvouw"); br?.classList.add("dreun"); piep("kracht", .7); if (navigator.vibrate) try { navigator.vibrate(120); } catch {} }, 380);
