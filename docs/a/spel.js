@@ -42,11 +42,11 @@ window.SPEL = {
   eed: {
     fragmenten: ["Bij het vuur", "dat nooit dooft", "bij de hoorn", "die nooit leeg raakt", "bij het schild", "van onze broederschap", "en het hart", "van de Ardennen", "zweren wij", "voor elkaar", "te waken."],
     aanwijzingen: [
-      "Het vuur spreekt als eerste, en wie de orde bewaakt maakt zijn zin af.",
+      "Het vuur van de haard spreekt als eerste, en de IJzeren Hoeder maakt zijn zin af.",
       "De Quartermaster heft de hoorn; de Alchemist zorgt dat hij nooit leeg raakt.",
-      "Waar de Krijgsheer het schild heft, spreekt de Gezant van broederschap.",
-      "De Woudloper brengt het hart; de Hogepriester het woud.",
-      "De Bard zweert, het Feestmaal is voor elkaar, en wie in de schaduw werkt, heeft het laatste woord.",
+      "Waar de Dobbelschurk het schild heft, spreekt de Zilveren Tong van broederschap.",
+      "De Padvinder brengt het hart; de Strijdgenezer het woud.",
+      "De Bard zweert, de Jager is er voor elkaar, en wie in de schaduw werkt, heeft het laatste woord.",
     ],
   },
 

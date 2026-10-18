@@ -41,8 +41,15 @@ html, body { overflow-x: hidden; }
 .klok b { font: 700 clamp(26px, 8vw, 36px)/1 var(--carved); color: var(--bronze-hi); text-shadow: 0 0 14px rgba(226,50,60,.6); font-variant-numeric: tabular-nums; }
 .klok span { font: 600 10px/1 var(--carved); letter-spacing: .2em; color: var(--ash); text-transform: uppercase; }
 /* before the weekend the countdown is the heart of the page */
-body.bevel-eerst :is(#vooraf, #spreek-rij, #hulp, #stap2, #stap3, #verzegeld) { display: none !important; }
-body:not(.bevel-eerst) :is(#vooraf, #hulp, #stap2) { animation: onthul 1.2s cubic-bezier(.2,.9,.3,1) both; }
+body.bevel-eerst :is(#vooraf, #spreek-rij, #gedaante, #hulp, #stap2, #stap3, #verzegeld) { display: none !important; }
+/* your race and class: known before the weekend, with a challenge to come (and stay) in costume */
+.gedaante { display: grid; gap: 12px; text-align: center; }
+.gedaante .gd-naam { font-size: clamp(26px, 8vw, 36px); line-height: 1.1; }
+.gedaante p { margin: 0; }
+.gedaante .gd-oproep { font: italic 400 16px/1.5 var(--display); color: var(--bone); }
+.gedaante .gd-tip { font-size: 14.5px; line-height: 1.45; color: var(--ash); text-align: left; padding: 12px 14px; border: 1px dashed rgba(184,149,95,.45); border-radius: 6px; }
+.gedaante .gd-tip b { color: var(--bronze-hi); }
+body:not(.bevel-eerst) :is(#vooraf, #gedaante, #hulp, #stap2) { animation: onthul 1.2s cubic-bezier(.2,.9,.3,1) both; }
 .bevel-verder { display: block; margin: 4px auto 0; padding: 13px 34px; cursor: pointer; font: 700 13px/1 var(--carved); letter-spacing: .22em; text-transform: uppercase;
   color: #ffd2d0; background: rgba(10,5,6,.7); border: 1px solid var(--ember); border-radius: 6px; box-shadow: 0 0 22px rgba(226,50,60,.55); animation: adem 2.4s ease-in-out infinite; }
 .spreek-rij { display: flex; justify-content: center; margin-top: -4px; }
@@ -296,6 +303,7 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <!-- before the weekend: the order (homework), the request for memories, step 2 and step 3 -->
   <section class="paneel bevel verborgen" id="bevel"></section>
   <div class="spreek-rij verborgen" id="spreek-rij"><button class="spreek" type="button" id="b-spreek" aria-pressed="false">▶ Laat Godfried opnieuw spreken</button></div>
+  <section class="paneel gedaante verborgen" id="gedaante"></section>
   <section class="paneel verborgen" id="hulp">
     <h2 class="carved">Godfried vraagt je hulp</h2>
     <p class="brief" style="text-align:center">In de laatste nacht moet het vuur de Wachters herkennen. Daarvoor heb ik herinneringen nodig. Vertel me iets over een andere Wachter: een avontuur van vroeger, een eigenaardigheid, iets wat de anderen misschien niet weten. Niemand ziet van wie het komt.</p>
@@ -353,13 +361,13 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=77"></script>
-<script src="a/spel.js?v=77"></script>
-<script src="a/rollen.js?v=77"></script>
-<script src="a/firebase-config.js?v=77"></script>
-<script src="a/koppeling.js?v=77"></script>
-<script src="a/tafel.js?v=77"></script>
-<script src="a/voorbereiding.js?v=77"></script>
+<script src="a/wachters.js?v=78"></script>
+<script src="a/spel.js?v=78"></script>
+<script src="a/rollen.js?v=78"></script>
+<script src="a/firebase-config.js?v=78"></script>
+<script src="a/koppeling.js?v=78"></script>
+<script src="a/tafel.js?v=78"></script>
+<script src="a/voorbereiding.js?v=78"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -400,7 +408,7 @@ function tekenRol() {
     <section class="paneel rol">
       <img class="med" src="a/rollen/${rol.id}.webp" alt="" onerror="this.removeAttribute('src');this.classList.add('leeg')">
       <h2 class="naam carved">${schoon(rol.naam)}</h2>
-      <div class="titel">${schoon(rol.titel)}</div>
+      <div class="titel">${schoon(rol.titel)}${window.KARAKTER?.[wachter.naam] ? ` · ${schoon(window.KARAKTER[wachter.naam].ras)} ${schoon(window.KARAKTER[wachter.naam].klasse)}` : ""}</div>
       <p class="tekst">${schoon(rol.tekst)}</p>
     </section>
     <section class="paneel vermogen">
@@ -521,7 +529,9 @@ let mijnVooraf = {}, vooraafGetekend = "", muziek = null, stem = null, binnenGed
 const lokaal = (k, w) => { try { if (w === undefined) return localStorage.getItem(k); localStorage.setItem(k, w); } catch { return null; } };
 const naamKlein = () => (wachter?.naam || "").toLowerCase();
 function welkomTekst() {
+  const k = window.KARAKTER?.[wachter.naam];
   return [`Wachter ${wachter.naam}. Ik ben Godfried van Bouillon.`, "Binnenkort ontwaakt de Schaduw onder mijn kasteel, en ik roep elf Wachters bijeen. Jij bent er één van.",
+    ...(k ? [`Jij komt als ${k.ras} ${k.klasse}. Kom in die gedaante, verkleed van top tot teen, en blijf het hele weekend in je rol… wie dat doet, wordt rijkelijk beloond.`] : []),
     V.bevelen?.[wachter.naam] ? "Je rol rust nog onder mijn zegel… maar één bevel geef ik je nu al. En ik vraag je om hulp." : "Je rol rust nog onder mijn zegel… maar ik vraag je nu al om hulp."];
 }
 function maakLus(bron, vol) {
@@ -600,7 +610,7 @@ $("b-binnen").onclick = () => { binnenGedaan = true; $("binnen").classList.add("
   if (lokaal(`kronieken-intro-${wachter?.naam}-${publiek.ronde || 0}`) !== "gezien") startIntro(); else startMuziek(); };
 $("b-spreek").onclick = () => startIntro();
 function toonVooraf(aan) {
-  for (const id of ["bevel", "spreek-rij", "hulp", "stap2"]) $(id).classList.toggle("verborgen", !aan || !wachter);
+  for (const id of ["bevel", "spreek-rij", "gedaante", "hulp", "stap2"]) $(id).classList.toggle("verborgen", !aan || !wachter);
   if (!aan || !wachter) $("stap3").classList.add("verborgen"); // step 3 shows itself when its time has come
   if (!aan || !wachter) { $("binnen").classList.add("verborgen"); document.body.classList.remove("bevel-eerst"); return; }
   if (!publiekGeladen) return;
@@ -612,7 +622,7 @@ function toonVooraf(aan) {
   // the order comes first: seal broken ("open"), read, then Verder ("gelezen") brings the countdown and the rest
   const heeftBevel = !!V.bevelen?.[wachter.naam], gelezen = !heeftBevel || lokaal(`kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`) === "gelezen";
   document.body.classList.toggle("bevel-eerst", !gelezen);
-  tekenBevel(); tekenHulp(); tekenStap2(stap); tekenStap3(stap);
+  tekenBevel(); tekenGedaante(); tekenHulp(); tekenStap2(stap); tekenStap3(stap);
 }
 // The wax seal, painted in its stages (scripts/zegel-brokken.mjs): whole, cracked, and four chunks plus crumbs on the same canvas.
 // Each chunk falls away from the middle, along its own side, with gravity.
@@ -658,6 +668,13 @@ function tekenBevel() {
     if (ok === false) { bevelBezig = false; melding("Niet verstuurd", "Je zegel kwam niet aan. Controleer je verbinding en druk opnieuw."); vooraafGetekend = ""; toonVooraf(true); return; }
     setTimeout(() => { bevelBezig = false; piep("volbracht", .6); if (!FIRE) mijnVooraf.bevel = { aanvaard: true, ronde: publiek.ronde || 0 }; vooraafGetekend = ""; toonVooraf(true); }, 1300);
   };
+}
+function tekenGedaante() {
+  const k = window.KARAKTER?.[wachter.naam], el = $("gedaante");
+  if (!k) { el.classList.add("verborgen"); return; }
+  el.innerHTML = `<h2 class="carved">Jouw gedaante</h2><div class="gd-naam carved">${schoon(k.ras)} ${schoon(k.klasse)}</div>
+    <p class="gd-oproep">Zo betreed jij de Kronieken. Kom verkleed in deze gedaante en blijf het hele weekend in je rol. Wie in zijn rol blijft, verdient punten en maakt kans op grote prijzen.</p>
+    <p class="gd-tip"><b>Ideeën voor je kostuum:</b> ${schoon(k.props)}.</p>`;
 }
 function tekenHulp() {
   const anders = (window.WACHTERS || []).filter((w) => w.naam !== wachter.naam), sel = $("hulp-over"), was = sel.value;

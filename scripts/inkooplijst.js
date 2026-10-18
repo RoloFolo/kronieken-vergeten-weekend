@@ -47,7 +47,7 @@ const L = [
   ["Events & quests", "Serveerplank", "1", "De Hapjesbrigade", "Mag uit het huisje"],
   ["Events & quests", "Telefoonstatief met afstandsbediening", "1", "Het Groepsportret, De Brandmeesters", ""],
   ["Buiten", "Fleecedekens", "4–6", "Het Buitenkamp, De Rustbrengers", "Optioneel"],
-  ["Eten & drinken", "Frituurpan (+ sauzen en frituurhapjes: Roy)", "1", "Frituur in het weekend", "Let op: volgens de huurvoorwaarden niet toegestaan zonder akkoord eigenaar"],
+  ["Eten & drinken", "Frituurpan (+ sauzen en frituurhapjes: Roy)", "1", "Frituur in het weekend", "Akkoord van de eigenaar (18 oktober)"],
   ["Buiten", "Thermoskan + to-go bekers", "1 + 11", "De Ochtendmars, Het Buitenkamp (iets warms)", ""],
   ["Eten & drinken", "Koffie, thee, melk, suiker", "", "Koffie voor de Wacht, De Hersteller, De Ochtendmars", "Naast de gewone boodschappen"],
   ["Eten & drinken", "Snacks en hapjes", "", "De Snackroof, De Hongerige Schaduw, Voorproever, Hapjesbrigade", "Naast de gewone boodschappen"],

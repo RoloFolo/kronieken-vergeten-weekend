@@ -1,6 +1,6 @@
 // Losse stemregels: overwinning, toost, uitleg en alles van de verrader (fluisteringen, vloek, valse Godfried).
 //   node --env-file=C:/Users/rolan/Verno/verno-app/.env.local scripts/losse-stemmen.mjs
-import { writeFileSync, existsSync } from "node:fs";
+import { writeFileSync, existsSync, readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 
 const SLEUTEL = process.env.REPLICATE_API_TOKEN;
@@ -13,6 +13,7 @@ const PROOST = "You are Godfrey of Bouillon, a noble medieval lord, speaking Dut
 const VALS = "You are Godfrey of Bouillon, a noble medieval lord, speaking Dutch to a hall of friends. Commanding and urgent, a little too eager, with a faint sly undertone.";
 const VERVORMD = "vibrato=f=5.5:d=0.18,aecho=0.8:0.55:70|140:0.35|0.2,highpass=f=120";
 const NAMEN = ["Geert", "Roy", "Martin", "Stefan", "Jeroen", "Ivo", "Johan", "Robin", "Rob", "Jean", "Roland"];
+const KAR = (() => { const w = {}; new Function("window", readFileSync("docs/a/rollen.js", "utf8"))(w); return w.KARAKTER || {}; })(); // race and class per Wachter, named in the welcome
 const REGELS = [
   // the traitor's new teases and sabotage
   ...NAMEN.map((n) => [`chaos-naam-${n.toLowerCase()}`, "Enceladus", SCHADUW, `[whispering] ${n}… ${n}… ik zie jou.`]),
@@ -74,7 +75,7 @@ const REGELS = [
   ["fin/open", "Charon", GODFRIED, "Het Zegel is sterk genoeg. Het geeft zijn geheim prijs."],
   ["fin/hint", "Charon", GODFRIED, "Een reliek ontwaakt. Luister naar wat het fluistert."],
   // Voor het weekend, op de persoonlijke pagina: een welkom per Wachter, en de avond ervoor de Schaduwkoning.
-  ...NAMEN.map((n) => [`vooraf/welkom-${n.toLowerCase()}`, "Charon", GODFRIED, `Wachter ${n}. Ik ben Godfried van Bouillon. Binnenkort ontwaakt de Schaduw onder mijn kasteel, en ik roep elf Wachters bijeen. Jij bent er één van. Je rol rust nog onder mijn zegel… ${["Rob", "Jean", "Roland"].includes(n) ? "maar ik vraag je nu al om hulp." : "maar één bevel geef ik je nu al. En ik vraag je om hulp."}`]), // the organisers get no order
+  ...NAMEN.map((n) => [`vooraf/welkom-${n.toLowerCase()}`, "Charon", GODFRIED, `Wachter ${n}. Ik ben Godfried van Bouillon. Binnenkort ontwaakt de Schaduw onder mijn kasteel, en ik roep elf Wachters bijeen. Jij bent er één van. ${KAR[n] ? `Jij komt als ${KAR[n].ras} ${KAR[n].klasse}. Kom in die gedaante, verkleed van top tot teen, en blijf het hele weekend in je rol… wie dat doet, wordt rijkelijk beloond. ` : ""}Je rol rust nog onder mijn zegel… ${["Rob", "Jean", "Roland"].includes(n) ? "maar ik vraag je nu al om hulp." : "maar één bevel geef ik je nu al. En ik vraag je om hulp."}`]), // the organisers get no order
   ["vooraf/schaduw", "Enceladus", SCHADUW, "Wachter… Godfried heeft je geroepen. Maar ik hoorde het ook. [whispering] Morgen breekt zijn zegel. En dan… zien wij elkaar."],
   // Het einde: eerst de echte kist (de cadeaus), op teken van de regie de envelop op de schoorsteen (de oorkondes).
   ["fin/einde-kist", "Charon", GODFRIED, "Het is volbracht. De Zegels zijn vernieuwd, en de Schaduwkoning slaapt weer onder mijn kasteel. Niet door één held… maar door een broederschap die voor elkaar zorgde. Wachters van Bouillon, ik ben trots op jullie. De vier cijfers zijn van jullie. Open nu de kist… wat daarin ligt, is voor jullie allen."],

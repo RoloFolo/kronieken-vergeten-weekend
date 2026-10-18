@@ -11,21 +11,21 @@ window.VOORAF = {
   // per Wachter: titel, opdracht, en welk Zegel hij voedt als de regie "Bevel volbracht" drukt (+3 fiches)
   bevelen: { // de organisatoren (Rob, Jean, Roland) krijgen geen bevel; elk Zegel krijgt er twee (samen 6 fiches)
     Robin: { titel: "De Legendarische Borrelplank", zegel: "hoorn",
-      tekst: "Samen met Geert leg jij op de eerste avond een borrelplank die de Kronieken ingaat. Editie 2026: legendarisch, of de Schaduw lacht jullie uit." },
+      tekst: "Samen met Geert leg jij op de eerste avond een borrelplank die de Kronieken ingaat. Editie 2026: legendarisch, en hij mag nooit leeg raken." },
     Geert: { titel: "De Legendarische Borrelplank", zegel: "hoorn",
-      tekst: "Samen met Robin leg jij op de eerste avond een borrelplank die de Kronieken ingaat. Editie 2026: legendarisch, of de Schaduw lacht jullie uit." },
+      tekst: "Samen met Robin leg jij op de eerste avond een borrelplank die de Kronieken ingaat. Editie 2026: legendarisch, en hij mag nooit leeg raken." },
     Stefan: { titel: "Het Spel der Rollen", zegel: "hart",
-      tekst: "Jij leidt een korte LARP-sessie: geef iedere Wachter een rol, een doel en een geheim. Het verhaal is van jou, de Ardennen zijn het toneel." },
+      tekst: "Jij leidt een LARP-sessie van hooguit een uur: geef iedere Wachter een doel en een geheim, passend bij zijn gedaante. Het verhaal is van jou." },
     Roy: { titel: "Meester van de Frituur", zegel: "vlam",
-      tekst: "Jij brengt de frituurpan, de frituurhapjes en de sauzen, en je draagt met trots de bakmuts. Zonder jou geen gouden vuur in de Hall." },
+      tekst: "Jij regelt de frituurpan, de snacks en de sauzen, en het hele weekend warme hapjes. Draag de bakmuts met trots: zonder jou geen gouden vuur." },
     Ivo: { titel: "De Proeverij van de Bard", zegel: "hart",
-      tekst: "Jij schenkt een wijnproeverij, met muziek op de achtergrond en bij elke wijn een verhaal. Laat de Wachters proeven wat de eeuwen te vertellen hebben." },
+      tekst: "Jij schenkt een wijnproeverij, met muziek en bij elke wijn een verhaal. En het hele weekend houd jij de sfeer in de Hall op peil." },
     Martin: { titel: "Drie Elixers", zegel: "vlam",
-      tekst: "Jij brouwt cocktails of mocktails in minstens drie thema's: Vuur, Schaduw en Opkikker. Geef elk elixer een naam die de Schaduw doet beven." },
+      tekst: "Jij brouwt drie elixers: Vuur voor de fakkeltocht, Schaduw, en een Ochtendbooster (liefst zonder alcohol). Geef elk een naam die de Schaduw doet beven." },
     Jeroen: { titel: "Het Eerste Avondmaal", zegel: "schild",
       tekst: "Op de eerste avond voed jij de Guild. Het avondmaal is aan jou, binnen het budget dat de hoeders van de Hall je meegeven." },
     Johan: { titel: "De Taveerne van het Lot", zegel: "schild",
-      tekst: "Jij opent een uur lang een taveerne: een gokspel voor de hele groep, met inzet, bluf en een waard die zelden verliest." },
+      tekst: "Jij opent een uur lang een middeleeuwse taveerne: een gokspel voor de hele groep, met drinken, dansen, knokken en gokken." },
   },
 
   // stap 2

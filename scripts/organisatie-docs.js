@@ -46,11 +46,12 @@ const voorstel = [
   ...titel("Voorstel rollen en bevelen", "Voor Roland en Jean · wie welke rol krijgt, wat die rol kan, en zijn bevel (thuiswerk) vooraf"),
   p([g("Zo staat het nu in de app. De rol blijft geheim tot de Eerste Dronk; het bevel krijgt iedereen al bij het versturen van de link en noemt de rol niet. Wie zijn bevel in het weekend volbrengt, krijgt 3 fiches voor het genoemde Zegel (regie → Voor het weekend → Volbracht). Wijzigingen? Geef ze door aan Claude.")]),
   h("In één oogopslag"),
-  tabel(["Wachter", "Rol", "Zegels", "Bevel"], window.WACHTERS.map((w) => { const r = rolVan(w.naam), bv = window.VOORAF.bevelen[w.naam];
-    return [w.naam, r ? `${r.naam} · ${r.titel}` : "?", r ? r.zegels.map((z) => ZEGEL[z].split(" ")[0]).join(", ") : "", bv ? `${bv.titel} (+3 ${ZEGEL[bv.zegel].split(" ")[0]})` : "–"]; }), [1300, 3500, 1500, 3500]),
+  tabel(["Wachter", "Gedaante", "Rol", "Zegels", "Bevel"], window.WACHTERS.map((w) => { const r = rolVan(w.naam), bv = window.VOORAF.bevelen[w.naam], k = window.KARAKTER?.[w.naam];
+    return [w.naam, k ? `${k.ras} ${k.klasse}` : "?", r ? `${r.naam} · ${r.titel}` : "?", r ? r.zegels.map((z) => ZEGEL[z].split(" ")[0]).join(", ") : "", bv ? `${bv.titel} (+3 ${ZEGEL[bv.zegel].split(" ")[0]})` : "–"]; }), [1200, 1700, 2900, 1300, 2700]),
   h("Per Wachter"),
   ...window.WACHTERS.flatMap((w) => { const r = rolVan(w.naam), bv = window.VOORAF.bevelen[w.naam]; if (!r) return [];
-    return [h3(`${w.naam} — ${r.naam} (${r.titel})`), p([t(r.tekst, { italics: true })]),
+    const k = window.KARAKTER?.[w.naam];
+    return [h3(`${w.naam} — ${r.naam} (${r.titel})`), ...(k ? [p([b("Gedaante: "), t(`${k.ras} ${k.klasse}. Kostuumideeën: ${k.props}.`)])] : []), p([t(r.tekst, { italics: true })]),
       bullet([b("Zegels: "), t(r.zegels.map((z) => ZEGEL[z]).join(" en ") + " (een quest voor een van deze: 1 extra fiche)")]),
       bullet([b(`Passief, ${r.passief[0]}: `), t(r.passief[1])]),
       bullet([b(`Kracht (1× per dag), ${r.kracht[0]}: `), t(r.kracht[1])]),
@@ -81,21 +82,29 @@ const beslissen = [
   vink("Thuiswerk definitief. Wijzigingen per persoon:"),
 
   h("2. Het huis"),
+  p([g("Frituurpan: akkoord van de eigenaar (18 oktober).")]),
   vink([b("Akkoord eigenaar voor een vriendengroep. "), t("Het huis is ‘uitsluitend voor families’; met vrienden mag het alleen met goedkeuring van de eigenaar, anders kan hij bij aankomst de toegang weigeren.")]),
-  vink([b("Frituurpan. "), t("Volgens de huurvoorwaarden niet toegestaan zonder akkoord. Vragen, of de frituur schrappen (Roy’s frituurbevel).")]),
   vink([b("Aankomsttijd doorgeven "), t("aan de contactpersoon, de avond ervoor (inchecken 16:00 tot 18:00).")]),
   vink([b("Vertrek maandag: "), t("hoe laat moeten we eruit? (Meestal 10:00; check de boeking.)")]),
   vink([b("Wie is er als eerste? "), t("Iemand moet vóór de rest binnen zijn om de tv, de potten en de envelop klaar te zetten.")]),
   vink([b("Kamerindeling: "), t("wie verdeelt de kamers, op basis van de kamerwensen uit de app? 7 kamers met 2 bedden, 1 met 1 bed: minstens 3 kamers worden gedeeld.")]),
 
-  h("3. De app en de link"),
+  h("3. Gedaanten en de LARP"),
+  p([t("Iedereen krijgt vooraf zijn ras en class (en de bevelhouders hun bevel), met de uitdaging om verkleed te komen en het hele weekend in zijn rol te blijven. Alles per Wachter in "), link("10 LARP: gedaanten en props", MAP), t(".")]),
+  vink([b("Rassen nog kiezen: "), t("Jeroen (nu Half-Elf, of Human), Rob (nu Halfling, of Human) en Roland (nu Dwarf, of Human).")]),
+  vink([b("Punten en prijzen voor wie in zijn rol blijft: "), t("hoeveel fiches, wanneer, en welke ‘grote prijzen’? De app belooft het al.")]),
+  vink([b("Bevelbonus: "), t("blijft het +3 fiches per volbracht bevel? Nu voedt elk Zegel twee bevelen.")]),
+  vink([b("Props voor Stefans LARP: "), t("welke props geven wij, en wie regelt ze (zie 10).")]),
+  vink([b("Budget eerste avondmaal (Jeroen): "), t("€ ______.")]),
+
+  h("4. De app en de link"),
   vink([b("Wanneer sturen we de link? "), t("Datum: ______. Iedereen krijgt zijn link (regie → ‘Persoonlijke links’) en zijn wachtwoord apart.")]),
   vink([b("Stap 2 "), t("(wat neem je mee, kamerwens, playlist) gaat nu open op vrijdag 6 november 09:00. Goed zo?")]),
   vink([b("Stap 3 "), t("(de Schaduw roert zich) gaat open op donderdag 12 november 19:00. Goed zo?")]),
   vink([b("Playlist: "), t("welke dienst (Spotify?), wie maakt hem, en de link.")]),
   vink([b("Herinneringen voor Akte I: "), t("tot wanneer mogen ze insturen? Schrijven wij er zelf ook een paar, voor wie er weinig krijgt?")]),
 
-  h("4. Samen testen"),
+  h("5. Samen testen"),
   p("Vóór het versturen testen we de app en de tv samen. Zo speelt Jean als gewone Wachter:"),
   bullet([t("Jean opent "), link("zijn persoonlijke pagina", SITE + "wachter.html#jean"), t(" op zijn telefoon en logt in.")]),
   bullet([t("Onderaan: "), b("‘Test: speel als gewone Wachter (regie verbergen)’"), t(". Het Regie-tabblad verdwijnt; terugzetten kan met dezelfde knop.")]),
@@ -104,7 +113,7 @@ const beslissen = [
   bullet("Na het testen: herinneringen die Jean als test instuurde, verwijdert hij zelf in de app (het kruisje). Op de regie → Beheer → ‘Hele spel opnieuw beginnen’ zet de tv weer op nul."),
   vink([b("Testdatum: "), t("______. Feedback daarna aan Claude.")]),
 
-  h("5. De finale en het einde"),
+  h("6. De finale en het einde"),
   p([t("De finale is "), b("zondagochtend"), t(". Zie het "), link("draaiboek", drive("draaiboek")), t(".")]),
   vink([b("Cadeaus in de kist: "), t("wat, budget, wie koopt.")]),
   vink([b("De kist en het cijferslot "), t("(code 7698): wie koopt ze, en waar staat de kist tijdens het weekend?")]),
@@ -112,7 +121,7 @@ const beslissen = [
   vink([b("Oorkondes printen: "), t("wie, en waar (printshop of thuis, A4 kleur).")]),
   vink([b("Eretitels: "), t("zondagavond bij het eten of maandag bij het ontbijt? En wie beslist welke titel naar wie gaat?")]),
 
-  h("6. Tijdens het weekend"),
+  h("7. Tijdens het weekend"),
   vink([b("Wie bedient de regie wanneer? "), t("Altijd één van ons drieën met de regie open.")]),
   vink([b("De verrader: "), t("wie kiest wie wanneer verrader is, en hoe lang (2, 4 of 6 uur)? ’s Nachts ‘Geen verrader’. Na zaterdagnacht geen verrader meer: de finale zoekt ze.")]),
   vink([b("Schaduw-events: "), t("hoe vaak per dag? Voorstel: 3 à 4 keer, verspreid. Alle events in "), link("04 Schaduw-events", drive("events")), t(".")]),
@@ -215,7 +224,21 @@ const draaiboek = [
 ];
 
 (async () => {
-  for (const [naam, inhoud] of [["09 Voorstel rollen en bevelen.docx", voorstel], ["07 Te beslissen (Roland en Jean).docx", beslissen], ["08 Draaiboek.docx", draaiboek]]) {
+  // ======================= 10 LARP: gedaanten en props =======================
+const larp = [
+  ...titel("LARP: gedaanten en props", "Voor de organisatoren en voor Stefan · ras en class per Wachter, met ideeën voor kostuum en props"),
+  p([g("Dit deel mag naar Stefan: het noemt alleen ras en class. De rollen, krachten en Zegels blijven geheim tot de Eerste Dronk. Rob, Jean en Roland doen gewoon mee aan de LARP.")]),
+  h("De uitdaging"),
+  p("Iedereen krijgt zijn gedaante vooraf in de app, en Godfried noemt hem in zijn welkom. De oproep: kom verkleed in je gedaante, met kostuum en attributen, en blijf het hele weekend in je rol. Wie dat doet, verdient punten en maakt kans op grote prijzen (nog in te vullen)."),
+  h("Per Wachter"),
+  tabel(["Wachter", "Ras", "Class", "Kostuum en props (ideeën)", "Wie regelt"], window.WACHTERS.map((w) => { const k = window.KARAKTER?.[w.naam] || {};
+    return [w.naam, k.ras || "?", k.klasse || "?", k.props || "", ""]; }), [1200, 1200, 1400, 4800, 1200]),
+  h("Stefans sessie"),
+  bullet("Een interactieve LARP van hooguit een uur. Stefan krijgt vooraf alleen deze lijst: geen verborgen rollen, krachten of plotwendingen."),
+  bullet("Props die wij geven: kies per Wachter één ding uit de lijst hierboven dat zijn gedaante meteen herkenbaar maakt, en zet bij ‘Wie regelt’ wie het koopt."),
+];
+
+for (const [naam, inhoud] of [["10 LARP - gedaanten en props.docx", larp], ["09 Voorstel rollen en bevelen.docx", voorstel], ["07 Te beslissen (Roland en Jean).docx", beslissen], ["08 Draaiboek.docx", draaiboek]]) {
     fs.writeFileSync(path.join(uit, naam), await Packer.toBuffer(doc(inhoud))); console.log("✓", naam);
   }
 })();
