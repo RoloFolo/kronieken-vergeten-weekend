@@ -628,9 +628,9 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .vt-vak.nu { filter: none; box-shadow: 0 0 0 4px #070405, 0 0 0 5px #d9b77a, 0 0 40px rgba(226,50,60,.55); }
 .vt-vak img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; transform-origin: 50% 35%; }
 /* each panel moves a little once it is drawn: a slow zoom in (default) or out, or the camera pans */
-.vt-vak.aan img { animation: vtIn 22s ease-out both; }
+.vt-vak.aan img { animation: vtIn 12s ease-out both; }
 .vt-vak.aan img.uit { animation-name: vtUit; }
-.vt-vak.aan img.pan { animation: vtPan 18s ease-in-out both; transform: scale(1.04); }
+.vt-vak.aan img.pan { animation: vtPan 8s ease-in-out both; transform: scale(1.04); }
 @keyframes vtIn { from { transform: scale(1); } to { transform: scale(1.12); } }
 @keyframes vtUit { from { transform: scale(1.16); } to { transform: scale(1); } }
 @keyframes vtPan { from { object-position: var(--van); } to { object-position: var(--naar); } }
@@ -1172,16 +1172,16 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=103"></script>
-<script src="a/godfried.js?v=103"></script>
-<script src="a/spel.js?v=103"></script>
-<script src="a/voorbereiding.js?v=103"></script>
-<script src="a/wachters.js?v=103"></script>
-<script src="a/firebase-config.js?v=103"></script>
-<script src="a/portretten.js?v=103"></script>
-<script src="a/koppeling.js?v=103"></script>
-<script src="a/rollen.js?v=103"></script>
-<script src="a/tafel.js?v=103"></script>
+<script src="a/events.js?v=104"></script>
+<script src="a/godfried.js?v=104"></script>
+<script src="a/spel.js?v=104"></script>
+<script src="a/voorbereiding.js?v=104"></script>
+<script src="a/wachters.js?v=104"></script>
+<script src="a/firebase-config.js?v=104"></script>
+<script src="a/portretten.js?v=104"></script>
+<script src="a/koppeling.js?v=104"></script>
+<script src="a/rollen.js?v=104"></script>
+<script src="a/tafel.js?v=104"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
