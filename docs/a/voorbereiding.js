@@ -27,6 +27,10 @@ window.VOORAF = {
       tekst: "Jij opent een uur lang een middeleeuwse taveerne: een gokspel voor de hele groep, met drinken, dansen, knokken en gokken." },
   },
 
+  // de organisatoren: een symbolisch bevel, zodat zij dezelfde flow doorlopen (telt niet mee voor de Zegels, staat niet in de regie)
+  hoederBevel: { titel: "Het Bevel der Hoeders",
+    tekst: "Jij houdt dit weekend de Kronieken in leven: de klok, de Schaduw, de verraders en de tijd. Zorg dat elke Wachter dit weekend nooit vergeet." },
+
   // stap 2: extra regels bovenaan de meeneemlijst van één Wachter
   extra: { Ivo: ["VERGEET JE SPORTSCHOENEN NIET"] },
   geregeld: ["Bedlinnen: de bedden zijn opgemaakt", "Badhanddoeken en theedoeken", "Eten en drinken", "Hout voor de haarden", "Wifi"],

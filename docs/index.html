@@ -1127,15 +1127,15 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=87"></script>
-<script src="a/godfried.js?v=87"></script>
-<script src="a/spel.js?v=87"></script>
-<script src="a/voorbereiding.js?v=87"></script>
-<script src="a/wachters.js?v=87"></script>
-<script src="a/firebase-config.js?v=87"></script>
-<script src="a/koppeling.js?v=87"></script>
-<script src="a/rollen.js?v=87"></script>
-<script src="a/tafel.js?v=87"></script>
+<script src="a/events.js?v=88"></script>
+<script src="a/godfried.js?v=88"></script>
+<script src="a/spel.js?v=88"></script>
+<script src="a/voorbereiding.js?v=88"></script>
+<script src="a/wachters.js?v=88"></script>
+<script src="a/firebase-config.js?v=88"></script>
+<script src="a/koppeling.js?v=88"></script>
+<script src="a/rollen.js?v=88"></script>
+<script src="a/tafel.js?v=88"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1452,6 +1452,9 @@ function muziekLus(naam, vol) {
   return {
     play() { actief = true; start(spelers[i]); clearTimeout(timer); bewaak(); },
     vol(v, ms = 1500) { doel = v; fade(spelers[i], v, ms); },
+    niveau() { return doel; },
+    stil(ms) { fade(spelers[i], 0, ms); }, // silent for a moment, keeps its level
+    terug(ms) { fade(spelers[i], doel, ms); },
     vervorm(laag, ms) { // glide the pitch down, hold, glide back (the traitor's out-of-tune song)
       const zet = (r) => spelers.forEach((a) => { a.preservesPitch = false; a.playbackRate = r; });
       const glij = (van, naar, duur, klaar) => { const s = performance.now(); const stap = (nu) => { const p = Math.min(1, (nu - s) / duur); zet(van + (naar - van) * p); if (p < 1) requestAnimationFrame(stap); else klaar?.(); }; requestAnimationFrame(stap); };
@@ -2733,11 +2736,13 @@ function wieVolgt(namen) {
   const g = gmGen; stemMet("fin/wievolgt-1", 1, () => g === gmGen && gmT(300, () => werp(0)), 9000);
 }
 let oproepBezig = false;
-function oproep() { // three strokes of the church bell over whatever is playing
+function oproep() { // all music falls silent, then three loud strokes of the church bell; afterwards everything comes back
   if (oproepBezig) return; oproepBezig = true; const o = $("oproep");
   o.classList.add("aan");
-  for (let i = 0; i < 3; i++) setTimeout(() => speel("kerkklok", 1), i * 1900);
-  setTimeout(() => { o.classList.remove("aan"); oproepBezig = false; }, 9500);
+  const muziek = [halMuziek, schaduwMuziek].filter(Boolean), sfeer = [vuur, wind, zaalSfeer].filter(Boolean).map((a) => [a, a.volume]);
+  muziek.forEach((m) => m.stil(500)); sfeer.forEach(([a]) => fade(a, 0, 500));
+  for (let i = 0; i < 3; i++) setTimeout(() => speel("kerkklok-luid", 1), 500 + i * 1900);
+  setTimeout(() => { o.classList.remove("aan"); oproepBezig = false; muziek.forEach((m) => m.terug(2500)); sfeer.forEach(([a, v]) => fade(a, v, 2500)); }, 10500);
 }
 const OPDRACHTEN = {
   oproep: () => oproep(),
