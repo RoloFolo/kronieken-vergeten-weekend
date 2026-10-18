@@ -108,6 +108,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   <div class="kaart" id="tv-dood" hidden style="border-color:var(--ember);color:#ffd2d0"></div>
   <div class="kaart" id="tv-stil" hidden style="border-color:var(--bronze);color:var(--bronze-hi)">De tv mag nog geen geluid afspelen. Klik één keer op het tv-scherm (met de muis van de laptop), anders hoort niemand Godfried.</div>
 
+  <button class="goud groot" id="b-oproep" type="button" style="margin:0">Oproep: iedereen naar het scherm</button>
   <nav class="fases" id="fases" role="tablist" aria-label="Fases">
     <button type="button" role="tab" data-fase="vooraf">Vooraf</button><button type="button" role="tab" data-fase="start">Start</button>
     <button type="button" role="tab" data-fase="hall">Hall</button><button type="button" role="tab" data-fase="tocht">Tocht</button>
@@ -256,13 +257,13 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=79"></script>
-<script src="a/spel.js?v=79"></script>
-<script src="a/wachters.js?v=79"></script>
-<script src="a/rollen.js?v=79"></script>
-<script src="a/firebase-config.js?v=79"></script>
-<script src="a/koppeling.js?v=79"></script>
-<script src="a/voorbereiding.js?v=79"></script>
+<script src="a/events.js?v=80"></script>
+<script src="a/spel.js?v=80"></script>
+<script src="a/wachters.js?v=80"></script>
+<script src="a/rollen.js?v=80"></script>
+<script src="a/firebase-config.js?v=80"></script>
+<script src="a/koppeling.js?v=80"></script>
+<script src="a/voorbereiding.js?v=80"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -329,6 +330,8 @@ $("links").onclick = (e) => {
 $("puzzels").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "puzzel", i: +b.dataset.i }); };
 
 const stuur = (o) => Koppeling.stuur(o);
+// the call to gather: the tv strikes the church bell; a short pause so one tap does not ring twice
+$("b-oproep").onclick = () => { const b = $("b-oproep"); stuur({ cmd: "oproep" }); b.disabled = true; b.textContent = "De klok luidt…"; setTimeout(() => { b.disabled = false; b.textContent = "Oproep: iedereen naar het scherm"; }, 12000); };
 
 for (const z of ZEGELS) {
   const el = document.createElement("div"); el.className = "zegel";
