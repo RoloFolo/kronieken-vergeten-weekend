@@ -73,6 +73,7 @@ const REGELS = [
   ["fin/cijfer-4", "Charon", GODFRIED, "Het vierde… en laatste cijfer. Acht!"],
   ["fin/dicht", "Enceladus", SCHADUW, "Dit Zegel is te zwak… Het geeft zijn geheim niet prijs. Niet zonder een laatste beproeving."],
   ["fin/open", "Charon", GODFRIED, "Het Zegel is sterk genoeg. Het geeft zijn geheim prijs."],
+  ["fin/einde-ere", "Charon", GODFRIED, "De kist is open, en Bouillon is gered. Maar een Wachter wordt niet alleen herinnerd om wat hij redde… ook om wie hij was. Laat ons hen eren."],
   ["fin/schandpaal", "Charon", GODFRIED, "Deze Wachter liet het vuur leeg. Hij weigerde zijn schande met mij te delen. Pek en veren, Wachters! Zet hem aan de schandpaal… en laat hem zijn gênantste moment hier vertellen, ten overstaan van allen."],
   ["fin/hint", "Charon", GODFRIED, "Een reliek ontwaakt. Luister naar wat het fluistert."],
   // Voor het weekend, op de persoonlijke pagina: een welkom per Wachter, en de avond ervoor de Schaduwkoning.

@@ -130,6 +130,16 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div class="schermen" id="schermen"></div>
   </section>
 
+  <section class="kaart" id="s-punt" data-fase="hall tocht finale">
+    <h2>Punt geven of afnemen</h2>
+    <p class="klein" style="margin:0 0 8px">Voor iets wat iemand echt deed: het telt voor het Zegel én voor zijn eigen score (die komt pas in de aftiteling). Was hij op dat moment verrader en kost het punten, dan telt het als verraderswerk.</p>
+    <div class="rij" id="punt-wie" style="grid-template-columns:repeat(3,1fr)"></div>
+    <div class="rij" id="punt-zegel" style="margin-top:8px;grid-template-columns:repeat(4,1fr)"><button type="button" data-z="vlam">Vlam</button><button type="button" data-z="hoorn">Hoorn</button><button type="button" data-z="schild">Schild</button><button type="button" data-z="hart">Hart</button></div>
+    <div class="rij" id="punt-n" style="margin-top:8px;grid-template-columns:repeat(5,1fr)"><button type="button" data-n="-2">−2</button><button type="button" data-n="-1">−1</button><button type="button" data-n="1">+1</button><button type="button" data-n="2">+2</button><button type="button" data-n="3">+3</button></div>
+    <input id="punt-waarom" type="text" maxlength="140" placeholder="Waarom? (bijv. vertelde een prachtig verhaal)" style="width:100%;margin-top:8px">
+    <button class="goud groot" id="b-punt" type="button" style="margin-top:8px" disabled>Kies wie, welk Zegel en hoeveel</button>
+    <p class="klein" id="punt-stand" style="margin:8px 0 0"></p>
+  </section>
   <section class="kaart" id="s-godfried" data-fase="hall finale">
     <h2>Godfried</h2>
     <p class="klein" style="margin:0 0 8px">Zijn verhaal (de quizvragen komen hieruit) en elke avond vóór het eten vier vragen, één per Zegel: goed +1, fout −1.</p>
@@ -243,10 +253,19 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div class="lijst" id="ere-lijst"></div>
   </section>
 
+  <section class="kaart" data-fase="ere hall">
+    <h2>Voor de aftiteling</h2>
+    <p class="klein" style="margin:0 0 8px">Gebeurt er iets wat de Kronieken moeten onthouden? Zet het erin: een extra titel, een moment of een uitspraak. Het komt in de aftiteling.</p>
+    <div class="rij" id="cr-soort" style="grid-template-columns:repeat(3,1fr)"><button type="button" data-s="titel" class="goud">Titel</button><button type="button" data-s="moment">Moment</button><button type="button" data-s="uitspraak">Uitspraak</button></div>
+    <select id="cr-wie" style="width:100%;margin-top:8px"></select>
+    <input id="cr-tekst" type="text" maxlength="200" placeholder="Bijv. Stefan, die één keer niet kotste" style="width:100%;margin-top:8px">
+    <button class="groot" id="b-credit" type="button" style="margin-top:8px">Toevoegen</button>
+    <div class="lijst" id="cr-lijst" style="margin-top:10px"></div>
+  </section>
   <section class="kaart" data-fase="ere">
     <h2>Het best in hun rol</h2>
     <p class="klein" style="margin:0 0 10px">Wie bleef het weekend het best in zijn gedaante? Zij komen in de aftiteling. Tik aan wie het verdient.</p>
-    <div class="rij" id="inrol-lijst" style="flex-wrap:wrap"></div>
+    <div class="rij" id="inrol-lijst" style="grid-template-columns:repeat(3,1fr)"></div>
   </section>
 
   <section class="kaart" data-fase="vooraf">
@@ -277,14 +296,14 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=84"></script>
-<script src="a/godfried.js?v=84"></script>
-<script src="a/spel.js?v=84"></script>
-<script src="a/wachters.js?v=84"></script>
-<script src="a/rollen.js?v=84"></script>
-<script src="a/firebase-config.js?v=84"></script>
-<script src="a/koppeling.js?v=84"></script>
-<script src="a/voorbereiding.js?v=84"></script>
+<script src="a/events.js?v=85"></script>
+<script src="a/godfried.js?v=85"></script>
+<script src="a/spel.js?v=85"></script>
+<script src="a/wachters.js?v=85"></script>
+<script src="a/rollen.js?v=85"></script>
+<script src="a/firebase-config.js?v=85"></script>
+<script src="a/koppeling.js?v=85"></script>
+<script src="a/voorbereiding.js?v=85"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -406,11 +425,11 @@ function toon(s) {
   if (s.vloek) ijsTxt.push(`Vervloekt: ${s.vloek.naam}. ${s.vloek.tekst}`);
   $("sabotage-status").hidden = !ijsTxt.length; $("sabotage-status").textContent = ijsTxt.join(" ");
   $("scherm").textContent = SCHERM[s.scherm] ?? "";
-  $("b-verder").textContent = s.scherm === "dronk-wacht" ? "Glazen vol: toost!" : s.scherm === "einde" && s.fin?.einde === 1 ? "Kist is open: de envelop" : "Volgende stap";
+  $("b-verder").textContent = s.scherm === "dronk-wacht" ? "Glazen vol: toost!" : s.scherm === "einde" && s.fin?.einde === 1 ? "Kist is open: naar de eretitels" : "Volgende stap";
   $("b-verder").classList.toggle("goud", s.scherm === "dronk-wacht");
   for (const z of ZEGELS) $(`n-${z.id}`).textContent = s.fiches?.[z.id] ?? 0;
   const actief = s.scherm === "schaduw";
-  $("b-fin-verder").textContent = s.scherm === "einde" && s.fin?.einde === 1 ? "Kist is open: de envelop" : s.scherm === "einde" ? "Volgende stap" : "Volgende stap (slaat het lopende deel over)";
+  $("b-fin-verder").textContent = s.scherm === "einde" && s.fin?.einde === 1 ? "Kist is open: naar de eretitels" : s.scherm === "einde" ? "Volgende stap" : "Volgende stap (slaat het lopende deel over)";
   volgFase(s.scherm);
   $("b-schaduw").disabled = actief;
   for (const id of ["b-goed", "b-fout", "b-hal"]) $(id).disabled = !actief;
@@ -458,7 +477,7 @@ function toon(s) {
   const vrij = [...gevonden].filter((k) => !op.has(k)).length;
   $("b-hint").disabled = !vrij || fin.hint?.[p.zegel] === (fin.voortgang?.[p.zegel]?.length ?? 0) || klaar || !open;
   $("b-hint").textContent = `Hint (${vrij} reliek${vrij === 1 ? "" : "en"} over)`;
-  ereStand = s.ere || {}; tekenEreRegie(); tekenInrol();
+  ereStand = s.ere || {}; tekenEreRegie(); tekenInrol(); tekenCredits();
   const totaal = (window.SCHADUW_EVENTS || []).length, over = totaal - (s.gebruikt?.length ?? 0);
   $("teller").textContent = `Nog ${over} van de ${totaal} events over.`;
 }
@@ -517,6 +536,30 @@ $("b-beproeving").onclick = () => stuur({ cmd: "beproeving" });
 $("b-hint").onclick = () => stuur({ cmd: "hint" });
 // ---------- Ere van de Wachters: assign beforehand (Firebase /ere, or the tv's state without Firebase), play during the game ----------
 let ereToewijzing = null, ereStand = {};
+// points per Wachter
+let puntKeuze = { naam: null, zegel: null, n: null };
+function tekenPunt() {
+  $("punt-wie").innerHTML = (window.WACHTERS || []).map((w) => `<button type="button" data-n="${w.naam}" class="${puntKeuze.naam === w.naam ? "goud" : ""}">${w.naam}</button>`).join("");
+  document.querySelectorAll("#punt-zegel button").forEach((b) => b.classList.toggle("goud", b.dataset.z === puntKeuze.zegel));
+  document.querySelectorAll("#punt-n button").forEach((b) => b.classList.toggle("goud", +b.dataset.n === puntKeuze.n));
+  const klaar = puntKeuze.naam && puntKeuze.zegel && puntKeuze.n;
+  $("b-punt").disabled = !klaar; $("b-punt").textContent = klaar ? `${puntKeuze.naam} ${puntKeuze.n > 0 ? "+" : "−"}${Math.abs(puntKeuze.n)} voor het ${puntKeuze.zegel}` : "Kies wie, welk Zegel en hoeveel";
+}
+$("punt-wie").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.naam = b.dataset.n; tekenPunt(); } };
+$("punt-zegel").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.zegel = b.dataset.z; tekenPunt(); } };
+$("punt-n").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.n = +b.dataset.n; tekenPunt(); } };
+$("b-punt").onclick = () => { stuur({ cmd: "punt", ...puntKeuze, waarom: $("punt-waarom").value.trim() }); $("punt-stand").textContent = `Verstuurd: ${$("b-punt").textContent}.`; puntKeuze = { naam: null, zegel: null, n: null }; $("punt-waarom").value = ""; tekenPunt(); };
+tekenPunt();
+// lines for the credits
+let crSoort = "titel";
+$("cr-wie").innerHTML = `<option value="">Over wie? (mag leeg)</option>` + (window.WACHTERS || []).map((w) => `<option>${w.naam}</option>`).join("");
+$("cr-soort").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; crSoort = b.dataset.s; document.querySelectorAll("#cr-soort button").forEach((x) => x.classList.toggle("goud", x === b)); };
+$("b-credit").onclick = () => { const t = $("cr-tekst").value.trim(); if (!t) return; stuur({ cmd: "credit", soort: crSoort, wie: $("cr-wie").value, tekst: t }); $("cr-tekst").value = ""; };
+$("cr-lijst").onclick = (e) => { const b = e.target.closest("[data-weg]"); if (b) stuur({ cmd: "credit-weg", id: b.dataset.weg }); };
+function tekenCredits() {
+  const SOORT = { titel: "Titel", moment: "Moment", uitspraak: "Uitspraak" }, esc = (t) => String(t ?? "").replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[k]);
+  $("cr-lijst").innerHTML = (ereStand.extra || []).map((x) => `<div class="anek"><b>${SOORT[x.soort]}${x.wie ? ` · ${esc(x.wie)}` : ""}</b> <button type="button" data-weg="${x.id}" style="float:right">×</button><br>${esc(x.tekst)}</div>`).join("");
+}
 function tekenInrol() {
   const aan = ereStand.inrol || {};
   $("inrol-lijst").innerHTML = (window.WACHTERS || []).map((w) => `<button type="button" data-n="${w.naam}" class="${aan[w.naam] ? "goud" : ""}" aria-pressed="${!!aan[w.naam]}">${aan[w.naam] ? "✓ " : ""}${w.naam}</button>`).join("");

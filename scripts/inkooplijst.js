@@ -8,11 +8,8 @@ const L = [
   // [categorie, wat, aantal, waarvoor, opmerking]
   ["Kist & einde", "Houten schatkist met beugel voor een hangslot", "1", "Finale: gaat open met de code van de tv, cadeaus erin", "Groot genoeg voor de cadeaus"],
   ["Kist & einde", "Cijferhangslot, 4 cijfers, zelf in te stellen", "1", "Op de kist", "Code instellen op 7698"],
-  ["Kist & einde", "Cadeaus voor de groep", "?", "In de kist, na de overwinning", "Nog te bepalen"],
-  ["Envelop & oorkondes", "Grote envelop (kraft of perkament)", "1", "Staat het hele weekend op de schoorsteen", "Pas open na de kist"],
-  ["Envelop & oorkondes", "Zegellak + lakstempel", "1", "Envelop verzegelen", ""],
-  ["Envelop & oorkondes", "Oorkondes laten printen (kleur, A4, 200–250 g mat)", "11", "06 Oorkondes.pdf, één per Wachter", "Na de portretten; printshop geeft mooiere kleuren"],
-  ["Envelop & oorkondes", "Fotolijstjes A4", "11", "Oorkonde mee naar huis", "Optioneel"],
+  ["Kist & einde", "Bouillonblokjes (flink wat)", "1", "De schat van Bouillon: de kist zit er vol mee", "Voor de grap, in plaats van goud"],
+  ["Kist & einde", "Cadeautje per Wachter", "11", "In de kist, na de overwinning", "Nog te bepalen"],
   ["Relieken", "Lantaarn (LED of kaars)", "1", "Reliek: De Lantaarn van het Kasteel", "Mee op de fakkeltocht"],
   ["Relieken", "Drinkhoorn", "1", "Reliek: De Hoorn van de Herberg", ""],
   ["Relieken", "Zwaard (decor of speelgoed)", "1", "Reliek: Het Zwaard van Broederschap", ""],
