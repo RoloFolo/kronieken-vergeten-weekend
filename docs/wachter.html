@@ -193,7 +193,7 @@ body.in-frame main { visibility: hidden; }
 .binnen p { margin: 0; max-width: 32ch; font: italic 16px/1.5 var(--display); color: var(--ash); }
 .binnen .knop { min-width: 220px; }
 /* the intro after "Treed binnen", like Friday on the tv: storm, Godfried's letter paragraph by paragraph with his voice, the seals */
-.intro { position: fixed; inset: 0; z-index: 72; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px;
+.intro { position: fixed; left: 0; right: 0; top: 0; height: 100dvh; height: var(--zicht, 100dvh); z-index: 72; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px;
   padding: max(16px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom)); background: #070405; overflow: hidden; transition: opacity 1.4s ease; }
 .intro.weg { opacity: 0; pointer-events: none; }
 /* the intro as a painted comic: full-screen panels that wipe in one by one, the words in a caption box */
@@ -228,6 +228,7 @@ body.in-frame main { visibility: hidden; }
 .strip-zinnen { display: grid; }
 .intro .strip-tekst .intro-verder { position: static; translate: none; justify-self: end; margin-top: 10px; padding: 11px 26px; background: rgba(7,4,5,.85); opacity: 0; pointer-events: none; transform: translateY(6px); transition: opacity .8s ease, transform .8s ease; }
 .intro .strip-tekst .intro-verder.klaar { opacity: 1; pointer-events: auto; transform: none; }
+.intro .strip-tekst:has(.intro-verder.klaar) { cursor: pointer; }
 .intro-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.32) saturate(.9) blur(1.5px); }
 .intro::after { content: ""; position: absolute; inset: 0; z-index: 1; background: radial-gradient(ellipse 90% 75% at 50% 45%, transparent 50%, rgba(7,4,5,.55)); pointer-events: none; }
 
@@ -262,7 +263,7 @@ body.in-frame main { visibility: hidden; }
 /* while the entry or the intro is open, the page behind stays still and the menu hides (a phone that scrolls its address bar away showed it) */
 body:has(#binnen:not(.verborgen)), body:has(#intro:not(.verborgen)) { overflow: hidden; }
 body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs { visibility: hidden; }
-.binnen, .intro { height: 100vh; height: 100lvh; bottom: auto; }
+.binnen { height: 100vh; height: 100lvh; bottom: auto; } /* the intro follows the visible height (--zicht), so its button stays on screen */
 .spreek { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 14px auto 0; padding: 8px 14px; min-height: 40px; cursor: pointer;
   font: 700 12px/1 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: var(--bronze-hi); background: none; border: 1px solid rgba(184,149,95,.5); border-radius: 999px; }
 .spreek[aria-pressed="true"] { border-color: var(--ember); color: #ffd2d0; }
@@ -443,15 +444,15 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=100"></script>
-<script src="a/godfried.js?v=100"></script>
-<script src="a/spel.js?v=100"></script>
-<script src="a/rollen.js?v=100"></script>
-<script src="a/firebase-config.js?v=100"></script>
-<script src="a/portretten.js?v=100"></script>
-<script src="a/koppeling.js?v=100"></script>
-<script src="a/tafel.js?v=100"></script>
-<script src="a/voorbereiding.js?v=100"></script>
+<script src="a/wachters.js?v=101"></script>
+<script src="a/godfried.js?v=101"></script>
+<script src="a/spel.js?v=101"></script>
+<script src="a/rollen.js?v=101"></script>
+<script src="a/firebase-config.js?v=101"></script>
+<script src="a/portretten.js?v=101"></script>
+<script src="a/koppeling.js?v=101"></script>
+<script src="a/tafel.js?v=101"></script>
+<script src="a/voorbereiding.js?v=101"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -724,6 +725,11 @@ function sluitIntro() {
   scrollTo(0, 0);
 }
 $("intro-verder").onclick = () => sluitIntro();
+// once Godfried has finished, a tap anywhere on the caption box goes on too (in case the button sits low)
+document.querySelector(".strip-tekst").onclick = (e) => { if ($("intro-verder").classList.contains("klaar") && !e.target.closest("#intro-verder")) sluitIntro(); };
+// the intro is exactly as tall as what the phone shows (Chrome sizes fixed layers to the screen without its address bar)
+const zichtHoogte = () => document.documentElement.style.setProperty("--zicht", `${Math.round(window.visualViewport?.height || innerHeight)}px`);
+zichtHoogte(); window.visualViewport?.addEventListener("resize", zichtHoogte); addEventListener("resize", zichtHoogte);
 // a phone that still refuses the sound: one more tap on this button counts as permission
 // no extra button: the next tap anywhere counts as permission and brings music and voice back
 let wachtOpTik = false;
