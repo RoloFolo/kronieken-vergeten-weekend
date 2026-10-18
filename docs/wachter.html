@@ -116,13 +116,13 @@ body:not(.bevel-eerst) :is(#vooraf, #gedaante, #hulp, #stap2) { animation: onthu
 @keyframes onthul { from { opacity: 0; transform: scale(.9); filter: blur(6px) brightness(2); } }
 .rol .med { width: min(230px, 62vw); aspect-ratio: 1; object-fit: contain; filter: drop-shadow(0 10px 24px #000) drop-shadow(0 0 22px rgba(226,50,60,.35)); }
 /* with his painting: one card. The painting runs into the role panel, the role medallion hangs over the seam */
-#rol-blok.met-held .held { border-bottom: 0; margin-bottom: -18px; box-shadow: inset 1px 1px 0 rgba(226,50,60,.45), inset -1px 0 0 rgba(226,50,60,.45); aspect-ratio: 2 / 2.5; }
+#rol-blok.met-held .held { border-bottom: 0; margin-bottom: -18px; box-shadow: inset 1px 1px 0 rgba(226,50,60,.45), inset -1px 0 0 rgba(226,50,60,.45); aspect-ratio: 2 / 2.75; }
 #rol-blok.met-held .rol-ras { display: none; }
-#rol-blok.met-held .held::after { background: linear-gradient(180deg, transparent 45%, rgba(24,8,10,.6) 68%, rgba(30,10,12,.97) 100%); }
-#rol-blok.met-held .held .held-naam { bottom: 92px; }
+#rol-blok.met-held .held::after { background: linear-gradient(180deg, transparent 62%, rgba(24,8,10,.55) 82%, rgba(30,10,12,.97) 100%); }
+#rol-blok.met-held .held .held-naam { bottom: 44px; }
 #rol-blok.met-held .held .held-lijst { bottom: -1px; border-bottom: 0; }
 #rol-blok.met-held .paneel.rol { border-top: 0; padding-top: 0; background: linear-gradient(180deg, rgba(30,10,12,.97), rgba(10,5,6,.94)); box-shadow: inset 1px 0 0 rgba(226,50,60,.45), inset -1px -1px 0 rgba(226,50,60,.45), 0 16px 44px #000; }
-#rol-blok.met-held .paneel.rol .med { position: relative; z-index: 2; width: min(170px, 46vw); margin-top: -82px; }
+#rol-blok.met-held .paneel.rol .med { position: relative; z-index: 2; width: min(140px, 38vw); margin-top: -34px; }
 .rol .med.leeg { border-radius: 50%; background: radial-gradient(circle, #3a1a14, #120708 70%); border: 3px solid var(--bronze); }
 .rol h2.naam { margin: 4px 0 0; font-size: clamp(24px, 7.4vw, 34px); letter-spacing: .06em; line-height: 1.1; }
 .rol .titel { font: 600 13px/1.2 var(--carved); letter-spacing: .25em; color: var(--ash); text-transform: uppercase; }
@@ -440,15 +440,15 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=91"></script>
-<script src="a/godfried.js?v=91"></script>
-<script src="a/spel.js?v=91"></script>
-<script src="a/rollen.js?v=91"></script>
-<script src="a/firebase-config.js?v=91"></script>
-<script src="a/portretten.js?v=91"></script>
-<script src="a/koppeling.js?v=91"></script>
-<script src="a/tafel.js?v=91"></script>
-<script src="a/voorbereiding.js?v=91"></script>
+<script src="a/wachters.js?v=92"></script>
+<script src="a/godfried.js?v=92"></script>
+<script src="a/spel.js?v=92"></script>
+<script src="a/rollen.js?v=92"></script>
+<script src="a/firebase-config.js?v=92"></script>
+<script src="a/portretten.js?v=92"></script>
+<script src="a/koppeling.js?v=92"></script>
+<script src="a/tafel.js?v=92"></script>
+<script src="a/voorbereiding.js?v=92"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
