@@ -441,15 +441,15 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=94"></script>
-<script src="a/godfried.js?v=94"></script>
-<script src="a/spel.js?v=94"></script>
-<script src="a/rollen.js?v=94"></script>
-<script src="a/firebase-config.js?v=94"></script>
-<script src="a/portretten.js?v=94"></script>
-<script src="a/koppeling.js?v=94"></script>
-<script src="a/tafel.js?v=94"></script>
-<script src="a/voorbereiding.js?v=94"></script>
+<script src="a/wachters.js?v=95"></script>
+<script src="a/godfried.js?v=95"></script>
+<script src="a/spel.js?v=95"></script>
+<script src="a/rollen.js?v=95"></script>
+<script src="a/firebase-config.js?v=95"></script>
+<script src="a/portretten.js?v=95"></script>
+<script src="a/koppeling.js?v=95"></script>
+<script src="a/tafel.js?v=95"></script>
+<script src="a/voorbereiding.js?v=95"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -471,7 +471,8 @@ const schoon = (t) => String(t).replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": 
 let publiek = {}, getekend = "", vorige = null;
 const ORGANISATOREN = ["Rob", "Jean", "Roland"];
 const mijnBevel = () => wachter && (V.bevelen?.[wachter.naam] || (ORGANISATOREN.includes(wachter.naam) ? V.hoederBevel : null)); // the organisers get a symbolic order, so they walk the same flow (it counts for nothing)
-const halOpen = () => Date.now() >= window.ROL_UITERLIJK || !!publiek.hal && (!FIRE || Date.now() >= START - 6 * 3600e3 || ORGANISATOREN.includes(wachter?.naam));
+const halTest = ORGANISATOREN && new URLSearchParams(location.search).has("hal"); // organisers can see the Hall early with ?hal in the link (testing); otherwise nobody before the weekend
+const halOpen = () => Date.now() >= window.ROL_UITERLIJK || !!publiek.hal && (!FIRE || Date.now() >= START - 6 * 3600e3 || halTest && ORGANISATOREN.includes(wachter?.naam));
 const eedOpen = () => !!publiek.eed; // only when the regie opens Act III (the finale runs on the tv anyway)
 
 // the power can be used once a day; the mark resets at midnight

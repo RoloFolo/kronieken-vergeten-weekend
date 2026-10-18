@@ -311,21 +311,22 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     </div>
     <button id="b-alles" type="button" style="margin-top:10px">Hele spel opnieuw beginnen</button>
     <div class="bevestig" id="alles-vraag" hidden>
+      <span id="alles-tv" class="klein" style="display:block;color:#ff8a80;margin-bottom:6px" hidden>De tv staat niet aan. Het wissen gebeurt op de tv: open eerst de tv (index.html?tv op de laptop), anders gebeurt er niets.</span>
       <span>Alle fiches, events, relieken, de finale en de titels gaan terug naar nul, en de tv start opnieuw bij het welkomstscherm (klik daarna één keer op de tv-laptop voor geluid). Zeker weten?</span>
       <div class="rij"><button class="rood" id="b-alles-ja" type="button">Ja, alles wissen</button><button id="b-alles-nee" type="button">Annuleren</button></div>
     </div>
   </section>
 </main>
 
-<script src="a/events.js?v=94"></script>
-<script src="a/godfried.js?v=94"></script>
-<script src="a/spel.js?v=94"></script>
-<script src="a/wachters.js?v=94"></script>
-<script src="a/rollen.js?v=94"></script>
-<script src="a/firebase-config.js?v=94"></script>
-<script src="a/portretten.js?v=94"></script>
-<script src="a/koppeling.js?v=94"></script>
-<script src="a/voorbereiding.js?v=94"></script>
+<script src="a/events.js?v=95"></script>
+<script src="a/godfried.js?v=95"></script>
+<script src="a/spel.js?v=95"></script>
+<script src="a/wachters.js?v=95"></script>
+<script src="a/rollen.js?v=95"></script>
+<script src="a/firebase-config.js?v=95"></script>
+<script src="a/portretten.js?v=95"></script>
+<script src="a/koppeling.js?v=95"></script>
+<script src="a/voorbereiding.js?v=95"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -630,7 +631,7 @@ $("b-aftiteling-uit").onclick = () => stuur({ cmd: "aftiteling-uit" });
 $("b-ere-speel").onclick = () => stuur({ cmd: ereStand.speelt ? "ere-pauze" : "ere-speel" });
 $("b-ere-terug").onclick = () => stuur({ cmd: "ere", d: -1 });
 $("b-ere-volgende").onclick = () => stuur({ cmd: "ere", d: 1 });
-$("b-alles").onclick = () => ($("alles-vraag").hidden = false);
+$("b-alles").onclick = () => { const g = laatsteStand?.tvInfo?.gemeld, dood = !g || Date.now() - g > 75000; $("alles-tv").hidden = !dood; $("b-alles-ja").disabled = dood; $("alles-vraag").hidden = false; };
 $("b-alles-nee").onclick = () => ($("alles-vraag").hidden = true);
 $("b-alles-ja").onclick = () => { stuur({ cmd: "alles-opnieuw" }); $("alles-vraag").hidden = true; };
 $("b-reset-nee").onclick = () => ($("reset-vraag").hidden = true);
