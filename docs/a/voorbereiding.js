@@ -1,12 +1,11 @@
 // Voor het weekend: wat de persoonlijke pagina laat zien zodra de link verstuurd is, in drie stappen.
 //   Stap 1 (meteen): welkom van Godfried, het eigen bevel (thuiswerk) en de vraag om herinneringen voor de finale.
-//   Stap 2 (vanaf stap2): wat neem je mee, je kamerwens en de playlist.
+//   Stap 2 (vanaf stap2): wat neem je mee.
 //   Stap 3 (vanaf stap3, de avond ervoor): de Schaduwkoning roert zich.
 // De bevelen noemen de rol nog niet: die breekt pas open na de Eerste Dronk.
 window.VOORAF = {
   stap2: new Date("2026-11-06T09:00:00+01:00"),
   stap3: new Date("2026-11-12T19:00:00+01:00"),
-  playlist: null, // link naar de gedeelde playlist, zodra die er is
 
   // per Wachter: titel, opdracht, en welk Zegel hij voedt als de regie "Bevel volbracht" drukt (+3 fiches)
   bevelen: { // de organisatoren (Rob, Jean, Roland) krijgen geen bevel; elk Zegel krijgt er twee (samen 6 fiches)
@@ -31,6 +30,7 @@ window.VOORAF = {
   // stap 2
   geregeld: ["Bedlinnen: de bedden zijn opgemaakt", "Badhanddoeken en theedoeken", "Eten en drinken", "Hout voor de haarden", "Wifi"],
   meenemen: [
+    "Je kostuum en props voor jouw gedaante: je komt verkleed, en je blijft het hele weekend in je rol",
     "Badjas en slippers, voor de sauna en het stoombad",
     "Warme kleren, een regenjas en stevige schoenen: zaterdagavond lopen we door een kasteel, en het bos ligt om de hoek",
     "Toiletspullen en je eigen medicijnen",

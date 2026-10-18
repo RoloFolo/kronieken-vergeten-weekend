@@ -47,6 +47,8 @@ const L = [
   ["Events & quests", "Serveerplank", "1", "De Hapjesbrigade", "Mag uit het huisje"],
   ["Events & quests", "Telefoonstatief met afstandsbediening", "1", "Het Groepsportret, De Brandmeesters", ""],
   ["Buiten", "Fleecedekens", "4–6", "Het Buitenkamp, De Rustbrengers", "Optioneel"],
+  ["Finale", "Zak veren", "1", "Akte I: pek en veren voor wie geen gênant moment instuurde", "Kussenveren of carnavalsveren"],
+  ["Finale", "Schandbord met touw", "1", "Akte I: om de nek aan de schandpaal (‘Ik liet het vuur leeg’)", ""],
   ["Eten & drinken", "Hete Sep (fles)", "1", "Shotjes bij het vuur, op de tocht en bij de toost", "Samen met de shotglaasjes"],
   ["Eten & drinken", "Frituurpan (+ sauzen en frituurhapjes: Roy)", "1", "Frituur in het weekend", "Akkoord van de eigenaar (18 oktober)"],
   ["Buiten", "Thermoskan + to-go bekers", "1 + 11", "De Ochtendmars, Het Buitenkamp (iets warms)", ""],

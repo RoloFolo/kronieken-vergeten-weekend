@@ -43,6 +43,8 @@ html, body { overflow-x: hidden; }
 /* before the weekend the countdown is the heart of the page */
 body.bevel-eerst :is(#vooraf, #spreek-rij, #gedaante, #hulp, #stap2, #stap3, #verzegeld) { display: none !important; }
 /* your race and class: known before the weekend, with a challenge to come (and stay) in costume */
+.schande-stand { margin: 6px 0 12px; text-align: center; font: 700 14px/1.4 var(--body); }
+.schande-stand.leeg { color: #ffb0a8; } .schande-stand.vol { color: #9fdc9f; }
 .kroniek { display: grid; gap: 14px; }
 .kroniek .kr-kop { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center; text-align: left; }
 .kroniek .kr-kop img { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #b8955f; }
@@ -327,11 +329,12 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <div class="spreek-rij verborgen" id="spreek-rij"><button class="spreek" type="button" id="b-spreek" aria-pressed="false">▶ Laat Godfried opnieuw spreken</button></div>
   <section class="paneel gedaante verborgen" id="gedaante"></section>
   <section class="paneel verborgen" id="hulp">
-    <h2 class="carved">Godfried vraagt je hulp</h2>
-    <p class="brief" style="text-align:center">In de laatste nacht moet het vuur de Wachters herkennen. Daarvoor heb ik herinneringen nodig. Vertel me iets over een andere Wachter: een avontuur van vroeger, een eigenaardigheid, iets wat de anderen misschien niet weten. Niemand ziet van wie het komt.</p>
+    <h2 class="carved">Jouw gênantste moment</h2>
+    <p class="brief verborgen" style="text-align:center">In de laatste nacht moet het vuur de Wachters herkennen. Daarvoor heb ik herinneringen nodig. Vertel me iets over een andere Wachter: een avontuur van vroeger, een eigenaardigheid, iets wat de anderen misschien niet weten. Niemand ziet van wie het komt.</p>
+    <p class="brief" style="text-align:center">In de laatste nacht zal het vuur jullie schande tonen, en de anderen moeten raden van wie zij is. Vertel mij jouw meest gênante moment ooit. Minstens één. Wie niets vertelt… wordt door het vuur zelf aan de schandpaal genageld.</p>
+    <p class="schande-stand" id="schande-stand"></p>
     <form id="hulp-form">
-      <div class="veld"><label for="hulp-over">Over wie</label><select id="hulp-over" required></select></div>
-      <div class="veld"><label for="hulp-tekst">Jouw herinnering</label><textarea id="hulp-tekst" maxlength="2000" required placeholder="Weet je nog toen…"></textarea></div>
+      <div class="veld"><label for="hulp-tekst">Jouw gênante moment</label><textarea id="hulp-tekst" maxlength="2000" required placeholder="Het was de avond dat ik…"></textarea></div>
       <button class="knop" type="submit" id="hulp-stuur" style="width:100%">Verzegel en stuur naar Godfried</button>
     </form>
     <p class="op-slot verborgen" id="hulp-geen">Insturen kan zodra je online bent ingelogd.</p>
@@ -385,14 +388,14 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=83"></script>
-<script src="a/godfried.js?v=83"></script>
-<script src="a/spel.js?v=83"></script>
-<script src="a/rollen.js?v=83"></script>
-<script src="a/firebase-config.js?v=83"></script>
-<script src="a/koppeling.js?v=83"></script>
-<script src="a/tafel.js?v=83"></script>
-<script src="a/voorbereiding.js?v=83"></script>
+<script src="a/wachters.js?v=84"></script>
+<script src="a/godfried.js?v=84"></script>
+<script src="a/spel.js?v=84"></script>
+<script src="a/rollen.js?v=84"></script>
+<script src="a/firebase-config.js?v=84"></script>
+<script src="a/koppeling.js?v=84"></script>
+<script src="a/tafel.js?v=84"></script>
+<script src="a/voorbereiding.js?v=84"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -547,7 +550,7 @@ function tekenTafel() {
 }
 // ---------- before the weekend ----------
 // Step 1 right away: Godfried's welcome (voice + the hall music after one tap), the order, the request for memories.
-// Step 2 from VOORAF.stap2: what to bring, the room wish, the playlist. Step 3 from VOORAF.stap3: the Shadow King stirs.
+// Step 2 from VOORAF.stap2: what to bring. Step 3 from VOORAF.stap3: the Shadow King stirs.
 const V = window.VOORAF || {};
 let publiekGeladen = false; // the round number comes with it: the seen-marks wait for it
 let mijnVooraf = {}, vooraafGetekend = "", muziek = null, stem = null, binnenGedaan = false;
@@ -712,29 +715,28 @@ function tekenGedaante() {
     + (V.bevelen?.[wachter.naam]?.larp ? `<div class="gd-larp"><b>Voor jouw LARP-sessie: de gedaanten van alle Wachters</b><ul>${Object.entries(window.KARAKTER || {}).map(([n, x]) => `<li><span>${schoon(n)}</span>${schoon(x.ras)} ${schoon(x.klasse)}</li>`).join("")}</ul><small>Alleen de gedaanten: hun rollen en krachten blijven ook voor jou geheim tot de Eerste Dronk.</small></div>` : "");
 }
 function tekenHulp() {
-  const anders = (window.WACHTERS || []).filter((w) => w.naam !== wachter.naam), sel = $("hulp-over"), was = sel.value;
-  sel.innerHTML = `<option value="">Kies een Wachter</option>` + anders.map((w) => `<option>${schoon(w.naam)}</option>`).join(""); sel.value = was;
   $("hulp-form").classList.toggle("verborgen", !FIRE); $("hulp-geen").classList.toggle("verborgen", FIRE);
   const lijst = Object.entries(mijnVooraf.anekdotes || {}).sort((a, b) => (a[1].t || 0) - (b[1].t || 0));
-  $("hulp-lijst").innerHTML = lijst.length ? lijst.map(([id, a]) => `<li><div><b>Over ${schoon(a.over)}</b><br>${schoon(a.tekst)}</div><button type="button" data-weg="${id}" aria-label="Verwijder">×</button></li>`).join("") : "";
+  const eigen = lijst.filter(([, a]) => !a.over || a.over === wachter.naam), st = $("schande-stand");
+  st.className = `schande-stand ${eigen.length ? "vol" : "leeg"}`; st.textContent = eigen.length ? `✓ ${eigen.length === 1 ? "Je schande is verzegeld" : `${eigen.length} momenten verzegeld`}. Meer mag altijd.` : "Nog niets ingestuurd. Minstens één, anders wacht de schandpaal.";
+  $("hulp-lijst").innerHTML = lijst.length ? lijst.map(([id, a]) => `<li><div>${a.over && a.over !== wachter.naam ? `<b>Over ${schoon(a.over)}</b><br>` : ""}${schoon(a.tekst)}</div><button type="button" data-weg="${id}" aria-label="Verwijder">×</button></li>`).join("") : "";
 }
 $("hulp-form").onsubmit = async (e) => {
-  e.preventDefault(); const over = $("hulp-over").value, tekst = $("hulp-tekst").value.trim(); if (!over || !tekst) return;
+  e.preventDefault(); const over = wachter.naam, tekst = $("hulp-tekst").value.trim(); if (!tekst) return;
   const knop = $("hulp-stuur"); knop.disabled = true;
   const ok = await Koppeling.vooraf(`anekdotes/a${Date.now().toString(36)}`, { over, tekst: tekst.slice(0, 2000), t: Date.now() });
   knop.disabled = false;
   if (ok === false) return melding("Niet verstuurd", "Dat kwam niet aan. Controleer je verbinding en probeer het opnieuw.");
-  $("hulp-tekst").value = ""; $("hulp-over").value = ""; piep("volbracht", .6);
-  melding("Godfried dankt je", "Je herinnering is verzegeld en bewaard. Heb je er nog een? Je mag er zoveel sturen als je wilt.");
+  $("hulp-tekst").value = ""; piep("volbracht", .6);
+  melding("Godfried dankt je", "Je schande is verzegeld. Alleen het vuur kent haar… tot de laatste nacht. Heb je er nog een? Je mag er zoveel sturen als je wilt.");
 };
 $("hulp-lijst").onclick = async (e) => { const b = e.target.closest("[data-weg]"); if (b) await Koppeling.vooraf(`anekdotes/${b.dataset.weg}`, null); };
 function tekenStap2(stap) {
   const el = $("stap2");
-  if (stap < 2) { el.innerHTML = `<h2 class="carved">Binnenkort meer</h2><p class="op-slot">Kort voor het weekend stuurt Godfried je meer: wat je moet meenemen en de muziek van de Hall.</p>`; return; }
+  if (stap < 2) { el.innerHTML = `<h2 class="carved">Binnenkort meer</h2><p class="op-slot">Kort voor het weekend stuurt Godfried je meer: wat je moet meenemen.</p>`; return; }
   el.innerHTML = `<h2 class="carved">Wat neem je mee</h2>
     <div class="sub-kop">Geregeld</div><ul class="lijstje geregeld">${(V.geregeld || []).map((t) => `<li>${schoon(t)}</li>`).join("")}</ul>
-    <div class="sub-kop">Neem zelf mee</div><ul class="lijstje">${(V.meenemen || []).map((t) => `<li>${schoon(t)}</li>`).join("")}</ul>
-    ${V.playlist ? `<h2 class="carved" style="margin-top:22px">De muziek van de Hall</h2><p class="op-slot" style="margin:0">Voeg je eigen nummers toe aan de playlist van het weekend.</p><a class="knop" href="${schoon(V.playlist)}" target="_blank" rel="noopener">Open de playlist</a>` : ""}`;
+    <div class="sub-kop">Neem zelf mee</div><ul class="lijstje">${(V.meenemen || []).map((t) => `<li>${schoon(t)}</li>`).join("")}</ul>`;
   if (lokaal(`kronieken-stap2-${wachter.naam}-${publiek.ronde || 0}`) !== "gezien") { lokaal(`kronieken-stap2-${wachter.naam}-${publiek.ronde || 0}`, "gezien"); if (navigator.vibrate) try { navigator.vibrate([80, 60, 80]); } catch {} }
 }
 function tekenStap3(stap) {

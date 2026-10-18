@@ -251,9 +251,9 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 
   <section class="kaart" data-fase="vooraf">
     <h2>Voor het weekend</h2>
-    <p class="klein" style="margin:0 0 10px">Wat de Wachters vooraf op hun pagina deden: hun bevel aanvaard en herinneringen voor de finale ingestuurd. Volbrengt iemand zijn bevel in het weekend, druk dan op <b>Volbracht</b>: zijn Zegel krijgt 3 fiches.</p>
+    <p class="klein" style="margin:0 0 10px">Wat de Wachters vooraf op hun pagina deden: hun bevel aanvaard en hun gênantste moment ingestuurd (minstens één; wie niets stuurt, gaat in Akte I aan de schandpaal). Volbrengt iemand zijn bevel in het weekend, druk dan op <b>Volbracht</b>: zijn Zegel krijgt 3 fiches.</p>
     <div class="lijst" id="vooraf-lijst"><p class="klein">Laden…</p></div>
-    <details style="margin-top:10px"><summary class="klein" style="cursor:pointer">Alle herinneringen lezen (voor Akte I)</summary><div class="lijst" id="vooraf-anekdotes" style="margin-top:8px"></div></details>
+    <details style="margin-top:10px"><summary class="klein" style="cursor:pointer">Alle gênante momenten lezen (Akte I)</summary><div class="lijst" id="vooraf-anekdotes" style="margin-top:8px"></div></details>
   </section>
 
   <section class="kaart" data-fase="vooraf">
@@ -277,14 +277,14 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=83"></script>
-<script src="a/godfried.js?v=83"></script>
-<script src="a/spel.js?v=83"></script>
-<script src="a/wachters.js?v=83"></script>
-<script src="a/rollen.js?v=83"></script>
-<script src="a/firebase-config.js?v=83"></script>
-<script src="a/koppeling.js?v=83"></script>
-<script src="a/voorbereiding.js?v=83"></script>
+<script src="a/events.js?v=84"></script>
+<script src="a/godfried.js?v=84"></script>
+<script src="a/spel.js?v=84"></script>
+<script src="a/wachters.js?v=84"></script>
+<script src="a/rollen.js?v=84"></script>
+<script src="a/firebase-config.js?v=84"></script>
+<script src="a/koppeling.js?v=84"></script>
+<script src="a/voorbereiding.js?v=84"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -479,11 +479,11 @@ function tekenVooraf() {
   $("vooraf-lijst").innerHTML = (window.WACHTERS || []).map((w) => {
     const v = vooraf[sleutelVan(w.naam)] || {}, b = V.bevelen?.[w.naam], n = Object.keys(v.anekdotes || {}).length, klaar = bevelGedaan.has(w.naam);
     const wat = [b ? `Bevel: ${esc(b.titel)} ${v.bevel?.aanvaard && (v.bevel.ronde ?? -1) === (laatsteStand?.ronde || 0) ? '<span class="ok">✓ aanvaard</span>' : "· nog niet aanvaard"}` : "Geen bevel",
-      `${n} herinnering${n === 1 ? "" : "en"}`].join(" · ");
+      n ? `${n} gênant${n === 1 ? " moment" : "e momenten"}` : '<span style="color:#ffb0a8">nog geen gênant moment</span>'].join(" · ");
     return `<div class="vw ${klaar ? "klaar" : ""}"><span class="wie">${esc(w.naam)}</span>${b ? `<button type="button" data-bevel="${esc(w.naam)}" ${klaar ? "disabled" : ""}>${klaar ? "Volbracht ✓" : "Volbracht"}</button>` : "<span></span>"}<span class="wat">${wat}</span></div>`;
   }).join("");
-  const alle = (window.WACHTERS || []).flatMap((w) => Object.values(vooraf[sleutelVan(w.naam)]?.anekdotes || {}));
-  $("vooraf-anekdotes").innerHTML = alle.length ? alle.sort((a, b) => a.over.localeCompare(b.over)).map((a) => `<div class="anek"><b>Over ${esc(a.over)}</b><br>${esc(a.tekst)}</div>`).join("") : '<p class="klein">Nog geen herinneringen ingestuurd.</p>';
+  const alle = (window.WACHTERS || []).flatMap((w) => Object.values(vooraf[sleutelVan(w.naam)]?.anekdotes || {}).map((a) => ({ ...a, van: w.naam })));
+  $("vooraf-anekdotes").innerHTML = alle.length ? alle.sort((a, b) => a.van.localeCompare(b.van)).map((a) => `<div class="anek"><b>${esc(a.van)}${a.over && a.over !== a.van ? ` (over ${esc(a.over)})` : ""}</b><br>${esc(a.tekst)}</div>`).join("") : '<p class="klein">Nog geen gênante momenten ingestuurd.</p>';
 }
 $("vooraf-lijst").onclick = (e) => { const b = e.target.closest("[data-bevel]"); if (b && !b.disabled) stuur({ cmd: "bevel", naam: b.dataset.bevel }); };
 Koppeling.start({ rol: "regie", opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); tekenGodfried(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); }, opEre: (t) => { ereToewijzing = t || {}; tekenEreRegie(); } })

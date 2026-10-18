@@ -55,7 +55,7 @@ const REGELS = [
   // De finale: het laatste gewelf. De cijfers volgen spel.js slotcode (7, 6, 9, 8): pas die regels aan als de code verandert.
   ["fin/schaduw", "Enceladus", SCHADUW, "Dus… jullie zijn tot hier gekomen. Tot aan mijn laatste slot. Vier cijfers houden mij nog gevangen. Vier. [whispering] Laten we eens zien… wat jullie werkelijk weten."],
   ["fin/godfried", "Charon", GODFRIED, "Laat je niet bang maken, Wachters. Elk Zegel bewaart één cijfer van dit slot. Volbreng zijn akte, en het cijfer valt op zijn plaats. Vier cijfers… en de Schaduwkoning is opnieuw gebonden."],
-  ["fin/akte-1", "Charon", GODFRIED, "Akte één. Het Vuur der Herinnering. Het vuur onthoudt wie jullie zijn. Het toont jullie herinneringen… herken de Wachter over wie het spreekt."],
+  ["fin/akte-1", "Charon", GODFRIED, "Akte één. Het Vuur der Herinnering. Het vuur onthoudt alles, ook wat jullie liever vergeten. Het toont jullie gênantste momenten… raad van welke Wachter ze zijn."],
   ["fin/akte-2", "Charon", GODFRIED, "Akte twee. Het Feestmaal. De Hoorn heeft alles gezien wat jullie dit weekend deden. Bewijs dat jullie het zelf ook nog weten."],
   ["fin/akte-3", "Charon", GODFRIED, "Akte drie. De Eed der Broeders. Ieder van jullie draagt een stuk van de eed. Het staat nu in jouw persoonlijke boodschap van mij. Alleen samen, in de juiste volgorde, spreken jullie hem uit."],
   ["fin/akte-4", "Charon", GODFRIED, "Akte vier. De Verrader. Het hele weekend liep er een verrader tussen jullie. Niet één, maar telkens een ander. Wijs ze aan."],
@@ -73,6 +73,7 @@ const REGELS = [
   ["fin/cijfer-4", "Charon", GODFRIED, "Het vierde… en laatste cijfer. Acht!"],
   ["fin/dicht", "Enceladus", SCHADUW, "Dit Zegel is te zwak… Het geeft zijn geheim niet prijs. Niet zonder een laatste beproeving."],
   ["fin/open", "Charon", GODFRIED, "Het Zegel is sterk genoeg. Het geeft zijn geheim prijs."],
+  ["fin/schandpaal", "Charon", GODFRIED, "Deze Wachter liet het vuur leeg. Hij weigerde zijn schande met mij te delen. Pek en veren, Wachters! Zet hem aan de schandpaal… en laat hem zijn gênantste moment hier vertellen, ten overstaan van allen."],
   ["fin/hint", "Charon", GODFRIED, "Een reliek ontwaakt. Luister naar wat het fluistert."],
   // Voor het weekend, op de persoonlijke pagina: een welkom per Wachter, en de avond ervoor de Schaduwkoning.
   ...NAMEN.map((n) => [`vooraf/welkom-${n.toLowerCase()}`, "Charon", GODFRIED, `Wachter ${n}. Ik ben Godfried van Bouillon, hertog van Neder-Lotharingen, heer van de burcht boven de Semois. Binnenkort ontwaakt de Schaduw onder mijn kasteel, en ik roep elf Wachters bijeen. Jij bent er één van. ${KAR[n] ? `Jij komt als ${KAR[n].ras} ${KAR[n].klasse}. Kom in die gedaante, verkleed van top tot teen, en blijf het hele weekend in je rol… wie dat doet, wordt rijkelijk beloond. ` : ""}Je rol rust nog onder mijn zegel… ${["Rob", "Jean", "Roland"].includes(n) ? "maar ik vraag je nu al om hulp." : "maar één bevel geef ik je nu al. En ik vraag je om hulp."}`]), // the organisers get no order

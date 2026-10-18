@@ -21,7 +21,7 @@ window.SPEL = {
   drempel: 12,            // fiches waarbij een Zegel zijn akte vanzelf opent; anders eerst een beproeving
   aktes: [
     { zegel: "vlam", naam: "Het Vuur der Herinnering", soort: "herinnering",
-      intro: "Het vuur onthoudt wie jullie zijn. Het toont jullie herinneringen… herken de Wachter over wie het spreekt." },
+      intro: "Het vuur onthoudt alles, ook wat jullie liever vergeten. Het toont jullie gênantste momenten… raad van welke Wachter ze zijn." },
     { zegel: "hoorn", naam: "Het Feestmaal", soort: "weekend",
       intro: "De Hoorn heeft alles gezien wat jullie dit weekend deden. Bewijs dat jullie het zelf ook nog weten." },
     { zegel: "schild", naam: "De Eed der Broeders", soort: "eed",

@@ -392,6 +392,11 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .gewelf .bekers { display: flex; gap: 1.2vw; }
 .gewelf .beker { width: clamp(22px, 1.9vw, 40px); aspect-ratio: .7; border: 2px solid #6e5230; border-radius: 0 0 40% 40%; background: linear-gradient(to top, #2a1416, #0e0607); }
 .gewelf .beker.vol { background: linear-gradient(to top, #6b0a10, #e2323c); border-color: #d8b06a; box-shadow: 0 0 14px rgba(226,50,60,.6); }
+.schandpaal { position: relative; overflow: hidden; display: grid; place-items: center; height: 18vh; width: min(60vw, 900px); border: 2px solid #6e5230; background: radial-gradient(ellipse at 50% 60%, rgba(60,30,10,.85), rgba(10,5,6,.95)); }
+.schandpaal b { position: relative; z-index: 1; font-size: clamp(36px, 4.6vw, 96px); filter: drop-shadow(0 0 20px rgba(226,50,60,.6)); animation: schandBeef .4s steps(2) infinite; }
+@keyframes schandBeef { 50% { translate: 2px -1px; } }
+.schandpaal i { position: absolute; top: -10%; width: 1.4vw; height: .5vw; border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; background: #f4ead6; opacity: .85; animation: veer 6s linear infinite; }
+@keyframes veer { to { transform: translate(3vw, 22vh) rotate(540deg); opacity: .2; } }
 .gewelf .herinnering-foto { max-height: 17vh; max-width: 30vw; border: 3px solid #6e5230; box-shadow: 0 10px 30px #000; filter: sepia(.35) contrast(1.05); }
 .gewelf .aanwijzingen { margin: 0; padding-left: 1.4em; max-width: 76ch; text-align: left; display: grid; gap: .6vh; font: italic clamp(13px, 1.15vw, 23px)/1.32 var(--display); color: var(--bone); }
 .gewelf .periodes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 30vw), 1fr)); gap: .9vw; width: 100%; }
@@ -1072,15 +1077,15 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=83"></script>
-<script src="a/godfried.js?v=83"></script>
-<script src="a/spel.js?v=83"></script>
-<script src="a/voorbereiding.js?v=83"></script>
-<script src="a/wachters.js?v=83"></script>
-<script src="a/firebase-config.js?v=83"></script>
-<script src="a/koppeling.js?v=83"></script>
-<script src="a/rollen.js?v=83"></script>
-<script src="a/tafel.js?v=83"></script>
+<script src="a/events.js?v=84"></script>
+<script src="a/godfried.js?v=84"></script>
+<script src="a/spel.js?v=84"></script>
+<script src="a/voorbereiding.js?v=84"></script>
+<script src="a/wachters.js?v=84"></script>
+<script src="a/firebase-config.js?v=84"></script>
+<script src="a/koppeling.js?v=84"></script>
+<script src="a/rollen.js?v=84"></script>
+<script src="a/tafel.js?v=84"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1926,13 +1931,26 @@ const SPOOR = { "chaos-steel": (l) => `er verdween een fiche uit de ${zegelNaamV
   "chaos-vloek": (l) => `${l.doel} werd vervloekt`, "chaos-ijs": (l) => `de ${zegelNaamVan(l.id)} bevroor`,
   "chaos-wissel": (l) => `een fiche sprong van de ${zegelNaamVan(l.id)} naar de ${zegelNaamVan(l.naar)}`,
   "chaos-dobbel": () => "de dobbelsteen werd vervloekt", "chaos-macht": () => "de Schaduwkoning nam de Hall over", "chaos-raaf": () => "de raaf schrok op", "chaos-valse-hoop": (l) => `de ${zegelNaamVan(l.id)} steeg… en zakte weer` };
+// Act I: per Wachter one embarrassing moment he sent in about himself (the earliest), in an order fixed per round;
+// whoever sent nothing ends up at the pillory. Without Firebase (a local test) the example memories from spel.js.
+const hashNaam = (s) => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
+function schandeLijst() {
+  if (!Object.keys(voorafAlles).length) return S.herinneringen;
+  const eigen = {}; for (const a of anekdotes()) if (a.van && (!a.over || a.over === a.van)) (eigen[a.van] ||= []).push(a);
+  return [...NAMEN].sort((x, y) => hashNaam(x + ronde) - hashNaam(y + ronde))
+    .map((n) => eigen[n]?.length ? { wie: n, tekst: [...eigen[n]].sort((p, q) => (p.t || 0) - (q.t || 0))[0].tekst } : { wie: n, schandpaal: true });
+}
+const schandpaalGehoord = new Set();
+function schandpaalStem(i) { if (schandpaalGehoord.has(`${ronde}-${i}`)) return; schandpaalGehoord.add(`${ronde}-${i}`); setTimeout(() => { speel("fin/fout-2", .9); setTimeout(() => gZeg("schandpaal", () => {}, 12000), 2200); }, 900); }
 function aktePuzzel(a) {
   const v = fin.voortgang[a.zegel] ||= [];
   if (a.soort === "herinnering") {
-    const lijst = S.herinneringen, i = lijst.findIndex((_, n) => !v.includes(n));
+    const lijst = schandeLijst(), i = lijst.findIndex((_, n) => !v.includes(n));
     const sterren = lijst.map((h, n) => `<span class="ster ${v.includes(n) ? "aan" : ""}">${v.includes(n) ? schoon(h.wie) : "✦"}</span>`).join("");
     if (i < 0) return { klaar: true, html: `<div class="sterren">${sterren}</div>` };
     const h = lijst[i];
+    if (h.schandpaal) { schandpaalStem(i); return { html: `<div class="sterren">${sterren}</div><div class="schandpaal">${Array.from({ length: 18 }, (_, n) => `<i style="left:${(n * 37) % 100}%;animation-delay:${-(n * .7) % 6}s"></i>`).join("")}<b class="carved">${schoon(h.wie)}</b></div><p class="vraag">${schoon(h.wie)} liet het vuur leeg.</p><p class="klein-tv">Pek en veren! Aan de schandpaal vertelt hij zijn gênantste moment, hier en nu. Daarna tikt de regie zijn naam aan.</p>`,
+      hint: "Hij staat al aan de schandpaal.", check: (w) => String(w).toLowerCase() === h.wie.toLowerCase(), goed: () => v.push(i) }; }
     return { html: `<div class="sterren">${sterren}</div>${h.foto ? `<img class="herinnering-foto" src="${h.foto}" alt="">` : ""}<p class="vraag">${schoon(h.tekst)}</p><p class="klein-tv">Wie is deze Wachter?</p>`,
       hint: `Zijn naam begint met een ${h.wie[0]}.`, check: (w) => String(w).toLowerCase() === h.wie.toLowerCase(), goed: () => v.push(i) };
   }
@@ -2032,6 +2050,7 @@ function finaleIn() {
 function finaleUit(naar) { gStop(); kaartWeg(); titel(null, false); if (naar !== "einde") { halMuziek.vol(.5, 3000); fade(vuur, .12, 2500); fade(wind, .2, 2500); } }
 function akteIn(stil) {
   gStop(); tekenFinale(); const a = S.aktes[fin.nu];
+  if (a?.soort === "eed" && !fin.eedOpen) { fin.eedOpen = true; meld(); } // the phones show their piece of the oath as soon as Act III begins, also when the finale gets there by itself
   if (S.aktes.every((x) => fin.opgelost[x.zegel])) { kaartWeg(); return gCam(""); }
   if (stil && fin.intro?.[a.zegel]) { gCam("vraag"); return kaartIn(); }
   kaartWeg(); titel(a, false); gCam("nis", fin.nu);
@@ -2157,7 +2176,7 @@ function aftitelingHtml() {
     + blok("De Wachters", NAMEN.map((n) => regel(rol(n) ? `${schoon(rol(n).naam)}<br><small>${schoon(rol(n).titel)}</small>` : "Wachter", schoon(n), n)), true)
     + blok("Ere van de Wachters", ereLijst().slice(0, 15).map((x) => regel(schoon(x.t.naam), schoon(x.wie), x.wie)))
     + blok("De bevelen van Godfried", NAMEN.filter((n) => window.VOORAF?.bevelen?.[n]).map((n) => regel(`${schoon(window.VOORAF.bevelen[n].titel)}${bevelGedaan.has(n) ? " ✓" : ""}`, schoon(n), n)), true)
-    + blok("Herinneringen uit de Kronieken", anekdotes().map((a) => `<div class="af-anekdote"><p>“${schoon(a.tekst)}”</p><b>over ${schoon(a.over)}${a.van ? ` <small>· ingestuurd door ${schoon(a.van)}</small>` : ""}</b></div>`), true)
+    + blok("De gênantste momenten", anekdotes().map((a) => `<div class="af-anekdote"><p>“${schoon(a.tekst)}”</p><b>${schoon(a.van || a.over)}${a.over && a.van && a.over !== a.van ? ` <small>· over ${schoon(a.over)}</small>` : ""}</b></div>`), true)
     + (FOTOS.length ? `<h2 class="carved">Het weekend in beeld</h2><div class="af-fotos">${FOTOS.map((u) => `<img src="${u}" alt="">`).join("")}</div>` : "")
     + blok("Het best in hun rol", NAMEN.filter((n) => ere.inrol?.[n]).map((n) => regel(window.KARAKTER?.[n] ? `${schoon(window.KARAKTER[n].ras)} ${schoon(window.KARAKTER[n].klasse)}` : "Wachter", schoon(n), n)))
     + blok("Het weekend in cijfers", cijfers, true)
