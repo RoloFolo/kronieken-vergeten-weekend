@@ -2,30 +2,41 @@
 <html lang="nl">
 <head>
 <meta charset="utf-8">
-<title>Vaas-etiketten – De Kronieken van het Vergeten Weekend</title>
+<title>Vaas-stroken – De Kronieken van het Vergeten Weekend</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Libre+Baskerville:ital@1&display=swap">
 <style>
-/* Four labels (90×120 mm) on one A4, one per Seal vase, with crop lines. */
-@page { size: A4; margin: 0; }
+/* Four strips of half an A4 lengthwise (297×105 mm), two per landscape A4, to wrap around each Seal vase as a band. */
+@page { size: A4 landscape; margin: 0; }
 * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 html, body { margin: 0; background: #fff; }
-.vel { width: 210mm; height: 297mm; display: grid; grid-template-columns: repeat(2, 90mm); grid-auto-rows: 120mm; gap: 8mm; justify-content: center; align-content: center; }
-.etiket { position: relative; display: grid; justify-items: center; align-content: center; gap: 4mm; padding: 8mm; text-align: center; outline: .2mm dashed #999; outline-offset: 0;
-  background: radial-gradient(ellipse 110% 60% at 50% 0%, rgba(150,18,28,.55), transparent 60%), #0b0607; color: #efe3d4; }
-.etiket::before { content: ""; position: absolute; inset: 3.5mm; border: .6mm solid #b8955f; box-shadow: inset 0 0 0 .4mm #4a331b, inset 0 0 0 .9mm rgba(226,50,60,.6); }
-.etiket img { width: 46mm; height: 46mm; filter: drop-shadow(0 1mm 2mm rgba(0,0,0,.8)); }
+.vel { width: 297mm; height: 210mm; display: grid; grid-template-rows: 105mm 105mm; page-break-after: always; overflow: hidden; }
+.strook { position: relative; display: grid; grid-template-columns: 52mm 1fr 52mm; align-items: center; padding: 0 12mm; color: #efe3d4;
+  background: radial-gradient(ellipse 60% 120% at 50% 50%, rgba(150,18,28,.55), transparent 70%), radial-gradient(ellipse 30% 90% at 8% 50%, rgba(110,14,20,.45), transparent 70%), radial-gradient(ellipse 30% 90% at 92% 50%, rgba(110,14,20,.45), transparent 70%), #0b0607; }
+.strook + .strook { border-top: .2mm dashed #999; }
+.strook::before { content: ""; position: absolute; inset: 5mm 4mm; border-top: .7mm solid #b8955f; border-bottom: .7mm solid #b8955f; box-shadow: inset 0 .6mm 0 rgba(226,50,60,.6), inset 0 -.6mm 0 rgba(226,50,60,.6); pointer-events: none; }
+.zij { display: flex; align-items: center; justify-content: space-evenly; }
+.zij img { width: 21mm; height: 21mm; border-radius: 50%; opacity: .55; filter: grayscale(.2) drop-shadow(0 1mm 2mm #000); }
+.midden { display: grid; grid-template-columns: auto auto; justify-content: center; align-items: center; gap: 7mm; }
+.midden > img { width: 62mm; height: 62mm; border-radius: 50%; filter: drop-shadow(0 0 6mm rgba(226,50,60,.5)) drop-shadow(0 1mm 2mm #000); }
 .carved { font-family: "Cinzel", Georgia, serif; font-weight: 700; text-transform: uppercase; letter-spacing: .08em;
   background: linear-gradient(180deg, #f1dfb6, #d8bf8f 45%, #9b7a4c); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.naam { font-size: 6.2mm; line-height: 1.15; }
-.onder { font: italic 3.6mm/1.4 "Libre Baskerville", Georgia, serif; color: #cdb9aa; max-width: 62mm; }
+.naam { font-size: 9mm; line-height: 1.1; }
+.onder { margin-top: 3mm; font: italic 4.4mm/1.4 "Libre Baskerville", Georgia, serif; color: #cdb9aa; max-width: 80mm; }
+.sier { margin-top: 2.5mm; font: 700 3mm/1 "Cinzel", Georgia, serif; letter-spacing: .5em; color: #9b7a4c; }
 </style>
 </head>
 <body>
-<section class="vel">
-  <div class="etiket"><img src="kaartbeeld/vlam.png" alt=""><div class="naam carved">Vlam van<br>Waakzaamheid</div><div class="onder">Scherp en sluw: niemand mag het doorhebben. Volbrachte quests hierin.</div></div>
-  <div class="etiket"><img src="kaartbeeld/hoorn.png" alt=""><div class="naam carved">Hoorn van<br>Overvloed</div><div class="onder">Drank, lof en eer, alles te veel. Volbrachte quests hierin.</div></div>
-  <div class="etiket"><img src="kaartbeeld/schild.png" alt=""><div class="naam carved">Schild van<br>Broederschap</div><div class="onder">Samen, regels, de groep als één. Volbrachte quests hierin.</div></div>
-  <div class="etiket"><img src="kaartbeeld/hart.png" alt=""><div class="naam carved">Hart van<br>de Ardennen</div><div class="onder">Verhalen, legendes, wie we zijn. Volbrachte quests hierin.</div></div>
-</section>
+<div id="vellen"></div>
+<script>
+const Z = [
+  ["vlam", "Vlam van<br>Waakzaamheid", "Scherp en sluw: niemand mag het doorhebben."],
+  ["hoorn", "Hoorn van<br>Overvloed", "Drank, lof en eer, alles te veel."],
+  ["schild", "Schild van<br>Broederschap", "Samen, regels, de groep als één."],
+  ["hart", "Hart van<br>de Ardennen", "Verhalen, legendes, wie we zijn."],
+];
+const zij = (id) => `<div class="zij"><img src="kaartbeeld/${id}.png" alt=""><img src="kaartbeeld/${id}.png" alt=""></div>`;
+const strook = ([id, naam, onder]) => `<div class="strook">${zij(id)}<div class="midden"><img src="kaartbeeld/${id}.png" alt=""><div><div class="naam carved">${naam}</div><div class="onder">${onder}</div><div class="sier">Volbrachte quests hierin</div></div></div>${zij(id)}</div>`;
+document.getElementById("vellen").innerHTML = `<section class="vel">${strook(Z[0])}${strook(Z[1])}</section><section class="vel">${strook(Z[2])}${strook(Z[3])}</section>`;
+</script>
 </body>
 </html>

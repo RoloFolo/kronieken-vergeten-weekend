@@ -25,6 +25,7 @@ html, body { margin: 0; background: #fff; }
 .soort { font: 700 2.3mm/1 var(--carved); letter-spacing: .35em; padding-left: .35em; color: var(--ash); text-transform: uppercase; }
 .med { width: 21mm; height: 21mm; }
 .soort b { color: var(--bronze-hi); font-weight: 700; }
+.dirty .soort i { font-style: normal; color: #ff8a80; }
 .legende .soort { color: #ff8a80; letter-spacing: .16em; padding-left: .16em; } .legende::before { box-shadow: inset 0 0 0 .3mm var(--bronze-lo), inset 0 0 0 .9mm rgba(226,50,60,.9), inset 0 0 6mm rgba(226,50,60,.35); }
 .carved { font-family: var(--carved); font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
   background: linear-gradient(180deg, var(--bronze-hi), #d8bf8f 45%, #9b7a4c); -webkit-background-clip: text; background-clip: text; color: transparent; }
@@ -39,8 +40,10 @@ html, body { margin: 0; background: #fff; }
 .lijnen { width: 100%; display: grid; gap: 4mm; margin-top: 1mm; }
 .lijnen i { display: block; border-bottom: .25mm dashed rgba(184,149,95,.6); height: 0; }
 .vier { display: flex; gap: 1.2mm; } .vier img { width: 9mm; height: 9mm; }
-.achter { display: grid; place-items: center; }
-.achter .logo { width: 50mm; }
+.achter { display: grid; justify-items: center; align-content: center; gap: 3mm; text-align: center; }
+.achter .logo { position: absolute; top: 8mm; width: 30mm; opacity: .9; }
+.achter .zmed { width: 30mm; height: 30mm; margin-top: 8mm; filter: drop-shadow(0 0 4mm rgba(226,50,60,.45)); }
+.achter .znaam { font-size: 4.6mm; line-height: 1.15; max-width: 48mm; }
 .achter .q { position: absolute; bottom: 9mm; font-size: 3.4mm; letter-spacing: .5em; padding-left: .5em; }
 .achter .ruit { position: absolute; inset: 7mm; border: .3mm solid rgba(184,149,95,.35); transform: none; }
 </style>
@@ -53,22 +56,23 @@ const MED = { vlam: "kaartbeeld/vlam.png", hoorn: "kaartbeeld/hoorn.png", schild
 const ZEGEL = { vlam: "Vlam van Waakzaamheid", hoorn: "Hoorn van Overvloed", schild: "Schild van Broederschap", hart: "Hart van de Ardennen" };
 const SOORT = { solo: "Solo", duo: "Duo", groep: "Groep" };
 const munten = (n) => `<span class="munten"><span class="plus">+${n}</span>${'<span class="munt"></span>'.repeat(n)}</span>`;
-const voorkant = (q) => `<div class="kaart voor${q.xp >= 30 ? " legende" : ""}">
-  <div class="soort">${q.xp >= 30 ? "Legendarisch · " : ""}${SOORT[q.soort]} · <b>${q.xp} XP</b></div>
+const voorkant = (q) => `<div class="kaart voor${q.xp >= 30 ? " legende" : ""}${q.dirty ? " dirty" : ""}">
+  <div class="soort">${q.dirty ? "<i>Dirty</i> · " : ""}${q.xp >= 30 && !q.dirty ? "Legendarisch · " : ""}${SOORT[q.soort]} · <b>${q.xp} XP</b></div>
   <img class="med" src="${MED[q.zegel]}" alt="">
   <div class="naam carved">${q.naam}</div>
   <div class="tekst">${q.tekst}</div>
   <div class="voet"><span class="zegel">${ZEGEL[q.zegel]}</span>${munten(q.fiches)}</div></div>`;
-const eigen = () => `<div class="kaart voor eigen">
+const eigen = (z) => `<div class="kaart voor eigen">
   <div class="soort">Eigen quest</div>
-  <div class="vier">${Object.values(MED).map((m) => `<img src="${m}" alt="">`).join("")}</div>
+  <img class="med" src="${MED[z]}" alt="">
   <div class="naam carved">Verzin een quest</div>
-  <div class="tekst">De groep bedenkt de opdracht. The Dice Rogue kiest het Zegel en de beloning.</div>
+  <div class="tekst">Bedenk zelf een opdracht voor dit Zegel. The Dice Rogue bepaalt de beloning.</div>
   <div class="lijnen"><i></i><i></i><i></i></div>
-  <div class="voet"><span class="zegel">Zegel: …………</span><span class="plus">+ …</span></div></div>`;
-const achterkant = () => `<div class="kaart achter"><div class="ruit"></div><img class="logo" src="kaartbeeld/logo.png" alt=""><div class="q carved">Quest</div></div>`;
+  <div class="voet"><span class="zegel">${ZEGEL[z]}</span><span class="plus">+ …</span></div></div>`;
+const achterkant = (z) => `<div class="kaart achter"><div class="ruit"></div><img class="logo" src="kaartbeeld/logo.png" alt=""><img class="zmed" src="${MED[z]}" alt=""><div class="znaam carved">${ZEGEL[z]}</div><div class="q carved">Quest</div></div>`;
 
-const kaarten = [...window.QUESTS.map(voorkant), ...Array.from({ length: window.QUESTS_EIGEN }, eigen)];
+// per Zegel: its quests, then its blank cards; each card keeps its seal for the back
+const kaarten = Object.keys(ZEGEL).flatMap((z) => [...window.QUESTS.filter((q) => q.zegel === z).map((q) => ({ z, voor: voorkant(q) })), ...Array.from({ length: window.QUESTS_EIGEN }, () => ({ z, voor: eigen(z) }))]);
 const snijlijnen = () => { // short crop marks outside the 3×3 block
   const xs = [10.5, 73.5, 136.5, 199.5], ys = [16.5, 104.5, 192.5, 280.5]; let h = "";
   for (const x of xs) { h += `<span class="snij" style="left:${x - .1}mm;top:6mm;width:.2mm;height:8mm"></span><span class="snij" style="left:${x - .1}mm;top:283mm;width:.2mm;height:8mm"></span>`; }
@@ -78,9 +82,9 @@ const snijlijnen = () => { // short crop marks outside the 3×3 block
 let html = "";
 for (let i = 0; i < kaarten.length; i += 9) {
   const blok = kaarten.slice(i, i + 9);
-  html += `<section class="vel">${snijlijnen()}<div class="raster">${blok.join("")}</div></section>`;
+  html += `<section class="vel">${snijlijnen()}<div class="raster">${blok.map((k) => k.voor).join("")}</div></section>`;
   // backs: same count, mirrored per row so they line up when printed double-sided (long edge)
-  const rijen = []; for (let r = 0; r < blok.length; r += 3) { const rij = blok.slice(r, r + 3).map(achterkant); while (rij.length < 3) rij.push(`<div></div>`); rijen.push(...rij.reverse()); }
+  const rijen = []; for (let r = 0; r < blok.length; r += 3) { const rij = blok.slice(r, r + 3).map((k) => achterkant(k.z)); while (rij.length < 3) rij.push(`<div></div>`); rijen.push(...rij.reverse()); }
   html += `<section class="vel">${snijlijnen()}<div class="raster">${rijen.join("")}</div></section>`;
 }
 document.getElementById("vellen").innerHTML = html;

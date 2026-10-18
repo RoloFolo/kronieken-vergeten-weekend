@@ -1,5 +1,5 @@
 // Inkooplijst voor De Kronieken van het Vergeten Weekend → Excel (Drive opent hem in Google Sheets).
-// Nagelopen tegen alle onderdelen: de Wachterstocht, de 26 Schaduw-events, de 30 quests, de rollen, de finale, het
+// Nagelopen tegen alle onderdelen: de Wachterstocht, de 26 Schaduw-events, de 42 quests, de rollen, de finale, het
 // einde en de eretitels. Wat de organisatoren al invulden (status, wie, prijs, opmerking) blijft per regel staan.
 //   node scripts/inkooplijst.js <uit.xlsx> [bestaande.xlsx]   (exceljs nodig)
 const ExcelJS = require("exceljs");
@@ -22,7 +22,7 @@ const L = [
   ["Zegels & kaarten", "Fiches (houten munten of pokerchips)", "150", "In de Zegel-potten bij elke quest", "12 per Zegel opent zijn akte"],
   ["Zegels & kaarten", "Stickervel A4 (wit of kraft)", "1", "Vaas-etiketten printen", ""],
   ["Zegels & kaarten", "Twee bakjes of mandjes", "2", "Questkaarten-stapel en aflegstapel", ""],
-  ["Printwerk", "Stevig papier A4 (250 g)", "8 vel", "02 Questkaarten (dubbelzijdig)", "30 quests + 6 eigen = 36 kaarten (4 vel voor, 4 achter), daarna snijden"],
+  ["Printwerk", "Stevig papier A4 (250 g)", "12 vel", "02 Questkaarten (dubbelzijdig)", "42 quests + 12 lege = 54 kaarten (6 vel voor, 6 achter), daarna snijden"],
   ["Printwerk", "Regelboek printen", "2", "01 Regelboek.pdf", "Eén voor de tafel, één reserve"],
   ["Printwerk", "Schaduw-events printen", "1", "04 Schaduw-events (alleen organisatoren)", "Niet laten slingeren"],
   ["Vuur & sfeer", "Kaarsen (waxinelichtjes + dinerkaarsen)", "30 + 6", "Kring van Kaarsen, Sfeermeesters, De Laatste Wacht", ""],

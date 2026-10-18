@@ -117,6 +117,11 @@ li::before {
 }
 
 .credit { display: block; margin-top: 1mm; font: 6pt var(--body); letter-spacing: .05em; text-transform: none; opacity: .6; }
+.page + .page { page-break-before: always; }
+.kop2 { text-align: center; margin: 4mm 0 5mm; }
+.kop2 .st.small { font-size: 13pt; }
+.kop2 .subtitle { margin-top: 2mm; }
+.blok { background: var(--panel); border: .6pt solid var(--line); padding: 3.5mm 4.5mm; }
 .footer {
   position: absolute; left: 0; right: 0; bottom: 2.5mm; z-index: 3; text-align: center;
   font: 8pt var(--display); letter-spacing: .3em; text-transform: uppercase; color: rgba(237,228,218,.55);
@@ -159,12 +164,11 @@ li::before {
       </section>
 
       <section>
-        <h2>Quests</h2>
+        <h2>Jouw gedaante</h2>
         <ul>
-          <li>De stapel ligt in de Guild Hall. Pak een kaart wanneer je zin hebt. Op de kaart: <b>het Zegel</b>, hoe zwaar (XP) en <b>hoeveel fiches</b>.</li>
-          <li>Het mooist als <b>niemand doorheeft</b> dat het een quest is. Bewijs: een getuige, foto of hoeder. Een duo telt voor allebei.</li>
-          <li>Klaar? Fiches in de pot, kaart op de aflegstapel en <b>meld het aan een hoeder</b> (Rob, Jean of Roland): die zet het op het scherm. <b>We spelen op eer.</b></li>
-          <li>Geen zin in deze? Onder de stapel ermee en pak een nieuwe.</li>
+          <li>Je komt verkleed in jouw <b>gedaante</b>: ras en class, van top tot teen. Die staat al in je app.</li>
+          <li>Blijf het hele weekend in je rol. Wie dat het best doet, krijgt <b>zijn naam in de aftiteling</b>.</li>
+          <li>Een gedaante is geen rol: wat jij kunt, breekt pas open na de Eerste Dronk.</li>
         </ul>
       </section>
 
@@ -182,6 +186,74 @@ li::before {
         <div class="mystery">Godfried liet meer achter dan alleen deze regels. Wat er gebeurt als de Zegels vol zijn, wat het kasteel nog verbergt en wat er in de kist zit… <b>dat ontdekken jullie vanzelf.</b> Raak niets aan wat verzegeld is.</div>
       </section>
 
+
+    </div>
+  </div>
+
+  <div class="skyline" aria-hidden="true"></div>
+  <div class="footer">Bouillon · Anno 1096 · Ardennen · zie ommezijde</div>
+</div>
+
+<div class="page">
+  <div class="content">
+    <div class="kop2">
+      <div class="title"><div class="rule"><span class="st small">Hoe verdien je eer</span></div></div>
+      <div class="subtitle">De Regels van de Wachters van Bouillon · II</div>
+    </div>
+
+    <div class="grid">
+
+      <section class="full">
+        <h2>Quests</h2>
+        <ul>
+          <li>Op tafel liggen <b>vier stapels</b>, één per Zegel: de achterkant toont het Zegel. Kies een stapel en pak de bovenste kaart.</li>
+          <li><b>Geen zin in deze?</b> Leg hem terug onder de stapel en pak een nieuwe.</li>
+          <li>Op de kaart: solo, duo of groep, hoe zwaar (5, 10, 20 of <b>30 XP: legendarisch</b>) en hoeveel fiches. <b>Dirty Quests</b> zijn persoonlijker en geniepiger.</li>
+          <li>Het mooist als <b>niemand doorheeft</b> dat het een quest is. Bewijs: een getuige, een foto of een hoeder. Een duo telt voor allebei, een groep voor wie echt meedeed.</li>
+          <li>Klaar? Fiches in de pot van dat Zegel, kaart op de aflegstapel en <b>meld het aan een hoeder</b> (Rob, Jean of Roland). <b>We spelen op eer.</b></li>
+          <li>Een lege kaart? Verzin zelf een quest voor dat Zegel; The Dice Rogue bepaalt de beloning.</li>
+          <li>Geen echte ellende: niets kapot, niemand ongevraagd aanraken, geen gedoe met buitenstaanders.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Jouw eigen eer</h2>
+        <ul>
+          <li>Naast de Zegels verdien je <b>eigen punten</b>. De hoeders geven of nemen ze, altijd met een Zegel en een reden.</li>
+          <li>Het klassement staat live aan de <b>Ronde Tafel</b> in je app.</li>
+          <li>Tik daar op <b>Toon op de tv</b>: het scorebord staat 45 seconden op het scherm.</li>
+          <li>Wie het meest verdiende, staat bovenaan in de aftiteling.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Godfried roept</h2>
+        <ul>
+          <li>Luidt de <b>kerkklok</b>, dan komt iedereen naar het scherm.</li>
+          <li>Godfried vertelt over zijn leven. Luister goed: voor het eten op vrijdag en zaterdag, en vlak voor de finale, stelt hij <b>vier vragen</b>, één per Zegel.</li>
+          <li>Goed: <b>+1</b> voor dat Zegel. Fout: <b>−1</b>.</li>
+          <li>Teruglezen kan: alles wat hij vertelde staat in je app, in <b>De Kroniek</b>.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Jouw bevel</h2>
+        <ul>
+          <li>Voor het weekend gaf Godfried de meeste Wachters een <b>bevel</b>: een borrelplank, een avondmaal, een proeverij, een spel.</li>
+          <li>Volbracht in het weekend? Dan krijgt zijn Zegel <b>3 fiches</b>.</li>
+          <li>Je bevel blijft in je app staan, onder je rol.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Aan tafel</h2>
+        <ul>
+          <li>In je app zie je de <b>Ronde Tafel</b>: wie er zit, in welke gedaante.</li>
+          <li><b>De Kroniek</b>, de <b>Tocht</b> en wat Godfried nog meer brengt, verschijnen vanzelf als het zover is.</li>
+          <li>Laat je telefoon geladen: hij is dit weekend je boodschap van Godfried.</li>
+        </ul>
+      </section>
+
       <section class="full">
         <h2>De Gulden Regels</h2>
         <div class="oaths">
@@ -193,7 +265,6 @@ li::before {
 
     </div>
   </div>
-
   <div class="skyline" aria-hidden="true"></div>
   <div class="footer">Bouillon · Anno 1096 · Ardennen<span class="credit">Iconen: game-icons.net (Lorc, Delapouite) · CC BY 3.0</span></div>
 </div>
