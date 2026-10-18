@@ -130,6 +130,20 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div class="schermen" id="schermen"></div>
   </section>
 
+  <section class="kaart" id="s-godfried" data-fase="hall finale">
+    <h2>Godfried</h2>
+    <p class="klein" style="margin:0 0 8px">Zijn verhaal (de quizvragen komen hieruit) en elke avond vóór het eten vier vragen, één per Zegel: goed +1, fout −1.</p>
+    <div class="rij"><button id="b-hfd-2" type="button">Hoofdstuk II vertellen</button><button id="b-hfd-3" type="button">Hoofdstuk III vertellen</button></div>
+    <p class="klein" style="margin:4px 0 10px">II: zaterdag overdag (Hendrik IV, Boudewijn, Luik). III: zaterdagavond na de Reliekenkist (Jeruzalem 1099, zijn dood). Hoofdstuk I speelt vanzelf bij Start verhaal. <span id="kroniek-stand"></span></p>
+    <div class="rij"><button class="goud" id="b-quiz-1" type="button">Quiz I · vr</button><button class="goud" id="b-quiz-2" type="button">Quiz II · za</button><button class="goud" id="b-quiz-3" type="button">Quiz III · zo, vóór de finale</button></div>
+    <div id="quiz-nu" hidden style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(239,227,212,.15)">
+      <p class="klein" id="quiz-wat" style="margin:0 0 4px"></p>
+      <p id="quiz-vraag" style="margin:0 0 4px;font-weight:600"></p>
+      <p class="klein" id="quiz-antwoord" style="margin:0 0 10px;color:var(--bronze-hi)"></p>
+      <div class="rij"><button class="goud" id="b-quiz-goed" type="button">Goed (+1)</button><button class="rood" id="b-quiz-fout" type="button">Fout (−1)</button></div>
+      <button id="b-quiz-stop" type="button" style="margin-top:8px">Quiz stoppen</button>
+    </div>
+  </section>
   <section class="kaart event" id="event" hidden data-fase="hall">
     <div class="soort" id="ev-soort"></div>
     <div class="naam" id="ev-naam"></div>
@@ -257,13 +271,14 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=80"></script>
-<script src="a/spel.js?v=80"></script>
-<script src="a/wachters.js?v=80"></script>
-<script src="a/rollen.js?v=80"></script>
-<script src="a/firebase-config.js?v=80"></script>
-<script src="a/koppeling.js?v=80"></script>
-<script src="a/voorbereiding.js?v=80"></script>
+<script src="a/events.js?v=81"></script>
+<script src="a/godfried.js?v=81"></script>
+<script src="a/spel.js?v=81"></script>
+<script src="a/wachters.js?v=81"></script>
+<script src="a/rollen.js?v=81"></script>
+<script src="a/firebase-config.js?v=81"></script>
+<script src="a/koppeling.js?v=81"></script>
+<script src="a/voorbereiding.js?v=81"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -331,6 +346,19 @@ $("puzzels").onclick = (e) => { const b = e.target.closest("button"); if (b) stu
 
 const stuur = (o) => Koppeling.stuur(o);
 // the call to gather: the tv strikes the church bell; a short pause so one tap does not ring twice
+// Godfried: his chapters and the quiz before dinner
+for (const n of [2, 3]) $(`b-hfd-${n}`).onclick = () => stuur({ cmd: "hoofdstuk", n });
+for (const n of [1, 2, 3]) $(`b-quiz-${n}`).onclick = () => stuur({ cmd: "quiz", n });
+$("b-quiz-goed").onclick = () => stuur({ cmd: "quiz-goed" }); $("b-quiz-fout").onclick = () => stuur({ cmd: "quiz-fout" }); $("b-quiz-stop").onclick = () => stuur({ cmd: "quiz-stop" });
+function tekenGodfried(s) {
+  const q = s.quiz, G = window.GODFRIED; $("quiz-nu").hidden = !q;
+  $("kroniek-stand").textContent = s.kroniek?.length ? `Verteld: ${s.kroniek.map((n) => ["I", "II", "III"][n - 1]).join(", ")}.` : "";
+  if (!q || !G) return; const r = G.quiz[q.nr - 1], v = r?.vragen[q.i];
+  $("quiz-wat").textContent = `${r.titel}${q.fase === "intro" ? " · Godfried opent" : q.fase === "slot" ? " · Godfried sluit af" : ` · vraag ${q.i + 1} van 4`}`;
+  $("quiz-vraag").textContent = v && q.fase !== "intro" ? v.vraag : "";
+  $("quiz-antwoord").textContent = v && q.fase !== "intro" ? `Antwoord: ${v.antwoord}` : "";
+  $("b-quiz-goed").disabled = $("b-quiz-fout").disabled = q.fase !== "vraag";
+}
 $("b-oproep").onclick = () => { const b = $("b-oproep"); stuur({ cmd: "oproep" }); b.disabled = true; b.textContent = "De klok luidt…"; setTimeout(() => { b.disabled = false; b.textContent = "Oproep: iedereen naar het scherm"; }, 12000); };
 
 for (const z of ZEGELS) {
@@ -453,7 +481,7 @@ function tekenVooraf() {
   $("vooraf-anekdotes").innerHTML = alle.length ? alle.sort((a, b) => a.over.localeCompare(b.over)).map((a) => `<div class="anek"><b>Over ${esc(a.over)}</b><br>${esc(a.tekst)}</div>`).join("") : '<p class="klein">Nog geen herinneringen ingestuurd.</p>';
 }
 $("vooraf-lijst").onclick = (e) => { const b = e.target.closest("[data-bevel]"); if (b && !b.disabled) stuur({ cmd: "bevel", naam: b.dataset.bevel }); };
-Koppeling.start({ rol: "regie", opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); }, opEre: (t) => { ereToewijzing = t || {}; tekenEreRegie(); } })
+Koppeling.start({ rol: "regie", opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); tekenGodfried(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); }, opEre: (t) => { ereToewijzing = t || {}; tekenEreRegie(); } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; });
 
 $("b-start").onclick = () => stuur({ cmd: "start" });
@@ -465,7 +493,7 @@ let fase = null, tvFase = null, vorigScherm = null;
 function kiesFase(f) {
   fase = f; try { localStorage.setItem("kronieken-regie-fase", f); } catch {}
   document.querySelectorAll("#fases button").forEach((b) => { b.setAttribute("aria-selected", b.dataset.fase === f); if (b.dataset.fase === f) b.scrollIntoView({ block: "nearest", inline: "nearest" }); });
-  document.querySelectorAll("main [data-fase]:not(button)").forEach((el) => el.classList.toggle("fase-weg", el.dataset.fase !== f));
+  document.querySelectorAll("main [data-fase]:not(button)").forEach((el) => el.classList.toggle("fase-weg", !el.dataset.fase.split(" ").includes(f)));
 }
 function volgFase(scherm) { // mark the tab of what the tv shows, and jump there when the tv changes screen
   tvFase = FASE_VAN[scherm] || null;

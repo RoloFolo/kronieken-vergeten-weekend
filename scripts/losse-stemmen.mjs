@@ -75,12 +75,20 @@ const REGELS = [
   ["fin/open", "Charon", GODFRIED, "Het Zegel is sterk genoeg. Het geeft zijn geheim prijs."],
   ["fin/hint", "Charon", GODFRIED, "Een reliek ontwaakt. Luister naar wat het fluistert."],
   // Voor het weekend, op de persoonlijke pagina: een welkom per Wachter, en de avond ervoor de Schaduwkoning.
-  ...NAMEN.map((n) => [`vooraf/welkom-${n.toLowerCase()}`, "Charon", GODFRIED, `Wachter ${n}. Ik ben Godfried van Bouillon. Binnenkort ontwaakt de Schaduw onder mijn kasteel, en ik roep elf Wachters bijeen. Jij bent er één van. ${KAR[n] ? `Jij komt als ${KAR[n].ras} ${KAR[n].klasse}. Kom in die gedaante, verkleed van top tot teen, en blijf het hele weekend in je rol… wie dat doet, wordt rijkelijk beloond. ` : ""}Je rol rust nog onder mijn zegel… ${["Rob", "Jean", "Roland"].includes(n) ? "maar ik vraag je nu al om hulp." : "maar één bevel geef ik je nu al. En ik vraag je om hulp."}`]), // the organisers get no order
+  ...NAMEN.map((n) => [`vooraf/welkom-${n.toLowerCase()}`, "Charon", GODFRIED, `Wachter ${n}. Ik ben Godfried van Bouillon, hertog van Neder-Lotharingen, heer van de burcht boven de Semois. Binnenkort ontwaakt de Schaduw onder mijn kasteel, en ik roep elf Wachters bijeen. Jij bent er één van. ${KAR[n] ? `Jij komt als ${KAR[n].ras} ${KAR[n].klasse}. Kom in die gedaante, verkleed van top tot teen, en blijf het hele weekend in je rol… wie dat doet, wordt rijkelijk beloond. ` : ""}Je rol rust nog onder mijn zegel… ${["Rob", "Jean", "Roland"].includes(n) ? "maar ik vraag je nu al om hulp." : "maar één bevel geef ik je nu al. En ik vraag je om hulp."}`]), // the organisers get no order
   ["vooraf/schaduw", "Enceladus", SCHADUW, "Wachter… Godfried heeft je geroepen. Maar ik hoorde het ook. [whispering] Morgen breekt zijn zegel. En dan… zien wij elkaar."],
   // Het einde: eerst de echte kist (de cadeaus), op teken van de regie de envelop op de schoorsteen (de oorkondes).
   ["fin/einde-kist", "Charon", GODFRIED, "Het is volbracht. De Zegels zijn vernieuwd, en de Schaduwkoning slaapt weer onder mijn kasteel. Niet door één held… maar door een broederschap die voor elkaar zorgde. Wachters van Bouillon, ik ben trots op jullie. De vier cijfers zijn van jullie. Open nu de kist… wat daarin ligt, is voor jullie allen."],
   ["fin/einde-envelop", "Charon", GODFRIED, "Nog één ding, Wachters. Op de schoorsteen wacht al het hele weekend een envelop. Open hem nu. Daarin staan jullie namen… voor altijd geschreven in de Kronieken."],
 ];
+// Godfried's life story and the quiz before dinner: one source with the tv and the app (docs/a/godfried.js)
+const GF = (() => { const w = {}; new Function("window", readFileSync("docs/a/godfried.js", "utf8"))(w); return w.GODFRIED; })();
+const ZEGELNAAM = { schild: "het Schild van Broederschap", hoorn: "de Hoorn van Overvloed", hart: "het Hart van de Ardennen", vlam: "de Vlam van Waakzaamheid" };
+for (const h of GF.hoofdstukken) REGELS.push([h.stem, "Charon", GODFRIED, h.tekst.join(" ")]);
+for (const q of GF.quiz) {
+  REGELS.push([q.intro.stem, "Charon", GODFRIED, q.intro.tekst], [q.slot.stem, "Charon", GODFRIED, q.slot.tekst]);
+  for (const v of q.vragen) REGELS.push([v.stem, "Charon", GODFRIED, `Voor ${ZEGELNAAM[v.zegel]}: ${v.vraag}`]);
+}
 
 async function tts(text, voice, prompt) {
   const kop = { Authorization: `Bearer ${SLEUTEL}`, "Content-Type": "application/json", Prefer: "wait" };

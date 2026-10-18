@@ -7,7 +7,7 @@ const { Document, Packer, Paragraph, TextRun, AlignmentType, BorderStyle, Table,
 const uit = process.argv[2] || ".", id09 = process.argv[3];
 // the game's own data, so the proposal always matches the app
 const window = {};
-for (const f of ["docs/a/wachters.js", "docs/a/spel.js", "docs/a/rollen.js", "docs/a/voorbereiding.js"]) new Function("window", fs.readFileSync(f, "utf8"))(window);
+for (const f of ["docs/a/wachters.js", "docs/a/spel.js", "docs/a/rollen.js", "docs/a/voorbereiding.js", "docs/a/godfried.js"]) new Function("window", fs.readFileSync(f, "utf8"))(window);
 const MAP = "https://drive.google.com/drive/folders/1FJUsB9lG6EUKs259WFvBJNlG6j9cnCbs";
 const DRIVE = { regelboek: "1Wpr279heSIT6yY2cL_ALbwKQOWWMmRqB", quest: "1ebjPtYkd6h69bTEwKr4_qnuZOgAj3qPd", vazen: "1oUUujWSRr-GjEB6VVQaembryzX3fqx7y", events: "1Jr9KumPcp5D-gHzGPHV5PdjvpTeecEbZ",
   inkoop: "1JMOMei8Rr08NfGZenpfNYVDJVBqOBriz", oorkondes: "1Zx7AlLBu0Szv6rcqVtLA4_ZpjckNfw25", beslissen: "1Eg2n3zOABEqqCdzFw98U0f_WTr3Lfhoe", draaiboek: "17o0So7Nxj_X1A56jd_kS6BdGP0CSh-K7", rollen: id09 || "1l4vN127UdeucNiHCmPq4hrauTzA2oVhu" };
@@ -168,12 +168,13 @@ const draaiboek = [
   h3("16:00 tot 18:00 · aankomst"),
   bullet("De tv staat op het welkomstscherm met de aftelling. Iedereen installeert zich (kamerindeling)."),
   h3("Iedereen binnen · de start (± 45 min)"),
-  bullet([t("Regie → "), R("Start verhaal"), t(": Godfried vertelt de proloog, de zegels verschijnen.")]),
+  bullet([t("Regie → "), R("Start verhaal"), t(": eerst stelt Godfried zich voor (Hoofdstuk I: hertog van Neder-Lotharingen, Bouillon, de Semois, 1096), dan leest hij zijn brief en verschijnen de zegels.")]),
   bullet("Godfried vraagt iedereen een drankje te halen; de tv wacht."),
   bullet([t("Alle glazen vol → "), R("Glazen vol: toost!"), t(": de Eerste Dronk, proost, elk Zegel +1.")]),
   bullet("De Guild Hall opent en de rollen breken open in de app. Godfried legt in vijf korte stukken uit hoe het werkt."),
   bullet([R("Volgende stap"), t(" slaat het lopende deel over als het moet.")]),
   h3("De avond"),
+  bullet([t("Vóór het eten: "), R("Oproep"), t(" (de kerkklok roept iedereen naar het scherm), dan regie → Godfried → "), R("Quiz I"), t(": vier vragen, één per Zegel. Goed +1, fout −1.")]),
   bullet([t("Jeroen: het Eerste Avondmaal (budget afspreken)"), ...volbracht("Jeroen")]),
   bullet([t("Robin en Geert: de Legendarische Borrelplank"), ...volbracht("beiden")]),
   bullet("Eerste verrader kiezen: regie → De Verrader → duur (2/4/6 uur) → naam. Alleen hij ziet het in zijn app."),
@@ -186,16 +187,19 @@ const draaiboek = [
   bullet("Ontbijt."),
   bullet([t("Stefans korte LARP-sessie"), ...volbracht("Stefan")]),
   bullet("Nieuwe verrader kiezen. Quests, een Schaduw-event."),
+  bullet([t("Regie → Godfried → "), R("Hoofdstuk II vertellen"), t(" (keizer Hendrik IV, broer Boudewijn, Bouillon verpand aan de prins-bisschop van Luik). Eerst "), R("Oproep"), t(".")]),
   h3("Middag"),
   bullet([t("Johans taveerne: het gokspel (± 1 uur)"), ...volbracht("Johan")]),
   bullet([t("Roy’s frituur: hapjes, sauzen en de bakmuts (of na de tocht)"), ...volbracht("Roy")]),
   bullet("Martins elixers (een van de drie thema’s: Vuur, Schaduw, Opkikker). Wissel van verrader; nog een Schaduw-event."),
   h3("Avond · de Wachterstocht"),
+  bullet([t("Vóór het eten: "), R("Oproep"), t(", dan "), R("Quiz II"), t(".")]),
   bullet([t("Vóór vertrek: regie → scherm "), R("Wachterstocht"), t(": de camera vliegt naar het kasteel, Godfried leest voor. De vijf opdrachten staan nu op ieders telefoon.")]),
   bullet("Mee: fakkels, shotglaasjes + zakfles, rugzak met relieken, powerbank, regie op een telefoon."),
   bullet("In het kasteel: elke gelukte opdracht afvinken in de regie (Wachterstocht) en het bijbehorende reliek uitdelen."),
   h3("Terug · de Reliekenkist"),
   bullet([t("Regie → "), R("Open de Reliekenkist"), t(": Godfried opent de kist, elk gevonden reliek rijst op. Elk reliek is in de finale één hint waard.")]),
+  bullet([t("Daarna regie → Godfried → "), R("Hoofdstuk III vertellen"), t(": wat de Kronieken over hem schrijven (Jeruzalem 1099, de geweigerde kroon, zijn dood, Boudewijn koning). Nodig voor de quiz van zondag.")]),
   h3("Rest van de avond"),
   bullet([t("Ivo’s wijnproeverij met muziek en verhalen"), ...volbracht("Ivo")]),
   bullet("Vrij: borrelen, spellen, Martins elixers. Nog een laatste verrader, dan voor het slapengaan Geen verrader: de verraders zijn voorbij, de finale gaat ze zoeken."),
@@ -204,6 +208,7 @@ const draaiboek = [
   h3("Ochtend"),
   bullet("Ontbijt."),
   h3("Late ochtend · de finale (± 1 uur)"),
+  bullet([t("Eerst regie → Godfried → "), R("Quiz III"), t(": de laatste vier vragen sterken (of verzwakken) de Zegels vlak voor de finale.")]),
   bullet([t("Regie → scherm "), R("Finale"), t(": de Schaduwkoning en Godfried openen, Akte I begint.")]),
   bullet([t("De spelers antwoorden hardop; de regie tikt het antwoord aan (naam, getal of zegel). "), R("Hint (kost een reliek)"), t(" als ze vastzitten.")]),
   bullet([t("Een Zegel nog niet vol (12 fiches)? Dan eerst een beproeving; daarna "), R("Beproeving voltooid"), t(".")]),
@@ -237,7 +242,20 @@ const larp = [
   bullet("Props die wij geven: kies per Wachter één ding uit de lijst hierboven dat zijn gedaante meteen herkenbaar maakt, en zet bij ‘Wie regelt’ wie het koopt."),
 ];
 
-for (const [naam, inhoud] of [["10 LARP - gedaanten en props.docx", larp], ["09 Voorstel rollen en bevelen.docx", voorstel], ["07 Te beslissen (Roland en Jean).docx", beslissen], ["08 Draaiboek.docx", draaiboek]]) {
+// ======================= 11 Godfried: verhaal en quiz =======================
+const ZN = { schild: "Schild", hoorn: "Hoorn", hart: "Hart", vlam: "Vlam" };
+const godfried = [
+  ...titel("Godfried: verhaal en quiz", "Voor de organisatoren · wat Godfried wanneer vertelt, en de vragen met antwoorden"),
+  p([g("Godfrieds brief komt uit 1096 en spreekt over 930 jaar heen; als geest mag hij ook vertellen hoe zijn leven afliep. Elke quizvraag is eerder verteld: in de app-intro, in een hoofdstuk op de tv, en terug te lezen in de app (De Kroniek van Godfried). Goed antwoord: +1 fiche voor dat Zegel, fout: −1.")]),
+  h("Zijn verhaal"),
+  bullet([b("Weken vooraf, app-intro: "), t("‘Ik ben Godfried van Bouillon, hertog van Neder-Lotharingen, heer van de burcht boven de Semois.’")]),
+  ...window.GODFRIED.hoofdstukken.flatMap((hs) => [h3(`${hs.titel} (${hs.wanneer})`), ...hs.tekst.map((x) => p([t(x, { italics: true })]))]),
+  h("De quiz vóór het eten"),
+  ...window.GODFRIED.quiz.flatMap((q) => [h3(`${q.titel} (${q.wanneer})`),
+    tabel(["Zegel", "Vraag", "Antwoord"], q.vragen.map((v) => [ZN[v.zegel], v.vraag, v.antwoord]), [1200, 5000, 3600])]),
+];
+
+for (const [naam, inhoud] of [["11 Godfried - verhaal en quiz.docx", godfried], ["10 LARP - gedaanten en props.docx", larp], ["09 Voorstel rollen en bevelen.docx", voorstel], ["07 Te beslissen (Roland en Jean).docx", beslissen], ["08 Draaiboek.docx", draaiboek]]) {
     fs.writeFileSync(path.join(uit, naam), await Packer.toBuffer(doc(inhoud))); console.log("✓", naam);
   }
 })();

@@ -531,6 +531,46 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .ere .voor { margin: 0; font: clamp(16px, 1.5vw, 30px)/1.4 var(--body); color: var(--bone); opacity: .85; }
 .ere .spreuk { margin: 0; font: italic clamp(18px, 1.8vw, 36px)/1.4 var(--display); color: #fbe3b4; }
 .ere .wie.verborgen-wie { visibility: hidden; }
+/* Godfried tells his story: his painting fills the screen and slowly moves, his words appear as lines below */
+.verteller { position: absolute; inset: 0; z-index: 31; overflow: hidden; background: #070405; opacity: 0; transition: opacity 1.4s ease; }
+.verteller.aan { opacity: 1; }
+.verteller .vt-beeld { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.82); animation: vtZoom 70s linear both; }
+@keyframes vtZoom { from { transform: scale(1.12) translateX(-1.5%); } to { transform: scale(1.0) translateX(1.5%); } }
+.verteller::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(7,4,5,.55) 0%, transparent 22%, transparent 48%, rgba(7,4,5,.88) 80%, rgba(7,4,5,.96) 100%); pointer-events: none; }
+.verteller .vt-tekst { position: absolute; z-index: 1; left: 8vw; right: 8vw; bottom: 7vh; display: grid; justify-items: center; gap: 2vh; text-align: center; }
+.verteller .vt-kop { font-size: clamp(14px, 1.3vw, 26px); letter-spacing: .3em; }
+.verteller .vt-zinnen { display: grid; width: min(70vw, 1400px); }
+.verteller .vt-zinnen p { grid-area: 1 / 1; margin: 0; font: italic 400 clamp(20px, 2.2vw, 46px)/1.45 var(--display); color: #fff3dc; text-shadow: 0 2px 14px #000; opacity: 0; transform: translateY(12px); transition: opacity 1.2s, transform 1.2s; text-wrap: balance; }
+.verteller .vt-zinnen p.aan { opacity: 1; transform: none; }
+/* Godfried's quiz before dinner: his portrait on the left, the question on the right */
+.gquiz { position: absolute; inset: 0; z-index: 30; display: grid; grid-template-columns: minmax(0, 38fr) minmax(0, 62fr); background: #090506; opacity: 0; transition: opacity 1.2s ease; }
+.gquiz.aan { opacity: 1; }
+.gquiz .gq-portret { position: relative; overflow: hidden; }
+.gquiz .gq-portret img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 20%; animation: vtZoom 90s linear both; }
+.gquiz .gq-portret::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent 55%, #090506 100%), linear-gradient(180deg, transparent 70%, rgba(9,5,6,.7)); }
+.gquiz .gq-kaart { display: grid; align-content: center; gap: 3vh; padding: 6vh 6vw 6vh 2vw; }
+.gquiz .gq-kop { font-size: clamp(14px, 1.3vw, 26px); letter-spacing: .3em; }
+.gquiz .gq-zegels { display: flex; gap: 1.4vw; }
+.gquiz .gq-zegels span { position: relative; width: clamp(48px, 5vw, 104px); aspect-ratio: 1; border-radius: 50%; opacity: .35; filter: grayscale(.6); transition: opacity .8s, filter .8s, transform .8s; }
+.gquiz .gq-zegels span img { width: 100%; height: 100%; }
+.gquiz .gq-zegels span.nu { opacity: 1; filter: none; transform: scale(1.15); }
+.gquiz .gq-zegels span.goed { opacity: 1; filter: drop-shadow(0 0 14px rgba(255,200,110,.9)); }
+.gquiz .gq-zegels span.fout { opacity: .8; filter: grayscale(1) brightness(.6) drop-shadow(0 0 12px rgba(226,50,60,.9)); }
+.gquiz .gq-zegel { font: 700 clamp(14px, 1.3vw, 26px)/1 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: var(--bronze-hi); min-height: 1em; }
+.gquiz .gq-vraag { font: 400 clamp(26px, 3vw, 64px)/1.3 var(--display); color: #fff3dc; min-height: 2.6em; text-wrap: balance; }
+.gquiz .gq-vraag.intro { font-style: italic; font-size: clamp(20px, 2.2vw, 46px); color: var(--bone); }
+.gquiz .gq-antwoord { font: 700 clamp(22px, 2.4vw, 50px)/1.2 var(--carved); letter-spacing: .04em; min-height: 1.2em; opacity: 0; transform: translateY(10px); transition: opacity .8s, transform .8s; }
+.gquiz .gq-antwoord.aan { opacity: 1; transform: none; }
+.gquiz .gq-antwoord.goed { color: #ffd98a; } .gquiz .gq-antwoord.fout { color: transparent; -webkit-text-stroke: 1.2px var(--ember); }
+/* the toast: Godfried raises his goblet behind the words */
+.verhaal-toost { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; filter: brightness(.6); transition: opacity 2.5s ease; }
+.verhaal.toost .verhaal-toost { opacity: 1; }
+.verhaal.toost .dronk { justify-self: start; margin-left: 2vw; }
+/* the narrator's face above his explanation cards, and above the false Godfried's (who is not quite right) */
+#uitleg:not(.vloek) .uitleg-kaart, #vals .uitleg-kaart { position: relative; margin-top: 7vh; padding-top: 9vh; }
+#uitleg:not(.vloek) .uitleg-kaart::before, #vals .uitleg-kaart::before { content: ""; position: absolute; top: 0; left: 50%; width: clamp(90px, 9vw, 180px); aspect-ratio: 1; translate: -50% -55%; border-radius: 50%;
+  background: url(a/godfried/gezicht.webp) center / cover; border: 3px solid #b8955f; box-shadow: 0 0 0 5px rgba(10,5,6,.8), 0 0 40px rgba(255,190,90,.35); }
+#vals .uitleg-kaart::before { filter: saturate(1.3) contrast(1.1); box-shadow: 0 0 0 5px rgba(10,5,6,.8), 0 0 40px rgba(226,50,60,.55); }
 /* the call to gather: the church bell strikes three times and a banner pulses over whatever is on screen */
 .oproep { position: absolute; inset: 0; z-index: 45; display: grid; place-items: center; pointer-events: none; opacity: 0; transition: opacity .8s; background: radial-gradient(ellipse 70% 55% at 50% 50%, rgba(7,4,5,.25), rgba(7,4,5,.7)); }
 .oproep.aan { opacity: 1; }
@@ -936,6 +976,9 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <div class="g-titel" id="g-titel"><span class="carved" id="g-titel-nr"></span><h2 class="carved" id="g-titel-naam"></h2></div>
     <div class="g-kaart" id="g-kaart"><div class="g-inhoud" id="g-inhoud"></div><div class="g-stempel carved" id="g-stempel"></div></div>
   </div>
+  <div class="verteller" id="verteller" hidden aria-live="polite"><img class="vt-beeld" id="vt-beeld" alt=""><div class="vt-tekst"><div class="vt-kop carved" id="vt-kop"></div><div class="vt-zinnen" id="vt-zinnen"></div></div></div>
+  <div class="gquiz" id="gquiz" hidden aria-live="polite"><div class="gq-portret"><img src="a/godfried/portret.webp" alt="Godfried van Bouillon"></div>
+    <div class="gq-kaart"><div class="gq-kop carved" id="gq-kop"></div><div class="gq-zegels" id="gq-zegels"></div><div class="gq-zegel" id="gq-zegel"></div><div class="gq-vraag" id="gq-vraag"></div><div class="gq-antwoord carved" id="gq-antwoord"></div></div></div>
   <div class="oproep" id="oproep" aria-live="polite"><div><b class="carved">Wachters, verzamelt u</b><span>De klok van Bouillon luidt. Kom naar het vuur.</span></div></div>
   <div class="aftiteling" id="aftiteling" hidden><img class="af-bg" src="a/fin/dageraad.webp" alt=""><div class="af-rol" id="af-rol"></div>
     <div class="af-slot" id="af-slot"><h1 class="carved">Wie volgt?</h1><p>Tot in 2027…</p></div></div>
@@ -983,6 +1026,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   <button class="klik-geluid" id="klik-geluid" type="button" hidden>Klik hier voor geluid</button>
   <div class="verhaal" id="verhaal" hidden>
     <video class="verhaal-bg" id="verhaal-bg" src="a/storm.mp4" muted loop playsinline preload="auto"></video>
+    <img class="verhaal-toost" src="a/godfried/toost.webp" alt="">
     <div class="zegel-kant l"><div class="vz" data-z="0"></div><div class="vz" data-z="2"></div></div>
     <div class="zegel-kant r"><div class="vz" data-z="1"></div><div class="vz" data-z="3"></div></div>
     <div class="brief" id="brief" aria-live="polite"></div>
@@ -1028,14 +1072,15 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=80"></script>
-<script src="a/spel.js?v=80"></script>
-<script src="a/voorbereiding.js?v=80"></script>
-<script src="a/wachters.js?v=80"></script>
-<script src="a/firebase-config.js?v=80"></script>
-<script src="a/koppeling.js?v=80"></script>
-<script src="a/rollen.js?v=80"></script>
-<script src="a/tafel.js?v=80"></script>
+<script src="a/events.js?v=81"></script>
+<script src="a/godfried.js?v=81"></script>
+<script src="a/spel.js?v=81"></script>
+<script src="a/voorbereiding.js?v=81"></script>
+<script src="a/wachters.js?v=81"></script>
+<script src="a/firebase-config.js?v=81"></script>
+<script src="a/koppeling.js?v=81"></script>
+<script src="a/rollen.js?v=81"></script>
+<script src="a/tafel.js?v=81"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1440,7 +1485,12 @@ for (const [, tekst] of BRIEF) { const p = document.createElement("p"); p.innerH
 // may this tv play sound yet? (a browser only allows it after someone clicked the page once)
 const tvMagGeluid = () => navigator.userActivation ? navigator.userActivation.hasBeenActive : true;
 document.addEventListener("click", () => setTimeout(meld, 100), { once: true });
+let openingGehad = false;
 function startVerhaal() {
+  if (!openingGehad) { // first Godfried himself: who he is, where, and when; then his letter
+    openingGehad = true; $("start").classList.add("weg"); setTimeout(() => ($("start").hidden = true), 1300); startMuziek(); halMuziek.vol(.12, 2500);
+    return vertel(window.GODFRIED.hoofdstukken[0], startVerhaal);
+  }
   setTimeout(meld, 200);
   $("start").classList.add("weg"); setTimeout(() => ($("start").hidden = true), 1300);
   const c = $("crest"); c.style.transition = "transform 2.4s cubic-bezier(.65,0,.2,1)"; c.style.transform = "none";
@@ -1496,6 +1546,7 @@ function startDronk() {
 function startToost() {
   if (!dronkWacht || toostBezig) return; dronkWacht = false; toostBezig = true; meld();
   halMuziek.vol(.1, 1500); $("dronk-hint").textContent = "";
+  $("verhaal").classList.add("toost");
   const el = $("dronk-regel"); el.classList.remove("aan"); void el.offsetWidth; el.textContent = "Hef het glas"; el.classList.add("aan");
   speelStem("dronk-toost", () => setTimeout(() => dronkRegel(0), 500), 2500);
 }
@@ -1515,7 +1566,7 @@ function proost() {
   speel("proost-klink", 1); setTimeout(() => speel("gejuich", .9), 450);
   $("verhaal").classList.add("goud"); speel("klok", .7, 1.2);
   setTimeout(() => {
-    $("verhaal").classList.add("weg"); setTimeout(() => { $("verhaal").hidden = true; $("verhaal-bg").pause(); $("verhaal").classList.remove("goud"); }, 1700);
+    $("verhaal").classList.add("weg"); setTimeout(() => { $("verhaal").hidden = true; $("verhaal-bg").pause(); $("verhaal").classList.remove("goud", "toost"); }, 1700);
     betreden(); halMuziek.vol(.5, 3000);
     // the first toast feeds every Seal once
     ZEGELS.forEach((z, n) => setTimeout(() => fiche(z.id, 1), 3600 + n * 450));
@@ -1546,6 +1597,7 @@ function volgendeUitleg() {
 function stopUitleg() { uitlegActief = false; rollenOpen = true; $("uitleg-verder").hidden = true; stage.classList.remove("wijs-zegels"); $("uitleg").hidden = true; fade(dronkStem, 0, 400); meld(); }
 // one button walks through the whole intro: story → toast → hall → past the tutorial
 function verderIntro() {
+  if (vertelLoopt) return vertelSla();
   if (tochtIntroLoopt) return tochtIntroKlaar();
   if (!$("verhaal").hidden && !verhaalKlaar) return naarHal();
   if (dronkActief && dronkWacht) return startToost();
@@ -2460,14 +2512,76 @@ function meld() {
   meldTimer = setTimeout(() => Koppeling.meldStand(({
     tv: tvId, tvInfo: { apparaat: tvApparaat, versie: tvVersie, sinds: geladenOp, gemeld: Date.now(), geluid: tvMagGeluid() }, fiches: Object.fromEntries(ZEGELS.map((z) => [z.id, z.fiches])), gebruikt: [...gebruikt],
     event: wakker() && EVENT ? { id: EVENT.id, naam: EVENT.naam, regel: EVENT.regel, soort: EVENT.soort, zegel: EVENT.zegel, verlies: EVENT.verlies * extra } : null,
-    scherm: schermNu(), d20: !$("b-d20").disabled,
+    scherm: schermNu(), d20: !$("b-d20").disabled, quiz: gq ? { ...gq, uit: [...gq.uit] } : null, kroniek: [...kroniek],
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], ronde, fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
-    publiek: { ronde, hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
+    publiek: { ronde, kroniek: [...kroniek], hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
     tochtOpen, kistGeopend,
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   })), 150);
+}
+// ===== Godfried tells a chapter of his life: painting, voice, lines in time with the voice =====
+let vertelLoopt = false, vertelKlaar = null, vertelTimers = [], vertelStem = null, kroniek = new Set();
+function vertel(h, klaar) {
+  vertelSla(true); vertelLoopt = true; vertelKlaar = klaar; kroniek.add(h.nr); meld();
+  const v = $("verteller"), z = $("vt-zinnen");
+  $("vt-beeld").src = h.beeld; $("vt-kop").textContent = h.titel;
+  z.innerHTML = h.tekst.map((t) => `<p>${schoon(t)}</p>`).join("");
+  v.hidden = false; void v.offsetWidth; v.classList.add("aan"); demp(true);
+  const ps = [...z.children], t = (ms, fn) => vertelTimers.push(setTimeout(fn, ms));
+  const plan = (duur) => { const tot = h.tekst.reduce((s, x) => s + x.length, 0); let s = 0;
+    h.tekst.forEach((x, i) => { t(s * 1000, () => ps.forEach((p, n) => p.classList.toggle("aan", n === i))); s += duur * x.length / tot; }); };
+  t(1600, () => { vertelStem = stemMet(h.stem, 1, () => t(1800, () => vertelSla()), h.tekst.join(" ").length * 70);
+    let gepland = false; const metDuur = () => { if (!gepland && isFinite(vertelStem.duration) && vertelStem.duration > 0) { gepland = true; plan(vertelStem.duration); } };
+    vertelStem.addEventListener("loadedmetadata", metDuur); metDuur(); t(1500, () => { if (!gepland) { gepland = true; plan(h.tekst.join(" ").length / 14); } }); });
+}
+function vertelSla(stil) { // end the chapter (or clear before a new one)
+  vertelTimers.forEach(clearTimeout); vertelTimers = []; if (vertelStem) { fade(vertelStem, 0, 400); vertelStem = null; }
+  if (!vertelLoopt) return; vertelLoopt = false; const v = $("verteller"); v.classList.remove("aan"); demp(false); meld();
+  setTimeout(() => { if (!vertelLoopt) v.hidden = true; }, 1400);
+  const k = vertelKlaar; vertelKlaar = null; if (!stil) k?.();
+}
+// ===== Godfried's quiz before dinner: four questions, one per Seal; the regie marks each answer =====
+let gq = null, gqTimers = [], gqStem = null;
+const gqT = (ms, fn) => gqTimers.push(setTimeout(fn, ms));
+function gqZeg(naam, klaar, reserve = 7000) { if (gqStem) fade(gqStem, 0, 300); gqStem = stemMet(naam, 1, () => { gqStem = null; klaar?.(); }, reserve); }
+function quizStart(nr) {
+  const r = window.GODFRIED.quiz[nr - 1]; if (!r) return; quizStop(true);
+  gq = { nr, i: -1, fase: "intro", uit: [] }; meld();
+  const q = $("gquiz"); $("gq-kop").textContent = r.titel;
+  $("gq-zegels").innerHTML = r.vragen.map((v) => `<span data-z="${v.zegel}"><img src="${medaille(v.zegel)}" alt=""></span>`).join("");
+  $("gq-zegel").textContent = ""; const vr = $("gq-vraag"); vr.className = "gq-vraag intro"; vr.textContent = r.intro.tekst; $("gq-antwoord").className = "gq-antwoord carved";
+  q.hidden = false; void q.offsetWidth; q.classList.add("aan"); demp(true); speel("kerkklok", .7);
+  gqT(1500, () => gqZeg(r.intro.stem, () => gqT(600, () => quizVraag(0)), 16000));
+}
+function quizVraag(i) {
+  const r = window.GODFRIED.quiz[gq.nr - 1], v = r.vragen[i]; gq.i = i; gq.fase = "vraag"; meld();
+  [...$("gq-zegels").children].forEach((s, n) => s.classList.toggle("nu", n === i));
+  $("gq-zegel").textContent = zegelNaamVan(v.zegel);
+  const vr = $("gq-vraag"); vr.className = "gq-vraag"; vr.textContent = v.vraag;
+  const a = $("gq-antwoord"); a.className = "gq-antwoord carved"; a.textContent = "";
+  gqZeg(v.stem, null, 6000);
+}
+function quizUitslag(goed) {
+  if (!gq || gq.fase !== "vraag") return; const r = window.GODFRIED.quiz[gq.nr - 1], v = r.vragen[gq.i];
+  gq.fase = "uitslag"; gq.uit[gq.i] = goed; meld();
+  const a = $("gq-antwoord"); a.textContent = v.antwoord; a.className = `gq-antwoord carved aan ${goed ? "goed" : "fout"}`;
+  const s = $("gq-zegels").children[gq.i]; s.classList.remove("nu"); s.classList.add(goed ? "goed" : "fout");
+  if (goed) { speel("fin/sfx-goed", .9); flitsQuiz(); } else { speel("fin/sfx-fout", .8); speel("donder", .4); }
+  gqT(700, () => fiche(v.zegel, goed ? 1 : -1));
+  gqT(900, () => gqZeg(goed ? `fin/goed-${1 + Math.floor(Math.random() * 4)}` : `fin/fout-${1 + Math.floor(Math.random() * 4)}`, () => gqT(1400, () => gq.i < 3 ? quizVraag(gq.i + 1) : quizSlot()), 5000));
+}
+function flitsQuiz() { const s = $("gq-zegels").children[gq.i]; s.animate([{ transform: "scale(1.5)" }, { transform: "scale(1)" }], { duration: 900, easing: "cubic-bezier(.2,1.4,.3,1)" }); }
+function quizSlot() {
+  const r = window.GODFRIED.quiz[gq.nr - 1]; gq.fase = "slot"; meld();
+  $("gq-zegel").textContent = ""; const vr = $("gq-vraag"); vr.className = "gq-vraag intro"; vr.textContent = r.slot.tekst; $("gq-antwoord").className = "gq-antwoord carved";
+  gqZeg(r.slot.stem, () => gqT(1200, () => quizStop()), 8000);
+}
+function quizStop(stil) {
+  gqTimers.forEach(clearTimeout); gqTimers = []; if (gqStem) { fade(gqStem, 0, 400); gqStem = null; }
+  if (!gq) return; gq = null; const q = $("gquiz"); q.classList.remove("aan"); if (!stil) demp(false); meld();
+  setTimeout(() => { if (!gq) q.hidden = true; }, 1300);
 }
 let oproepBezig = false;
 function oproep() { // three strokes of the church bell over whatever is playing
@@ -2478,9 +2592,14 @@ function oproep() { // three strokes of the church bell over whatever is playing
 }
 const OPDRACHTEN = {
   oproep: () => oproep(),
+  hoofdstuk: (o) => { const h = window.GODFRIED.hoofdstukken[(o.n || 1) - 1]; if (h) vertel(h); },
+  "hoofdstuk-stop": () => vertelSla(),
+  quiz: (o) => quizStart(o.n || 1),
+  "quiz-goed": () => quizUitslag(true), "quiz-fout": () => quizUitslag(false),
+  "quiz-stop": () => quizStop(),
   ...CHAOS,
   start: () => { if (binnen === null && $("verhaal").hidden) { location.hash = "nu"; startVerhaal(); } },
-  verder: () => paneelNu === "finale" ? gSla() : paneelNu === "einde" ? envelop() : verderIntro(),
+  verder: () => vertelLoopt ? vertelSla() : paneelNu === "finale" ? gSla() : paneelNu === "einde" ? envelop() : verderIntro(),
   schaduw: () => schaduw(), d20: () => werpD20(), goed: () => uitslag(true), fout: () => uitslag(false), hal: () => hal(),
   fiche: (o) => fiche(o.id, o.n > 0 ? 1 : -1),
   // a Wachter fulfilled the order he got before the weekend: his seal gets 3 fiches, one by one
@@ -2513,7 +2632,7 @@ const OPDRACHTEN = {
   ere: (o) => { const n = Math.max(0, Math.min(ereLijst().length, (ere.stap ?? -1) + o.d)); ereStap(n, ere.speelt); },
   // without Firebase the regie stores the assignment here, in the tv's own state
   "ere-toewijs": (o) => { ere.toewijzing ||= {}; if (o.naam) ere.toewijzing[`t${o.i}`] = String(o.naam).slice(0, 40); else delete ere.toewijzing[`t${o.i}`]; meld(); },
-  "alles-opnieuw": () => { ronde = Date.now(); tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
+  "alles-opnieuw": () => { ronde = Date.now(); kroniek = new Set(); openingGehad = false; quizStop(); vertelSla(true); tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
     setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); }, // back to the welcome screen, so the regie shows "Start verhaal" again
 };
 // With Firebase only the tv laptop logs in (address ends in ?tv); public visitors just see the countdown.
@@ -2528,7 +2647,7 @@ function laadStand(s) {
   for (const z of ZEGELS) z.fiches = s.fiches?.[z.id] ?? z.fiches;
   gebruikt = new Set(s.gebruikt || []); teller(); teken();
   tochtOpen = !!s.tochtOpen; kistGeopend = !!s.kistGeopend; bevelGedaan = new Set(s.bevelen || []); tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
-  ronde = s.ronde || 1;
+  ronde = s.ronde || 1; kroniek = new Set(s.kroniek || []);
   if (s.fin) fin = { nu: 0, open: {}, opgelost: {}, hint: {}, ...s.fin }; if (s.ere) ere = { i: -1, namen: {}, ...s.ere };
   if (s.chaos) { const { wacht: w, ...rest } = s.chaos; chaos = rest; Object.assign(wacht, w || {}); }
   ijs = s.ijs || {}; vloekD20 = !!s.vloekD20; vloek = s.vloek || null; tekenIjs();
