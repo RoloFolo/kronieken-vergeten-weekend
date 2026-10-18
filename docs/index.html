@@ -536,6 +536,45 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .ere .voor { margin: 0; font: clamp(16px, 1.5vw, 30px)/1.4 var(--body); color: var(--bone); opacity: .85; }
 .ere .spreuk { margin: 0; font: italic clamp(18px, 1.8vw, 36px)/1.4 var(--display); color: #fbe3b4; }
 .ere .wie.verborgen-wie { visibility: hidden; }
+/* the Guild's scoreboard: asked for from a phone, 45 seconds, then the screen returns */
+.scorebord { position: absolute; inset: 0; z-index: 33; display: grid; grid-template-rows: auto 1fr auto; gap: 3vh; padding: 5vh 5vw 4vh; background: radial-gradient(ellipse at 50% 30%, rgba(48,10,14,.995), rgba(8,4,5,1) 70%); opacity: 0; transition: opacity .8s; }
+.scorebord.aan { opacity: 1; }
+.scorebord .sb-kop { text-align: center; font-size: clamp(26px, 3.2vw, 66px); }
+.scorebord .sb-midden { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr) minmax(0, 1.2fr); gap: 3vw; min-height: 0; }
+.scorebord h3 { margin: 0 0 1.6vh; font: 700 clamp(13px, 1.2vw, 24px)/1 var(--carved); letter-spacing: .25em; text-transform: uppercase; color: var(--ash); }
+.scorebord .sb-zegel { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1vw; margin-bottom: 2.2vh; }
+.scorebord .sb-zegel img { width: clamp(40px, 3.6vw, 76px); }
+.scorebord .sb-zegel span { font: 600 clamp(14px, 1.3vw, 26px)/1.2 var(--body); color: var(--bone); }
+.scorebord .sb-zegel b { font: 900 clamp(22px, 2.2vw, 46px)/1 var(--carved); color: #ffd98a; font-variant-numeric: tabular-nums; }
+.scorebord ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 1.1vh; }
+.scorebord .sb-rang li { display: grid; grid-template-columns: 2.2em 1fr auto; gap: 1vw; align-items: baseline; font: 600 clamp(16px, 1.6vw, 34px)/1.15 var(--carved); color: var(--bone); }
+.scorebord .sb-rang li:first-child { color: #ffd98a; font-size: clamp(19px, 1.9vw, 40px); }
+.scorebord .sb-rang i { font-style: normal; color: var(--ash); }
+.scorebord .sb-rang b { font-variant-numeric: tabular-nums; }
+.scorebord .sb-recent li { display: grid; gap: .3vh; padding-bottom: 1vh; border-bottom: 1px solid rgba(184,149,95,.2); }
+.scorebord .sb-recent b { font: 700 clamp(15px, 1.4vw, 28px)/1.2 var(--carved); } .scorebord .sb-recent b.plus { color: #ffd98a; } .scorebord .sb-recent b.min { color: #ff7d74; }
+.scorebord .sb-recent span { font: italic clamp(14px, 1.25vw, 26px)/1.3 var(--display); color: var(--bone); }
+.scorebord .sb-tijd { display: grid; grid-template-columns: 1fr auto; gap: 1.5vw; align-items: center; }
+.scorebord .sb-balk { height: 6px; background: rgba(255,255,255,.1); border-radius: 3px; overflow: hidden; }
+.scorebord .sb-balk i { display: block; height: 100%; background: linear-gradient(90deg, var(--ember), #ffb05a); transform-origin: left; }
+.scorebord .sb-tijd b { font: 700 clamp(14px, 1.3vw, 26px)/1 var(--carved); color: var(--ash); font-variant-numeric: tabular-nums; }
+/* the best traitor and who follows: dark full-screen moments with the die */
+.groot-moment { position: absolute; inset: 0; z-index: 42; display: grid; place-items: center; text-align: center; padding: 6vh 6vw; background: radial-gradient(ellipse at 50% 45%, rgba(56,8,12,.995), rgba(6,3,4,1) 70%); opacity: 0; transition: opacity 1s; }
+.groot-moment.aan { opacity: 1; }
+.groot-moment .gm-kop { font-size: clamp(16px, 1.5vw, 30px); letter-spacing: .3em; margin-bottom: 3vh; }
+.groot-moment .gm-naam { font-size: clamp(48px, 7vw, 150px); line-height: 1; filter: drop-shadow(0 0 40px rgba(226,50,60,.7)); }
+.groot-moment .gm-onder { margin-top: 3vh; font: italic clamp(18px, 2vw, 42px)/1.4 var(--display); color: var(--bone); }
+.verraders-lijst { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(26vw, 420px), 1fr)); gap: 2vw; width: min(90vw, 1700px); text-align: left; }
+.verraders-lijst .vk { padding: 2.2vh 1.6vw; background: rgba(20,6,8,.85); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.4); }
+.verraders-lijst .vk b { display: block; font: 700 clamp(20px, 2vw, 42px)/1.1 var(--carved); color: #ffd2d0; }
+.verraders-lijst .vk small { display: block; margin: .6vh 0 1vh; font: 600 clamp(12px, 1.1vw, 22px)/1.2 var(--body); color: var(--ash); letter-spacing: .08em; text-transform: uppercase; }
+.verraders-lijst .vk p { margin: .4vh 0 0; font: italic clamp(14px, 1.25vw, 26px)/1.35 var(--display); color: var(--bone); }
+.d11 { position: relative; width: min(42vh, 520px); aspect-ratio: 1; display: grid; place-items: center; margin: 2vh auto; }
+.d11 svg { position: absolute; inset: 0; width: 100%; filter: drop-shadow(0 0 40px rgba(255,190,90,.5)) drop-shadow(0 12px 30px #000); }
+.d11.rol svg { animation: rol 2.6s cubic-bezier(.2,.7,.2,1); }
+.d11 .d11-naam { position: relative; font-size: clamp(22px, 3vw, 62px); max-width: 70%; line-height: 1; }
+.wv-namen { display: flex; flex-wrap: wrap; justify-content: center; gap: 1vw 3vw; margin-top: 2vh; min-height: 1.2em; font-size: clamp(26px, 3vw, 64px); }
+.wv-namen span { animation: titel 1s cubic-bezier(.2,1.2,.3,1); }
 /* a point given by the regie: a strip at the bottom of the hall for a few seconds */
 .puntstrook { position: absolute; z-index: 28; left: 50%; bottom: 3vh; translate: -50% 0; display: flex; align-items: center; gap: 1.2vw; padding: 1.4vh 2.2vw; max-width: 80vw;
   background: linear-gradient(180deg, rgba(40,10,14,.92), rgba(15,6,8,.95)); border: 2px solid #6e5230; box-shadow: 0 10px 40px #000; opacity: 0; transform: translateY(20px); transition: opacity .6s, transform .6s; pointer-events: none; }
@@ -993,6 +1032,8 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   <div class="gquiz" id="gquiz" hidden aria-live="polite"><div class="gq-portret"><img src="a/godfried/portret.webp" alt="Godfried van Bouillon"></div>
     <div class="gq-kaart"><div class="gq-kop carved" id="gq-kop"></div><div class="gq-zegels" id="gq-zegels"></div><div class="gq-zegel" id="gq-zegel"></div><div class="gq-vraag" id="gq-vraag"></div><div class="gq-antwoord carved" id="gq-antwoord"></div></div></div>
   <div class="puntstrook" id="puntstrook" aria-live="polite"></div>
+  <div class="scorebord" id="scorebord" hidden aria-live="polite"><div class="sb-kop carved">Het scorebord van de Guild</div><div class="sb-midden" id="sb-midden"></div><div class="sb-tijd"><div class="sb-balk"><i id="sb-balk"></i></div><b id="sb-tel">45</b></div></div>
+  <div class="groot-moment" id="groot-moment" hidden aria-live="polite"></div>
   <div class="oproep" id="oproep" aria-live="polite"><div><b class="carved">Wachters, verzamelt u</b><span>De klok van Bouillon luidt. Kom naar het vuur.</span></div></div>
   <div class="aftiteling" id="aftiteling" hidden><img class="af-bg" src="a/fin/dageraad.webp" alt=""><div class="af-rol" id="af-rol"></div>
     <div class="af-slot" id="af-slot"><h1 class="carved">Wie volgt?</h1><p>Tot in 2027…</p></div></div>
@@ -1086,15 +1127,15 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=85"></script>
-<script src="a/godfried.js?v=85"></script>
-<script src="a/spel.js?v=85"></script>
-<script src="a/voorbereiding.js?v=85"></script>
-<script src="a/wachters.js?v=85"></script>
-<script src="a/firebase-config.js?v=85"></script>
-<script src="a/koppeling.js?v=85"></script>
-<script src="a/rollen.js?v=85"></script>
-<script src="a/tafel.js?v=85"></script>
+<script src="a/events.js?v=86"></script>
+<script src="a/godfried.js?v=86"></script>
+<script src="a/spel.js?v=86"></script>
+<script src="a/voorbereiding.js?v=86"></script>
+<script src="a/wachters.js?v=86"></script>
+<script src="a/firebase-config.js?v=86"></script>
+<script src="a/koppeling.js?v=86"></script>
+<script src="a/rollen.js?v=86"></script>
+<script src="a/tafel.js?v=86"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2187,7 +2228,7 @@ function aftitelingHtml() {
     + (FOTOS.length ? `<h2 class="carved">Het weekend in beeld</h2><div class="af-fotos">${FOTOS.map((u) => `<img src="${u}" alt="">`).join("")}</div>` : "")
     + (() => { const { p, v } = scores(), kl = NAMEN.filter((n) => p[n]).sort((a, b) => p[b] - p[a]), vr = NAMEN.filter((n) => v[n]).sort((a, b) => v[b] - v[a]);
         return blok("Het klassement", kl.map((n, i) => regel(`${i + 1}.`, `${schoon(n)} · ${p[n]} punt${Math.abs(p[n]) === 1 ? "" : "en"}`, n)), true)
-          + blok("De sluwste verraders", vr.slice(0, 5).map((n, i) => regel(i === 0 ? "Meester van de Schaduw" : `${i + 1}.`, `${schoon(n)} · ${v[n]}`, n))); })()
+          + blok("De sluwste verraders", [...(ere.besteVerrader ? [regel("Meester van de Schaduw", schoon(ere.besteVerrader), ere.besteVerrader)] : []), ...vr.filter((n) => n !== ere.besteVerrader).slice(0, 4).map((n) => regel("Hand van de Schaduw", `${schoon(n)} · ${v[n]}`, n))]); })()
     + blok("Titels van het weekend", (ere.extra || []).filter((x) => x.soort === "titel").map((x) => regel(schoon(x.tekst), schoon(x.wie || "?"), x.wie)), true)
     + blok("Momenten om nooit te vergeten", (ere.extra || []).filter((x) => x.soort === "moment").map((x) => `<div class="af-anekdote"><p>${schoon(x.tekst)}</p>${x.wie ? `<b>${schoon(x.wie)}</b>` : ""}</div>`), true)
     + blok("Uitspraken voor de Kronieken", (ere.extra || []).filter((x) => x.soort === "uitspraak").map((x) => `<div class="af-anekdote"><p>“${schoon(x.tekst)}”</p>${x.wie ? `<b>— ${schoon(x.wie)}</b>` : ""}</div>`), true)
@@ -2549,7 +2590,7 @@ function meld() {
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], ronde, fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
-    publiek: { ronde, kroniek: [...kroniek], hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
+    publiek: { ronde, kroniek: [...kroniek], scores: scorebordData(), hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
     tochtOpen, kistGeopend,
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   })), 150);
@@ -2635,6 +2676,62 @@ function scores() {
   }
   return { p, v };
 }
+// ===== The Guild's scoreboard: points per Wachter (all of them, so a traitor stays hidden), the Seals and the latest points =====
+function scorebordData() {
+  const stand = {}; for (const n of NAMEN) stand[n] = 0;
+  const recent = []; for (const l of logboek) if (l.type === "punt" && l.naam in stand) { stand[l.naam] += l.n; recent.push({ naam: l.naam, zegel: l.zegel, n: l.n, waarom: l.waarom || "" }); }
+  return { stand, recent: recent.slice(-6).reverse(), zegels: Object.fromEntries(ZEGELS.map((z) => [z.id, z.fiches])) };
+}
+let sbTimer = null, sbTik = null;
+function scorebord() {
+  if (wakker() || gq || vertelLoopt || !$("verhaal").hidden || ["finale", "ere", "einde"].includes(paneelNu) || !$("groot-moment").hidden) return; // busy: the tv keeps what it shows
+  const d = scorebordData(), rang = NAMEN.map((n) => [n, d.stand[n]]).sort((a, b) => b[1] - a[1]);
+  $("sb-midden").innerHTML = `<div><h3>De Zegels</h3>${ZEGELS.map((z) => `<div class="sb-zegel"><img src="${z.medaille}" alt=""><span>${z.naam}</span><b>${z.fiches}</b></div>`).join("")}</div>
+    <div><h3>Het klassement</h3><ol class="sb-rang">${rang.map(([n, p], i) => `<li><i>${i + 1}.</i><span>${schoon(n)}</span><b>${p}</b></li>`).join("")}</ol></div>
+    <div><h3>De laatste punten</h3><ol class="sb-recent">${d.recent.length ? d.recent.map((r) => `<li><b class="${r.n > 0 ? "plus" : "min"}">${schoon(r.naam)} ${r.n > 0 ? "+" : "−"}${Math.abs(r.n)} · ${zegelNaamVan(r.zegel).split(" ")[0]}</b>${r.waarom ? `<span>${schoon(r.waarom)}</span>` : ""}</li>`).join("") : "<li><span>Nog geen punten uitgedeeld.</span></li>"}</ol></div>`;
+  const s = $("scorebord"); s.hidden = false; void s.offsetWidth; s.classList.add("aan"); speel("klok", .5, 1.3);
+  const eind = Date.now() + 45000, balk = $("sb-balk");
+  clearInterval(sbTik); sbTik = setInterval(() => { const r = Math.max(0, eind - Date.now()); $("sb-tel").textContent = Math.ceil(r / 1000); balk.style.transform = `scaleX(${r / 45000})`; }, 200);
+  clearTimeout(sbTimer); sbTimer = setTimeout(scorebordWeg, 45000);
+}
+function scorebordWeg() { clearTimeout(sbTimer); clearInterval(sbTik); const s = $("scorebord"); s.classList.remove("aan"); setTimeout(() => { if (!s.classList.contains("aan")) s.hidden = true; }, 900); }
+// ===== The best traitor: the tv shows every traitor's work, the regie crowns one =====
+function verraderOverzicht() {
+  const per = {};
+  for (const p of verraadPeriodes()) { const x = per[p.naam] ||= { naam: p.naam, periodes: 0, sporen: [], kost: 0 }; x.periodes++; x.sporen.push(...p.sporen); }
+  for (const l of logboek) if (l.type === "punt" && l.verrader && l.n < 0 && per[l.naam]) per[l.naam].kost += -l.n;
+  for (const x of Object.values(per)) x.kost += x.sporen.filter((l) => ["chaos-steel", "chaos-wissel"].includes(l.cmd || l.type)).length;
+  return Object.values(per);
+}
+let gmTimers = [], gmGen = 0;
+const gmT = (ms, fn) => { const g = gmGen; gmTimers.push(setTimeout(() => g === gmGen && fn(), ms)); }; // a newer moment cancels the old one, voice callbacks included
+function grootMoment(html) { gmGen++; gmTimers.forEach(clearTimeout); gmTimers = []; const g = $("groot-moment"); g.innerHTML = html; g.hidden = false; void g.offsetWidth; g.classList.add("aan"); }
+function grootMomentWeg() { gmGen++; gmTimers.forEach(clearTimeout); gmTimers = []; const g = $("groot-moment"); g.classList.remove("aan"); setTimeout(() => { if (!g.classList.contains("aan")) g.hidden = true; }, 1000); }
+function verradersToon() {
+  const lijst = verraderOverzicht();
+  grootMoment(`<div><div class="gm-kop carved">De handen van de Schaduw</div><div class="verraders-lijst">${lijst.length ? lijst.map((x) => `<div class="vk"><b>${schoon(x.naam)}</b><small>${x.periodes} keer verrader · ${x.sporen.length} sabotage${x.sporen.length === 1 ? "" : "s"}${x.kost ? ` · ${x.kost} fiche${x.kost === 1 ? "" : "s"} gekost` : ""}</small>${x.sporen.slice(0, 3).map((l) => `<p>${schoon((SPOOR[l.cmd || l.type] || (() => "iets in het duister"))(l))}</p>`).join("")}</div>`).join("") : '<p class="gm-onder">Geen verraders dit weekend.</p>'}</div></div>`);
+  speel("chaos-2", .7);
+}
+function verraderKroon(naam) {
+  if (!NAMEN.includes(naam)) return; ere.besteVerrader = naam; meld();
+  grootMoment(`<div><div class="gm-kop carved">Meester van de Schaduw</div><div class="gm-naam carved" id="gm-naam">…</div></div>`);
+  const g = gmGen; stemMet("fin/beste-verrader", 1, () => g === gmGen && gmT(400, () => { $("gm-naam").textContent = naam; speel("fin/sfx-goed", .9); speel("gejuich", .7); speel("chaos-1", .5); }), 9000);
+}
+// ===== Who follows? A die with eleven names lands, by the purest chance, on the ones the regie chose =====
+function wieVolgt(namen) {
+  namen = (namen || []).filter((n) => NAMEN.includes(n)).slice(0, 3); if (!namen.length) return;
+  const vorm = `<svg viewBox="0 0 100 100" aria-hidden="true"><polygon points="50,3 91,26 91,74 50,97 9,74 9,26" fill="#170e0e" stroke="url(#brons)" stroke-width="3"/><polygon points="50,24 76,68 24,68" fill="#2a1214" stroke="url(#brons)" stroke-width="2.2" opacity=".55"/></svg>`;
+  grootMoment(`<div><div class="gm-kop carved">Wie volgt?</div><div class="d11" id="d11">${vorm}<span class="d11-naam carved" id="d11-naam">11</span></div><div class="wv-namen carved" id="wv-namen"></div><div class="gm-onder" id="wv-onder">Wie draagt in 2027 de fakkel?</div></div>`);
+  let t = 0; const werp = (i) => {
+    const d = $("d11"), nm = $("d11-naam"); d.classList.remove("rol"); void d.offsetWidth; d.classList.add("rol"); speel("klok", .5, .7);
+    const fl = setInterval(() => (nm.textContent = NAMEN[Math.floor(Math.random() * NAMEN.length)]), 90);
+    gmTimers.push(fl); gmT(2600, () => { clearInterval(fl); nm.textContent = namen[i]; speel("fin/sfx-goed", .8);
+      const s = document.createElement("span"); s.textContent = namen[i]; $("wv-namen").appendChild(s);
+      if (i + 1 < namen.length) gmT(2200, () => werp(i + 1));
+      else gmT(1400, () => { $("wv-onder").textContent = "De organisatoren van 2027. Wat een toeval…"; stemMet("fin/wievolgt-2", 1, () => speel("gejuich", .8), 6000); }); });
+  };
+  const g = gmGen; stemMet("fin/wievolgt-1", 1, () => g === gmGen && gmT(300, () => werp(0)), 9000);
+}
 let oproepBezig = false;
 function oproep() { // three strokes of the church bell over whatever is playing
   if (oproepBezig) return; oproepBezig = true; const o = $("oproep");
@@ -2644,6 +2741,12 @@ function oproep() { // three strokes of the church bell over whatever is playing
 }
 const OPDRACHTEN = {
   oproep: () => oproep(),
+  scorebord: () => scorebord(),
+  "scorebord-weg": () => scorebordWeg(),
+  "verraders-toon": () => verradersToon(),
+  "verrader-kroon": (o) => verraderKroon(o.naam),
+  wievolgt: (o) => wieVolgt(o.namen),
+  "groot-weg": () => grootMomentWeg(),
   punt: (o) => punt(o),
   credit: (o) => { const t = String(o.tekst || "").trim().slice(0, 200); if (!t) return; ere.extra = [...(ere.extra || []), { id: Date.now().toString(36), soort: ["titel", "moment", "uitspraak"].includes(o.soort) ? o.soort : "moment", wie: NAMEN.includes(o.wie) ? o.wie : "", tekst: t }]; meld(); },
   "credit-weg": (o) => { ere.extra = (ere.extra || []).filter((x) => x.id !== o.id); meld(); },

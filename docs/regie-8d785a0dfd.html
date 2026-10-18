@@ -132,7 +132,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 
   <section class="kaart" id="s-punt" data-fase="hall tocht finale">
     <h2>Punt geven of afnemen</h2>
-    <p class="klein" style="margin:0 0 8px">Voor iets wat iemand echt deed: het telt voor het Zegel én voor zijn eigen score (die komt pas in de aftiteling). Was hij op dat moment verrader en kost het punten, dan telt het als verraderswerk.</p>
+    <p class="klein" style="margin:0 0 8px">Voor iets wat iemand echt deed: het telt voor het Zegel én voor zijn eigen score, live te zien aan de Ronde Tafel. Was hij op dat moment verrader en kost het punten, dan telt het als verraderswerk.</p>
     <div class="rij" id="punt-wie" style="grid-template-columns:repeat(3,1fr)"></div>
     <div class="rij" id="punt-zegel" style="margin-top:8px;grid-template-columns:repeat(4,1fr)"><button type="button" data-z="vlam">Vlam</button><button type="button" data-z="hoorn">Hoorn</button><button type="button" data-z="schild">Schild</button><button type="button" data-z="hart">Hart</button></div>
     <div class="rij" id="punt-n" style="margin-top:8px;grid-template-columns:repeat(5,1fr)"><button type="button" data-n="-2">−2</button><button type="button" data-n="-1">−1</button><button type="button" data-n="1">+1</button><button type="button" data-n="2">+2</button><button type="button" data-n="3">+3</button></div>
@@ -262,6 +262,19 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <button class="groot" id="b-credit" type="button" style="margin-top:8px">Toevoegen</button>
     <div class="lijst" id="cr-lijst" style="margin-top:10px"></div>
   </section>
+  <section class="kaart" data-fase="ere finale">
+    <h2>Beste Verrader</h2>
+    <p class="klein" style="margin:0 0 8px">Toon op de tv wat elke verrader deed, kies samen de sluwste, en kroon hem.</p>
+    <button class="groot" id="b-vr-toon" type="button">Toon alle verraders op de tv</button>
+    <div class="rij" id="vr-kroon" style="margin-top:8px;grid-template-columns:repeat(3,1fr)"></div>
+    <button id="b-groot-weg" type="button" style="margin-top:8px">Scherm sluiten</button>
+  </section>
+  <section class="kaart" data-fase="ere">
+    <h2>Wie volgt? · 2027</h2>
+    <p class="klein" style="margin:0 0 8px">Kies 2 of 3 namen. De dobbelsteen met elf namen valt ‘toevallig’ op hen.</p>
+    <div class="rij" id="wv-kies" style="grid-template-columns:repeat(3,1fr)"></div>
+    <button class="goud groot" id="b-wievolgt" type="button" style="margin-top:8px" disabled>Werp de D11</button>
+  </section>
   <section class="kaart" data-fase="ere">
     <h2>Het best in hun rol</h2>
     <p class="klein" style="margin:0 0 10px">Wie bleef het weekend het best in zijn gedaante? Zij komen in de aftiteling. Tik aan wie het verdient.</p>
@@ -296,14 +309,14 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=85"></script>
-<script src="a/godfried.js?v=85"></script>
-<script src="a/spel.js?v=85"></script>
-<script src="a/wachters.js?v=85"></script>
-<script src="a/rollen.js?v=85"></script>
-<script src="a/firebase-config.js?v=85"></script>
-<script src="a/koppeling.js?v=85"></script>
-<script src="a/voorbereiding.js?v=85"></script>
+<script src="a/events.js?v=86"></script>
+<script src="a/godfried.js?v=86"></script>
+<script src="a/spel.js?v=86"></script>
+<script src="a/wachters.js?v=86"></script>
+<script src="a/rollen.js?v=86"></script>
+<script src="a/firebase-config.js?v=86"></script>
+<script src="a/koppeling.js?v=86"></script>
+<script src="a/voorbereiding.js?v=86"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -477,7 +490,7 @@ function toon(s) {
   const vrij = [...gevonden].filter((k) => !op.has(k)).length;
   $("b-hint").disabled = !vrij || fin.hint?.[p.zegel] === (fin.voortgang?.[p.zegel]?.length ?? 0) || klaar || !open;
   $("b-hint").textContent = `Hint (${vrij} reliek${vrij === 1 ? "" : "en"} over)`;
-  ereStand = s.ere || {}; tekenEreRegie(); tekenInrol(); tekenCredits();
+  ereStand = s.ere || {}; tekenEreRegie(); tekenInrol(); tekenCredits(); tekenVerraderKroon(s);
   const totaal = (window.SCHADUW_EVENTS || []).length, over = totaal - (s.gebruikt?.length ?? 0);
   $("teller").textContent = `Nog ${over} van de ${totaal} events over.`;
 }
@@ -555,6 +568,16 @@ let crSoort = "titel";
 $("cr-wie").innerHTML = `<option value="">Over wie? (mag leeg)</option>` + (window.WACHTERS || []).map((w) => `<option>${w.naam}</option>`).join("");
 $("cr-soort").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; crSoort = b.dataset.s; document.querySelectorAll("#cr-soort button").forEach((x) => x.classList.toggle("goud", x === b)); };
 $("b-credit").onclick = () => { const t = $("cr-tekst").value.trim(); if (!t) return; stuur({ cmd: "credit", soort: crSoort, wie: $("cr-wie").value, tekst: t }); $("cr-tekst").value = ""; };
+// best traitor and who follows
+$("b-vr-toon").onclick = () => stuur({ cmd: "verraders-toon" });
+$("b-groot-weg").onclick = () => stuur({ cmd: "groot-weg" });
+$("vr-kroon").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "verrader-kroon", naam: b.dataset.n }); };
+function tekenVerraderKroon(s) { const namen = [...new Set((s.verraders || []).map((v) => v.naam))]; $("vr-kroon").innerHTML = namen.length ? namen.map((n) => `<button type="button" data-n="${n}" class="${s.ere?.besteVerrader === n ? "goud" : ""}">Kroon ${n}</button>`).join("") : '<p class="klein">Nog geen verraders geweest.</p>'; }
+let wvKeuze = [];
+function tekenWieVolgt() { $("wv-kies").innerHTML = (window.WACHTERS || []).map((w) => `<button type="button" data-n="${w.naam}" class="${wvKeuze.includes(w.naam) ? "goud" : ""}">${wvKeuze.includes(w.naam) ? "✓ " : ""}${w.naam}</button>`).join(""); $("b-wievolgt").disabled = wvKeuze.length < 2; $("b-wievolgt").textContent = wvKeuze.length < 2 ? "Kies minstens 2 namen" : `Werp de D11 · ${wvKeuze.join(", ")}`; }
+$("wv-kies").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; const n = b.dataset.n; wvKeuze = wvKeuze.includes(n) ? wvKeuze.filter((x) => x !== n) : wvKeuze.length < 3 ? [...wvKeuze, n] : wvKeuze; tekenWieVolgt(); };
+$("b-wievolgt").onclick = () => stuur({ cmd: "wievolgt", namen: wvKeuze });
+tekenWieVolgt();
 $("cr-lijst").onclick = (e) => { const b = e.target.closest("[data-weg]"); if (b) stuur({ cmd: "credit-weg", id: b.dataset.weg }); };
 function tekenCredits() {
   const SOORT = { titel: "Titel", moment: "Moment", uitspraak: "Uitspraak" }, esc = (t) => String(t ?? "").replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[k]);

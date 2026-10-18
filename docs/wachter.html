@@ -45,6 +45,17 @@ body.bevel-eerst :is(#vooraf, #spreek-rij, #gedaante, #hulp, #stap2, #stap3, #ve
 /* your race and class: known before the weekend, with a challenge to come (and stay) in costume */
 .schande-stand { margin: 6px 0 12px; text-align: center; font: 700 14px/1.4 var(--body); }
 .schande-stand.leeg { color: #ffb0a8; } .schande-stand.vol { color: #9fdc9f; }
+.scorebord-app { display: grid; gap: 14px; }
+.scorebord-app .sb-z { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
+.scorebord-app .sb-z div { display: grid; justify-items: center; gap: 2px; font: 700 18px/1 var(--carved); color: var(--bronze-hi); }
+.scorebord-app .sb-z img { width: 42px; }
+.scorebord-app .sb-z small { font: 600 10px/1.1 var(--body); letter-spacing: .06em; text-transform: uppercase; color: var(--ash); }
+.scorebord-app ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.scorebord-app .sb-r li { display: grid; grid-template-columns: 2em 1fr auto; gap: 8px; font: 600 16px/1.2 var(--body); }
+.scorebord-app .sb-r li.ik { color: var(--bronze-hi); }
+.scorebord-app .sb-r i { font-style: normal; color: var(--ash); }
+.scorebord-app .sb-n li { font-size: 14px; line-height: 1.35; color: var(--ash); } .scorebord-app .sb-n b { color: var(--bone); }
+.scorebord-app .sub-kop { margin: 4px 0 0; }
 .kroniek { display: grid; gap: 14px; }
 .kroniek .kr-kop { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center; text-align: left; }
 .kroniek .kr-kop img { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #b8955f; }
@@ -307,6 +318,7 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
       <p class="tocht-onder" id="tafel-onder">Tik op een Wachter om zijn rol en kracht te zien.</p>
       <div class="tafel-doos" id="tafel-doos"></div></section>
     <section class="paneel tafel-kaart" id="tafel-kaart"><p class="leeg">Kies een Wachter aan de tafel.</p></section>
+    <section class="paneel scorebord-app verborgen" id="scorebord-app"></section>
   </section>
 
   <!-- tab: the Wachterstocht, to read again on the way -->
@@ -388,14 +400,14 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=85"></script>
-<script src="a/godfried.js?v=85"></script>
-<script src="a/spel.js?v=85"></script>
-<script src="a/rollen.js?v=85"></script>
-<script src="a/firebase-config.js?v=85"></script>
-<script src="a/koppeling.js?v=85"></script>
-<script src="a/tafel.js?v=85"></script>
-<script src="a/voorbereiding.js?v=85"></script>
+<script src="a/wachters.js?v=86"></script>
+<script src="a/godfried.js?v=86"></script>
+<script src="a/spel.js?v=86"></script>
+<script src="a/rollen.js?v=86"></script>
+<script src="a/firebase-config.js?v=86"></script>
+<script src="a/koppeling.js?v=86"></script>
+<script src="a/tafel.js?v=86"></script>
+<script src="a/voorbereiding.js?v=86"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -543,9 +555,25 @@ function tekenTabs() {
 $("tabs").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; if (b.dataset.tab !== tabNu) piep("tik", .35); toonTab(b.dataset.tab); };
 document.addEventListener("click", (e) => { const b = e.target.closest("[data-naar]"); if (b) toonTab(b.dataset.naar); });
 let tafelGekozen = null, tafelOpen = null;
+// the Guild's scoreboard: live at the Round Table, and anyone can put it on the tv for 45 seconds
+let sbGevraagd = 0;
+function tekenScorebord() {
+  const s = publiek.scores, el = $("scorebord-app"); if (!s || !halOpen()) { el.classList.add("verborgen"); return; }
+  el.classList.remove("verborgen");
+  const Z = [["vlam", "Vlam"], ["hoorn", "Hoorn"], ["schild", "Schild"], ["hart", "Hart"]];
+  const rang = Object.entries(s.stand || {}).sort((a, b) => b[1] - a[1]);
+  el.innerHTML = `<h2 class="carved">Het scorebord</h2>
+    <div class="sb-z">${Z.map(([id, n]) => `<div><img src="a/medaillon-${id}.webp" alt="">${s.zegels?.[id] ?? 0}<small>${n}</small></div>`).join("")}</div>
+    <div class="sub-kop">Het klassement</div><ol class="sb-r">${rang.map(([n, p], i) => `<li class="${n === wachter?.naam ? "ik" : ""}"><i>${i + 1}.</i><span>${schoon(n)}</span><b>${p}</b></li>`).join("")}</ol>
+    <div class="sub-kop">De laatste punten</div><ol class="sb-n">${(s.recent || []).length ? s.recent.map((r) => `<li><b>${schoon(r.naam)} ${r.n > 0 ? "+" : "−"}${Math.abs(r.n)}</b>${r.waarom ? ` · ${schoon(r.waarom)}` : ""}</li>`).join("") : "<li>Nog geen punten uitgedeeld.</li>"}</ol>
+    <button class="knop" type="button" id="b-sb-tv">Toon op de tv (45 seconden)</button>`;
+  $("b-sb-tv").onclick = async () => { if (Date.now() - sbGevraagd < 50000) return melding("Even geduld", "Het scorebord staat al op de tv."); sbGevraagd = Date.now();
+    const ok = await Koppeling.stuur({ cmd: "scorebord" }); if (ok === false) melding("Niet gelukt", "De tv kon het niet ontvangen. Controleer je verbinding."); else melding("Op de tv", "Als de tv vrij is, staat het scorebord er nu 45 seconden op."); };
+}
 function tekenTafel() {
   tafelOpen = halOpen();
   $("tafel-onder").textContent = tafelOpen ? "Tik op een Wachter om zijn rol en kracht te zien." : "De rollen zijn nog verzegeld tot de Eerste Dronk.";
+  tekenScorebord();
   Tafel.teken($("tafel-doos"), { open: tafelOpen, gekozen: tafelGekozen, opKies: (w, r) => { tafelGekozen = w.naam; $("tafel-kaart").innerHTML = Tafel.details(r, w); piep("kies", .5); } });
 }
 // ---------- before the weekend ----------
@@ -756,7 +784,7 @@ $("b-geluid").onclick = () => { oudGeluid(); if (!geluidAan) { muziek?.pause(); 
 
 zetNaam(); klok(); teken(); tekenTabs(); toonTab(tabNu);
 setInterval(() => { klok(); teken(); }, 1000);
-Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; publiekGeladen = true; teken(); tekenTocht(); tekenKroniek(); }, opVerraad: verraad,
+Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; publiekGeladen = true; teken(); tekenTocht(); tekenKroniek(); tekenScorebord(); }, opVerraad: verraad,
   opVooraf: (v) => { mijnVooraf = v || {}; vooraafGetekend = ""; toonVooraf(!$("vooraf").classList.contains("verborgen")); } }).then(() => {
   const ik = Koppeling.ik; if (!ik) return;
   wachter = (window.WACHTERS || []).find((w) => w.naam === ik.naam) || { naam: ik.naam, token: ik.email }; token = wachter.token;
