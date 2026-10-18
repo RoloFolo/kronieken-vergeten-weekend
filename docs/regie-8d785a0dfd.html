@@ -131,11 +131,11 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 
   <section class="kaart" id="s-punt" data-fase="hall tocht finale">
-    <h2>Punt geven of afnemen</h2>
-    <p class="klein" style="margin:0 0 8px">Voor iets wat iemand echt deed: het telt voor het Zegel én voor zijn eigen score, live te zien aan de Ronde Tafel. Was hij op dat moment verrader en kost het punten, dan telt het als verraderswerk.</p>
+    <h2>XP geven of afnemen</h2>
+    <p class="klein" style="margin:0 0 8px">Voor een volbrachte quest (de XP staat op de kaart) of iets wat iemand echt deed. Hij krijgt de XP, live aan de Ronde Tafel; het Zegel krijgt fiches zoals op de kaarten: 5–10 XP is 1, 20 is 2, 30 is 3. Was hij op dat moment verrader en kost het XP, dan telt het als verraderswerk.</p>
     <div class="rij" id="punt-wie" style="grid-template-columns:repeat(3,1fr)"></div>
     <div class="rij" id="punt-zegel" style="margin-top:8px;grid-template-columns:repeat(4,1fr)"><button type="button" data-z="vlam">Vlam</button><button type="button" data-z="hoorn">Hoorn</button><button type="button" data-z="schild">Schild</button><button type="button" data-z="hart">Hart</button></div>
-    <div class="rij" id="punt-n" style="margin-top:8px;grid-template-columns:repeat(5,1fr)"><button type="button" data-n="-2">−2</button><button type="button" data-n="-1">−1</button><button type="button" data-n="1">+1</button><button type="button" data-n="2">+2</button><button type="button" data-n="3">+3</button></div>
+    <div class="rij" id="punt-n" style="margin-top:8px;grid-template-columns:repeat(6,1fr)"><button type="button" data-n="-10">−10</button><button type="button" data-n="-5">−5</button><button type="button" data-n="5">+5</button><button type="button" data-n="10">+10</button><button type="button" data-n="20">+20</button><button type="button" data-n="30">+30</button></div>
     <input id="punt-waarom" type="text" maxlength="140" placeholder="Waarom? (bijv. vertelde een prachtig verhaal)" style="width:100%;margin-top:8px">
     <button class="goud groot" id="b-punt" type="button" style="margin-top:8px" disabled>Kies wie, welk Zegel en hoeveel</button>
     <p class="klein" id="punt-stand" style="margin:8px 0 0"></p>
@@ -309,14 +309,14 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=88"></script>
-<script src="a/godfried.js?v=88"></script>
-<script src="a/spel.js?v=88"></script>
-<script src="a/wachters.js?v=88"></script>
-<script src="a/rollen.js?v=88"></script>
-<script src="a/firebase-config.js?v=88"></script>
-<script src="a/koppeling.js?v=88"></script>
-<script src="a/voorbereiding.js?v=88"></script>
+<script src="a/events.js?v=89"></script>
+<script src="a/godfried.js?v=89"></script>
+<script src="a/spel.js?v=89"></script>
+<script src="a/wachters.js?v=89"></script>
+<script src="a/rollen.js?v=89"></script>
+<script src="a/firebase-config.js?v=89"></script>
+<script src="a/koppeling.js?v=89"></script>
+<script src="a/voorbereiding.js?v=89"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -556,12 +556,12 @@ function tekenPunt() {
   document.querySelectorAll("#punt-zegel button").forEach((b) => b.classList.toggle("goud", b.dataset.z === puntKeuze.zegel));
   document.querySelectorAll("#punt-n button").forEach((b) => b.classList.toggle("goud", +b.dataset.n === puntKeuze.n));
   const klaar = puntKeuze.naam && puntKeuze.zegel && puntKeuze.n;
-  $("b-punt").disabled = !klaar; $("b-punt").textContent = klaar ? `${puntKeuze.naam} ${puntKeuze.n > 0 ? "+" : "−"}${Math.abs(puntKeuze.n)} voor het ${puntKeuze.zegel}` : "Kies wie, welk Zegel en hoeveel";
+  $("b-punt").disabled = !klaar; $("b-punt").textContent = klaar ? `${puntKeuze.naam} ${puntKeuze.n > 0 ? "+" : "−"}${Math.abs(puntKeuze.n)} XP · ${puntKeuze.zegel} ${puntKeuze.n > 0 ? "+" : "−"}${Math.abs(puntKeuze.n) >= 30 ? 3 : Math.abs(puntKeuze.n) >= 20 ? 2 : 1}` : "Kies wie, welk Zegel en hoeveel XP";
 }
 $("punt-wie").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.naam = b.dataset.n; tekenPunt(); } };
 $("punt-zegel").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.zegel = b.dataset.z; tekenPunt(); } };
 $("punt-n").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.n = +b.dataset.n; tekenPunt(); } };
-$("b-punt").onclick = () => { stuur({ cmd: "punt", ...puntKeuze, waarom: $("punt-waarom").value.trim() }); $("punt-stand").textContent = `Verstuurd: ${$("b-punt").textContent}.`; puntKeuze = { naam: null, zegel: null, n: null }; $("punt-waarom").value = ""; tekenPunt(); };
+$("b-punt").onclick = () => { stuur({ cmd: "punt", naam: puntKeuze.naam, zegel: puntKeuze.zegel, xp: puntKeuze.n, waarom: $("punt-waarom").value.trim() }); $("punt-stand").textContent = `Verstuurd: ${$("b-punt").textContent}.`; puntKeuze = { naam: null, zegel: null, n: null }; $("punt-waarom").value = ""; tekenPunt(); };
 tekenPunt();
 // lines for the credits
 let crSoort = "titel";
