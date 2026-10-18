@@ -27,7 +27,8 @@ window.VOORAF = {
       tekst: "Jij opent een uur lang een middeleeuwse taveerne: een gokspel voor de hele groep, met drinken, dansen, knokken en gokken." },
   },
 
-  // stap 2
+  // stap 2: extra regels bovenaan de meeneemlijst van één Wachter
+  extra: { Ivo: ["VERGEET JE SPORTSCHOENEN NIET"] },
   geregeld: ["Bedlinnen: de bedden zijn opgemaakt", "Badhanddoeken en theedoeken", "Eten en drinken", "Hout voor de haarden", "Wifi"],
   meenemen: [
     "Je kostuum en props voor jouw gedaante: je komt verkleed, en je blijft het hele weekend in je rol",

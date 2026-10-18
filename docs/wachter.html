@@ -272,6 +272,7 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
 @keyframes stempel-op { from { transform: translateY(-60px) scale(2.2); opacity: 0; } 70% { transform: scale(.9); opacity: 1; } }
 .bevel-brief.dreun { animation: dreun .35s ease-out; }
 @keyframes dreun { 30% { transform: translateY(4px) scale(.985); } }
+.lijstje li.extra { color: #ff8a80; font-weight: 700; letter-spacing: .02em; }
 .aanvaard { margin-top: 14px; text-align: center; color: #8fd493; font: 600 15px/1.4 var(--body); }
 .veld { display: grid; gap: 6px; margin-top: 12px; }
 .veld label { font: 700 11px/1 var(--carved); letter-spacing: .25em; text-transform: uppercase; color: var(--ash); }
@@ -400,14 +401,14 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=86"></script>
-<script src="a/godfried.js?v=86"></script>
-<script src="a/spel.js?v=86"></script>
-<script src="a/rollen.js?v=86"></script>
-<script src="a/firebase-config.js?v=86"></script>
-<script src="a/koppeling.js?v=86"></script>
-<script src="a/tafel.js?v=86"></script>
-<script src="a/voorbereiding.js?v=86"></script>
+<script src="a/wachters.js?v=87"></script>
+<script src="a/godfried.js?v=87"></script>
+<script src="a/spel.js?v=87"></script>
+<script src="a/rollen.js?v=87"></script>
+<script src="a/firebase-config.js?v=87"></script>
+<script src="a/koppeling.js?v=87"></script>
+<script src="a/tafel.js?v=87"></script>
+<script src="a/voorbereiding.js?v=87"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -427,7 +428,8 @@ kiesRol();
 const schoon = (t) => String(t).replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[k]);
 
 let publiek = {}, getekend = "", vorige = null;
-const halOpen = () => !!publiek.hal || Date.now() >= window.ROL_UITERLIJK;
+const ORGANISATOREN = ["Rob", "Jean", "Roland"];
+const halOpen = () => Date.now() >= window.ROL_UITERLIJK || !!publiek.hal && (!FIRE || Date.now() >= START - 6 * 3600e3 || ORGANISATOREN.includes(wachter?.naam));
 const eedOpen = () => !!publiek.eed; // only when the regie opens Act III (the finale runs on the tv anyway)
 
 // the power can be used once a day; the mark resets at midnight
@@ -474,9 +476,16 @@ function teken() {
   const nu = Date.now();
   const staat = !wachter ? (FIRE ? "laden" : "onbekend") : !halOpen() ? (nu < START ? "vooraf" : "wacht") : eedOpen() ? "eed" : "rol";
   $("onbekend").classList.toggle("verborgen", staat !== "onbekend");
+  bevelAltijdOpen = !!wachter && (staat === "wacht" || staat === "rol" || staat === "eed");
   $("vooraf").classList.toggle("verborgen", staat !== "vooraf"); toonVooraf(staat === "vooraf");
   $("verzegeld").classList.toggle("verborgen", staat !== "vooraf" && staat !== "wacht");
   $("rol-blok").classList.toggle("verborgen", staat !== "rol" && staat !== "eed");
+  if (bevelAltijdOpen) {
+    if ($("rol-blok").nextElementSibling !== $("bevel")) $("rol-blok").after($("bevel"), $("gedaante"));
+    $("gedaante").classList.remove("verborgen");
+    const k = `${staat}|${JSON.stringify(mijnVooraf.bevel || null)}`; if (weekendGetekend !== k) { weekendGetekend = k; tekenBevel(); tekenGedaante(); }
+    if (V.bevelen?.[wachter.naam]) $("bevel").classList.remove("verborgen");
+  } else { weekendGetekend = ""; if ($("spreek-rij").previousElementSibling !== $("bevel")) { $("spreek-rij").before($("bevel")); $("spreek-rij").after($("gedaante")); vooraafGetekend = ""; toonVooraf(staat === "vooraf"); } }
   if (staat === "wacht") $("verzegeld-tekst").textContent = "Het weekend is begonnen. Het zegel breekt na de Eerste Dronk in de Guild Hall.";
   if ((staat === "rol" || staat === "eed") && getekend !== staat) {
     if (!rol) { $("rol-blok").innerHTML = `<section class="paneel zegel"><p>Godfried heeft jouw rol nog niet gekozen. Vraag het de organisatoren.</p></section>`; }
@@ -537,7 +546,7 @@ function toonTab(t) {
   if (!beschikbaar(t)) t = "ik"; tabNu = t; try { localStorage.setItem("kronieken-tab", t); } catch {}
   document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-current", b.dataset.tab === t));
   const ik = t === "ik";
-  for (const id of ["schaduw", "vooraf", "bevel", "spreek-rij", "hulp", "stap2", "stap3", "verzegeld", "rol-blok", "kroniek", "onbekend"]) $(id).classList.toggle("tab-weg", !ik);
+  for (const id of ["schaduw", "vooraf", "bevel", "spreek-rij", "gedaante", "hulp", "stap2", "stap3", "verzegeld", "rol-blok", "kroniek", "onbekend"]) $(id).classList.toggle("tab-weg", !ik);
   document.querySelector(".slot").classList.toggle("tab-weg", !ik);
   $("tab-tafel").classList.toggle("verborgen", t !== "tafel"); $("tocht").classList.toggle("tab-weg", t !== "tocht");
   for (const naam of ["regie", "verrader"]) {
@@ -697,12 +706,14 @@ function breekZegel(knop, klaar) {
   setTimeout(() => { knop.classList.add("valt"); piep("knak", .45); if (navigator.vibrate) try { navigator.vibrate([20, 30, 60]); } catch {} }, 620); // pop and fall
   setTimeout(klaar, 1550);
 }
+let bevelAltijdOpen = false, weekendGetekend = ""; // in the weekend the order is always open, with its seal still to press
+const naBevel = () => { if (bevelAltijdOpen) { weekendGetekend = ""; teken(); } else { vooraafGetekend = ""; toonVooraf(true); } };
 let bevelNetOpen = false, bevelBezig = false; // while the seal is being pressed, a quick answer from the database must not redraw it
 function tekenBevel() {
   const b = V.bevelen?.[wachter.naam], el = $("bevel");
   if (!b) { el.classList.add("verborgen"); return; }
   if (bevelBezig) return;
-  const sleutel = () => `kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`, stand = lokaal(sleutel()), open = stand === "open" || stand === "gelezen", ja = !!mijnVooraf.bevel?.aanvaard && (mijnVooraf.bevel.ronde ?? -1) === (publiek.ronde || 0); // an acceptance from an earlier test round does not count
+  const sleutel = () => `kronieken-bevel-${wachter.naam}-${publiek.ronde || 0}`, stand = lokaal(sleutel()), open = bevelAltijdOpen || stand === "open" || stand === "gelezen", ja = !!mijnVooraf.bevel?.aanvaard && (mijnVooraf.bevel.ronde ?? -1) === (publiek.ronde || 0); // an acceptance from an earlier test round does not count
   el.innerHTML = `<h2 class="carved">Jouw bevel</h2>` + (!open
     ? `<div class="bevel-brief"><div class="vlak" style="justify-content:flex-start"><div class="van">Een bevel van Godfried</div></div>
          <button class="dicht-zegel" type="button" id="b-breek" aria-label="Breek het zegel">${zegelLagen()}</button>
@@ -713,7 +724,7 @@ function tekenBevel() {
          <p class="wat-nu ${ja ? "ja" : ""}">${ja ? "✓ Aanvaard<small>Godfried rekent op je</small>" : "Aanvaard je dit bevel?<br>Druk hieronder je zegel ↓"}</p></div>
          <button class="plek ${ja ? "gedrukt" : ""}" type="button" id="b-aanvaard" ${ja ? "disabled" : ""} aria-label="Druk je zegel: ik aanvaard het bevel">${ja ? `<img src="a/app/lakzegel.webp" alt="">` : "Druk<br>hier"}</button></div>
        <p class="op-slot" style="font-size:14px;margin:0">Volbreng je het in het weekend, dan voedt het een Zegel.</p>
-       ${stand === "open" ? `<button class="bevel-verder" type="button" id="b-bevel-verder">Verder</button>` : ""}`);
+       ${stand === "open" && !bevelAltijdOpen ? `<button class="bevel-verder" type="button" id="b-bevel-verder">Verder</button>` : ""}`);
   bevelNetOpen = false;
   const breek = $("b-breek"); if (breek) breek.onclick = () => breekZegel(breek, () => { lokaal(sleutel(), "open"); bevelNetOpen = true; vooraafGetekend = ""; toonVooraf(true); });
   const verder = $("b-bevel-verder"); if (verder) verder.onclick = () => { lokaal(sleutel(), "gelezen"); vooraafGetekend = ""; toonVooraf(true); scrollTo({ top: 0, behavior: "smooth" }); };
@@ -721,8 +732,8 @@ function tekenBevel() {
     bevelBezig = true; plek.disabled = true; plek.classList.add("gedrukt", "net"); plek.innerHTML = `<img src="a/app/lakzegel.webp" alt="">`;
     setTimeout(() => { const br = $("bevel-brief"); br?.classList.remove("ontvouw"); br?.classList.add("dreun"); piep("kracht", .7); if (navigator.vibrate) try { navigator.vibrate(120); } catch {} }, 380);
     const ok = await Koppeling.vooraf("bevel", { aanvaard: true, t: Date.now(), ronde: publiek.ronde || 0 });
-    if (ok === false) { bevelBezig = false; melding("Niet verstuurd", "Je zegel kwam niet aan. Controleer je verbinding en druk opnieuw."); vooraafGetekend = ""; toonVooraf(true); return; }
-    setTimeout(() => { bevelBezig = false; piep("volbracht", .6); if (!FIRE) mijnVooraf.bevel = { aanvaard: true, ronde: publiek.ronde || 0 }; vooraafGetekend = ""; toonVooraf(true); }, 1300);
+    if (ok === false) { bevelBezig = false; melding("Niet verstuurd", "Je zegel kwam niet aan. Controleer je verbinding en druk opnieuw."); naBevel(); return; }
+    setTimeout(() => { bevelBezig = false; piep("volbracht", .6); if (!FIRE) mijnVooraf.bevel = { aanvaard: true, ronde: publiek.ronde || 0 }; naBevel(); }, 1300);
   };
 }
 function tekenKroniek() {
@@ -740,7 +751,7 @@ function tekenGedaante() {
     <p class="gd-oproep">Zo betreed jij de Kronieken. Kom verkleed in deze gedaante, van top tot teen, en blijf het hele weekend in je rol. Wie dat het best doet, krijgt zijn naam in de aftiteling.</p>
     <div class="gd-prijs">Wie in zijn rol blijft, komt in de aftiteling</div>
     <p class="gd-tip"><b>Ideeën voor je kostuum:</b> ${schoon(k.props)}.</p>`
-    + (V.bevelen?.[wachter.naam]?.larp ? `<div class="gd-larp"><b>Voor jouw LARP-sessie: de gedaanten van alle Wachters</b><ul>${Object.entries(window.KARAKTER || {}).map(([n, x]) => `<li><span>${schoon(n)}</span>${schoon(x.ras)} ${schoon(x.klasse)}</li>`).join("")}</ul><small>Alleen de gedaanten: hun rollen en krachten blijven ook voor jou geheim tot de Eerste Dronk.</small></div>` : "");
+    + (V.bevelen?.[wachter.naam]?.larp ? `<div class="gd-larp"><b>Voor jouw LARP-sessie: de gedaanten van alle Wachters</b><ul>${Object.entries(window.KARAKTER || {}).map(([n, x]) => `<li><span>${schoon(n)}</span>${schoon(x.ras)} ${schoon(x.klasse)}</li>`).join("")}</ul><small>${halOpen() ? "Gebruik ze voor jouw Spel der Rollen: geef ieder een doel en een geheim." : "Alleen de gedaanten: hun rollen en krachten blijven ook voor jou geheim tot de Eerste Dronk."}</small></div>` : "");
 }
 function tekenHulp() {
   $("hulp-form").classList.toggle("verborgen", !FIRE); $("hulp-geen").classList.toggle("verborgen", FIRE);
@@ -764,7 +775,7 @@ function tekenStap2(stap) {
   if (stap < 2) { el.innerHTML = `<h2 class="carved">Binnenkort meer</h2><p class="op-slot">Kort voor het weekend stuurt Godfried je meer: wat je moet meenemen.</p>`; return; }
   el.innerHTML = `<h2 class="carved">Wat neem je mee</h2>
     <div class="sub-kop">Geregeld</div><ul class="lijstje geregeld">${(V.geregeld || []).map((t) => `<li>${schoon(t)}</li>`).join("")}</ul>
-    <div class="sub-kop">Neem zelf mee</div><ul class="lijstje">${(V.meenemen || []).map((t) => `<li>${schoon(t)}</li>`).join("")}</ul>`;
+    <div class="sub-kop">Neem zelf mee</div><ul class="lijstje">${(V.extra?.[wachter.naam] || []).map((t) => `<li class="extra">${schoon(t)}</li>`).join("")}${(V.meenemen || []).map((t) => `<li>${schoon(t)}</li>`).join("")}</ul>`;
   if (lokaal(`kronieken-stap2-${wachter.naam}-${publiek.ronde || 0}`) !== "gezien") { lokaal(`kronieken-stap2-${wachter.naam}-${publiek.ronde || 0}`, "gezien"); if (navigator.vibrate) try { navigator.vibrate([80, 60, 80]); } catch {} }
 }
 function tekenStap3(stap) {
