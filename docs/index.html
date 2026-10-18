@@ -1072,15 +1072,15 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=81"></script>
-<script src="a/godfried.js?v=81"></script>
-<script src="a/spel.js?v=81"></script>
-<script src="a/voorbereiding.js?v=81"></script>
-<script src="a/wachters.js?v=81"></script>
-<script src="a/firebase-config.js?v=81"></script>
-<script src="a/koppeling.js?v=81"></script>
-<script src="a/rollen.js?v=81"></script>
-<script src="a/tafel.js?v=81"></script>
+<script src="a/events.js?v=82"></script>
+<script src="a/godfried.js?v=82"></script>
+<script src="a/spel.js?v=82"></script>
+<script src="a/voorbereiding.js?v=82"></script>
+<script src="a/wachters.js?v=82"></script>
+<script src="a/firebase-config.js?v=82"></script>
+<script src="a/koppeling.js?v=82"></script>
+<script src="a/rollen.js?v=82"></script>
+<script src="a/tafel.js?v=82"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2159,6 +2159,7 @@ function aftitelingHtml() {
     + blok("De bevelen van Godfried", NAMEN.filter((n) => window.VOORAF?.bevelen?.[n]).map((n) => regel(`${schoon(window.VOORAF.bevelen[n].titel)}${bevelGedaan.has(n) ? " ✓" : ""}`, schoon(n), n)), true)
     + blok("Herinneringen uit de Kronieken", anekdotes().map((a) => `<div class="af-anekdote"><p>“${schoon(a.tekst)}”</p><b>over ${schoon(a.over)}${a.van ? ` <small>· ingestuurd door ${schoon(a.van)}</small>` : ""}</b></div>`), true)
     + (FOTOS.length ? `<h2 class="carved">Het weekend in beeld</h2><div class="af-fotos">${FOTOS.map((u) => `<img src="${u}" alt="">`).join("")}</div>` : "")
+    + blok("Het best in hun rol", NAMEN.filter((n) => ere.inrol?.[n]).map((n) => regel(window.KARAKTER?.[n] ? `${schoon(window.KARAKTER[n].ras)} ${schoon(window.KARAKTER[n].klasse)}` : "Wachter", schoon(n), n)))
     + blok("Het weekend in cijfers", cijfers, true)
     + blok("Met de stemmen van", [regel("De verteller", "Godfried van Bouillon"), regel("De vijand", "De Schaduwkoning")])
     + blok("Bedacht en geregeld door", [regel("De hoeders van de Hall", "Rob, Jean en Roland")])
@@ -2628,6 +2629,7 @@ const OPDRACHTEN = {
   "ere-speel": () => { ere.speelt = true; const n = ere.stap == null || ere.stap < 0 || ere.stap >= ereLijst().length ? 0 : ere.stap; ereStap(n, true); },
   aftiteling: () => { ereStop(); aftiteling(); },
   "aftiteling-uit": () => aftitelingUit(),
+  inrol: (o) => { ere.inrol = { ...(ere.inrol || {}) }; if (o.aan) ere.inrol[o.naam] = true; else delete ere.inrol[o.naam]; meld(); },
   "ere-pauze": () => { ere.speelt = false; ereStop(); tekenEre(); meld(); },
   ere: (o) => { const n = Math.max(0, Math.min(ereLijst().length, (ere.stap ?? -1) + o.d)); ereStap(n, ere.speelt); },
   // without Firebase the regie stores the assignment here, in the tv's own state

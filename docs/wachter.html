@@ -64,6 +64,12 @@ body.bevel-eerst :is(#vooraf, #spreek-rij, #gedaante, #hulp, #stap2, #stap3, #ve
 .gedaante .gd-oproep { font: italic 400 16px/1.5 var(--display); color: var(--bone); }
 .gedaante .gd-tip { font-size: 14.5px; line-height: 1.45; color: var(--ash); text-align: left; padding: 12px 14px; border: 1px dashed rgba(184,149,95,.45); border-radius: 6px; }
 .gedaante .gd-tip b { color: var(--bronze-hi); }
+.gedaante .gd-larp { display: grid; gap: 8px; text-align: left; padding: 12px 14px; border: 1px solid rgba(184,149,95,.45); border-radius: 6px; background: rgba(0,0,0,.25); }
+.gedaante .gd-larp b { font: 700 13px/1.3 var(--carved); letter-spacing: .06em; text-transform: uppercase; color: var(--bronze-hi); }
+.gedaante .gd-larp ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 15px; }
+.gedaante .gd-larp li { display: grid; grid-template-columns: 6.5em 1fr; gap: 8px; }
+.gedaante .gd-larp li span { font-weight: 700; color: var(--bone); }
+.gedaante .gd-larp small { font-size: 12.5px; color: var(--ash); }
 body:not(.bevel-eerst) :is(#vooraf, #gedaante, #hulp, #stap2) { animation: onthul 1.2s cubic-bezier(.2,.9,.3,1) both; }
 .bevel-verder { display: block; margin: 4px auto 0; padding: 13px 34px; cursor: pointer; font: 700 13px/1 var(--carved); letter-spacing: .22em; text-transform: uppercase;
   color: #ffd2d0; background: rgba(10,5,6,.7); border: 1px solid var(--ember); border-radius: 6px; box-shadow: 0 0 22px rgba(226,50,60,.55); animation: adem 2.4s ease-in-out infinite; }
@@ -379,14 +385,14 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=81"></script>
-<script src="a/godfried.js?v=81"></script>
-<script src="a/spel.js?v=81"></script>
-<script src="a/rollen.js?v=81"></script>
-<script src="a/firebase-config.js?v=81"></script>
-<script src="a/koppeling.js?v=81"></script>
-<script src="a/tafel.js?v=81"></script>
-<script src="a/voorbereiding.js?v=81"></script>
+<script src="a/wachters.js?v=82"></script>
+<script src="a/godfried.js?v=82"></script>
+<script src="a/spel.js?v=82"></script>
+<script src="a/rollen.js?v=82"></script>
+<script src="a/firebase-config.js?v=82"></script>
+<script src="a/koppeling.js?v=82"></script>
+<script src="a/tafel.js?v=82"></script>
+<script src="a/voorbereiding.js?v=82"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -700,9 +706,10 @@ function tekenGedaante() {
   const k = window.KARAKTER?.[wachter.naam], el = $("gedaante");
   if (!k) { el.classList.add("verborgen"); return; }
   el.innerHTML = `<div class="gd-beeld" role="img" aria-label="Een kamer vol kostuums: mantels, helmen, een luit, schilden en een spiegel"><div class="gd-kop"><small>Jouw gedaante</small><div class="gd-naam carved">${schoon(k.ras)} ${schoon(k.klasse)}</div></div></div>
-    <p class="gd-oproep">Zo betreed jij de Kronieken. Kom verkleed in deze gedaante, van top tot teen, en blijf het hele weekend in je rol.</p>
-    <div class="gd-prijs">Wie in zijn rol blijft, valt in de prijzen</div>
-    <p class="gd-tip"><b>Ideeën voor je kostuum:</b> ${schoon(k.props)}.</p>`;
+    <p class="gd-oproep">Zo betreed jij de Kronieken. Kom verkleed in deze gedaante, van top tot teen, en blijf het hele weekend in je rol. Wie dat het best doet, krijgt zijn naam in de aftiteling.</p>
+    <div class="gd-prijs">Wie in zijn rol blijft, komt in de aftiteling</div>
+    <p class="gd-tip"><b>Ideeën voor je kostuum:</b> ${schoon(k.props)}.</p>`
+    + (V.bevelen?.[wachter.naam]?.larp ? `<div class="gd-larp"><b>Voor jouw LARP-sessie: de gedaanten van alle Wachters</b><ul>${Object.entries(window.KARAKTER || {}).map(([n, x]) => `<li><span>${schoon(n)}</span>${schoon(x.ras)} ${schoon(x.klasse)}</li>`).join("")}</ul><small>Alleen de gedaanten: hun rollen en krachten blijven ook voor jou geheim tot de Eerste Dronk.</small></div>` : "");
 }
 function tekenHulp() {
   const anders = (window.WACHTERS || []).filter((w) => w.naam !== wachter.naam), sel = $("hulp-over"), was = sel.value;

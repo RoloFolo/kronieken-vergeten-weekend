@@ -243,6 +243,12 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div class="lijst" id="ere-lijst"></div>
   </section>
 
+  <section class="kaart" data-fase="ere">
+    <h2>Het best in hun rol</h2>
+    <p class="klein" style="margin:0 0 10px">Wie bleef het weekend het best in zijn gedaante? Zij komen in de aftiteling. Tik aan wie het verdient.</p>
+    <div class="rij" id="inrol-lijst" style="flex-wrap:wrap"></div>
+  </section>
+
   <section class="kaart" data-fase="vooraf">
     <h2>Voor het weekend</h2>
     <p class="klein" style="margin:0 0 10px">Wat de Wachters vooraf op hun pagina deden: hun bevel aanvaard, herinneringen voor de finale ingestuurd, hun kamerwens. Volbrengt iemand zijn bevel in het weekend, druk dan op <b>Volbracht</b>: zijn Zegel krijgt 3 fiches.</p>
@@ -271,14 +277,14 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=81"></script>
-<script src="a/godfried.js?v=81"></script>
-<script src="a/spel.js?v=81"></script>
-<script src="a/wachters.js?v=81"></script>
-<script src="a/rollen.js?v=81"></script>
-<script src="a/firebase-config.js?v=81"></script>
-<script src="a/koppeling.js?v=81"></script>
-<script src="a/voorbereiding.js?v=81"></script>
+<script src="a/events.js?v=82"></script>
+<script src="a/godfried.js?v=82"></script>
+<script src="a/spel.js?v=82"></script>
+<script src="a/wachters.js?v=82"></script>
+<script src="a/rollen.js?v=82"></script>
+<script src="a/firebase-config.js?v=82"></script>
+<script src="a/koppeling.js?v=82"></script>
+<script src="a/voorbereiding.js?v=82"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -452,7 +458,7 @@ function toon(s) {
   const vrij = [...gevonden].filter((k) => !op.has(k)).length;
   $("b-hint").disabled = !vrij || fin.hint?.[p.zegel] === (fin.voortgang?.[p.zegel]?.length ?? 0) || klaar || !open;
   $("b-hint").textContent = `Hint (${vrij} reliek${vrij === 1 ? "" : "en"} over)`;
-  ereStand = s.ere || {}; tekenEreRegie();
+  ereStand = s.ere || {}; tekenEreRegie(); tekenInrol();
   const totaal = (window.SCHADUW_EVENTS || []).length, over = totaal - (s.gebruikt?.length ?? 0);
   $("teller").textContent = `Nog ${over} van de ${totaal} events over.`;
 }
@@ -512,6 +518,11 @@ $("b-beproeving").onclick = () => stuur({ cmd: "beproeving" });
 $("b-hint").onclick = () => stuur({ cmd: "hint" });
 // ---------- Ere van de Wachters: assign beforehand (Firebase /ere, or the tv's state without Firebase), play during the game ----------
 let ereToewijzing = null, ereStand = {};
+function tekenInrol() {
+  const aan = ereStand.inrol || {};
+  $("inrol-lijst").innerHTML = (window.WACHTERS || []).map((w) => `<button type="button" data-n="${w.naam}" class="${aan[w.naam] ? "goud" : ""}" aria-pressed="${!!aan[w.naam]}">${aan[w.naam] ? "✓ " : ""}${w.naam}</button>`).join("");
+}
+$("inrol-lijst").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "inrol", naam: b.dataset.n, aan: b.getAttribute("aria-pressed") !== "true" }); };
 const ereVan = () => ereToewijzing || ereStand.toewijzing || {};
 function tekenEreRegie() {
   const tw = ereVan(), namen = (window.WACHTERS || []).map((w) => w.naam), esc = (t) => String(t ?? "").replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[k]);

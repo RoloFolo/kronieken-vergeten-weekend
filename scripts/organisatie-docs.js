@@ -91,10 +91,10 @@ const beslissen = [
 
   h("3. Gedaanten en de LARP"),
   p([t("Iedereen krijgt vooraf zijn ras en class (en de bevelhouders hun bevel), met de uitdaging om verkleed te komen en het hele weekend in zijn rol te blijven. Alles per Wachter in "), link("10 LARP: gedaanten en props", MAP), t(".")]),
-  vink([b("Punten en prijzen voor wie in zijn rol blijft: "), t("hoeveel fiches, wanneer, en welke ‘grote prijzen’? De app belooft het al.")]),
+  p([g("Wie het best in zijn rol blijft, komt in de aftiteling (regie → Ere → ‘Het best in hun rol’). Geen andere prijzen.")]),
   vink([b("Bevelbonus: "), t("blijft het +3 fiches per volbracht bevel? Nu voedt elk Zegel twee bevelen.")]),
-  vink([b("Props voor Stefans LARP: "), t("welke props geven wij, en wie regelt ze (zie 10).")]),
-  vink([b("Budget eerste avondmaal (Jeroen): "), t("€ ______.")]),
+  vink([b("Props aanvullen: "), t("iedereen neemt zelf props mee; wij vullen aan. Wie regelt wat (zie 10)? Stefan weet hier niets van.")]),
+  p([g("Budget eerste avondmaal (Jeroen): ± € 250, meer op aanvraag.")]),
 
   h("4. De app en de link"),
   vink([b("Wanneer sturen we de link? "), t("Datum: ______. Iedereen krijgt zijn link (regie → ‘Persoonlijke links’) en zijn wachtwoord apart.")]),
@@ -175,7 +175,7 @@ const draaiboek = [
   bullet([R("Volgende stap"), t(" slaat het lopende deel over als het moet.")]),
   h3("De avond"),
   bullet([t("Vóór het eten: "), R("Oproep"), t(" (de kerkklok roept iedereen naar het scherm), dan regie → Godfried → "), R("Quiz I"), t(": vier vragen, één per Zegel. Goed +1, fout −1.")]),
-  bullet([t("Jeroen: het Eerste Avondmaal (budget afspreken)"), ...volbracht("Jeroen")]),
+  bullet([t("Jeroen: het Eerste Avondmaal (budget ± € 250)"), ...volbracht("Jeroen")]),
   bullet([t("Robin en Geert: de Legendarische Borrelplank"), ...volbracht("beiden")]),
   bullet("Eerste verrader kiezen: regie → De Verrader → duur (2/4/6 uur) → naam. Alleen hij ziet het in zijn app."),
   bullet([t("Eén of twee keer "), R("De Schaduw beweegt"), t(": event voorlezen, dan "), R("Doorstaan"), t(", "), R("Gefaald"), t(" of de D20.")]),
@@ -230,16 +230,16 @@ const draaiboek = [
 (async () => {
   // ======================= 10 LARP: gedaanten en props =======================
 const larp = [
-  ...titel("LARP: gedaanten en props", "Voor de organisatoren en voor Stefan · ras en class per Wachter, met ideeën voor kostuum en props"),
-  p([g("Dit deel mag naar Stefan: het noemt alleen ras en class. De rollen, krachten en Zegels blijven geheim tot de Eerste Dronk. Rob, Jean en Roland doen gewoon mee aan de LARP.")]),
+  ...titel("LARP: gedaanten en props", "Alleen voor de organisatoren · ras en class per Wachter, en welke props wij aanvullen"),
+  p([g("Stefan ziet de gedaanten van iedereen (ras en class, geen rollen) in zijn eigen app. Dit document is alleen voor ons: dat wij props aanvullen, weet hij niet. Rob, Jean en Roland doen gewoon mee aan de LARP.")]),
   h("De uitdaging"),
-  p("Iedereen krijgt zijn gedaante vooraf in de app, en Godfried noemt hem in zijn welkom. De oproep: kom verkleed in je gedaante, met kostuum en attributen, en blijf het hele weekend in je rol. Wie dat doet, verdient punten en maakt kans op grote prijzen (nog in te vullen)."),
+  p("Iedereen krijgt zijn gedaante vooraf in de app, en Godfried noemt hem in zijn welkom. De oproep: kom verkleed in je gedaante, met kostuum en attributen, en blijf het hele weekend in je rol. Wie dat het best doet, komt in de aftiteling."),
   h("Per Wachter"),
   tabel(["Wachter", "Ras", "Class", "Kostuum en props (ideeën)", "Wie regelt"], window.WACHTERS.map((w) => { const k = window.KARAKTER?.[w.naam] || {};
     return [w.naam, k.ras || "?", k.klasse || "?", k.props || "", ""]; }), [1200, 1200, 1400, 4800, 1200]),
   h("Stefans sessie"),
-  bullet("Een interactieve LARP van hooguit een uur. Stefan krijgt vooraf alleen deze lijst: geen verborgen rollen, krachten of plotwendingen."),
-  bullet("Props die wij geven: kies per Wachter één ding uit de lijst hierboven dat zijn gedaante meteen herkenbaar maakt, en zet bij ‘Wie regelt’ wie het koopt."),
+  bullet("Een interactieve LARP van hooguit een uur. Stefan ziet in zijn app alleen de gedaanten: geen verborgen rollen, krachten of plotwendingen."),
+  bullet("Iedereen neemt zelf props mee. Wij vullen aan waar iets ontbreekt: zet bij ‘Wie regelt’ wie wat koopt."),
 ];
 
 // ======================= 11 Godfried: verhaal en quiz =======================
