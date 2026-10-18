@@ -294,6 +294,14 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div class="lijst" id="links"></div>
   </section>
 
+  <section class="kaart" data-fase="vooraf beheer">
+    <h2>Portretten</h2>
+    <p class="klein" style="margin:0 0 10px">Eén keer doen: kies de elf schilderijen (bestandsnaam begint met de naam, zoals in Jeans map Fotos). Ze worden verkleind en in de database gezet, alleen zichtbaar voor wie is ingelogd. App en tv tonen ze dan vanzelf: aan de Ronde Tafel, bij XP, eretitels en aftiteling.</p>
+    <label class="groot knop-label" style="display:block;text-align:center;cursor:pointer;padding:12px;border:1px solid #b8955f">Kies de portretten<input type="file" id="portret-kies" accept="image/*" multiple hidden></label>
+    <p class="klein" id="portret-status" style="margin:8px 0"></p>
+    <div id="portret-rij" style="display:grid;grid-template-columns:repeat(6,1fr);gap:6px"></div>
+  </section>
+
   <section class="kaart" data-fase="beheer">
     <h2>Beheer</h2>
     <button id="b-reset" type="button">Alle events weer beschikbaar maken</button>
@@ -309,14 +317,15 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=89"></script>
-<script src="a/godfried.js?v=89"></script>
-<script src="a/spel.js?v=89"></script>
-<script src="a/wachters.js?v=89"></script>
-<script src="a/rollen.js?v=89"></script>
-<script src="a/firebase-config.js?v=89"></script>
-<script src="a/koppeling.js?v=89"></script>
-<script src="a/voorbereiding.js?v=89"></script>
+<script src="a/events.js?v=90"></script>
+<script src="a/godfried.js?v=90"></script>
+<script src="a/spel.js?v=90"></script>
+<script src="a/wachters.js?v=90"></script>
+<script src="a/rollen.js?v=90"></script>
+<script src="a/firebase-config.js?v=90"></script>
+<script src="a/portretten.js?v=90"></script>
+<script src="a/koppeling.js?v=90"></script>
+<script src="a/voorbereiding.js?v=90"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -518,6 +527,15 @@ function tekenVooraf() {
   $("vooraf-anekdotes").innerHTML = alle.length ? alle.sort((a, b) => a.van.localeCompare(b.van)).map((a) => `<div class="anek"><b>${esc(a.van)}${a.over && a.over !== a.van ? ` (over ${esc(a.over)})` : ""}</b><br>${esc(a.tekst)}</div>`).join("") : '<p class="klein">Nog geen gênante momenten ingestuurd.</p>';
 }
 $("vooraf-lijst").onclick = (e) => { const b = e.target.closest("[data-bevel]"); if (b && !b.disabled) stuur({ cmd: "bevel", naam: b.dataset.bevel }); };
+// portraits: pick the files once, they go to /portretten (small webp), everyone logged in sees them
+function tekenPortretten() { const W = window.WACHTERS || []; $("portret-status").textContent = `${Portret.aantal()} van de ${W.length} portretten staan klaar.`;
+  $("portret-rij").innerHTML = W.map((w) => `<div style="display:grid;gap:2px;text-align:center;font-size:11px"><div class="pr-av" data-n="${w.naam}" style="aspect-ratio:1;border-radius:50%;border:1px solid #6e5230;background:#1a0d0e"></div>${w.naam}</div>`).join("");
+  document.querySelectorAll(".pr-av").forEach((el) => Portret.rond(el, el.dataset.n)); }
+Portret.op(tekenPortretten); tekenPortretten();
+$("portret-kies").onchange = async (e) => { const W = window.WACHTERS || [], los = [];
+  for (const f of e.target.files) { const w = W.find((x) => f.name.toLowerCase().startsWith(x.naam.toLowerCase() + " ") || f.name.toLowerCase().startsWith(x.naam.toLowerCase() + ".")); if (!w) { los.push(f.name); continue; }
+    $("portret-status").textContent = `Bezig: ${w.naam}…`; const ok = await Koppeling.portret(w.naam, await Portret.verklein(f)); if (ok === false) los.push(`${f.name} (niet opgeslagen)`); }
+  e.target.value = ""; tekenPortretten(); if (los.length) $("portret-status").textContent += ` Niet gelukt: ${los.join(", ")}.`; };
 Koppeling.start({ rol: "regie", opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); tekenGodfried(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); }, opEre: (t) => { ereToewijzing = t || {}; tekenEreRegie(); } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; });
 

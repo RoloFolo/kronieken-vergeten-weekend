@@ -6,6 +6,7 @@
 //     /opdrachten  admins sturen alles, de huidige verrader alleen chaos-opdrachten
 //     /ere         de eretitels: welke Wachter welke titel krijgt (alleen admins)
 //     /vooraf/<e>  ieder schrijft en leest alleen zijn eigen plek (bevel aanvaard, herinneringen, kamerwens); admins lezen alles
+//     /portretten  de schilderijen van de Wachters (data-URL per naam): iedereen die is ingelogd leest, admins schrijven (a/portretten.js)
 //   Anders de lokale server (app/server.mjs): /api/stand en /api/stroom.
 //   Anders niets: de pagina werkt dan alleen op zichzelf.
 //
@@ -112,6 +113,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
   if (rol === "wachter") luister(db.onValue, `vooraf/${sleutel(email)}`, (s) => opVooraf?.(s.val() || {}));
   if (rol === "regie" || rol === "tv") luister(db.onValue, "vooraf", (s) => opVooraf?.(s.val() || {})); // the tv only reads it for the credits
   if (alleenAdmin) luister(db.onValue, "ere/toewijzing", (s) => opEre?.(s.val() || {}));
+  if (rol !== "chaos") db.onValue(db.ref(d, "portretten"), (s) => window.Portret?.zet(s.val() || {}), () => {}); // no access (rules not yet published): just no portraits, no connection alarm
   return {
     soort: "firebase",
     meldStand: (stand) => {
@@ -126,6 +128,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
     uitloggen: () => auth.signOut(a),
     vooraf: (pad, waarde) => metToken(() => db.set(db.ref(d, `vooraf/${sleutel(email)}/${pad}`), waarde)),
     ere: alleenAdmin ? (i, naam) => metToken(() => db.set(db.ref(d, `ere/toewijzing/t${i}`), naam || null)) : null,
+    portret: alleenAdmin ? (naam, url) => metToken(() => db.set(db.ref(d, `portretten/${naam}`), url || null)) : null,
   };
 }
 
@@ -152,5 +155,6 @@ window.Koppeling = {
   uitloggen() { return this.verbinding?.uitloggen?.(); },
   ere(i, naam) { return this.verbinding?.ere ? this.verbinding.ere(i, naam) : null; },
   vooraf(pad, waarde) { return this.verbinding?.vooraf ? this.verbinding.vooraf(pad, waarde) : Promise.resolve(false); },
+  portret(naam, url) { return this.verbinding?.portret ? this.verbinding.portret(naam, url) : Promise.resolve(false); },
 };
 window.dispatchEvent(new Event("koppeling-klaar"));

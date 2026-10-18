@@ -28,6 +28,11 @@
         "anekdotes": { "$id": { ".validate": "newData.child('tekst').isString() && newData.child('tekst').val().length <= 2000" } }
       }
     },
+    "portretten": {
+      ".read": "auth != null",
+      ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+      "$naam": { ".validate": "newData.isString() && newData.val().beginsWith('data:image/') && newData.val().length < 300000" }
+    },
     "opdrachten": {
       ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
       ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",

@@ -56,6 +56,13 @@ body.bevel-eerst :is(#vooraf, #spreek-rij, #gedaante, #hulp, #stap2, #stap3, #ve
 .scorebord-app .sb-r i { font-style: normal; color: var(--ash); }
 .scorebord-app .sb-n li { font-size: 14px; line-height: 1.35; color: var(--ash); } .scorebord-app .sb-n b { color: var(--bone); }
 .scorebord-app .sub-kop { margin: 4px 0 0; }
+.scorebord-app .sb-laatst { margin: 0; text-align: center; font: italic 14px/1.4 var(--display); color: var(--ash); } .scorebord-app .sb-laatst b { font-style: normal; color: var(--bronze-hi); }
+.held { position: relative; overflow: hidden; padding: 0; aspect-ratio: 2 / 2.4; background: #0b0607 center 12% / cover no-repeat; }
+.held::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 50%, rgba(11,6,7,.55) 72%, #0b0607 98%); }
+.held .held-lijst { position: absolute; inset: 9px; border: 1.5px solid rgba(184,149,95,.7); z-index: 1; }
+.held .held-naam { position: absolute; left: 0; right: 0; bottom: 18px; z-index: 2; text-align: center; }
+.held .held-naam .carved { font-size: clamp(28px, 9vw, 40px); line-height: 1; filter: drop-shadow(0 2px 6px #000); }
+.held .held-naam small { display: block; margin-top: 6px; font: 600 12px/1 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: var(--bone); }
 .kroniek { display: grid; gap: 14px; }
 .kroniek .kr-kop { display: grid; grid-template-columns: 64px 1fr; gap: 14px; align-items: center; text-align: left; }
 .kroniek .kr-kop img { width: 64px; height: 64px; border-radius: 50%; border: 2px solid #b8955f; }
@@ -181,9 +188,38 @@ body.in-frame main { visibility: hidden; }
 .intro { position: fixed; inset: 0; z-index: 72; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 14px;
   padding: max(16px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom)); background: #070405; overflow: hidden; transition: opacity 1.4s ease; }
 .intro.weg { opacity: 0; pointer-events: none; }
+/* the intro as a painted comic: full-screen panels that wipe in one by one, the words in a caption box */
+.strip { position: absolute; inset: 0; z-index: 0; }
+.sp { position: absolute; inset: 0; overflow: hidden; clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); transition: clip-path 1.3s cubic-bezier(.7,0,.2,1); }
+.sp.aan { clip-path: polygon(-30% 0, 100% 0, 100% 100%, -60% 100%); }
+.sp { background: radial-gradient(ellipse 120% 45% at 50% 0%, rgba(150,18,28,.45), transparent 60%), #0b0607; }
+.sp-blad { position: absolute; left: 12px; right: 12px; top: max(12px, env(safe-area-inset-top)); bottom: calc(max(20px, env(safe-area-inset-bottom)) + 30svh); display: flex; flex-direction: column; gap: 9px; }
+.vak { position: relative; flex: 1; overflow: hidden; background: #000; border: 1px solid #b8955f; box-shadow: 0 0 0 3px #070405, 0 0 0 4px rgba(184,149,95,.35), 0 0 22px rgba(226,50,60,.3); }
+.vak img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 45%; }
+.sp.nu .vak img { animation: kenburns 24s ease-out both; }
+.sp.nu .vak + .vak { animation: vakIn .9s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--na, 1.2s); }
+@keyframes vakIn { from { opacity: 0; transform: translateX(18%) rotate(1.5deg); } }
+@keyframes kenburns { from { transform: scale(1.12) translateY(2%); } to { transform: scale(1) translateY(0); } }
+.sp-label { position: absolute; translate: -50% -100%; padding: 3px 8px 4px; font: 700 clamp(11px, 3.2vw, 14px)/1 var(--carved); letter-spacing: .14em; text-transform: uppercase; white-space: nowrap;
+  color: #fff3dc; background: rgba(10,4,5,.72); border: 1px solid #b8955f; box-shadow: 2px 2px 0 #000; opacity: 0; transition: opacity .8s ease; }
+.sp-label::after { content: ""; position: absolute; left: 50%; top: 100%; width: 1px; height: 14px; background: #f1dfb6; box-shadow: 0 0 3px #000; }
+.sp.nu .sp-label { opacity: 1; transition-delay: 1.8s; } .sp.nu .sp-label:nth-of-type(2) { transition-delay: 2.6s; } .sp.nu .sp-label:nth-of-type(3) { transition-delay: 3.4s; }
+.sp-hoek { position: absolute; left: 8px; bottom: 8px; padding: 6px 10px 7px; font: 700 clamp(10px, 2.9vw, 12px)/1 var(--carved); letter-spacing: .18em; text-transform: uppercase; color: var(--bronze-hi);
+  background: linear-gradient(180deg, rgba(30,14,14,.92), rgba(12,6,7,.94)); border: 1px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.25), 0 4px 12px rgba(0,0,0,.7); }
+.strip-kop { position: absolute; left: 20px; top: calc(max(12px, env(safe-area-inset-top)) + 8px); z-index: 3; display: grid; gap: 3px; padding: 6px 11px 7px;
+  background: linear-gradient(180deg, rgba(30,14,14,.92), rgba(12,6,7,.94)); border: 1px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.25), 0 4px 12px rgba(0,0,0,.7); }
+.intro .strip-kop { transition: opacity .8s ease; } .intro.na-eerste .strip-kop { opacity: 0; }
+.strip-kop small { font: 700 8px/1 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: var(--ash); }
+.strip-kop b { font: 900 clamp(14px, 4.2vw, 18px)/1 var(--carved); text-transform: uppercase; letter-spacing: .05em; background: linear-gradient(180deg, #f1dfb6, #d8bf8f 45%, #9b7a4c); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.strip-tekst { position: absolute; left: 16px; right: 16px; bottom: calc(max(20px, env(safe-area-inset-bottom)) + 62px); max-height: calc(30svh - 70px); overflow: hidden; z-index: 3; display: grid; padding: 14px 16px 15px;
+  background: linear-gradient(180deg, rgba(30,14,14,.94), rgba(12,6,7,.96)); border: 1px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.25), 0 0 30px rgba(226,50,60,.25), 0 10px 30px #000; }
+.strip-tekst p { grid-area: 1 / 1; margin: 0; font: italic 400 clamp(15px, 4.4vw, 19px)/1.5 var(--display); color: var(--bone); opacity: 0; transform: translateY(6px); transition: opacity .7s ease, transform .7s ease; }
+.strip-tekst p.aan { opacity: 1; transform: none; }
+.strip-tekst p::first-letter { float: left; margin: .04em .12em 0 0; font: 900 2.7em/.8 var(--carved); font-style: normal; color: var(--ember); text-shadow: 0 0 12px rgba(226,50,60,.6); }
+.intro .intro-verder { position: absolute; left: 50%; translate: -50% 0; bottom: max(20px, env(safe-area-inset-bottom)); background: rgba(7,4,5,.85); }
 .intro-bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(.32) saturate(.9) blur(1.5px); }
-.intro::after { content: ""; position: absolute; inset: 0; background: radial-gradient(ellipse 80% 65% at 50% 50%, transparent 25%, rgba(7,4,5,.9)); pointer-events: none; }
-.intro > *:not(.intro-bg):not(.sintel) { position: relative; z-index: 2; }
+.intro::after { content: ""; position: absolute; inset: 0; z-index: 1; background: radial-gradient(ellipse 90% 75% at 50% 45%, transparent 50%, rgba(7,4,5,.55)); pointer-events: none; }
+
 .intro-logo { width: min(250px, 62vw); margin: -4% 0 -6%; filter: drop-shadow(0 6px 18px #000); }
 /* Godfried's letter: painted parchment with the four seal medallions in its corners, dark ink, a wax seal at the bottom */
 .intro-brief { position: relative; height: min(60svh, 135vw); aspect-ratio: 800 / 1203; background: url(a/app/brief.webp) center / 100% 100% no-repeat;
@@ -386,14 +422,9 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <button type="button" data-tab="verrader" class="rood" hidden><img class="ico" src="a/logo.webp" alt="">Verrader</button>
 </nav>
 <div class="intro verborgen" id="intro" role="dialog" aria-label="Een boodschap van Godfried">
-  <video class="intro-bg" id="intro-bg" src="a/storm.mp4" poster="a/plaat.jpg" muted loop playsinline preload="none"></video>
-  <img class="intro-logo" src="a/logo.webp" alt="">
-  <div class="intro-brief" id="intro-brief">
-    <div class="vlak"><div class="intro-kop">Een boodschap van Godfried</div><h3 class="intro-aan" id="intro-aan"></h3><div class="sier">❦</div>
-      <div class="intro-tekst" id="intro-tekst" aria-live="polite"></div><div class="handtekening">Godfried</div></div>
-    <img class="zegel-was" src="a/app/lakzegel.webp" alt="">
-    <img class="intro-portret" src="a/godfried/gezicht.webp" alt="Godfried van Bouillon">
-  </div>
+  <div class="strip" id="strip" aria-hidden="true"></div>
+  <div class="strip-kop"><small>Een boodschap van Godfried</small><b id="intro-aan"></b></div>
+  <div class="strip-tekst" id="intro-tekst" aria-live="polite"></div>
   <button class="intro-verder" type="button" id="intro-verder">Verder</button>
 </div>
 <div class="binnen verborgen" id="binnen"><img src="a/logo.webp" alt=""><p>Godfried van Bouillon heeft een boodschap voor je. Zet je geluid aan.</p><button class="knop" type="button" id="b-binnen">Treed binnen</button></div>
@@ -401,14 +432,15 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=88"></script>
-<script src="a/godfried.js?v=88"></script>
-<script src="a/spel.js?v=88"></script>
-<script src="a/rollen.js?v=88"></script>
-<script src="a/firebase-config.js?v=88"></script>
-<script src="a/koppeling.js?v=88"></script>
-<script src="a/tafel.js?v=88"></script>
-<script src="a/voorbereiding.js?v=88"></script>
+<script src="a/wachters.js?v=90"></script>
+<script src="a/godfried.js?v=90"></script>
+<script src="a/spel.js?v=90"></script>
+<script src="a/rollen.js?v=90"></script>
+<script src="a/firebase-config.js?v=90"></script>
+<script src="a/portretten.js?v=90"></script>
+<script src="a/koppeling.js?v=90"></script>
+<script src="a/tafel.js?v=90"></script>
+<script src="a/voorbereiding.js?v=90"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -448,6 +480,7 @@ function tekenRol() {
   const frag = rol.eed != null ? window.SPEL?.eed?.fragmenten?.[rol.eed] : null;
   const eed = frag && eedOpen() ? `<section class="paneel eed"><h2 class="carved">Jouw deel van de eed</h2><div class="fragment">“${schoon(frag)}”</div><p>Zoek je plek in de rij en spreek het uit wanneer het jouw beurt is.</p></section>` : "";
   $("rol-blok").innerHTML = `${eed}
+    <section class="paneel held verborgen" id="held"></section>
     <section class="paneel rol">
       <img class="med" src="a/rollen/${rol.id}.webp" alt="" onerror="this.removeAttribute('src');this.classList.add('leeg')">
       <h2 class="naam carved">${schoon(rol.naam)}</h2>
@@ -490,7 +523,7 @@ function teken() {
   if (staat === "wacht") $("verzegeld-tekst").textContent = "Het weekend is begonnen. Het zegel breekt na de Eerste Dronk in de Guild Hall.";
   if ((staat === "rol" || staat === "eed") && getekend !== staat) {
     if (!rol) { $("rol-blok").innerHTML = `<section class="paneel zegel"><p>Godfried heeft jouw rol nog niet gekozen. Vraag het de organisatoren.</p></section>`; }
-    else { tekenRol(); if (vorige) { piep("onthul", .6); setTimeout(() => piep("klok", .45), 350); if (navigator.vibrate) try { navigator.vibrate([80, 60, 160]); } catch {} } }
+    else { tekenRol(); tekenHeld(); if (vorige) { piep("onthul", .6); setTimeout(() => piep("klok", .45), 350); if (navigator.vibrate) try { navigator.vibrate([80, 60, 160]); } catch {} } }
   }
   getekend = staat === "rol" || staat === "eed" ? staat : ""; vorige = staat;
 }
@@ -548,7 +581,7 @@ function toonTab(t) {
   document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-current", b.dataset.tab === t));
   const ik = t === "ik";
   for (const id of ["schaduw", "vooraf", "bevel", "spreek-rij", "gedaante", "hulp", "stap2", "stap3", "verzegeld", "rol-blok", "kroniek", "onbekend"]) $(id).classList.toggle("tab-weg", !ik);
-  document.querySelector(".slot").classList.toggle("tab-weg", !ik);
+  document.querySelector(".slot").classList.toggle("tab-weg", !ik); $("binnen").classList.toggle("tab-weg", !ik);
   $("tab-tafel").classList.toggle("verborgen", t !== "tafel"); $("tocht").classList.toggle("tab-weg", t !== "tocht");
   for (const naam of ["regie", "verrader"]) {
     const fr = $(`frame-${naam}`), aan = t === naam; fr.classList.toggle("verborgen", !aan);
@@ -571,20 +604,24 @@ function tekenScorebord() {
   const s = publiek.scores, el = $("scorebord-app"); if (!s || !halOpen()) { el.classList.add("verborgen"); return; }
   el.classList.remove("verborgen");
   const Z = [["vlam", "Vlam"], ["hoorn", "Hoorn"], ["schild", "Schild"], ["hart", "Hart"]];
-  const rang = Object.entries(s.stand || {}).sort((a, b) => b[1] - a[1]);
-  el.innerHTML = `<h2 class="carved">Het scorebord</h2>
+  const laatste = (s.recent || [])[0], lxp = laatste ? laatste.xp ?? (laatste.n || 0) * 10 : 0;
+  el.innerHTML = `<h2 class="carved">De Zegels</h2>
     <div class="sb-z">${Z.map(([id, n]) => `<div><img src="a/medaillon-${id}.webp" alt="">${s.zegels?.[id] ?? 0}<small>${n}</small></div>`).join("")}</div>
-    <div class="sub-kop">Het klassement</div><ol class="sb-r">${rang.map(([n, p], i) => `<li class="${n === wachter?.naam ? "ik" : ""}"><i>${i + 1}.</i><span>${schoon(n)}</span><b>${p}</b></li>`).join("")}</ol>
-    <div class="sub-kop">De laatste punten</div><ol class="sb-n">${(s.recent || []).length ? s.recent.map((r) => `<li><b>${schoon(r.naam)} ${r.n > 0 ? "+" : "−"}${Math.abs(r.n)}</b>${r.waarom ? ` · ${schoon(r.waarom)}` : ""}</li>`).join("") : "<li>Nog geen punten uitgedeeld.</li>"}</ol>
+    ${laatste ? `<p class="sb-laatst"><b>${schoon(laatste.naam)} ${lxp > 0 ? "+" : "−"}${Math.abs(lxp)} XP</b>${laatste.waarom ? ` · ${schoon(laatste.waarom)}` : ""}</p>` : ""}
     <button class="knop" type="button" id="b-sb-tv">Toon op de tv (45 seconden)</button>`;
   $("b-sb-tv").onclick = async () => { if (Date.now() - sbGevraagd < 50000) return melding("Even geduld", "Het scorebord staat al op de tv."); sbGevraagd = Date.now();
     const ok = await Koppeling.stuur({ cmd: "scorebord" }); if (ok === false) melding("Niet gelukt", "De tv kon het niet ontvangen. Controleer je verbinding."); else melding("Op de tv", "Als de tv vrij is, staat het scorebord er nu 45 seconden op."); };
 }
+// his own painting at the top of the player card (from /portretten, once the regie has uploaded them)
+function tekenHeld() { const el = $("held"), u = wachter && Portret.url(wachter.naam); if (!el) return; el.classList.toggle("verborgen", !u); if (!u) return;
+  const k = window.KARAKTER?.[wachter.naam]; el.style.backgroundImage = `url(${u})`;
+  el.innerHTML = `<div class="held-lijst"></div><div class="held-naam"><div class="carved">${schoon(wachter.naam)}</div>${k ? `<small>${schoon(k.ras)} ${schoon(k.klasse)}</small>` : ""}</div>`; }
+Portret.op(() => { tekenHeld(); if (tabNu === "tafel") tekenTafel(); });
 function tekenTafel() {
   tafelOpen = halOpen();
   $("tafel-onder").textContent = tafelOpen ? "Tik op een Wachter om zijn rol en kracht te zien." : "De rollen zijn nog verzegeld tot de Eerste Dronk.";
   tekenScorebord();
-  Tafel.teken($("tafel-doos"), { open: tafelOpen, gekozen: tafelGekozen, opKies: (w, r) => { tafelGekozen = w.naam; $("tafel-kaart").innerHTML = Tafel.details(r, w); piep("kies", .5); } });
+  Tafel.teken($("tafel-doos"), { open: tafelOpen, gekozen: tafelGekozen, stand: publiek.scores?.stand || null, opKies: (w, r) => { tafelGekozen = w.naam; $("tafel-kaart").innerHTML = Tafel.details(r, w); piep("kies", .5); } });
 }
 // ---------- before the weekend ----------
 // Step 1 right away: Godfried's welcome (voice + the hall music after one tap), the order, the request for memories.
@@ -630,19 +667,28 @@ function spreek(bestand, klaar) {
 // Music and voice start inside the tap itself (a phone refuses sound that starts later), the first visit only;
 // "Laat Godfried spreken" plays it again.
 let introTimers = [];
+const STRIP = [ // one comic page per paragraph of the welcome: who he is (with the quiz hints), the Shadow, the guise, the seal
+  { hoek: "Bouillon · Anno 1096", vakken: [{ beeld: "a/strip/1a.webp" }, { beeld: "a/strip/1b.webp", labels: [["De Ardennen", 22, 22], ["Bouillon", 52, 48], ["De Semois", 74, 78]] }] },
+  { hoek: "Onder de burcht", vakken: [{ beeld: "a/strip/2a.webp" }, { beeld: "a/strip/2b.webp" }] },
+  { hoek: "Jouw gedaante", vakken: [{ beeld: "a/strip/3.webp" }] },
+  { hoek: "Onder mijn zegel", vakken: [{ beeld: "a/strip/4a.webp", h: 1.3 }, { beeld: "a/strip/4b.webp" }] },
+];
 function startIntro() {
   introTimers.forEach(clearTimeout); introTimers = [];
   const el = $("intro"), zinnen = welkomTekst();
   el.classList.remove("verborgen", "weg"); $("intro-verder").classList.remove("klaar");
-  $("intro-bg").play().catch(() => {});
   $("intro-tekst").innerHTML = zinnen.map((z) => `<p>${schoon(z)}</p>`).join("");
   $("intro-aan").textContent = `Aan ${wachter.naam}`;
   const ps = [...$("intro-tekst").children];
-  const b = $("intro-brief"); b.style.animation = "none"; void b.offsetWidth; b.style.animation = ""; // the letter unfolds again on a replay
+  // one painted panel per paragraph: who he is (with the quiz hints), the Shadow, the guise, the seal
+  const panelen = [STRIP[0], STRIP[1], ...(zinnen.length === 4 ? [STRIP[2]] : []), STRIP[3]];
+  $("strip").innerHTML = panelen.map((p) => `<div class="sp"><div class="sp-blad">${p.vakken.map((v, n) => `<div class="vak" style="flex:${v.h || 1}"><img src="${v.beeld}" alt="">${(v.labels || []).map(([t, x, y]) => `<span class="sp-label" style="left:${x}%;top:${y}%">${t}</span>`).join("")}${n === 0 && p.hoek ? `<div class="sp-hoek">${p.hoek}</div>` : ""}</div>`).join("")}</div></div>`).join("");
+  const sps = [...$("strip").children];
+  const paneel = (i) => { sps.forEach((s, n) => { s.classList.toggle("aan", n <= i); s.classList.toggle("nu", n === i); }); el.classList.toggle("na-eerste", i > 0); }; // the "Aan ..." label only on the first page
+  requestAnimationFrame(() => paneel(0));
   if (!el.querySelector(".sintel")) for (let i = 0; i < 14; i++) { const s = document.createElement("span"); s.className = "sintel";
     s.style.left = `${Math.random() * 100}%`; s.style.animationDuration = `${7 + Math.random() * 7}s`; s.style.animationDelay = `${-Math.random() * 12}s`; s.style.setProperty("--dx", `${Math.round((Math.random() - .5) * 120)}px`); el.appendChild(s); }
-  b.classList.remove("klaar");
-  const toon = (i) => ps.forEach((p, n) => p.classList.toggle("aan", n === i));
+  const toon = (i) => { ps.forEach((p, n) => p.classList.toggle("aan", n === i)); paneel(i); };
   const plan = (duur) => { // each paragraph gets a share of the voice by its length
     const totaal = zinnen.reduce((s, z) => s + z.length, 0); let t = 0;
     zinnen.forEach((z, i) => { introTimers.push(setTimeout(() => toon(i), t * 1000)); t += duur * z.length / totaal; });
@@ -657,12 +703,12 @@ function startIntro() {
   startMuziek();
   begin(spreek(`a/vooraf/welkom-${naamKlein()}.mp3`, stemNa));
 }
-function introKlaar() { $("intro-verder").classList.add("klaar"); $("intro-brief").classList.add("klaar"); }
+function introKlaar() { $("intro-verder").classList.add("klaar"); }
 function sluitIntro() {
   introTimers.forEach(clearTimeout); introTimers = [];
   if (stem) { stem.pause(); stem.dispatchEvent(new Event("ended")); }
   lokaal(`kronieken-intro-${wachter?.naam}-${publiek.ronde || 0}`, "gezien");
-  const el = $("intro"); el.classList.add("weg"); setTimeout(() => { el.classList.add("verborgen"); $("intro-bg").pause(); }, 1400);
+  const el = $("intro"); el.classList.add("weg"); setTimeout(() => el.classList.add("verborgen"), 1400);
   scrollTo(0, 0);
 }
 $("intro-verder").onclick = () => sluitIntro();
@@ -680,7 +726,7 @@ function toonVooraf(aan) {
   if (!aan || !wachter) $("stap3").classList.add("verborgen"); // step 3 shows itself when its time has come
   if (!aan || !wachter) { $("binnen").classList.add("verborgen"); document.body.classList.remove("bevel-eerst"); return; }
   if (!publiekGeladen) return;
-  if (!binnenGedaan && $("binnen").classList.contains("verborgen") && !document.hidden) $("binnen").classList.remove("verborgen");
+  if (!binnenGedaan && tabNu === "ik" && $("binnen").classList.contains("verborgen") && !document.hidden) $("binnen").classList.remove("verborgen"); // only on the Ik tab: never over the regie
   const test = +new URLSearchParams(location.search).get("stap") || 0; // ?stap=2 or ?stap=3 shows that step now, on this device only
   const nu = Date.now(), stap = test || (nu >= V.stap3 ? 3 : nu >= V.stap2 ? 2 : 1);
   const sleutelNu = `${wachter.naam}|${stap}|${JSON.stringify(mijnVooraf)}`;
@@ -796,7 +842,7 @@ $("b-geluid").onclick = () => { oudGeluid(); if (!geluidAan) { muziek?.pause(); 
 
 zetNaam(); klok(); teken(); tekenTabs(); toonTab(tabNu);
 setInterval(() => { klok(); teken(); }, 1000);
-Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; publiekGeladen = true; teken(); tekenTocht(); tekenKroniek(); tekenScorebord(); }, opVerraad: verraad,
+Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; publiekGeladen = true; teken(); tekenTocht(); tekenKroniek(); if (tabNu === "tafel") tekenTafel(); else tekenScorebord(); }, opVerraad: verraad,
   opVooraf: (v) => { mijnVooraf = v || {}; vooraafGetekend = ""; toonVooraf(!$("vooraf").classList.contains("verborgen")); } }).then(() => {
   const ik = Koppeling.ik; if (!ik) return;
   wachter = (window.WACHTERS || []).find((w) => w.naam === ik.naam) || { naam: ik.naam, token: ik.email }; token = wachter.token;
