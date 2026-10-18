@@ -3,22 +3,30 @@
 // Tijdlijn: zijn brief komt uit 1096 en spreekt over 930 jaar heen; als geest vertelt hij in hoofdstuk III ook hoe het
 // afliep (1099, 1100). Elke quizvraag is eerder verteld: vrijdag in de app-intro en hoofdstuk I, zaterdag in hoofdstuk II,
 // zondag in hoofdstuk III (zaterdagavond na de Reliekenkist).
+// vakken: de stripvakken op de tv (een bladzijde die zich vult terwijl hij vertelt): [beeld, uitsnede]; vakVan: welk vak bij welke zin hoort;
+// blad: de indeling van de bladzijde (kolommen, rijen en per rij welk vak waar staat, a = het eerste vak), zodat elk hoofdstuk eigen maten heeft.
 window.GODFRIED = {
   hoofdstukken: [
-    { nr: 1, titel: "Hoofdstuk I · De oproep", wanneer: "vrijdag, de opening", beeld: "a/godfried/kantelen.webp", stem: "godfried/hoofdstuk-1", tekst: [
+    { nr: 1, titel: "Hoofdstuk I · De oproep", wanneer: "vrijdag, de opening", beeld: "a/godfried/kantelen.webp", stem: "godfried/hoofdstuk-1",
+      vakken: [["a/strip/1a.webp", "70% 30%"], ["a/strip/1b.webp", "50% 58%"], ["a/godfried/strip/1c.webp", "38% 50%"], ["a/godfried/strip/1d.webp", "55% 28%"]], vakVan: [0, 1, 2, 3],
+      blad: { kol: "0.95fr 1fr 1.1fr", rij: "1fr 1fr", vlak: ["a b b", "a c d"] }, tekst: [
       "Het jaar des Heren 1096. Mijn naam is Godfried. Godfried van Bouillon.",
       "Hertog van Neder-Lotharingen. En heer van deze burcht, hoog op de rots boven de Semois, in het hart van de Ardennen.",
       "Ver in het oosten ligt Jeruzalem. De oproep is gedaan, en ik zal gaan. Mijn land laat ik achter. Zelfs mijn burcht geef ik op, om de grote tocht te kunnen betalen.",
       "Een ware Wachter kent zijn heer, zijn land, en de geschiedenis waarvoor hij waakt. Luister daarom goed naar mijn woorden. Alles wat ik jullie vertel, kan later van betekenis blijken.",
     ] },
-    { nr: 2, titel: "Hoofdstuk II · Een hertog zonder burcht", wanneer: "zaterdag, overdag", beeld: "a/godfried/portret.webp", stem: "godfried/hoofdstuk-2", tekst: [
+    { nr: 2, titel: "Hoofdstuk II · Een hertog zonder burcht", wanneer: "zaterdag, overdag", beeld: "a/godfried/portret.webp", stem: "godfried/hoofdstuk-2",
+      vakken: [["a/godfried/strip/2a.webp", "72% 32%"], ["a/godfried/strip/2b.webp", "40% 45%"], ["a/godfried/strip/2c.webp", "55% 38%"], ["a/godfried/strip/2d.webp", "48% 50%"], ["a/godfried/strip/2e.webp", "50% 55%"]], vakVan: [0, 1, 2, 3, 4],
+      blad: { kol: "0.8fr 0.6fr 1.15fr 0.9fr", rij: "1fr 1.1fr", vlak: ["a b b b", "c c d e"] }, tekst: [
       "Wachters. Ik vertelde jullie wie ik ben. Nu vertel ik hoe ik het werd.",
       "Jarenlang diende ik keizer Hendrik de Vierde. Ik vocht voor hem, tot voor de muren van Rome. Als dank gaf hij mij Neder-Lotharingen.",
       "Maar een tocht naar Jeruzalem kost meer dan moed. Daarom verpandde ik mijn burcht Bouillon aan de prins-bisschop van Luik. Mijn erfdeel, voor zilver, paarden en mannen.",
       "En ik ga niet alleen. Mijn broer Boudewijn trekt met mij mee naar het oosten.",
       "Vanavond betreden jullie mijn burcht, hier in de Ardennen. Kijk goed om je heen. De Schaduwkoning kent elke zwakke plek van een vesting… en misschien ook die van haar Wachters.",
     ] },
-    { nr: 3, titel: "Hoofdstuk III · Wat de Kronieken schrijven", wanneer: "zaterdagavond, na de Reliekenkist", beeld: "a/godfried/kantelen.webp", stem: "godfried/hoofdstuk-3", tekst: [
+    { nr: 3, titel: "Hoofdstuk III · Wat de Kronieken schrijven", wanneer: "zaterdagavond, na de Reliekenkist", beeld: "a/godfried/kantelen.webp", stem: "godfried/hoofdstuk-3",
+      vakken: [["a/godfried/strip/3a.webp", "50% 40%"], ["a/godfried/strip/3b.webp", "62% 40%"], ["a/godfried/strip/3c.webp", "60% 40%"], ["a/godfried/strip/3d.webp", "45% 50%"], ["a/godfried/strip/3e.webp", "50% 35%"]], vakVan: [0, 1, 2, 3, 4],
+      blad: { kol: "1fr 0.85fr 0.75fr 1.2fr", rij: "1.15fr 1fr", vlak: ["a a a b", "c d d e"] }, tekst: [
       "Toen ik jullie mijn brief schreef, wist ik niet wat mij wachtte. Nu, negen eeuwen later, weet ik het wel. Luister.",
       "In 1099, na drie jaar van marsen en belegeringen, namen wij Jeruzalem in.",
       "Ze wilden mij tot koning kronen. Maar ik weigerde een gouden kroon te dragen, waar Christus een kroon van doornen droeg. Ik noemde mij slechts Beschermer van het Heilig Graf.",

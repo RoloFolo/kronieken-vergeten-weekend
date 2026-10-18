@@ -614,6 +614,22 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .verteller .vt-zinnen { display: grid; width: min(70vw, 1400px); }
 .verteller .vt-zinnen p { grid-area: 1 / 1; margin: 0; font: italic 400 clamp(20px, 2.2vw, 46px)/1.45 var(--display); color: #fff3dc; text-shadow: 0 2px 14px #000; opacity: 0; transform: translateY(12px); transition: opacity 1.2s, transform 1.2s; text-wrap: balance; }
 .verteller .vt-zinnen p.aan { opacity: 1; transform: none; }
+/* a chapter as a comic page: the panels fill in while he speaks, the one he talks about lights up */
+.verteller.strip .vt-beeld { display: none; }
+.verteller.strip { background: radial-gradient(ellipse 100% 45% at 50% 0%, rgba(150,18,28,.4), transparent 60%), #0b0607; }
+.verteller.strip::after { background: linear-gradient(180deg, transparent 62%, rgba(7,4,5,.9) 76%, #070405 100%); }
+.vt-blad { position: absolute; left: 3vw; right: 3vw; top: 3.5vh; bottom: 27vh; display: none; gap: 1.4vh 1vw; }
+.verteller.strip .vt-blad { display: grid; }
+/* panels not yet told are empty frames; the drawing wipes in when he gets there */
+.vt-vak { position: relative; min-width: 0; min-height: 0; overflow: hidden; background: rgba(20,8,10,.6); border: 1px solid rgba(184,149,95,.45); box-shadow: 0 0 0 4px #070405, 0 0 0 5px rgba(184,149,95,.2);
+  transition: filter .9s ease, box-shadow .9s ease, border-color .9s ease; filter: brightness(.45) saturate(.7); }
+.vt-vak img { clip-path: inset(0 0 0 100%); transition: clip-path 1.2s cubic-bezier(.7,0,.2,1); }
+.vt-vak.aan { border-color: #b8955f; } .vt-vak.aan img { clip-path: inset(0 0 0 0); }
+.vt-vak.nu { filter: none; box-shadow: 0 0 0 4px #070405, 0 0 0 5px #d9b77a, 0 0 40px rgba(226,50,60,.55); }
+.vt-vak img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; transform-origin: 50% 35%; }
+.vt-vak.nu img { animation: kenburns 20s ease-out both; }
+.verteller.strip .vt-tekst { bottom: 4vh; }
+.verteller.strip .vt-zinnen p { font-size: clamp(18px, 1.9vw, 40px); }
 /* Godfried's quiz before dinner: his portrait on the left, the question on the right */
 .gquiz { position: absolute; inset: 0; z-index: 30; display: grid; grid-template-columns: minmax(0, 38fr) minmax(0, 62fr); background: #090506; opacity: 0; transition: opacity 1.2s ease; }
 .gquiz.aan { opacity: 1; }
@@ -644,7 +660,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
   background: url(a/godfried/gezicht.webp) center / cover; border: 3px solid #b8955f; box-shadow: 0 0 0 5px rgba(10,5,6,.8), 0 0 40px rgba(255,190,90,.35); }
 #vals .uitleg-kaart::before { filter: saturate(1.3) contrast(1.1); box-shadow: 0 0 0 5px rgba(10,5,6,.8), 0 0 40px rgba(226,50,60,.55); }
 /* the call to gather: the church bell strikes three times and a banner pulses over whatever is on screen */
-.oproep { position: absolute; inset: 0; z-index: 45; display: grid; place-items: center; pointer-events: none; opacity: 0; transition: opacity .8s; background: radial-gradient(ellipse 70% 55% at 50% 50%, rgba(7,4,5,.25), rgba(7,4,5,.7)); }
+.oproep { position: absolute; inset: 0; z-index: 45; display: grid; place-items: center; pointer-events: none; opacity: 0; transition: opacity .8s; background: radial-gradient(ellipse 70% 55% at 50% 50%, rgba(7,4,5,.78), rgba(7,4,5,.94)); backdrop-filter: blur(4px) brightness(.55); -webkit-backdrop-filter: blur(4px) brightness(.55); } /* dim what is behind, so the call reads */
 .oproep.aan { opacity: 1; }
 .oproep div { display: grid; justify-items: center; gap: 1.6vh; text-align: center; animation: oproepPuls 1.8s ease-in-out infinite; }
 .oproep b { font-size: clamp(34px, 5vw, 110px); line-height: 1; filter: drop-shadow(0 0 30px rgba(255,190,90,.6)); }
@@ -1048,7 +1064,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <div class="g-titel" id="g-titel"><span class="carved" id="g-titel-nr"></span><h2 class="carved" id="g-titel-naam"></h2></div>
     <div class="g-kaart" id="g-kaart"><div class="g-inhoud" id="g-inhoud"></div><div class="g-stempel carved" id="g-stempel"></div></div>
   </div>
-  <div class="verteller" id="verteller" hidden aria-live="polite"><img class="vt-beeld" id="vt-beeld" alt=""><div class="vt-tekst"><div class="vt-kop carved" id="vt-kop"></div><div class="vt-zinnen" id="vt-zinnen"></div></div></div>
+  <div class="verteller" id="verteller" hidden aria-live="polite"><img class="vt-beeld" id="vt-beeld" alt=""><div class="vt-blad" id="vt-blad"></div><div class="vt-tekst"><div class="vt-kop carved" id="vt-kop"></div><div class="vt-zinnen" id="vt-zinnen"></div></div></div>
   <div class="gquiz" id="gquiz" hidden aria-live="polite"><div class="gq-portret"><img src="a/godfried/portret.webp" alt="Godfried van Bouillon"></div>
     <div class="gq-kaart"><div class="gq-kop carved" id="gq-kop"></div><div class="gq-zegels" id="gq-zegels"></div><div class="gq-zegel" id="gq-zegel"></div><div class="gq-vraag" id="gq-vraag"></div><div class="gq-antwoord carved" id="gq-antwoord"></div></div></div>
   <div class="puntstrook" id="puntstrook" aria-live="polite"></div>
@@ -1147,16 +1163,16 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=99"></script>
-<script src="a/godfried.js?v=99"></script>
-<script src="a/spel.js?v=99"></script>
-<script src="a/voorbereiding.js?v=99"></script>
-<script src="a/wachters.js?v=99"></script>
-<script src="a/firebase-config.js?v=99"></script>
-<script src="a/portretten.js?v=99"></script>
-<script src="a/koppeling.js?v=99"></script>
-<script src="a/rollen.js?v=99"></script>
-<script src="a/tafel.js?v=99"></script>
+<script src="a/events.js?v=100"></script>
+<script src="a/godfried.js?v=100"></script>
+<script src="a/spel.js?v=100"></script>
+<script src="a/voorbereiding.js?v=100"></script>
+<script src="a/wachters.js?v=100"></script>
+<script src="a/firebase-config.js?v=100"></script>
+<script src="a/portretten.js?v=100"></script>
+<script src="a/koppeling.js?v=100"></script>
+<script src="a/rollen.js?v=100"></script>
+<script src="a/tafel.js?v=100"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2627,11 +2643,19 @@ function vertel(h, klaar) {
   vertelSla(true); vertelLoopt = true; vertelKlaar = klaar; kroniek.add(h.nr); meld();
   const v = $("verteller"), z = $("vt-zinnen");
   $("vt-beeld").src = h.beeld; $("vt-kop").textContent = h.titel;
+  // comic page: 4 panels as 2 + 2, 5 as 2 + 3, otherwise one row
+  // the page: a grid with its own sizes per chapter (h.blad), each panel in its area (a = first) with its own crop
+  const vk = (h.vakken || []).map((v) => Array.isArray(v) ? v : [v, "50% 40%"]), bl = h.blad || { kol: `repeat(${Math.min(vk.length, 3)}, 1fr)`, rij: "1fr", vlak: [vk.map((_, i) => "abcdef"[i]).join(" ")] };
+  const blad = $("vt-blad"); blad.style.gridTemplateColumns = bl.kol; blad.style.gridTemplateRows = bl.rij; blad.style.gridTemplateAreas = bl.vlak.map((r) => `"${r}"`).join(" ");
+  blad.innerHTML = vk.map(([b, pos], i) => `<div class="vt-vak" data-i="${i}" style="grid-area:${"abcdef"[i]}"><img src="${b}" alt="" style="object-position:${pos}"></div>`).join("");
+  v.classList.toggle("strip", vk.length > 0);
+  const vakken = [...$("vt-blad").querySelectorAll(".vt-vak")];
+  const toonVak = (i) => { const k = h.vakVan?.[i] ?? i; vakken.forEach((el) => { const n = +el.dataset.i; el.classList.toggle("aan", n <= k); el.classList.toggle("nu", n === k); }); };
   z.innerHTML = h.tekst.map((t) => `<p>${schoon(t)}</p>`).join("");
   v.hidden = false; void v.offsetWidth; v.classList.add("aan"); demp(true);
   const ps = [...z.children], t = (ms, fn) => vertelTimers.push(setTimeout(fn, ms));
   const plan = (duur) => { const tot = h.tekst.reduce((s, x) => s + x.length, 0); let s = 0;
-    h.tekst.forEach((x, i) => { t(s * 1000, () => ps.forEach((p, n) => p.classList.toggle("aan", n === i))); s += duur * x.length / tot; }); };
+    h.tekst.forEach((x, i) => { t(s * 1000, () => { ps.forEach((p, n) => p.classList.toggle("aan", n === i)); toonVak(i); }); s += duur * x.length / tot; }); };
   t(1600, () => { vertelStem = stemMet(h.stem, 1, () => t(1800, () => vertelSla()), h.tekst.join(" ").length * 70);
     let gepland = false; const metDuur = () => { if (!gepland && isFinite(vertelStem.duration) && vertelStem.duration > 0) { gepland = true; plan(vertelStem.duration); } };
     vertelStem.addEventListener("loadedmetadata", metDuur); metDuur(); t(1500, () => { if (!gepland) { gepland = true; plan(h.tekst.join(" ").length / 14); } }); });

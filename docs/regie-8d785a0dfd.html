@@ -112,7 +112,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   <button class="goud groot" id="b-oproep" type="button" style="margin:0">Oproep: iedereen naar het scherm</button>
   <nav class="fases" id="fases" role="tablist" aria-label="Fases">
     <button type="button" role="tab" data-fase="vooraf">Vooraf</button><button type="button" role="tab" data-fase="start">Start</button>
-    <button type="button" role="tab" data-fase="hall">Hall</button><button type="button" role="tab" data-fase="tocht">Tocht</button>
+    <button type="button" role="tab" data-fase="hall">Hall</button><button type="button" role="tab" data-fase="xp">XP</button><button type="button" role="tab" data-fase="godfried">Godfried</button><button type="button" role="tab" data-fase="tocht">Tocht</button>
     <button type="button" role="tab" data-fase="finale">Finale</button><button type="button" role="tab" data-fase="ere">Ere</button>
     <button type="button" role="tab" data-fase="beheer">Beheer</button>
   </nav>
@@ -131,7 +131,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div class="schermen" id="schermen"></div>
   </section>
 
-  <section class="kaart" id="s-punt" data-fase="hall tocht finale">
+  <section class="kaart" id="s-punt" data-fase="xp tocht finale">
     <h2>XP geven of afnemen</h2>
     <p class="klein" style="margin:0 0 8px">Voor een volbrachte quest (de XP staat op de kaart) of iets wat iemand echt deed. Hij krijgt de XP, live aan de Ronde Tafel; het Zegel krijgt fiches zoals op de kaarten: 5–10 XP is 1, 20 is 2, 30 is 3. Was hij op dat moment verrader en kost het XP, dan telt het als verraderswerk.</p>
     <div class="rij" id="punt-wie" style="grid-template-columns:repeat(3,1fr)"></div>
@@ -141,7 +141,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <button class="goud groot" id="b-punt" type="button" style="margin-top:8px" disabled>Kies wie, welk Zegel en hoeveel</button>
     <p class="klein" id="punt-stand" style="margin:8px 0 0"></p>
   </section>
-  <section class="kaart" id="s-godfried" data-fase="hall finale">
+  <section class="kaart" id="s-godfried" data-fase="godfried finale">
     <h2>Godfried</h2>
     <p class="klein" style="margin:0 0 8px">Zijn verhaal (de quizvragen komen hieruit) en elke avond vóór het eten vier vragen, één per Zegel: goed +1, fout −1.</p>
     <div class="rij"><button id="b-hfd-2" type="button">Hoofdstuk II vertellen</button><button id="b-hfd-3" type="button">Hoofdstuk III vertellen</button></div>
@@ -254,7 +254,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div class="lijst" id="ere-lijst"></div>
   </section>
 
-  <section class="kaart" data-fase="ere hall">
+  <section class="kaart" data-fase="xp ere">
     <h2>Voor de aftiteling</h2>
     <p class="klein" style="margin:0 0 8px">Gebeurt er iets wat de Kronieken moeten onthouden? Zet het erin: een extra titel, een moment of een uitspraak. Het komt in de aftiteling.</p>
     <div class="rij" id="cr-soort" style="grid-template-columns:repeat(3,1fr)"><button type="button" data-s="titel" class="goud">Titel</button><button type="button" data-s="moment">Moment</button><button type="button" data-s="uitspraak">Uitspraak</button></div>
@@ -320,15 +320,15 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=99"></script>
-<script src="a/godfried.js?v=99"></script>
-<script src="a/spel.js?v=99"></script>
-<script src="a/wachters.js?v=99"></script>
-<script src="a/rollen.js?v=99"></script>
-<script src="a/firebase-config.js?v=99"></script>
-<script src="a/portretten.js?v=99"></script>
-<script src="a/koppeling.js?v=99"></script>
-<script src="a/voorbereiding.js?v=99"></script>
+<script src="a/events.js?v=100"></script>
+<script src="a/godfried.js?v=100"></script>
+<script src="a/spel.js?v=100"></script>
+<script src="a/wachters.js?v=100"></script>
+<script src="a/rollen.js?v=100"></script>
+<script src="a/firebase-config.js?v=100"></script>
+<script src="a/portretten.js?v=100"></script>
+<script src="a/koppeling.js?v=100"></script>
+<script src="a/voorbereiding.js?v=100"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
