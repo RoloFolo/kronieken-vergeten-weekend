@@ -50,7 +50,7 @@ window.ROLLEN = [
 ];
 
 // Ras en LARP-class per Wachter (Jean, 18 okt). Die krijgt iedereen al vooraf, met tips voor kostuum en attributen;
-// de rol zelf (naam, krachten, Zegels) blijft verborgen tot de Eerste Dronk. Jeroen, Rob en Roland: ras nog te bevestigen.
+// de rol zelf (naam, krachten, Zegels) blijft verborgen tot de Eerste Dronk. Bijgewerkt 18 okt; Roland: ras (Dwarf of Human) nog te bevestigen.
 window.KARAKTER = {
   Geert: { ras: "Half-Orc", klasse: "Cleric", props: "een pij of kap, een heilig symbool aan een koord, een flesje ‘heilwater’ en verband voor de gewonden" },
   Roy: { ras: "Human", klasse: "Fighter", props: "een tuniek met riem, een houten zwaard of strijdbijl, en een buidel voor de voorraad" },
@@ -58,11 +58,11 @@ window.KARAKTER = {
   Stefan: { ras: "Human", klasse: "Wizard", props: "een mantel met kap, een staf en een oud boek met spreuken" },
   Jeroen: { ras: "Half-Elf", klasse: "Ranger", props: "een groene of bruine mantel, een jachthoorn of boog, en een mes aan de riem" },
   Ivo: { ras: "Gnome", klasse: "Bard", props: "een hoed met veer, een luit of fluit, en een kelk voor de Amarone" },
-  Johan: { ras: "Human", klasse: "Gambler", props: "een vest, een dobbelbeker en een buidel met munten, en een kaartspel in de mouw" },
-  Robin: { ras: "Dwarf", klasse: "Innkeeper", props: "een baard, een leren schort, een bierkroes en een theedoek over de schouder" },
-  Rob: { ras: "Halfling", klasse: "Diplomat", props: "een nette mantel, een perkamentrol met zegel en een zegelring" },
-  Jean: { ras: "Human", klasse: "Rogue", props: "een donkere kap, zwarte handschoenen en een (nep)dolk" },
-  Roland: { ras: "Dwarf", klasse: "Shieldbearer", props: "een schild, een helm of maliënkap, en een stevige baard" },
+  Johan: { ras: "Human", klasse: "Thief", props: "een donker vest, een buidel munten aan de riem, een dobbelbeker en een kaartspel in de mouw" },
+  Robin: { ras: "Dwarf", klasse: "Monk", props: "een eenvoudige pij met een touw als riem, een baard, een gebedssnoer en een staf" },
+  Rob: { ras: "Halfling", klasse: "Paladin", props: "een tabbaard met een embleem, een (nep)zwaard en een heilig symbool aan een ketting" },
+  Jean: { ras: "Human", klasse: "Thief", props: "een donkere kap, zwarte handschoenen, een (nep)dolk en een bos lopers" },
+  Roland: { ras: "Dwarf", klasse: "Fighter", props: "een schild, een helm of maliënkap, een strijdbijl en een stevige baard" },
 };
 
 // Wie krijgt welke rol. VOORSTEL (zie Drive: 09 Voorstel rollen en bevelen), nog te bevestigen door Roland en Jean.
