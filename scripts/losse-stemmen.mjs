@@ -30,8 +30,8 @@ const REGELS = [
   ["einde-schaduw", "Enceladus", VERSLAGEN, "Nee… Nee! Dit kan niet… Vier Zegels… één broederschap… Ik… ik zal… [whispering] ooit… kom ik terug."],
   ["einde-godfried", "Charon", GODFRIED, "Het is volbracht. De Zegels zijn vernieuwd, en de Schaduwkoning slaapt weer onder mijn kasteel. Niet door één held… maar door een broederschap die voor elkaar zorgde. Wachters van Bouillon, ik ben trots op jullie. Open nu de envelop op de schoorsteen."],
   // De Eerste Dronk (na de proloog) en de uitleg van de Hall.
-  ["dronk-intro", "Charon", GODFRIED, "Eén ding nog, Wachters. Een broederschap begint met een dronk. Haal jullie drankjes, schenk de glazen vol… en kom terug bij het vuur. Ik wacht op jullie."],
-  ["dronk-toost", "Charon", GODFRIED, "Hef het glas, Wachters."],
+  ["dronk-intro", "Charon", GODFRIED, "Eén ding nog, Wachters. Een broederschap begint met een dronk. Elf Wachters… elf glazen. Ze staan voor jullie klaar. Pak je glas… en kom bij het vuur."],
+  ["dronk-toost", "Charon", PROOST, "Hef het glas! Elf Wachters, elf glazen. Hef je glas, proost op elkaar… en laat het weekend beginnen!"],
   ["dronk-1", "Charon", GODFRIED, "Bij het vuur… dat nooit dooft."],
   ["dronk-2", "Charon", GODFRIED, "Bij de hoorn… die nooit leeg raakt."],
   ["dronk-3", "Charon", GODFRIED, "Bij het schild… van onze broederschap."],

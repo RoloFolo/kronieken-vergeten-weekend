@@ -1210,16 +1210,16 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=119"></script>
-<script src="a/godfried.js?v=119"></script>
-<script src="a/spel.js?v=119"></script>
-<script src="a/voorbereiding.js?v=119"></script>
-<script src="a/wachters.js?v=119"></script>
-<script src="a/firebase-config.js?v=119"></script>
-<script src="a/portretten.js?v=119"></script>
-<script src="a/koppeling.js?v=119"></script>
-<script src="a/rollen.js?v=119"></script>
-<script src="a/tafel.js?v=119"></script>
+<script src="a/events.js?v=120"></script>
+<script src="a/godfried.js?v=120"></script>
+<script src="a/spel.js?v=120"></script>
+<script src="a/voorbereiding.js?v=120"></script>
+<script src="a/wachters.js?v=120"></script>
+<script src="a/firebase-config.js?v=120"></script>
+<script src="a/portretten.js?v=120"></script>
+<script src="a/koppeling.js?v=120"></script>
+<script src="a/rollen.js?v=120"></script>
+<script src="a/tafel.js?v=120"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1524,34 +1524,44 @@ tik(); setInterval(tik, 10000);
 /* ================= sound ================= */
 const bron = (n) => `a/${n}.mp3`;
 function speel(n, vol = 1, rate = 1) { const a = new Audio(bron(n)); a.volume = vol; a.playbackRate = rate; a.play().catch(() => {}); return a; }
+// one Godfried voice at a time: a new line silences the one still speaking, so voices never pile up
+let stemNu = null;
+function stemKanaal(a) { const oud = stemNu; if (oud && oud !== a && !oud.paused && !oud.ended) { fade(oud, 0, 250); setTimeout(() => oud.pause(), 300); } stemNu = a; return a; }
+const stemSpeelt = () => !!stemNu && !stemNu.paused && !stemNu.ended;
+// one fade per sound at a time: a newer fade takes over, so two fades never fight (that left music silent or too loud)
+const fades = new WeakMap();
 function fade(a, naar, ms) {
-  if (!a) return; const van = a.volume, s = performance.now();
-  const stap = (nu) => { const p = Math.min(1, (nu - s) / ms); a.volume = Math.max(0, Math.min(1, van + (naar - van) * p)); if (p < 1) requestAnimationFrame(stap); };
+  if (!a) return; const id = {}; fades.set(a, id); const van = a.volume, s = performance.now();
+  const stap = (nu) => { if (fades.get(a) !== id) return; const p = Math.min(1, (nu - s) / ms); a.volume = Math.max(0, Math.min(1, van + (naar - van) * p)); if (p < 1) requestAnimationFrame(stap); };
   requestAnimationFrame(stap);
 }
 function muziekLus(naam, vol) {
-  const spelers = [new Audio(bron(naam)), new Audio(bron(naam))]; let i = 0, actief = true, doel = vol, timer;
-  const start = (a) => { a.currentTime = 0; a.volume = 0; a.play().catch(() => {}); fade(a, doel, 2500); };
+  // doel: the level the scene wants; demper: lower while Godfried speaks (the scene level stays, so ducking never resets it)
+  const spelers = [new Audio(bron(naam)), new Audio(bron(naam))]; let i = 0, actief = true, doel = vol, demper = 1, timer, stopTimer;
+  const niv = () => doel * demper;
+  const start = (a) => { a.currentTime = 0; a.volume = 0; a.play().catch(() => {}); fade(a, niv(), 2500); };
   const bewaak = () => { const a = spelers[i]; if (actief && a.duration && a.currentTime > a.duration - 3) { fade(a, 0, 2800); i = 1 - i; start(spelers[i]); } timer = setTimeout(bewaak, 250); };
   return {
-    play() { actief = true; start(spelers[i]); clearTimeout(timer); bewaak(); },
-    vol(v, ms = 1500) { doel = v; fade(spelers[i], v, ms); },
+    // a quick play after stop keeps the music (the pending pause is cancelled); already playing: only back to its level
+    play() { clearTimeout(stopTimer); actief = true; const a = spelers[i]; if (a.paused || a.ended) start(a); else fade(a, niv(), 1500); clearTimeout(timer); bewaak(); },
+    vol(v, ms = 1500) { doel = v; fade(spelers[i], niv(), ms); },
+    demp(f, ms = 1500) { demper = f; fade(spelers[i], niv(), ms); },
     niveau() { return doel; },
     stil(ms) { fade(spelers[i], 0, ms); }, // silent for a moment, keeps its level
-    terug(ms) { fade(spelers[i], doel, ms); },
+    terug(ms) { fade(spelers[i], niv(), ms); },
     vervorm(laag, ms) { // glide the pitch down, hold, glide back (the traitor's out-of-tune song)
       const zet = (r) => spelers.forEach((a) => { a.preservesPitch = false; a.playbackRate = r; });
       const glij = (van, naar, duur, klaar) => { const s = performance.now(); const stap = (nu) => { const p = Math.min(1, (nu - s) / duur); zet(van + (naar - van) * p); if (p < 1) requestAnimationFrame(stap); else klaar?.(); }; requestAnimationFrame(stap); };
       glij(1, laag, 1800, () => setTimeout(() => glij(laag, 1, 2200), ms));
     },
     hapert() { return actief && spelers[i].paused; }, // should be playing, but the browser refused it (no click on the tv yet)
-    stop(ms = 1500) { actief = false; clearTimeout(timer); spelers.forEach((a) => fade(a, 0, ms)); setTimeout(() => spelers.forEach((a) => a.pause()), ms + 50); },
+    stop(ms = 1500) { actief = false; clearTimeout(timer); spelers.forEach((a) => fade(a, 0, ms)); clearTimeout(stopTimer); stopTimer = setTimeout(() => spelers.forEach((a) => a.pause()), ms + 50); },
   };
 }
 const lus = (n, v) => { const a = new Audio(bron(n)); a.loop = true; a.volume = v; return a; };
 const vuur = lus("vuur", .12), wind = lus("wind", .2);
 const halMuziek = muziekLus("muziek-hal", .5);
-let schaduwMuziek = null, muziekAan = false;
+let schaduwMuziek = null, muziekAan = false, schaduwStart = null, halTerug = null;
 function startMuziek() { if (muziekAan && !halMuziek.hapert()) return; muziekAan = true; halMuziek.play(); }
 // a tv started from the regie without a click has no sound yet: the first click anywhere brings the hall music in after all
 addEventListener("pointerdown", () => { if (muziekAan && halMuziek.hapert()) halMuziek.play(); });
@@ -1664,10 +1674,10 @@ function naarHal() { // the letter is done: on to the First Toast
 }
 // ===== De Eerste Dronk: Godfried speaks a toast line by line, the group repeats it, then the Hall opens =====
 const DRONK = ["Bij het vuur dat nooit dooft,", "bij de hoorn die nooit leeg raakt,", "bij het schild van onze broederschap,", "en bij het hart van de Ardennen:", "Wij waken. Proost!"];
-let dronkActief = false, dronkKlaar = false, dronkStem = null, dronkWacht = false, toostBezig = false;
+let dronkActief = false, dronkKlaar = false, dronkStem = null, dronkWacht = false, toostBezig = false, dronkTel = null;
 function speelStem(naam, klaar, reserve = 6000) { // plays a voice line, calls klaar when it ends (or after a fallback time)
   let gedaan = false; const af = () => { if (!gedaan) { gedaan = true; klaar(); } };
-  dronkStem = speel(naam, 1); dronkStem.addEventListener("ended", af); dronkStem.addEventListener("error", () => setTimeout(af, reserve));
+  dronkStem = stemKanaal(speel(naam, 1)); dronkStem.addEventListener("ended", af); dronkStem.addEventListener("error", () => setTimeout(af, reserve));
   setTimeout(af, 30000);
 }
 function startDronk() {
@@ -1675,22 +1685,22 @@ function startDronk() {
   $("brief").hidden = true; document.querySelectorAll(".zegel-kant").forEach((z) => (z.hidden = true));
   $("dronk").hidden = false; $("dronk-regel").textContent = ""; $("dronk-hint").textContent = "";
   halMuziek.vol(.12, 2000);
-  setTimeout(() => { $("dronk-tekst").textContent = "Eén ding nog, Wachters. Een broederschap begint met een dronk. Haal jullie drankjes, schenk de glazen vol… en kom terug bij het vuur. Ik wacht op jullie."; $("dronk-tekst").hidden = false; }, 1200);
+  setTimeout(() => { $("dronk-tekst").textContent = "Eén ding nog, Wachters. Een broederschap begint met een dronk. Elf Wachters… elf glazen. Ze staan voor jullie klaar. Pak je glas… en kom bij het vuur."; $("dronk-tekst").hidden = false; }, 1200);
   setTimeout(() => speelStem("dronk-intro", () => {
     $("dronk-tekst").hidden = true;
-    // wait for the organisers: fetching drinks takes as long as it takes
+    // the eleven glasses stand ready: a minute to take one, then Godfried raises his (the regie can start sooner)
     dronkWacht = true; meld();
-    $("dronk-regel").textContent = "Haal je drankje"; $("dronk-regel").classList.add("aan");
-    $("dronk-hint").textContent = "Schenk de glazen vol en kom terug bij het vuur.";
+    $("dronk-regel").textContent = "Pak je glas"; $("dronk-regel").classList.add("aan");
     halMuziek.vol(.35, 3000);
+    let over = 60; const tel = () => { if (!dronkWacht) return; $("dronk-hint").textContent = `Elf Wachters, elf glazen. Over ${over} seconden heft Godfried het zijne.`; if (over-- <= 0) return startToost(); dronkTel = setTimeout(tel, 1000); }; tel();
   }), 1200);
 }
 function startToost() {
-  if (!dronkWacht || toostBezig) return; dronkWacht = false; toostBezig = true; meld();
-  halMuziek.vol(.1, 1500); $("dronk-hint").textContent = "";
+  if (!dronkWacht || toostBezig) return; dronkWacht = false; toostBezig = true; clearTimeout(dronkTel); meld();
+  halMuziek.vol(.1, 1500); $("dronk-hint").textContent = "Elf Wachters, elf glazen. Hef je glas, proost op elkaar en laat het weekend beginnen!";
   $("verhaal").classList.add("toost");
-  const el = $("dronk-regel"); el.classList.remove("aan"); void el.offsetWidth; el.textContent = "Hef het glas"; el.classList.add("aan");
-  speelStem("dronk-toost", () => setTimeout(() => dronkRegel(0), 500), 2500);
+  const el = $("dronk-regel"); el.classList.remove("aan"); void el.offsetWidth; el.textContent = "Hef het glas!"; el.classList.add("aan");
+  speelStem("dronk-toost", () => setTimeout(() => dronkRegel(0), 500), 9000);
 }
 function dronkRegel(i) {
   if (!dronkActief) return;
@@ -2553,11 +2563,19 @@ function overnameVuur() {
 }
 function stemMet(naam, vol, klaar, reserve = 5000) {
   let af = false, vangnet = setTimeout(() => k(), reserve); const k = () => { if (!af) { af = true; clearTimeout(vangnet); klaar?.(); } };
-  const a = speel(naam, vol); a.addEventListener("ended", k);
+  const a = stemKanaal(speel(naam, vol)); a.addEventListener("ended", k);
   a.addEventListener("loadedmetadata", () => { clearTimeout(vangnet); vangnet = setTimeout(k, a.duration * 1000 + 800); });
   return a;
 }
-function demp(aan) { if (aan) { halMuziek.vol(.06, 800); fade(vuur, .02, 800); } else { halMuziek.vol(.5, 2500); fade(vuur, .12, 2500); } }
+// Godfried speaks: music and fire go down. They come back only when nothing that speaks is still busy,
+// and a safety net brings them back if a scene forgot to (the music can never stay low)
+let gedempt = false;
+const moetStil = () => vertelLoopt || !!gq || truc;
+function demp(aan) {
+  if (aan) { gedempt = true; halMuziek.demp(.12, 800); fade(vuur, .02, 800); return; }
+  setTimeout(() => { if (!gedempt || moetStil()) return; gedempt = false; halMuziek.demp(1, 2500); fade(vuur, .12, 2500); }, 60);
+}
+setInterval(() => { if (gedempt && !moetStil() && !stemSpeelt()) demp(false); }, 10000);
 function verberg(id, ms = 1600) { const el = $(id); el.classList.add("weg"); setTimeout(() => { el.hidden = true; el.classList.remove("weg"); }, ms); }
 const VLOEKEN = [
   "Tot de Schaduw weer beweegt, spreekt hij alleen fluisterend.",
@@ -3032,7 +3050,7 @@ function toonEvent(e, metStem = true) {
   $("ev-label").textContent = SOORT[e.soort] ?? "Schaduw-event";
   $("ev-name").textContent = e.naam; $("ev-rule").textContent = ""; $("ev-stake").innerHTML = ""; $("ev-d20").classList.remove("aan");
   clearInterval(typer); fade(stem, 0, 400);
-  if (metStem) setTimeout(() => { stem = speel(`events/${e.id}`, 1); schaduwMuziek?.vol(.2, 800); }, 300);
+  if (metStem) setTimeout(() => { stem = stemKanaal(speel(`events/${e.id}`, 1)); schaduwMuziek?.vol(.2, 800); }, 300);
   setTimeout(() => {
     if (!wakker() || EVENT !== e) return;
     const doel = $("ev-rule"), tekst = e.regel; let i = 0;
@@ -3115,7 +3133,8 @@ function schaduw() {
   speel("klok", .9, .8); bliksem(0);
   setTimeout(() => { speel("donder-hard", .9); bliksem(0); }, 700);
   stormTimer = setInterval(() => bliksem(0), 1500);
-  setTimeout(() => { schaduwMuziek = muziekLus("muziek-ontwaken", .55); schaduwMuziek.play(); }, 900);
+  clearTimeout(halTerug); clearTimeout(schaduwStart); schaduwMuziek?.stop(800);
+  schaduwStart = setTimeout(() => { schaduwMuziek = muziekLus("muziek-ontwaken", .55); schaduwMuziek.play(); }, 900);
   $("ev-name").textContent = ""; $("ev-rule").textContent = ""; $("ev-stake").innerHTML = "";
   setTimeout(() => $("event").classList.add("show"), 1600);
   setTimeout(() => toonEvent(nieuw), 2300);
@@ -3132,11 +3151,11 @@ function uitslag(goed) {
 function hal() {
   if (!wakker()) return;
   clearInterval(typer); clearInterval(stormTimer); fade(stem, 0, 800);
-  schaduwMuziek?.stop(2000); schaduwMuziek = null;
+  clearTimeout(schaduwStart); schaduwMuziek?.stop(2000); schaduwMuziek = null;
   clearTimeout(d20Na); d20Na = null;
   $("event").classList.remove("show"); $("d20").hidden = true; rollend = false; stage.classList.remove("awake"); knoppen(false); $("storm").playbackRate = 1;
   $("status").textContent = "De Schaduw slaapt"; meld();
-  fade(vuur, .12, 2500); fade(wind, .2, 2500); setTimeout(() => halMuziek.play(), 1200);
+  fade(vuur, .12, 2500); fade(wind, .2, 2500); clearTimeout(halTerug); halTerug = setTimeout(() => halMuziek.play(), 1200);
 }
 $("b-event").onclick = schaduw; $("b-hall").onclick = hal;
 $("b-good").onclick = () => uitslag(true); $("b-bad").onclick = () => uitslag(false);
