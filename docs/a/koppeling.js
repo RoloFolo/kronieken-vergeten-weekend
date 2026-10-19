@@ -16,6 +16,14 @@
 //           Koppeling.meldStand(stand)   (tv)      Koppeling.stuur(opdracht)   (regie, verrader)
 //           Koppeling.ik = { email, naam, admin }  (na inloggen via Firebase)
 const FB = "https://www.gstatic.com/firebasejs/10.12.2/";
+// Two sessions in one database: live (the players) and test (?test in the link: everything under /test, the portraits shared).
+// Testing, resets and restore points in the test session never touch the players' live data.
+const SESSIE = new URLSearchParams(location.search).has("test") ? "test/" : "";
+const sessiePad = (pad) => SESSIE + pad;
+window.KRONIEKEN_SESSIE = SESSIE ? "test" : "live";
+if (SESSIE) addEventListener("DOMContentLoaded", () => { const b = document.createElement("div"); b.textContent = "TEST";
+  b.style.cssText = "position:fixed;top:6px;right:6px;z-index:9999;padding:3px 9px;font:700 12px/1 Cinzel,Georgia,serif;letter-spacing:.2em;color:#170a03;background:#ffd23f;border:2px solid #000;border-radius:4px;box-shadow:0 2px 8px #000;pointer-events:none";
+  document.body.appendChild(b); });
 const LOGIN = () => window.KRONIEKEN_LOGIN || { domein: "", admins: [] };
 const sleutel = (email) => String(email).toLowerCase().replaceAll(".", ","); // Firebase keys cannot contain dots
 const naamVan = (email) => { const kort = String(email).split("@")[0].toLowerCase(); return (window.WACHTERS || []).find((w) => w.naam.toLowerCase() === kort)?.naam || kort; };
@@ -95,7 +103,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
   db.onValue(db.ref(d, ".info/connected"), (s) => { status.online = !!s.val(); if (status.online) vers(false); meld(); });
   const luister = (soort, pad, op) => {
     let poging = 0, weg = false;
-    const start = () => soort(db.ref(d, pad), (s) => { if (weg) { weg = false; status.kapot--; meld(); } poging = 0; op(s); }, async () => {
+    const start = () => soort(db.ref(d, sessiePad(pad)), (s) => { if (weg) { weg = false; status.kapot--; meld(); } poging = 0; op(s); }, async () => {
       if (!weg) { weg = true; status.kapot++; meld(); }
       await vers(true);
       setTimeout(start, Math.min(30000, 1500 * 2 ** poging++));
@@ -116,25 +124,33 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
   if (alleenAdmin) luister(db.onValue, "ere/toewijzing", (s) => opEre?.(s.val() || {}));
   if (rol === "wachter") { // the LARP: has Stefan kicked off, his story for everyone, and the secret task for this Wachter (no access yet: silent)
     const larp = {}; const zend = () => opLarp?.({ ...larp });
-    for (const [k, pad] of [["gestart", "larp/gestart"], ["algemeen", "larp/algemeen"], ["mijn", `larp/voor/${sleutel(email)}`]]) db.onValue(db.ref(d, pad), (s) => { larp[k] = s.val(); zend(); }, () => {});
+    for (const [k, pad] of [["gestart", "larp/gestart"], ["algemeen", "larp/algemeen"], ["mijn", `larp/voor/${sleutel(email)}`]]) db.onValue(db.ref(d, sessiePad(pad)), (s) => { larp[k] = s.val(); zend(); }, () => {});
   }
   if (rol !== "chaos" && window.Portret) window.Portret.laadGroot = (naam) => db.get(db.ref(d, `portretten-groot/${naam}`)).then((s) => s.val());
   if (rol !== "chaos") db.onValue(db.ref(d, "portretten"), (s) => window.Portret?.zet(s.val() || {}), () => {}); // no access (rules not yet published): just no portraits, no connection alarm
   return {
     soort: "firebase",
     meldStand: (stand) => {
-      const schrijf = (pad, w) => metToken(() => db.set(db.ref(d, pad), w));
+      const schrijf = (pad, w) => metToken(() => db.set(db.ref(d, sessiePad(pad)), w));
       schrijf("stand", JSON.parse(JSON.stringify(stand)));
       if (stand.publiek) schrijf("publiek", stand.publiek);
       // only the current traitor gets a node, with just what the traitor panel needs
       const v = stand.verrader;
       schrijf("verraad", v ? { [sleutel(emailVan(v.naam))]: { naam: v.naam, sinds: v.sinds, tot: v.tot || null, fiches: stand.fiches, scherm: stand.scherm, chaos: stand.chaos || null } } : null);
     },
-    stuur: (o) => metToken(() => db.push(db.ref(d, "opdrachten"), { ...o, van: email, t: Date.now() })),
+    stuur: (o) => metToken(() => db.push(db.ref(d, sessiePad("opdrachten")), { ...o, van: email, t: Date.now() })),
     uitloggen: () => auth.signOut(a),
-    vooraf: (pad, waarde) => metToken(() => db.set(db.ref(d, `vooraf/${sleutel(email)}/${pad}`), waarde)),
-    ere: alleenAdmin ? (i, naam) => metToken(() => db.set(db.ref(d, `ere/toewijzing/t${i}`), naam || null)) : null,
-    larp: (algemeen, perNaam, aan) => metToken(() => db.update(db.ref(d, "larp"), { gestart: aan ? Date.now() : null, algemeen: algemeen || null,
+    vooraf: (pad, waarde) => metToken(() => db.set(db.ref(d, sessiePad(`vooraf/${sleutel(email)}/${pad}`)), waarde)),
+    ere: alleenAdmin ? (i, naam) => metToken(() => db.set(db.ref(d, sessiePad(`ere/toewijzing/t${i}`)), naam || null)) : null,
+    // restore points: the tv stores a copy of the whole state; the regie lists them and asks the tv to go back to one
+    // the list is small (time and reason), the copies are big and only fetched one at a time; at most 40 are kept
+    herstelBewaar: alleenAdmin ? (stand, waarom) => metToken(async () => { const id = `h${Date.now()}`;
+      await db.update(db.ref(d, sessiePad("herstel")), { [`lijst/${id}`]: { t: Date.now(), waarom: waarom || "" }, [`stand/${id}`]: JSON.parse(JSON.stringify(stand)) });
+      const oud = Object.keys((await db.get(db.ref(d, sessiePad("herstel/lijst")))).val() || {}).sort().slice(0, -40);
+      if (oud.length) await db.update(db.ref(d, sessiePad("herstel")), Object.fromEntries(oud.flatMap((k) => [[`lijst/${k}`, null], [`stand/${k}`, null]]))); }) : null,
+    herstelLijst: alleenAdmin ? () => db.get(db.ref(d, sessiePad("herstel/lijst"))).then((s) => Object.entries(s.val() || {}).map(([id, h]) => ({ id, t: h.t, waarom: h.waarom })).sort((a, b) => b.t - a.t)) : null,
+    herstelHaal: alleenAdmin ? (id) => db.get(db.ref(d, sessiePad(`herstel/stand/${id}`))).then((s) => s.val()) : null,
+    larp: (algemeen, perNaam, aan) => metToken(() => db.update(db.ref(d, sessiePad("larp")), { gestart: aan ? Date.now() : null, algemeen: algemeen || null,
       ...Object.fromEntries(Object.entries(perNaam || {}).map(([n, t]) => [`voor/${sleutel(emailVan(n))}`, t || null])) })),
     portret: alleenAdmin ? (naam, url, groot) => metToken(() => Promise.all([db.set(db.ref(d, `portretten/${naam}`), url || null), db.set(db.ref(d, `portretten-groot/${naam}`), groot || null)])) : null,
   };
@@ -148,7 +164,10 @@ async function viaServer({ rol, opStand, opOpdracht, opPubliek }) {
   if (rol === "wachter") opPubliek?.(eerste.publiek || {});
   if (rol === "tv") bron.addEventListener("opdracht", (e) => opOpdracht?.(JSON.parse(e.data)));
   const post = (pad, o) => fetch(pad, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(o) }).catch(() => {});
-  return { soort: "server", bron, meldStand: (s) => post("/api/stand", s), stuur: (o) => post("/api/opdracht", o) };
+  return { soort: "server", bron, meldStand: (s) => post("/api/stand", s), stuur: (o) => post("/api/opdracht", o),
+    herstelBewaar: (s, waarom) => post("/api/herstel", { waarom, stand: s }).then(() => true),
+    herstelLijst: () => fetch("/api/herstel").then((r) => r.json()),
+    herstelHaal: (id) => fetch(`/api/herstel?id=${encodeURIComponent(id)}`).then((r) => r.json()) };
 }
 
 window.Koppeling = {
@@ -163,6 +182,9 @@ window.Koppeling = {
   uitloggen() { return this.verbinding?.uitloggen?.(); },
   ere(i, naam) { return this.verbinding?.ere ? this.verbinding.ere(i, naam) : null; },
   vooraf(pad, waarde) { return this.verbinding?.vooraf ? this.verbinding.vooraf(pad, waarde) : Promise.resolve(false); },
+  herstelBewaar(stand, waarom) { return this.verbinding?.herstelBewaar ? this.verbinding.herstelBewaar(stand, waarom) : Promise.resolve(false); },
+  herstelLijst() { return this.verbinding?.herstelLijst ? this.verbinding.herstelLijst() : Promise.resolve([]); },
+  herstelHaal(id) { return this.verbinding?.herstelHaal ? this.verbinding.herstelHaal(id) : Promise.resolve(null); },
   larp(algemeen, perNaam, aan) { return this.verbinding?.larp ? this.verbinding.larp(algemeen, perNaam, aan) : Promise.resolve(false); },
   portret(naam, url, groot) { return this.verbinding?.portret ? this.verbinding.portret(naam, url, groot) : Promise.resolve(false); },
 };

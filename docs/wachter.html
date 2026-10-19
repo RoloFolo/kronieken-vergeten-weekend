@@ -475,15 +475,15 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=118"></script>
-<script src="a/godfried.js?v=118"></script>
-<script src="a/spel.js?v=118"></script>
-<script src="a/rollen.js?v=118"></script>
-<script src="a/firebase-config.js?v=118"></script>
-<script src="a/portretten.js?v=118"></script>
-<script src="a/koppeling.js?v=118"></script>
-<script src="a/tafel.js?v=118"></script>
-<script src="a/voorbereiding.js?v=118"></script>
+<script src="a/wachters.js?v=119"></script>
+<script src="a/godfried.js?v=119"></script>
+<script src="a/spel.js?v=119"></script>
+<script src="a/rollen.js?v=119"></script>
+<script src="a/firebase-config.js?v=119"></script>
+<script src="a/portretten.js?v=119"></script>
+<script src="a/koppeling.js?v=119"></script>
+<script src="a/tafel.js?v=119"></script>
+<script src="a/voorbereiding.js?v=119"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -631,7 +631,7 @@ function toonTab(t) {
   $("tab-tafel").classList.toggle("verborgen", t !== "tafel"); $("tab-larp").classList.toggle("verborgen", t !== "larp"); if (t === "larp") tekenLarp(); $("tocht").classList.toggle("tab-weg", t !== "tocht");
   for (const naam of ["regie", "verrader"]) {
     const fr = $(`frame-${naam}`), aan = t === naam; fr.classList.toggle("verborgen", !aan);
-    const i = fr.querySelector("iframe"); if (aan && !i.getAttribute("src")) i.src = i.dataset.src;
+    const i = fr.querySelector("iframe"); if (aan && !i.getAttribute("src")) i.src = i.dataset.src + (window.KRONIEKEN_SESSIE === "test" ? "?test" : ""); // the regie and traitor panel follow the session
   }
   document.body.classList.toggle("in-frame", t === "regie" || t === "verrader");
   if (t === "tafel") tekenTafel();
@@ -732,7 +732,7 @@ function tekenTafel() {
 const V = window.VOORAF || {};
 let publiekGeladen = false; // the round number comes with it: the seen-marks wait for it
 let mijnVooraf = {}, vooraafGetekend = "", muziek = null, stem = null, binnenGedaan = false;
-const lokaal = (k, w) => { try { if (w === undefined) return localStorage.getItem(k); localStorage.setItem(k, w); } catch { return null; } };
+const lokaal = (k, w) => { k = (window.KRONIEKEN_SESSIE === "test" ? "test-" : "") + k; try { if (w === undefined) return localStorage.getItem(k); localStorage.setItem(k, w); } catch { return null; } }; // the test session keeps its own marks
 const naamKlein = () => (wachter?.naam || "").toLowerCase();
 function welkomTekst() {
   const k = window.KARAKTER?.[wachter.naam];

@@ -21,7 +21,7 @@ let stand = { fiches: { vlam: 0, hoorn: 0, schild: 0, hart: 0 }, gebruikt: [], e
 if (existsSync(STAND)) try { stand = { ...stand, ...JSON.parse(readFileSync(STAND, "utf8")) }; } catch {}
 const bewaar = () => writeFileSync(STAND, JSON.stringify(stand, null, 2));
 
-const luisteraars = new Set();
+const luisteraars = new Set(), herstel = new Map();
 function zend(type, data) { const regel = `event: ${type}\ndata: ${JSON.stringify(data)}\n\n`; for (const r of luisteraars) r.write(regel); }
 
 function lees(req) { return new Promise((ok) => { let b = ""; req.on("data", (d) => (b += d)); req.on("end", () => { try { ok(JSON.parse(b || "{}")); } catch { ok({}); } }); }); }
@@ -38,6 +38,12 @@ createServer(async (req, res) => {
   if (pad === "/api/stand" && req.method === "GET") { res.writeHead(200, { "Content-Type": "application/json" }); return res.end(JSON.stringify(stand)); }
   if (pad === "/api/stand" && req.method === "POST") { // het tv-scherm meldt zijn stand
     Object.assign(stand, await lees(req)); bewaar(); zend("stand", stand); res.writeHead(204); return res.end();
+  }
+  if (pad === "/api/herstel" && req.method === "POST") { // herstelpunt: een kopie van de hele stand (alleen in het geheugen)
+    const o = await lees(req), id = `h${Date.now()}`; herstel.set(id, { t: Date.now(), waarom: o.waarom || "", stand: o.stand }); res.writeHead(204); return res.end();
+  }
+  if (pad === "/api/herstel") { const id = new URL(req.url, "http://x").searchParams.get("id"); res.writeHead(200, { "Content-Type": "application/json" });
+    return res.end(JSON.stringify(id ? herstel.get(id)?.stand ?? null : [...herstel].map(([id, h]) => ({ id, t: h.t, waarom: h.waarom })).reverse()));
   }
   if (pad === "/api/opdracht" && req.method === "POST") { // de regie geeft een opdracht aan de tv
     const o = await lees(req); zend("opdracht", o); res.writeHead(204); return res.end();

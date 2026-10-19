@@ -49,6 +49,12 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
 .goud { border-color: var(--bronze); color: var(--bronze-hi); background: rgba(184,149,95,.1); }
 .rij { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .klein { font-size: 13px; color: var(--ash); margin: 8px 0 0; }
+.xp-r { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 6px 0; border-top: 1px solid rgba(239,227,212,.1); }
+.xp-r small { display: block; color: var(--ash); font-size: 12px; margin-top: 2px; }
+.xp-r button { padding: 8px 10px; font-size: 13px; }
+.wijz { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; font-size: 14px; max-height: 360px; overflow: auto; }
+.wijz small { color: var(--ash); margin-right: 6px; }
+
 .schermen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .schermen button.nu { border-color: var(--bronze); background: rgba(184,149,95,.2); color: var(--bronze-hi); }
 /* one tab per phase of the weekend; the status, the tv warnings and the screen switch stay above the tabs */
@@ -140,6 +146,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <input id="punt-waarom" type="text" maxlength="140" placeholder="Waarom? (bijv. vertelde een prachtig verhaal)" style="width:100%;margin-top:8px">
     <button class="goud groot" id="b-punt" type="button" style="margin-top:8px" disabled>Kies wie, welk Zegel en hoeveel</button>
     <p class="klein" id="punt-stand" style="margin:8px 0 0"></p>
+    <div id="punt-laatst" style="display:grid;gap:2px;margin-top:10px"></div>
   </section>
   <section class="kaart" id="s-godfried" data-fase="godfried finale">
     <h2>Godfried</h2>
@@ -304,6 +311,19 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 
   <section class="kaart" data-fase="beheer">
+    <h2>Herstelpunten</h2>
+    <p class="klein" style="margin:0 0 8px">De tv bewaart vanzelf een kopie van de hele stand: vlak vóór elke grote reset en elk half uur als er iets veranderde. Ging er iets mis, zet de tv dan terug naar zo'n moment. De stand van vlak ervoor wordt eerst ook bewaard, dus terugzetten kun je altijd weer ongedaan maken.</p>
+    <div class="rij"><button id="b-kopie" type="button">Nu een herstelpunt maken</button><button id="b-kopie-lijst" type="button">Toon herstelpunten</button></div>
+    <p class="klein" id="kopie-status" hidden></p>
+    <div id="kopie-lijst" style="display:grid;gap:6px;margin-top:8px"></div>
+  </section>
+  <section class="kaart" data-fase="beheer xp">
+    <h2>Wat er veranderde</h2>
+    <p class="klein" style="margin:0 0 8px">Wat de tv als laatste bijhield, nieuwste bovenaan.</p>
+    <ol id="wijzigingen" class="wijz"></ol>
+  </section>
+
+  <section class="kaart" data-fase="beheer">
     <h2>Beheer</h2>
     <button id="b-reset" type="button">Alle events weer beschikbaar maken</button>
     <div class="bevestig" id="reset-vraag" hidden>
@@ -314,21 +334,22 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <p class="klein" id="alles-status" style="margin:8px 0 0" hidden></p>
     <div class="bevestig" id="alles-vraag" hidden>
       <span id="alles-tv" class="klein" style="display:block;color:#ff8a80;margin-bottom:6px" hidden>De tv staat niet aan. Het wissen gebeurt op de tv: open eerst de tv (index.html?tv op de laptop), anders gebeurt er niets.</span>
-      <span>Alle fiches, events, relieken, de finale en de titels gaan terug naar nul, en de tv start opnieuw bij het welkomstscherm (klik daarna één keer op de tv-laptop voor geluid). Zeker weten?</span>
+      <span>Alle fiches, events, relieken, de finale en de titels gaan terug naar nul, en de tv start opnieuw bij het welkomstscherm (klik daarna één keer op de tv-laptop voor geluid). De tv bewaart eerst een herstelpunt. Zeker weten?</span>
+      <input id="alles-typ" type="text" autocomplete="off" placeholder="Dit is het echte spel: typ WISSEN" hidden style="width:100%;margin:8px 0">
       <div class="rij"><button class="rood" id="b-alles-ja" type="button">Ja, alles wissen</button><button id="b-alles-nee" type="button">Annuleren</button></div>
     </div>
   </section>
 </main>
 
-<script src="a/events.js?v=118"></script>
-<script src="a/godfried.js?v=118"></script>
-<script src="a/spel.js?v=118"></script>
-<script src="a/wachters.js?v=118"></script>
-<script src="a/rollen.js?v=118"></script>
-<script src="a/firebase-config.js?v=118"></script>
-<script src="a/portretten.js?v=118"></script>
-<script src="a/koppeling.js?v=118"></script>
-<script src="a/voorbereiding.js?v=118"></script>
+<script src="a/events.js?v=119"></script>
+<script src="a/godfried.js?v=119"></script>
+<script src="a/spel.js?v=119"></script>
+<script src="a/wachters.js?v=119"></script>
+<script src="a/rollen.js?v=119"></script>
+<script src="a/firebase-config.js?v=119"></script>
+<script src="a/portretten.js?v=119"></script>
+<script src="a/koppeling.js?v=119"></script>
+<script src="a/voorbereiding.js?v=119"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -373,7 +394,7 @@ $("v-lokaal").hidden = FIRE; $("v-fire").hidden = !FIRE;
 function toonLink() {
   if (!verraderNu || FIRE) { $("v-link").hidden = true; return; }
   const basis = location.href.replace(/[^/]*$/, ""), ww = $("v-ww").value;
-  $("v-url").value = `${basis}chaos-06d0ece377.html#t=${verraderNu.token}${ww ? `&w=${encodeURIComponent(ww)}` : ""}`;
+  $("v-url").value = `${basis}chaos-06d0ece377.html${window.KRONIEKEN_SESSIE === "test" ? "?test" : ""}#t=${verraderNu.token}${ww ? `&w=${encodeURIComponent(ww)}` : ""}`;
   $("v-wie").textContent = verraderNu.naam; $("v-link").hidden = false;
 }
 let duurUren = 4;
@@ -383,7 +404,7 @@ $("b-v-geen").onclick = () => stuur({ cmd: "geen-verrader" });
 $("b-v-stop").onclick = () => stuur({ cmd: "geen-verrader" });
 $("b-v-kopie").onclick = () => { const v = $("v-url").value; navigator.clipboard?.writeText(v).then(() => ($("b-v-kopie").textContent = "Gekopieerd"), () => $("v-url").select()); setTimeout(() => ($("b-v-kopie").textContent = "Kopieer link"), 2000); };
 // personal links: one per Wachter, sent before the weekend
-const persoonlijk = (w) => `${location.href.replace(/[^/]*$/, "")}wachter.html#${FIRE ? w.naam.toLowerCase() : w.token}`;
+const persoonlijk = (w) => `${location.href.replace(/[^/]*$/, "")}wachter.html${window.KRONIEKEN_SESSIE === "test" ? "?test" : ""}#${FIRE ? w.naam.toLowerCase() : w.token}`; // in the test session the links lead to the test session
 $("links").innerHTML = (window.WACHTERS || []).map((w, i) => { const rol = window.ROLLEN?.find((r) => r.id === window.ROL_VAN?.[w.naam]);
   return `<div class="link"><span class="wie">${w.naam}<small>${rol ? rol.naam.replace(/^The /, "") : "nog geen rol"}</small></span>
     <button class="goud" type="button" data-kopie="${i}">Kopieer</button><button type="button" data-app="${i}">WhatsApp</button></div>`; }).join("");
@@ -448,7 +469,7 @@ function bewaakTvs(s) {
     : "Let op: er schrijven twee tv-vensters tegelijk. Sluit alle tabbladen met ?tv behalve één.";
 }
 function toon(s) {
-  bewaakTvs(s);
+  bewaakTvs(s); tekenXpLijst(s); tekenWijzigingen(s);
   // what the traitor did that everyone can see anyway: a frozen seal (no fiches) and a cursed Wachter
   const ijsTxt = Object.entries(s.ijs || {}).filter(([, t]) => t > Date.now()).map(([id, t]) => `❄ ${ZEGELS.find((z) => z.id === id)?.naam} is bevroren tot ${new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}. Tik op ❄ om te ontdooien.`);
   if (s.vloek) ijsTxt.push(`Vervloekt: ${s.vloek.naam}. ${s.vloek.tekst}`);
@@ -637,7 +658,9 @@ $("b-aftiteling-uit").onclick = () => stuur({ cmd: "aftiteling-uit" });
 $("b-ere-speel").onclick = () => stuur({ cmd: ereStand.speelt ? "ere-pauze" : "ere-speel" });
 $("b-ere-terug").onclick = () => stuur({ cmd: "ere", d: -1 });
 $("b-ere-volgende").onclick = () => stuur({ cmd: "ere", d: 1 });
-$("b-alles").onclick = () => { const g = laatsteStand?.tvInfo?.gemeld, dood = !g || Date.now() - g > 75000; $("alles-tv").hidden = !dood; $("b-alles-ja").disabled = dood; $("alles-vraag").hidden = false; };
+$("b-alles").onclick = () => { const g = laatsteStand?.tvInfo?.gemeld, dood = !g || Date.now() - g > 75000; $("alles-tv").hidden = !dood; 
+  const live = window.KRONIEKEN_SESSIE !== "test", typ = $("alles-typ"); typ.hidden = !live; typ.value = ""; $("b-alles-ja").disabled = dood || live;
+  typ.oninput = () => ($("b-alles-ja").disabled = dood || typ.value.trim().toUpperCase() !== "WISSEN"); $("alles-vraag").hidden = false; };
 $("b-alles-nee").onclick = () => ($("alles-vraag").hidden = true);
 // a full reset happens on the tv: say so, and confirm when the tv really started a new round
 let resetWacht = null;
@@ -647,6 +670,38 @@ $("b-alles-ja").onclick = () => { $("alles-vraag").hidden = true;
   stuur({ cmd: "alles-opnieuw" }); resetMelding("Verstuurd naar de tv… even wachten op bevestiging.", ""); };
 $("b-reset-nee").onclick = () => ($("reset-vraag").hidden = true);
 $("b-reset-ja").onclick = () => { stuur({ cmd: "events-opnieuw" }); $("reset-vraag").hidden = true; };
+// ===== XP taken back, restore points, and what changed =====
+const veilig = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+const tijdVan = (t) => new Date(t).toLocaleString("nl-NL", { weekday: "short", hour: "2-digit", minute: "2-digit" });
+const zegelNaam = (id) => ZEGELS.find((z) => z.id === id)?.naam?.split(" ")[0] || id || "";
+const xpTekst = (l) => `${l.xp > 0 ? "+" : "−"}${Math.abs(l.xp || (l.n || 0) * 10)} XP`;
+// twice tapping: the first tap asks, the second within 4 seconds does it
+function tweeKeer(b, vraag, doe) { if (b.dataset.zeker) { delete b.dataset.zeker; doe(); return; } const t = b.textContent; b.dataset.zeker = "1"; b.textContent = vraag; b.classList.add("rood");
+  setTimeout(() => { if (b.dataset.zeker) { delete b.dataset.zeker; b.textContent = t; b.classList.remove("rood"); } }, 4000); }
+function tekenXpLijst(s) {
+  const l = (s.logboek || []).filter((x) => x.type === "punt").slice(-8).reverse();
+  $("punt-laatst").innerHTML = l.length ? `<b class="klein" style="margin:0">Laatst gegeven</b>` + l.map((x) => `<div class="xp-r"><span><b>${veilig(x.naam)} ${xpTekst(x)}</b> · ${veilig(zegelNaam(x.zegel))}<small>${tijdVan(x.t)}${x.waarom ? ` · ${veilig(x.waarom)}` : ""}</small></span><button type="button" data-t="${x.t}">↶ Terug</button></div>`).join("") : "";
+  $("punt-laatst").querySelectorAll("button").forEach((b) => (b.onclick = () => tweeKeer(b, "Zeker?", () => { stuur({ cmd: "punt-terug", t: +b.dataset.t }); b.disabled = true; b.textContent = "…"; })));
+}
+const WIJZ = { punt: (l) => `${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})${l.waarom ? `: ${l.waarom}` : ""}`, "punt-terug": (l) => `XP teruggedraaid: ${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})`,
+  fiche: (l) => `${zegelNaam(l.id)} ${l.n > 0 ? "+" : "−"}${Math.abs(l.n)} fiche`, bevel: (l) => `Bevel volbracht: ${l.naam}`, kist: (l) => `Reliekenkist geopend: ${l.n} relieken`,
+  uitslag: (l) => `Event ${l.goed ? "gehaald" : "mislukt"}`, chaos: () => "Schaduwkaart gespeeld", "verrader-einde": () => "Schaduwtijd voorbij" };
+function tekenWijzigingen(s) {
+  // the fiches that follow from XP (they drop in one by one) are left out: the XP line says it already
+  const log = s.logboek || [], l = log.filter((x, i) => WIJZ[x.type] && !(x.type === "fiche" && log.slice(Math.max(0, i - 6), i).some((p) => p.type === "punt" && x.t - p.t < 15000))).slice(-25).reverse();
+  $("wijzigingen").innerHTML = l.length ? l.map((x) => `<li><small>${tijdVan(x.t)}</small> ${veilig(WIJZ[x.type](x))}</li>`).join("") : '<li class="klein">Nog niets.</li>';
+}
+function kopieMelding(t, fout) { const el = $("kopie-status"); el.hidden = false; el.textContent = t; el.style.color = fout ? "#ff8a80" : "#efe3d4"; }
+$("b-kopie").onclick = () => { stuur({ cmd: "herstelpunt", waarom: "met de hand" }); kopieMelding("Gevraagd aan de tv. Tik op Toon herstelpunten om te zien of hij er staat."); };
+$("b-kopie-lijst").onclick = async () => {
+  kopieMelding("Ophalen…"); const l = await Koppeling.herstelLijst().catch(() => null);
+  if (!l) return kopieMelding("Kon de herstelpunten niet ophalen. Zijn de nieuwe regels gepubliceerd?", true);
+  kopieMelding(l.length ? `${l.length} herstelpunten, nieuwste bovenaan.` : "Nog geen herstelpunten.");
+  $("kopie-lijst").innerHTML = l.map((h) => `<div class="xp-r"><span><b>${tijdVan(h.t)}</b><small>${veilig(h.waarom)}</small></span><button type="button" data-id="${veilig(h.id)}">Terugzetten</button></div>`).join("");
+  $("kopie-lijst").querySelectorAll("button").forEach((b) => (b.onclick = () => tweeKeer(b, "Zeker? Tik nog eens", () => {
+    stuur({ cmd: "herstel", id: b.dataset.id }); b.disabled = true; kopieMelding("Verstuurd: de tv zet de stand terug en start opnieuw (klik daarna één keer op de tv-laptop voor geluid)."); })));
+};
+
 </script>
 </body>
 </html>

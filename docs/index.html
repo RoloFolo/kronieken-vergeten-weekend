@@ -1210,16 +1210,16 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=118"></script>
-<script src="a/godfried.js?v=118"></script>
-<script src="a/spel.js?v=118"></script>
-<script src="a/voorbereiding.js?v=118"></script>
-<script src="a/wachters.js?v=118"></script>
-<script src="a/firebase-config.js?v=118"></script>
-<script src="a/portretten.js?v=118"></script>
-<script src="a/koppeling.js?v=118"></script>
-<script src="a/rollen.js?v=118"></script>
-<script src="a/tafel.js?v=118"></script>
+<script src="a/events.js?v=119"></script>
+<script src="a/godfried.js?v=119"></script>
+<script src="a/spel.js?v=119"></script>
+<script src="a/voorbereiding.js?v=119"></script>
+<script src="a/wachters.js?v=119"></script>
+<script src="a/firebase-config.js?v=119"></script>
+<script src="a/portretten.js?v=119"></script>
+<script src="a/koppeling.js?v=119"></script>
+<script src="a/rollen.js?v=119"></script>
+<script src="a/tafel.js?v=119"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2696,11 +2696,15 @@ const CHAOS = Object.fromEntries(Object.entries(CHAOS_RAW).map(([cmd, fn]) => [c
 
 /* ================= link with the laptop server (app/server.mjs) ================= */
 // Without a server (the concept page) everything runs locally as before.
-let server = false, meldTimer = null;
+let server = false, meldTimer = null, herstelt = false; // herstelt: going back to a restore point, write nothing more
 function schermNu() { return dronkActief && dronkWacht ? "dronk-wacht" : dronkActief ? "dronk" : uitlegActief ? "uitleg" : !$("verhaal").hidden ? "verhaal" : binnen === null ? "start" : wakker() ? "schaduw" : paneelNu || "hal"; }
 function meld() {
-  if (!server || passief || !standGeladen) return; clearTimeout(meldTimer);
-  meldTimer = setTimeout(() => Koppeling.meldStand(({
+  if (!server || passief || !standGeladen || herstelt) return; clearTimeout(meldTimer);
+  meldTimer = setTimeout(() => Koppeling.meldStand(standNu()), 150);
+}
+// the whole state as it goes to the database (also what a restore point keeps)
+function standNu() {
+  return ({
     tv: tvId, tvInfo: { apparaat: tvApparaat, versie: tvVersie, sinds: geladenOp, gemeld: Date.now(), geluid: tvMagGeluid() }, fiches: Object.fromEntries(ZEGELS.map((z) => [z.id, z.fiches])), gebruikt: [...gebruikt],
     event: wakker() && EVENT ? { id: EVENT.id, naam: EVENT.naam, regel: EVENT.regel, soort: EVENT.soort, zegel: EVENT.zegel, verlies: EVENT.verlies * extra } : null,
     scherm: schermNu(), d20: !$("b-d20").disabled, quiz: gq ? { ...gq, uit: [...gq.uit] } : null, kroniek: [...kroniek],
@@ -2710,7 +2714,7 @@ function meld() {
     publiek: { ronde, levend: Date.now(), tafel: paneelNu === "tafel", kroniek: [...kroniek], scores: scorebordData(), hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
     tochtOpen, kistGeopend,
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
-  })), 150);
+  });
 }
 // ===== Godfried tells a chapter of his life: painting, voice, lines in time with the voice =====
 let vertelLoopt = false, vertelKlaar = null, vertelTimers = [], vertelStem = null, kroniek = new Set();
@@ -2796,6 +2800,28 @@ function punt(o) {
     : `<img src="${z.medaille}" alt=""><b class="${xp > 0 ? "plus" : "min"}">${schoon(o.naam)} ${xp > 0 ? "+" : "−"}${Math.abs(xp)} XP</b><span>${schoon(o.waarom || z.naam)}</span>`;
   s.classList.add("aan"); clearTimeout(puntTimer); puntTimer = setTimeout(() => s.classList.remove("aan"), pu ? 11000 : 7000);
   if (paneelNu === "tafel") zaalStand();
+}
+// the regie takes back an XP entry given by mistake: the entry leaves the log, the Seal loses (or gets back) its fiches
+function puntTerug(o) {
+  const i = logboek.findIndex((l) => l.type === "punt" && l.t === +o.t); if (i < 0) return;
+  const l = logboek[i], z = ZEGELS.find((x) => x.id === l.zegel); logboek.splice(i, 1);
+  if (z) { z.fiches = Math.max(0, z.fiches - (l.n || 0)); teken(); }
+  log("punt-terug", { naam: l.naam, zegel: l.zegel, xp: l.xp, waarom: l.waarom || "" }); meld();
+  if (paneelNu === "tafel") zaalStand();
+}
+// restore points: a copy of the whole state in the database, before every big reset, every half hour when something changed, and on request
+let laatsteKopie = "";
+const kopieSleutel = () => `${logboek.length}:${logboek.at(-1)?.t || 0}:${ZEGELS.map((z) => z.fiches).join(",")}:${ronde}`;
+function herstelpunt(waarom) {
+  if (!server || passief || !standGeladen || herstelt) return Promise.resolve(false); laatsteKopie = kopieSleutel();
+  return Promise.race([Koppeling.herstelBewaar(standNu(), waarom), new Promise((ok) => setTimeout(() => ok(false), 5000))]); // never let a reset wait on a slow connection
+}
+setInterval(() => { if (standGeladen && kopieSleutel() !== laatsteKopie) herstelpunt("automatisch (elk half uur)"); }, 30 * 60000);
+async function herstel(id) {
+  const s = await Koppeling.herstelHaal(id).catch(() => null); if (!s || !s.fiches) return;
+  await herstelpunt("vlak vóór het terugzetten"); // so going back can itself be undone
+  herstelt = true; clearTimeout(meldTimer); Koppeling.meldStand({ ...s, tv: tvId });
+  setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); // starts again from the restored state
 }
 // personal XP: what the regie gave someone; a traitor scores with harm done while he was the traitor (and 10 per sabotage card)
 function scores() {
@@ -2897,6 +2923,9 @@ const OPDRACHTEN = {
   wievolgt: (o) => wieVolgt(o.namen),
   "groot-weg": () => grootMomentWeg(),
   punt: (o) => punt(o),
+  "punt-terug": (o) => puntTerug(o),
+  herstelpunt: (o) => herstelpunt(String(o.waarom || "met de hand").slice(0, 80)),
+  herstel: (o) => herstel(String(o.id || "")),
   credit: (o) => { const t = String(o.tekst || "").trim().slice(0, 200); if (!t) return; ere.extra = [...(ere.extra || []), { id: Date.now().toString(36), soort: ["titel", "moment", "uitspraak"].includes(o.soort) ? o.soort : "moment", wie: NAMEN.includes(o.wie) ? o.wie : "", tekst: t }]; meld(); },
   "credit-weg": (o) => { ere.extra = (ere.extra || []).filter((x) => x.id !== o.id); meld(); },
   hoofdstuk: (o) => { const h = window.GODFRIED.hoofdstukken[(o.n || 1) - 1]; if (h) vertel(h); },
@@ -2912,7 +2941,7 @@ const OPDRACHTEN = {
   // a Wachter fulfilled the order he got before the weekend: his seal gets 3 fiches, one by one
   bevel: (o) => { const b = window.VOORAF?.bevelen?.[o.naam]; if (!b || bevelGedaan.has(o.naam)) return; bevelGedaan.add(o.naam); log("bevel", { naam: o.naam, zegel: b.zegel });
     for (let i = 0; i < 3; i++) setTimeout(() => fiche(b.zegel, 1), i * 700); },
-  "events-opnieuw": () => { gebruikt.clear(); bewaar(); },
+  "events-opnieuw": () => { herstelpunt("vlak vóór alle events opnieuw"); gebruikt.clear(); bewaar(); },
   scherm: (o) => { if (uitlegActief) stopUitleg(); if (dronkActief) { dronkActief = false; dronkKlaar = true; fade(dronkStem, 0, 300); }
     rollenOpen = true; if (binnen === null) { verhaalKlaar = true; proloog?.pause(); $("verhaal").hidden = true; betreden(); } if (wakker()) hal(); paneel(o.naam === "hal" ? null : o.naam); },
   tocht: (o) => { o.aan ? tochtGedaan.add(o.id) : tochtGedaan.delete(o.id); if (paneelNu === "tocht") vinkTocht(o.id, !!o.aan); meld(); },
@@ -2940,7 +2969,7 @@ const OPDRACHTEN = {
   ere: (o) => { const n = Math.max(0, Math.min(ereLijst().length, (ere.stap ?? -1) + o.d)); ereStap(n, ere.speelt); },
   // without Firebase the regie stores the assignment here, in the tv's own state
   "ere-toewijs": (o) => { ere.toewijzing ||= {}; if (o.naam) ere.toewijzing[`t${o.i}`] = String(o.naam).slice(0, 40); else delete ere.toewijzing[`t${o.i}`]; meld(); },
-  "alles-opnieuw": () => { ronde = Date.now(); kroniek = new Set(); openingGehad = false; quizStop(); vertelSla(true); tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
+  "alles-opnieuw": async () => { await herstelpunt("vlak vóór alles opnieuw"); ronde = Date.now(); kroniek = new Set(); openingGehad = false; quizStop(); vertelSla(true); tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
     setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); }, // back to the welcome screen, so the regie shows "Start verhaal" again
 };
 // With Firebase only the tv laptop logs in (address ends in ?tv); public visitors just see the countdown.
@@ -2951,7 +2980,7 @@ const tvApparaat = (() => { const u = navigator.userAgent; const os = /Android/.
   const br = /Edg\//.test(u) ? "Edge" : /Chrome\//.test(u) ? "Chrome" : /Firefox\//.test(u) ? "Firefox" : /Safari\//.test(u) ? "Safari" : "browser"; return `${os} · ${br}`; })();
 let tvVersie = "?"; fetch(`a/versie.txt?t=${Date.now()}`, { cache: "no-store" }).then((r) => r.text()).then((v) => (tvVersie = v.trim())).catch(() => {});
 function laadStand(s) {
-  if (standGeladen) return bewaakTv(s); standGeladen = true; geladenOp = Date.now();
+  if (herstelt) return; if (standGeladen) return bewaakTv(s); standGeladen = true; geladenOp = Date.now();
   for (const z of ZEGELS) z.fiches = s.fiches?.[z.id] ?? z.fiches;
   gebruikt = new Set(s.gebruikt || []); teller(); teken();
   tochtOpen = !!s.tochtOpen; kistGeopend = !!s.kistGeopend; bevelGedaan = new Set(s.bevelen || []); tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
@@ -2983,7 +3012,7 @@ if (!window.FIREBASE_CONFIG || new URLSearchParams(location.search).has("tv"))
 let stem = null, typer = null, stormTimer = null, beslist = false;
 function knoppen(aan) { $("b-good").disabled = !aan; $("b-bad").disabled = !aan; $("b-d20").disabled = !aan; }
 // every event happens at most once; remembered in this browser
-const SLEUTEL = "kronieken-events-gebruikt";
+const SLEUTEL = (window.KRONIEKEN_SESSIE === "test" ? "test-" : "") + "kronieken-events-gebruikt"; // each session its own used events
 let gebruikt = new Set(); try { gebruikt = new Set(JSON.parse(localStorage.getItem(SLEUTEL) || "[]")); } catch {}
 function bewaar() { try { localStorage.setItem(SLEUTEL, JSON.stringify([...gebruikt])); } catch {} teller(); meld(); }
 function teller() { const over = EVENTS.filter((e) => !gebruikt.has(e.id)).length; $("ev-teller").textContent = `Nog ${over} van de ${EVENTS.length} events over.`; }

@@ -25,31 +25,115 @@
       "$wie": {
         ".read": "auth != null && auth.token.email.replace('.', ',') === $wie",
         ".write": "auth != null && auth.token.email.replace('.', ',') === $wie",
-        "anekdotes": { "$id": { ".validate": "newData.child('tekst').isString() && newData.child('tekst').val().length <= 2000" } }
+        "anekdotes": {
+          "$id": {
+            ".validate": "newData.child('tekst').isString() && newData.child('tekst').val().length <= 2000"
+          }
+        }
       }
     },
     "larp": {
       ".read": "auth != null && (auth.token.email === 'stefan@petjoempa.nl' || auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/))",
       ".write": "auth != null && (auth.token.email === 'stefan@petjoempa.nl' || auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/))",
-      "gestart": { ".read": "auth != null" },
-      "algemeen": { ".read": "auth != null", ".validate": "newData.isString() && newData.val().length < 6000" },
-      "voor": { "$wie": { ".read": "auth != null && auth.token.email.replace('.', ',') === $wie", ".validate": "newData.isString() && newData.val().length < 3000" } }
+      "gestart": {
+        ".read": "auth != null"
+      },
+      "algemeen": {
+        ".read": "auth != null",
+        ".validate": "newData.isString() && newData.val().length < 6000"
+      },
+      "voor": {
+        "$wie": {
+          ".read": "auth != null && auth.token.email.replace('.', ',') === $wie",
+          ".validate": "newData.isString() && newData.val().length < 3000"
+        }
+      }
     },
     "portretten": {
       ".read": "auth != null",
       ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
-      "$naam": { ".validate": "newData.isString() && newData.val().beginsWith('data:image/') && newData.val().length < 300000" }
+      "$naam": {
+        ".validate": "newData.isString() && newData.val().beginsWith('data:image/') && newData.val().length < 300000"
+      }
     },
     "portretten-groot": {
       ".read": "auth != null",
       ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
-      "$naam": { ".validate": "newData.isString() && newData.val().beginsWith('data:image/') && newData.val().length < 900000" }
+      "$naam": {
+        ".validate": "newData.isString() && newData.val().beginsWith('data:image/') && newData.val().length < 900000"
+      }
     },
     "opdrachten": {
       ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
       ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
       "$id": {
         ".write": "auth != null && newData.child('van').val() === auth.token.email && root.child('verraad').child(auth.token.email.replace('.', ',')).exists() && newData.child('cmd').isString() && newData.child('cmd').val().beginsWith('chaos-') || auth != null && newData.child('van').val() === auth.token.email && (newData.child('cmd').val() === 'scorebord' || newData.child('cmd').val() === 'tafel-kies')"
+      }
+    },
+    "herstel": {
+      ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+      ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)"
+    },
+    "test": {
+      "stand": {
+        ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+        ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+        ".validate": "newData.child('tv').isString()"
+      },
+      "publiek": {
+        ".read": true,
+        ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)"
+      },
+      "verraad": {
+        ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+        ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+        "$wie": {
+          ".read": "auth != null && auth.token.email.replace('.', ',') === $wie"
+        }
+      },
+      "ere": {
+        ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+        ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)"
+      },
+      "vooraf": {
+        ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+        "$wie": {
+          ".read": "auth != null && auth.token.email.replace('.', ',') === $wie",
+          ".write": "auth != null && auth.token.email.replace('.', ',') === $wie",
+          "anekdotes": {
+            "$id": {
+              ".validate": "newData.child('tekst').isString() && newData.child('tekst').val().length <= 2000"
+            }
+          }
+        }
+      },
+      "larp": {
+        ".read": "auth != null && (auth.token.email === 'stefan@petjoempa.nl' || auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/))",
+        ".write": "auth != null && (auth.token.email === 'stefan@petjoempa.nl' || auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/))",
+        "gestart": {
+          ".read": "auth != null"
+        },
+        "algemeen": {
+          ".read": "auth != null",
+          ".validate": "newData.isString() && newData.val().length < 6000"
+        },
+        "voor": {
+          "$wie": {
+            ".read": "auth != null && auth.token.email.replace('.', ',') === $wie",
+            ".validate": "newData.isString() && newData.val().length < 3000"
+          }
+        }
+      },
+      "opdrachten": {
+        ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+        ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+        "$id": {
+          ".write": "auth != null && newData.child('van').val() === auth.token.email && root.child('test').child('verraad').child(auth.token.email.replace('.', ',')).exists() && newData.child('cmd').isString() && newData.child('cmd').val().beginsWith('chaos-') || auth != null && newData.child('van').val() === auth.token.email && (newData.child('cmd').val() === 'scorebord' || newData.child('cmd').val() === 'tafel-kies')"
+        }
+      },
+      "herstel": {
+        ".read": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
+        ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)"
       }
     }
   }
