@@ -475,15 +475,15 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=117"></script>
-<script src="a/godfried.js?v=117"></script>
-<script src="a/spel.js?v=117"></script>
-<script src="a/rollen.js?v=117"></script>
-<script src="a/firebase-config.js?v=117"></script>
-<script src="a/portretten.js?v=117"></script>
-<script src="a/koppeling.js?v=117"></script>
-<script src="a/tafel.js?v=117"></script>
-<script src="a/voorbereiding.js?v=117"></script>
+<script src="a/wachters.js?v=118"></script>
+<script src="a/godfried.js?v=118"></script>
+<script src="a/spel.js?v=118"></script>
+<script src="a/rollen.js?v=118"></script>
+<script src="a/firebase-config.js?v=118"></script>
+<script src="a/portretten.js?v=118"></script>
+<script src="a/koppeling.js?v=118"></script>
+<script src="a/tafel.js?v=118"></script>
+<script src="a/voorbereiding.js?v=118"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -673,7 +673,7 @@ Portret.op(() => { tekenHeld(); if (tabNu === "tafel") tekenTafel(); });
 // The LARP (Stefan's order: Het Spel der Rollen). Stefan sees every Wachter with guise, role and powers, writes one story for everyone
 // and a secret task per Wachter, and kicks it off: then every Wachter gets a LARP tab with the story and only his own task.
 let larpStaat = {}, larpGezien = null;
-const isLarpLeider = () => !!mijnBevel()?.larp;
+const isLarpLeider = () => !!mijnBevel()?.larp || ORGANISATOREN.includes(wachter?.naam) && new URLSearchParams(location.search).has("larp"); // organisers can test it with ?larp in their link
 function opLarp(l) {
   larpStaat = l || {}; tekenTabs();
   if (larpStaat.gestart && !isLarpLeider() && larpGezien !== larpStaat.gestart) { const nieuw = larpGezien !== null || lokaal("kronieken-larp-gezien") !== String(larpStaat.gestart);
@@ -693,7 +693,7 @@ function tekenLarpSpeler() {
 }
 // Stefan: every Wachter with guise, role and powers (explained), one story for everyone and a task per Wachter; kick off, update or stop
 function tekenLarpLeider() {
-  const el = $("tab-larp"), b = mijnBevel(), open = true, W = (window.WACHTERS || []).filter((w) => w.naam !== wachter?.naam); // Stefan may read the roles now, to prepare
+  const el = $("tab-larp"), b = V.bevelen?.Stefan || mijnBevel(), open = true, W = (window.WACHTERS || []).filter((w) => w.naam !== wachter?.naam); // Stefan may read the roles now, to prepare
   const concept = (k, w) => { const s = `kronieken-larp-${k}`; if (w === undefined) return lokaal(s) || ""; lokaal(s, w); };
   const gestart = !!larpStaat.gestart;
   el.innerHTML = `<section class="paneel larp-kop"><h2 class="carved">Het Spel der Rollen</h2><div class="wanneer">Zondagochtend · hooguit een uur</div>
