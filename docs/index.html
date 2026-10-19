@@ -603,10 +603,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .groot-moment .dief { display: grid; justify-items: center; align-content: start; gap: 1.2vh; width: 24vw; }
 .groot-moment .dief img { height: 34vh; aspect-ratio: 2 / 3; object-fit: cover; border: 3px solid #d9b77a; box-shadow: 0 0 0 2px #000, 0 0 50px rgba(226,50,60,.5); }
 .groot-moment .dief > b { font-size: clamp(28px, 3vw, 64px); line-height: 1; }
-.groot-moment .dief-worp { font: 700 clamp(44px, 5.5vw, 120px)/1 var(--carved); color: #ffd98a; min-height: 1em; filter: drop-shadow(0 0 24px rgba(255,200,120,.5)); }
-.groot-moment .dief.fout .dief-worp { color: #ff8a80; filter: drop-shadow(0 0 24px rgba(226,50,60,.6)); }
-.groot-moment .dief small { font: italic clamp(16px, 1.5vw, 32px)/1.35 var(--display); color: var(--bone); }
-.groot-moment .dief small b { display: block; font: 700 clamp(18px, 1.7vw, 36px)/1.2 var(--carved); font-style: normal; color: #ffd98a; letter-spacing: .06em; }
+.groot-moment .dief-mist { margin-top: 2vh; font: 600 clamp(13px, 1.1vw, 24px)/1.4 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: var(--ash); }
 .groot-moment .gm-onder { margin-top: 3vh; font: italic clamp(18px, 2vw, 42px)/1.4 var(--display); color: var(--bone); }
 .verraders-lijst { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(26vw, 420px), 1fr)); gap: 2vw; width: min(90vw, 1700px); text-align: left; }
 .verraders-lijst .vk { padding: 2.2vh 1.6vw; background: rgba(20,6,8,.85); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.4); }
@@ -1218,16 +1215,16 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=122"></script>
-<script src="a/godfried.js?v=122"></script>
-<script src="a/spel.js?v=122"></script>
-<script src="a/voorbereiding.js?v=122"></script>
-<script src="a/wachters.js?v=122"></script>
-<script src="a/firebase-config.js?v=122"></script>
-<script src="a/portretten.js?v=122"></script>
-<script src="a/koppeling.js?v=122"></script>
-<script src="a/rollen.js?v=122"></script>
-<script src="a/tafel.js?v=122"></script>
+<script src="a/events.js?v=123"></script>
+<script src="a/godfried.js?v=123"></script>
+<script src="a/spel.js?v=123"></script>
+<script src="a/voorbereiding.js?v=123"></script>
+<script src="a/wachters.js?v=123"></script>
+<script src="a/firebase-config.js?v=123"></script>
+<script src="a/portretten.js?v=123"></script>
+<script src="a/koppeling.js?v=123"></script>
+<script src="a/rollen.js?v=123"></script>
+<script src="a/tafel.js?v=123"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2915,37 +2912,24 @@ function verraderKroon(naam) {
   grootMoment(`<div><div class="gm-kop carved">Wie diende de Schaduwkoning het best?</div><div id="gm-portret"></div><div class="gm-naam carved" id="gm-naam">…</div></div>`);
   const g = gmGen; stemMet("fin/beste-verrader", 1, () => g === gmGen && gmT(400, () => { $("gm-naam").textContent = naam; if (PORTRET[naam]) $("gm-portret").innerHTML = `<img class="gm-portret" src="${PORTRET[naam]}" alt="">`; speel("fin/sfx-goed", .9); speel("gejuich", .7); speel("chaos-1", .5); }), 9000);
 }
-// ===== De Dieven: at the finale the Seals are not full; the Thieves (Jean and Johan) each throw the D20 once and steal fiches back =====
+// ===== De Dieven: at the finale the Seals are not full; the Thieves (Jean and Johan) get the task to steal back what is missing,
+// in their own way. The regie judges the theft and gives the loot: fiches for the emptiest Seals. =====
 const DIEVEN = Object.entries(window.KARAKTER || {}).filter(([, k]) => k.klasse === "Thief").map(([n]) => n);
-const DIEF_UIT = [
-  { tot: 1, kop: "Betrapt!", regel: "De Schaduw greep de dief bij de kraag. Niets gestolen.", n: 0 },
-  { tot: 9, kop: "Lege handen", regel: "De buit glipte door zijn vingers.", n: 0 },
-  { tot: 15, kop: "Gestolen!", regel: "Eén fiche terug uit de Schaduw.", n: 1 },
-  { tot: 19, kop: "Meesterdief!", regel: "Twee fiches terug uit de Schaduw.", n: 2 },
-  { tot: 20, kop: "De grote roof!", regel: "Drie fiches terug uit de Schaduw.", n: 3 },
-];
-let dieven = null; // { gedaan: { naam: throw } }
+let dieven = null; // { buit: fiches given, or null while they are still stealing }
 const leegsteZegel = () => (ZEGELS.filter((z) => z.fiches < S.drempel && !bevroren(z.id)).sort((a, b) => a.fiches - b.fiches)[0] || ZEGELS.filter((z) => z.fiches < S.drempel).sort((a, b) => a.fiches - b.fiches)[0])?.id;
 function dievenStart() {
-  dieven = { gedaan: {} }; meld();
-  grootMoment(`<div><div class="gm-kop carved">De Dieven van Bouillon</div><div class="dief-rij">${DIEVEN.map((n) => `<div class="dief" data-n="${schoon(n)}">${PORTRET[n] ? `<img src="${PORTRET[n]}" alt="">` : ""}<b class="carved">${schoon(n)}</b><span class="dief-worp"></span><small></small></div>`).join("")}</div>
-    <div class="gm-onder" id="dief-onder">De Zegels zijn niet vol. Steel terug wat de Schaduw nam.</div></div>`);
+  dieven = { buit: null }; meld();
+  const mist = ZEGELS.filter((z) => z.fiches < S.drempel).map((z) => `${zegelNaam(z.id)}: nog ${S.drempel - z.fiches}`).join(" · ");
+  grootMoment(`<div><div class="gm-kop carved">De Dieven van Bouillon</div><div class="dief-rij">${DIEVEN.map((n) => `<div class="dief">${PORTRET[n] ? `<img src="${PORTRET[n]}" alt="">` : ""}<b class="carved">${schoon(n)}</b></div>`).join("")}</div>
+    <div class="gm-onder" id="dief-onder">Steel terug wat de Schaduw nam. Hoe? Dat bepalen jullie. Hoe slimmer de roof, hoe groter de buit.</div>${mist ? `<div class="dief-mist">${schoon(mist)}</div>` : ""}</div>`);
   speel("kerkklok", .5); stemMet("fin/dieven", 1, null, 14000);
 }
-function dievenWorp(naam) {
-  if (!dieven || naam in dieven.gedaan || !DIEVEN.includes(naam)) return;
-  const worp = 1 + Math.floor(Math.random() * 20), r = DIEF_UIT.find((x) => worp <= x.tot);
-  dieven.gedaan[naam] = worp; log("dief", { naam, worp, n: r.n }); meld();
-  const el = document.querySelector(`.dief[data-n="${naam}"]`); if (!el) return;
-  const w = el.querySelector(".dief-worp"); speel("klok", .5, .7);
-  const flikker = setInterval(() => (w.textContent = 1 + Math.floor(Math.random() * 20)), 70); setTimeout(() => clearInterval(flikker), 1800);
-  gmT(1800, () => {
-    w.textContent = worp; el.querySelector("small").innerHTML = `<b>${r.kop}</b>${r.regel}`; el.classList.add(r.n ? "goed" : "fout");
-    if (r.n) { speel("fin/sfx-goed", .8); if (worp === 20) speel("gejuich", .7); for (let i = 0; i < r.n; i++) gmT(900 + i * 600, () => { const z = leegsteZegel(); if (z) fiche(z, 1); }); }
-    else speel(worp === 1 ? "donder-hard" : "donder", worp === 1 ? .8 : .5);
-    if (Object.keys(dieven.gedaan).length === DIEVEN.length) gmT(2600, () => { const buit = DIEVEN.reduce((s, n) => s + DIEF_UIT.find((x) => dieven.gedaan[n] <= x.tot).n, 0);
-      $("dief-onder").textContent = buit ? `Samen stalen de Dieven ${buit} fiche${buit > 1 ? "s" : ""} terug.` : "De Schaduw hield alles vast. Nu moet de broederschap het doen."; });
-  });
+function dievenBuit(n) {
+  if (!dieven) return; n = Math.max(0, Math.min(6, Math.round(+n) || 0)); dieven.buit = n; log("dief", { namen: DIEVEN, n }); meld();
+  const o = $("dief-onder"); if (!o) return;
+  o.textContent = n ? `De buit: ${n} fiche${n > 1 ? "s" : ""} terug uit de Schaduw!` : "De Schaduw hield alles vast. Nu moet de broederschap het doen.";
+  if (n) { speel("fin/sfx-goed", .8); speel("gejuich", .7); for (let i = 0; i < n; i++) gmT(900 + i * 600, () => { const z = leegsteZegel(); if (z) fiche(z, 1); }); }
+  else speel("donder", .5);
 }
 // ===== Who follows? A die with eleven names lands, by the purest chance, on the ones the regie chose =====
 function wieVolgt(namen) {
@@ -2981,7 +2965,7 @@ const OPDRACHTEN = {
   wievolgt: (o) => wieVolgt(o.namen),
   "groot-weg": () => grootMomentWeg(),
   dieven: () => dievenStart(),
-  "dief-worp": (o) => dievenWorp(o.naam),
+  "dief-buit": (o) => dievenBuit(o.n),
   punt: (o) => punt(o),
   herworp: () => { if (d20Na) werpD20(true); },
   "punt-terug": (o) => puntTerug(o),
