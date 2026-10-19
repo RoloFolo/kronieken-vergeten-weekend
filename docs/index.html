@@ -604,6 +604,36 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .groot-moment .dief img { height: 34vh; aspect-ratio: 2 / 3; object-fit: cover; border: 3px solid #d9b77a; box-shadow: 0 0 0 2px #000, 0 0 50px rgba(226,50,60,.5); }
 .groot-moment .dief > b { font-size: clamp(28px, 3vw, 64px); line-height: 1; }
 .groot-moment .dief-mist { margin-top: 2vh; font: 600 clamp(13px, 1.1vw, 24px)/1.4 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: var(--ash); }
+/* quests on the big-moment screen */
+.groot-moment .q-titel { font-size: clamp(38px, 4.6vw, 100px); line-height: 1.05; filter: drop-shadow(0 0 30px rgba(226,50,60,.6)); }
+.groot-moment .q-tekst { margin: 2.6vh auto 0; max-width: 64vw; font: italic clamp(20px, 2vw, 44px)/1.4 var(--display); color: var(--bone); }
+.groot-moment .q-citaat { max-width: 70vw; margin: 3.5vh auto 0; font: italic clamp(28px, 3.2vw, 70px)/1.3 var(--display); color: #f3e3c4; }
+.groot-moment .q-uit { margin-top: 3vh; min-height: 1em; font: 700 clamp(26px, 3vw, 64px)/1.1 var(--carved); color: #ffd98a; letter-spacing: .04em; }
+.groot-moment .q-uit.fout { color: #ff8a80; }
+.groot-moment .q-sub { margin-top: 1.4vh; font: 600 clamp(14px, 1.3vw, 28px)/1 var(--carved); letter-spacing: .22em; text-transform: uppercase; color: var(--ash); }
+.groot-moment .q-klasse .gm-naam { transition: font-size .8s ease; }
+.groot-moment .q-klasse .gm-naam.klein { font-size: clamp(30px, 3.4vw, 72px); }
+.groot-moment .q-klasse .q-titel { margin-top: 2.4vh; font-size: clamp(30px, 3.4vw, 76px); }
+.groot-moment .q-klasse .q-tekst { margin-top: 1.6vh; }
+.groot-moment .q-rij { display: flex; gap: 2.4vw; justify-content: center; margin-top: 3vh; }
+.groot-moment .q-rij figure { margin: 0; display: grid; gap: 1vh; justify-items: center; animation: q-in .8s ease both; }
+@keyframes q-in { from { opacity: 0; transform: translateY(2vh); } }
+.groot-moment .q-rij img { height: 20vh; aspect-ratio: 2 / 3; object-fit: cover; border: 2px solid #8a6a3a; box-shadow: 0 0 0 2px #000, 0 0 24px rgba(0,0,0,.8); }
+.groot-moment .q-rij figure.eerst img { height: 25vh; border-color: #d9b77a; box-shadow: 0 0 0 2px #000, 0 0 40px rgba(226,50,60,.6); }
+.groot-moment .q-rij figcaption { font: 700 clamp(15px, 1.4vw, 30px)/1 var(--carved); color: #ffd98a; text-transform: uppercase; letter-spacing: .06em; }
+.groot-moment .q-zoom { height: 58vh; aspect-ratio: 2 / 3; overflow: hidden; margin: 3vh auto 0; border: 3px solid #d9b77a; box-shadow: 0 0 0 2px #000, 0 0 60px rgba(226,50,60,.5); }
+.groot-moment .q-zoom img { width: 100%; height: 100%; object-fit: cover; transform: scale(14); transition: transform 45s cubic-bezier(.5, 0, .9, .6); }
+.groot-moment .q-zoom.uit img { transform: scale(1.4); }
+.groot-moment .q-zoom.onthul img { transition: transform 1.4s ease; transform: scale(1); }
+.groot-moment .q-zegels { display: flex; gap: 3vw; justify-content: center; margin-top: 5vh; }
+.groot-moment .q-zegels img { width: 11vw; opacity: .22; filter: grayscale(.7); transition: opacity .15s, transform .15s, filter .15s; }
+.groot-moment .q-zegels img.licht { opacity: 1; filter: drop-shadow(0 0 40px rgba(255,200,120,.95)); transform: scale(1.18); }
+.groot-moment .q-inzet { display: inline-flex; align-items: center; gap: 1vw; margin-top: 2.6vh; font: 600 clamp(14px, 1.3vw, 28px)/1 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: var(--ash); }
+.groot-moment .q-inzet img { width: clamp(30px, 2.8vw, 60px); }
+.groot-moment .q-tijd { position: absolute; left: 22vw; right: 22vw; bottom: 6vh; height: .9vh; background: rgba(255,255,255,.1); opacity: 0; transition: opacity .6s; }
+.groot-moment .q-tijd.aan { opacity: 1; }
+.groot-moment .q-tijd i { position: absolute; inset: 0; background: linear-gradient(90deg, #a8322f, #ffd98a); transform-origin: left; }
+.groot-moment .q-tijd span { position: absolute; left: 0; right: 0; bottom: 2.2vh; font: 700 clamp(22px, 2.4vw, 52px)/1 var(--carved); color: #ffd98a; }
 .groot-moment .gm-onder { margin-top: 3vh; font: italic clamp(18px, 2vw, 42px)/1.4 var(--display); color: var(--bone); }
 .verraders-lijst { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(26vw, 420px), 1fr)); gap: 2vw; width: min(90vw, 1700px); text-align: left; }
 .verraders-lijst .vk { padding: 2.2vh 1.6vw; background: rgba(20,6,8,.85); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.4); }
@@ -1215,16 +1245,17 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=123"></script>
-<script src="a/godfried.js?v=123"></script>
-<script src="a/spel.js?v=123"></script>
-<script src="a/voorbereiding.js?v=123"></script>
-<script src="a/wachters.js?v=123"></script>
-<script src="a/firebase-config.js?v=123"></script>
-<script src="a/portretten.js?v=123"></script>
-<script src="a/koppeling.js?v=123"></script>
-<script src="a/rollen.js?v=123"></script>
-<script src="a/tafel.js?v=123"></script>
+<script src="a/events.js?v=124"></script>
+<script src="a/godfried.js?v=124"></script>
+<script src="a/spel.js?v=124"></script>
+<script src="a/voorbereiding.js?v=124"></script>
+<script src="a/wachters.js?v=124"></script>
+<script src="a/firebase-config.js?v=124"></script>
+<script src="a/portretten.js?v=124"></script>
+<script src="a/koppeling.js?v=124"></script>
+<script src="a/rollen.js?v=124"></script>
+<script src="a/quests-tv.js?v=124"></script>
+<script src="a/tafel.js?v=124"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2040,8 +2071,8 @@ function tekenTvTafel() {
 // the hall sounds alive: crackling fire, chatter and laughter
 let zaalSfeer = null;
 function zaalGeluid(aan) {
-  if (aan) { halMuziek.vol(.12, 2000); fade(vuur, .3, 2000); if (!zaalSfeer) { zaalSfeer = lus("zaal-sfeer", 0); zaalSfeer.play().catch(() => {}); } fade(zaalSfeer, .7, 2500); }
-  else if (zaalSfeer) { const z = zaalSfeer; zaalSfeer = null; fade(z, 0, 1500); setTimeout(() => z.pause(), 1600); halMuziek.vol(.5, 2500); fade(vuur, .12, 2500); }
+  if (aan) { halMuziek.vol(.12, 2000); fade(vuur, .3, 2000); if (!zaalSfeer) { zaalSfeer = muziekLus("zaal-sfeer", .7); zaalSfeer.play(); } else zaalSfeer.vol(.7, 2500); }
+  else if (zaalSfeer) { zaalSfeer.stop(1500); zaalSfeer = null; halMuziek.vol(.5, 2500); fade(vuur, .12, 2500); }
 }
 // living fire in the hearth, the four braziers and the candelabras (measured on the painting)
 const ZAAL_VUUR = [[.503, .255, 1.2], [.212, .35, .9], [.803, .352, .9], [.202, .9, .9], [.813, .905, .9],
@@ -2575,7 +2606,7 @@ function stemMet(naam, vol, klaar, reserve = 5000) {
 // Godfried speaks: music and fire go down. They come back only when nothing that speaks is still busy,
 // and a safety net brings them back if a scene forgot to (the music can never stay low)
 let gedempt = false;
-const moetStil = () => vertelLoopt || !!gq || truc;
+const moetStil = () => vertelLoopt || !!gq || truc || !!quest;
 function demp(aan) {
   if (aan) { gedempt = true; halMuziek.demp(.12, 800); fade(vuur, .02, 800); return; }
   setTimeout(() => { if (!gedempt || moetStil()) return; gedempt = false; halMuziek.demp(1, 2500); fade(vuur, .12, 2500); }, 60);
@@ -2720,7 +2751,7 @@ const CHAOS = Object.fromEntries(Object.entries(CHAOS_RAW).map(([cmd, fn]) => [c
 /* ================= link with the laptop server (app/server.mjs) ================= */
 // Without a server (the concept page) everything runs locally as before.
 let server = false, meldTimer = null, herstelt = false; // herstelt: going back to a restore point, write nothing more
-function schermNu() { return dronkActief && dronkWacht ? "dronk-wacht" : dronkActief ? "dronk" : uitlegActief ? "uitleg" : !$("verhaal").hidden ? "verhaal" : binnen === null ? "start" : wakker() ? "schaduw" : paneelNu || "hal"; }
+function schermNu() { return dronkActief && dronkWacht ? "dronk-wacht" : dronkActief ? "dronk" : uitlegActief ? "uitleg" : !$("verhaal").hidden ? "verhaal" : binnen === null ? "start" : wakker() ? "schaduw" : quest ? "quest" : paneelNu || "hal"; }
 function meld() {
   if (!server || passief || !standGeladen || herstelt) return; clearTimeout(meldTimer);
   meldTimer = setTimeout(() => Koppeling.meldStand(standNu()), 150);
@@ -2732,7 +2763,7 @@ function standNu() {
     event: wakker() && EVENT ? { id: EVENT.id, naam: EVENT.naam, regel: EVENT.regel, soort: EVENT.soort, zegel: EVENT.zegel, verlies: EVENT.verlies * extra } : null,
     scherm: schermNu(), d20: !$("b-d20").disabled, d20Wacht: !!d20Na, quiz: gq ? { ...gq, uit: [...gq.uit] } : null, kroniek: [...kroniek],
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], ronde, fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
-    ijs, vloek, vloekD20, dieven,
+    ijs, vloek, vloekD20, dieven, quest: quest ? { id: quest.id, naam: quest.naam, fase: quest.fase, lengte: quest.lengte || 0, beste: quest.beste || 0, hoofd: quest.hoofd || null, mee: quest.mee || null, antwoord: quest.antwoord || null } : null, rotatie,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
     publiek: { ronde, levend: Date.now(), tafel: paneelNu === "tafel", kroniek: [...kroniek], scores: scorebordData(), hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
     tochtOpen, kistGeopend,
@@ -2873,6 +2904,16 @@ function tafelEven() { // a Wachter asked for the Round Table: 45 seconds, then 
   const balk = $("z-tijd-balk"); $("z-tijd").classList.add("aan");
   zaalTik = setInterval(() => { balk.style.transform = `scaleX(${Math.max(0, eind - Date.now()) / 45000})`; }, 200);
 }
+// every five minutes the Guild Hall turns to the Round Table for 45 seconds (the regie can switch it off);
+// first in the light: whoever got XP since the last turn, otherwise the next one at the table
+let rotatie = true, rotatieOp = Date.now();
+setInterval(() => {
+  if (!rotatie || !standGeladen || passief || Date.now() - rotatieOp < 5 * 60000) return;
+  if (schermNu() !== "hal" || oproepBezig || !$("groot-moment").hidden || questBezig()) return;
+  const p = logboek.filter((l) => l.type === "punt" && l.t > rotatieOp).at(-1), W = window.WACHTERS || [];
+  rotatieOp = Date.now(); if (p) { const i = W.findIndex((w) => w.naam === p.naam); if (i >= 0) tafelI = i; }
+  tafelEven();
+}, 15000);
 function tafelKies(naam) { // a Wachter tapped someone in his app while the hall is on screen
   if (paneelNu !== "tafel") return; const W = window.WACHTERS || [], i = W.findIndex((w) => w.naam === naam); if (i < 0) return;
   tafelPauze = Date.now() + 30000; tafelI = i; zaalKaart(W[i]);
@@ -2900,7 +2941,7 @@ function verraderOverzicht() {
 }
 let gmTimers = [], gmGen = 0;
 const gmT = (ms, fn) => { const g = gmGen; gmTimers.push(setTimeout(() => g === gmGen && fn(), ms)); }; // a newer moment cancels the old one, voice callbacks included
-function grootMoment(html) { gmGen++; gmTimers.forEach(clearTimeout); gmTimers = []; const g = $("groot-moment"); g.innerHTML = html; g.hidden = false; void g.offsetWidth; g.classList.add("aan"); }
+function grootMoment(html) { if (quest && !questBouwt) questOpruim(); gmGen++; gmTimers.forEach(clearTimeout); gmTimers = []; const g = $("groot-moment"); g.innerHTML = html; g.hidden = false; void g.offsetWidth; g.classList.add("aan"); }
 function grootMomentWeg() { gmGen++; gmTimers.forEach(clearTimeout); gmTimers = []; const g = $("groot-moment"); g.classList.remove("aan"); setTimeout(() => { if (!g.classList.contains("aan")) g.hidden = true; }, 1000); }
 function verradersToon() {
   const lijst = verraderOverzicht();
@@ -2911,6 +2952,117 @@ function verraderKroon(naam) {
   if (!NAMEN.includes(naam)) return; ere.besteVerrader = naam; meld();
   grootMoment(`<div><div class="gm-kop carved">Wie diende de Schaduwkoning het best?</div><div id="gm-portret"></div><div class="gm-naam carved" id="gm-naam">…</div></div>`);
   const g = gmGen; stemMet("fin/beste-verrader", 1, () => g === gmGen && gmT(400, () => { $("gm-naam").textContent = naam; if (PORTRET[naam]) $("gm-portret").innerHTML = `<img class="gm-portret" src="${PORTRET[naam]}" alt="">`; speel("fin/sfx-goed", .9); speel("gejuich", .7); speel("chaos-1", .5); }), 9000);
+}
+// ===== Quests the regie starts on the tv (tab Quests): five digital quests, a quest of their own, and the class moments.
+// They take the big-moment screen; the regie closes them with Gelukt / Mislukt / Sluiten. =====
+const QT = window.QUESTS_TV || {};
+let quest = null, questTimers = [], questTik = null, questFlikker = null, questBouwt = false;
+const qT = (ms, fn) => { const q = quest; questTimers.push(setTimeout(() => { if (quest === q) fn(); }, ms)); };
+const questBezig = () => !!quest;
+function questOpruim() {
+  questTimers.forEach(clearTimeout); questTimers = []; clearInterval(questTik); clearInterval(questFlikker); questTik = questFlikker = null;
+  if (quest?.stil) halMuziek.terug(2500); quest = null;
+}
+function questStop() { if (!quest) return; questOpruim(); grootMomentWeg(); demp(false); meld(); }
+function questScherm(q, html) { questOpruim(); quest = q; questBouwt = true; grootMoment(html); questBouwt = false; demp(true); meld(); }
+const qKop = (label, naam, tekst) => `<div class="gm-kop carved">${label}</div><div class="q-titel carved">${schoon(naam)}</div>${tekst ? `<div class="q-tekst">${schoon(tekst)}</div>` : ""}`;
+const qTijd = '<div class="q-tijd"><i></i><span></span></div>';
+const qBeeld = (n, eerst) => `<figure class="${eerst ? "eerst" : ""}">${PORTRET[n] ? `<img src="${PORTRET[n]}" alt="">` : ""}<figcaption>${schoon(n)}</figcaption></figure>`;
+const enLijst = (l) => l.length > 1 ? `${l.slice(0, -1).join(", ")} en ${l.at(-1)}` : l[0] || "";
+function questKlok(sec, klaar) {
+  const el = document.querySelector("#groot-moment .q-tijd"); if (!el) return; const eind = Date.now() + sec * 1000; el.classList.add("aan");
+  const tik = () => { const over = Math.max(0, eind - Date.now()), s = Math.ceil(over / 1000);
+    el.querySelector("i").style.transform = `scaleX(${over / (sec * 1000)})`; el.querySelector("span").textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+    if (!over) { clearInterval(questTik); questTik = null; el.querySelector("span").textContent = "Tijd!"; speel("klok", .8); klaar?.(); } };
+  clearInterval(questTik); tik(); questTik = setInterval(tik, 250);
+}
+// the end: the regie says Gelukt or Mislukt; fiches go to the quest's Seal (or the emptiest one)
+function questKlaar(goed, n, extra = "") {
+  const q = quest; if (!q || q.fase === "uit") return; q.fase = "uit"; clearInterval(questTik); questTik = null;
+  const u = $("q-uit"); if (u) { u.className = `q-uit ${goed ? "" : "fout"}`; u.textContent = `${goed ? "Gelukt!" : "Mislukt."}${extra ? ` ${extra}` : ""}`; }
+  if (goed) { speel("fin/sfx-goed", .9); speel("gejuich", .7); } else speel("donder", .6);
+  if (goed && n) for (let i = 0; i < n; i++) qT(1200 + i * 600, () => { const z = q.zegel || leegsteZegel(); if (z) fiche(z, 1); });
+  log("quest", { id: q.id, naam: q.naam, goed: !!goed, n: goed ? n : 0 }); meld();
+  qT(9000, questStop);
+}
+// De Stille Wachters: the farts of the Shadow orchestra, faster and faster, a melody in pitch; nobody may laugh
+function scheetOrkest(sec) {
+  const melodie = [1, 1.12, 1.26, 1.5, 1.26, 1.12, 1, .84, .75, .84, 1, 1.5, 2, 1.5, 1, .6], eind = sec * 1000 - 1600;
+  let t = 1200, i = 0;
+  while (t < eind) { const r = melodie[i % melodie.length], n = i % 4 === 3 ? 3 : i % 2 ? 2 : i % 3 ? 1 : 4;
+    qT(t, () => { const a = speel(`quest/scheet-${n}`, .9, r); a.preservesPitch = false; }); t += Math.max(320, 1700 - t / 45); i++; }
+  qT(eind + 300, () => { const a = speel("quest/scheet-3", 1, .55); a.preservesPitch = false; });
+}
+const QUEST = {
+  stil() {
+    const d = QT.stil; questScherm({ id: "stil", naam: d.naam, fase: "loopt", stil: true, zegel: d.zegel, fiches: d.fiches }, `<div>${qKop("Quest", d.naam, d.tekst)}<div class="q-uit" id="q-uit"></div></div>${qTijd}`);
+    halMuziek.stil(800);
+    stemMet("quest/stem-stil", 1, () => qT(600, () => { $("q-uit").textContent = "Sssst…"; questKlok(d.sec, () => { quest.fase = "klaar"; meld(); $("q-uit").textContent = "Tijd! Lachte er iemand?"; }); scheetOrkest(d.sec); }), 9000);
+  },
+  foto() {
+    const d = QT.foto, P = window.QUEST_POSES || [], pose = P[Math.floor(Math.random() * P.length)] || "";
+    questScherm({ id: "foto", naam: d.naam, fase: "loopt", zegel: d.zegel, fiches: d.fiches }, `<div>${qKop("Quest", d.naam, d.tekst)}<div class="q-citaat">${schoon(pose)}</div><div class="q-uit" id="q-uit"></div></div>${qTijd}`);
+    stemMet("quest/stem-foto", 1, () => questKlok(d.sec, () => { quest.fase = "klaar"; meld(); $("q-uit").textContent = "Tijd! Staat iedereen erop?"; }), 9000);
+  },
+  wie() { // a painting from very close, slowly zooming out; the regie reveals the name, then the next one
+    const d = QT.wie, al = quest?.id === "wie" ? quest.gezien : [], met = NAMEN.filter((n) => PORTRET[n]), nog = met.filter((n) => !al.includes(n)), pot = nog.length ? nog : met;
+    if (!pot.length) return; const naam = pot[Math.floor(Math.random() * pot.length)];
+    const [fx, fy, fw] = Portret.gezicht?.(naam) || [.5, .2, .15], ox = Math.min(.88, Math.max(.12, fx + (Math.random() < .5 ? -1 : 1) * fw * (.6 + Math.random()))), oy = Math.min(.88, Math.max(.1, fy + fw * (.8 + Math.random() * 1.4))); // a detail beside or below the face, not the face itself
+    questScherm({ id: "wie", naam: d.naam, fase: "zoomt", gezien: [...(nog.length ? al : []), naam], antwoord: naam },
+      `<div>${qKop("Quest", d.naam, al.length ? "" : d.tekst)}<div class="q-zoom" id="q-zoom"><img src="${PORTRET[naam]}" alt="" style="transform-origin:${ox * 100}% ${oy * 100}%"></div><div class="q-uit" id="q-uit"></div></div>`);
+    const z = $("q-zoom"); void z.offsetWidth; const start = () => qT(500, () => z.classList.add("uit"));
+    if (!al.length) stemMet("quest/stem-wie", 1, start, 7000); else start();
+  },
+  zei(o) {
+    const d = QT.zei, tekst = String(o.tekst || "").trim().slice(0, 240), wie = NAMEN.includes(o.wie) ? o.wie : null; if (!tekst) return;
+    log("citaat", { tekst, naam: wie });
+    questScherm({ id: "zei", naam: d.naam, fase: "vraag", antwoord: wie }, `<div>${qKop("Quest", d.naam)}<div class="q-citaat">“${schoon(tekst)}”</div><div class="q-uit" id="q-uit">Wie zei het?</div><div class="q-rij" id="q-rij"></div></div>`);
+    stemMet("quest/stem-zei", 1, null, 6000);
+  },
+  geheugen() {
+    const d = QT.geheugen;
+    questScherm({ id: "geheugen", naam: d.naam, fase: "toont", reeks: [], lengte: 0, beste: 0 }, `<div>${qKop("Quest", d.naam, d.tekst)}<div class="q-zegels" id="q-zegels">${ZEGELS.map((z) => `<img src="${z.medaille}" data-z="${z.id}" alt="">`).join("")}</div><div class="q-uit" id="q-uit"></div></div>`);
+    stemMet("quest/stem-geheugen", 1, () => geheugenRonde(3), 7000);
+  },
+  eigen(o) {
+    const titel = String(o.titel || "").trim().slice(0, 80) || "Een opdracht", tekst = String(o.tekst || "").trim().slice(0, 400);
+    const zegel = ZEGELS.some((z) => z.id === o.zegel) ? o.zegel : null, fiches = Math.max(0, Math.min(3, Math.round(+o.fiches) || 0)), sec = Math.max(0, Math.min(3600, Math.round(+o.sec) || 0));
+    questScherm({ id: "eigen", naam: titel, fase: "loopt", zegel, fiches },
+      `<div>${qKop("Opdracht van Godfried", titel, tekst)}${zegel && fiches ? `<div class="q-inzet"><img src="${medaille(zegel)}" alt="">Gelukt: +${fiches} fiche${fiches > 1 ? "s" : ""} voor ${schoon(zegelNaam(zegel))}</div>` : ""}<div class="q-uit" id="q-uit"></div></div>${sec ? qTijd : ""}`);
+    stemMet("quest/stem-eigen", 1, () => { if (sec) questKlok(sec, () => { quest.fase = "klaar"; meld(); }); }, 5000);
+  },
+  klasse() { // the die picks a Wachter (who had the fewest turns first), a quest of his class, and his fellow players (who played least first)
+    const KQ = window.KLASSE_QUESTS || {}, K = window.KARAKTER || {};
+    const tel = (alleenHoofd) => { const t = Object.fromEntries(NAMEN.map((n) => [n, 0])); for (const l of logboek) if (l.type === "klasse") { t[l.hoofd]++; if (!alleenHoofd) (l.mee || []).forEach((n) => t[n]++); } return t; };
+    const minst = (lijst, t) => { const m = Math.min(...lijst.map((n) => t[n])), p = lijst.filter((n) => t[n] === m); return p[Math.floor(Math.random() * p.length)]; };
+    const kand = NAMEN.filter((n) => KQ[K[n]?.klasse]?.length); if (!kand.length) return;
+    const hoofd = minst(kand, tel(true)), qs = KQ[K[hoofd].klasse], gedaan = logboek.filter((l) => l.type === "klasse" && l.hoofd === hoofd).map((l) => l.quest);
+    const vrij = qs.filter((q) => !gedaan.includes(q.naam)), pot = vrij.length ? vrij : qs, q = pot[Math.floor(Math.random() * pot.length)];
+    const tm = tel(false), mee = []; for (let i = 0; i < (q.mee || 2); i++) mee.push(minst(NAMEN.filter((n) => n !== hoofd && !mee.includes(n)), tm));
+    log("klasse", { hoofd, mee, quest: q.naam, zegel: q.zegel });
+    questScherm({ id: "klasse", naam: q.naam, fase: "kiest", hoofd, mee, zegel: q.zegel },
+      `<div class="q-klasse"><div class="gm-kop carved">Klassemoment</div><div class="gm-naam carved" id="q-hoofd">…</div><div class="q-sub" id="q-sub"></div><div class="q-titel carved" id="q-titel"></div><div class="q-tekst" id="q-tekst"></div><div class="q-rij" id="q-rij"></div><div class="q-uit" id="q-uit"></div></div>`);
+    speel("kerkklok", .6); stemMet("quest/stem-klasse", 1, null, 6000);
+    const el = $("q-hoofd"); questFlikker = setInterval(() => (el.textContent = NAMEN[Math.floor(Math.random() * NAMEN.length)]), 90);
+    qT(3600, () => { clearInterval(questFlikker); questFlikker = null; el.textContent = hoofd; speel("klok", .8, 1.2); $("q-sub").textContent = `${K[hoofd].ras} · ${K[hoofd].klasse}`; });
+    qT(6200, () => { el.classList.add("klein"); $("q-titel").textContent = q.naam; $("q-tekst").textContent = q.tekst.replaceAll("{naam}", hoofd).replaceAll("{mee}", enLijst(mee)); });
+    qT(8200, () => { $("q-rij").innerHTML = [hoofd, ...mee].map((n, i) => qBeeld(n, !i)).join(""); quest.fase = "loopt"; meld(); speel("fin/sfx-licht", .6); });
+  },
+};
+function geheugenRonde(n) {
+  const q = quest; if (q?.id !== "geheugen") return;
+  while (q.reeks.length < n) q.reeks.push(ZEGELS[Math.floor(Math.random() * ZEGELS.length)].id);
+  q.lengte = n; q.fase = "toont"; meld(); $("q-uit").textContent = `${n} Zegels`;
+  const stap = 1100 - Math.min(450, n * 40);
+  q.reeks.forEach((id, i) => qT(900 + i * stap, () => { const img = document.querySelector(`#q-zegels img[data-z="${id}"]`); if (!img) return; img.classList.add("licht");
+    const a = speel("fin/sfx-klank", .7, [.8, 1, 1.2, 1.5][ZEGELS.findIndex((z) => z.id === id)]); a.preservesPitch = false; setTimeout(() => img.classList.remove("licht"), stap * .7); }));
+  qT(900 + n * stap + 300, () => { q.fase = "beurt"; meld(); $("q-uit").textContent = "Nu jullie! Roep ze in de juiste volgorde."; });
+}
+function questUit(goed) {
+  const q = quest; if (!q || q.fase === "uit") return;
+  if (q.id === "geheugen") { const b = q.beste || 0, n = b >= 8 ? 3 : b >= 6 ? 2 : b >= 4 ? 1 : 0; return questKlaar(n > 0, n, `Langste reeks: ${b}.`); }
+  if (q.id === "klasse" && goed) { punt({ naam: q.hoofd, zegel: q.zegel, xp: 20, waarom: `Klassemoment: ${q.naam}` }); q.mee.forEach((n, i) => setTimeout(() => punt({ naam: n, zegel: q.zegel, xp: 10, waarom: `Klassemoment: ${q.naam}` }), 1500 * (i + 1))); return questKlaar(true, 0); }
+  questKlaar(goed, q.fiches || 0);
 }
 // ===== De Dieven: at the finale the Seals are not full; the Thieves (Jean and Johan) get the task to steal back what is missing,
 // in their own way. The regie judges the theft and gives the loot: fiches for the emptiest Seals. =====
@@ -2950,20 +3102,28 @@ let oproepBezig = false;
 function oproep() { // all music falls silent, then three loud strokes of the church bell; afterwards everything comes back
   if (oproepBezig) return; oproepBezig = true; const o = $("oproep");
   o.classList.add("aan");
-  const muziek = [halMuziek, schaduwMuziek].filter(Boolean), sfeer = [vuur, wind, zaalSfeer].filter(Boolean).map((a) => [a, a.volume]);
+  const muziek = [halMuziek, schaduwMuziek, zaalSfeer].filter(Boolean), sfeer = [vuur, wind].filter(Boolean).map((a) => [a, a.volume]);
   muziek.forEach((m) => m.stil(500)); sfeer.forEach(([a]) => fade(a, 0, 500));
   for (let i = 0; i < 3; i++) setTimeout(() => speel("kerkklok-luid", 1), 500 + i * 1900);
   setTimeout(() => { o.classList.remove("aan"); oproepBezig = false; muziek.forEach((m) => m.terug(2500)); sfeer.forEach(([a, v]) => fade(a, v, 2500)); }, 10500);
 }
 const OPDRACHTEN = {
   oproep: () => oproep(),
-  scorebord: () => tafelEven(), // the phones' button now opens the Round Table hall
+  scorebord: () => tafelEven(),
+  rotatie: (o) => { rotatie = !!o.aan; rotatieOp = Date.now(); meld(); }, // the phones' button now opens the Round Table hall
   "tafel-kies": (o) => tafelKies(o.naam),
   "scorebord-weg": () => scorebordWeg(),
   "verraders-toon": () => verradersToon(),
   "verrader-kroon": (o) => verraderKroon(o.naam),
   wievolgt: (o) => wieVolgt(o.namen),
-  "groot-weg": () => grootMomentWeg(),
+  "groot-weg": () => { questStop(); grootMomentWeg(); },
+  quest: (o) => { if (!wakker() && binnen !== null) QUEST[o.id]?.(o); },
+  "quest-uit": (o) => questUit(!!o.goed),
+  "quest-stop": () => questStop(),
+  "wie-onthul": () => { if (quest?.id !== "wie" || quest.fase === "onthuld") return; quest.fase = "onthuld"; $("q-zoom")?.classList.add("onthul"); $("q-uit").textContent = quest.antwoord; speel("fin/sfx-goed", .8); meld(); },
+  "wie-volgende": () => { if (quest?.id === "wie") QUEST.wie(); },
+  "zei-onthul": () => { if (quest?.id !== "zei" || !quest.antwoord || quest.fase === "onthuld") return; quest.fase = "onthuld"; $("q-uit").textContent = ""; $("q-rij").innerHTML = qBeeld(quest.antwoord, true); speel("fin/sfx-goed", .8); meld(); },
+  "geheugen-goed": () => { if (quest?.id === "geheugen" && quest.fase === "beurt") { quest.beste = quest.lengte; speel("fin/sfx-goed", .6); geheugenRonde(quest.lengte + 1); } },
   dieven: () => dievenStart(),
   "dief-buit": (o) => dievenBuit(o.n),
   punt: (o) => punt(o),
@@ -2981,7 +3141,7 @@ const OPDRACHTEN = {
   ...CHAOS,
   start: () => { if (binnen === null && $("verhaal").hidden) { location.hash = "nu"; startVerhaal(); } },
   verder: () => vertelLoopt ? vertelSla() : paneelNu === "finale" ? gSla() : paneelNu === "einde" ? naarEre() : verderIntro(),
-  schaduw: () => schaduw(), d20: () => werpD20(), goed: () => uitslag(true), fout: () => uitslag(false), hal: () => hal(),
+  schaduw: (o) => schaduw(o.id), d20: () => werpD20(), goed: () => uitslag(true), fout: () => uitslag(false), hal: () => hal(),
   fiche: (o) => fiche(o.id, o.n > 0 ? 1 : -1),
   // a Wachter fulfilled the order he got before the weekend: his seal gets 3 fiches, one by one
   bevel: (o) => { const b = window.VOORAF?.bevelen?.[o.naam]; if (!b || bevelGedaan.has(o.naam)) return; bevelGedaan.add(o.naam); log("bevel", { naam: o.naam, zegel: b.zegel });
@@ -3032,7 +3192,7 @@ function laadStand(s) {
   ronde = s.ronde || 1; kroniek = new Set(s.kroniek || []);
   if (s.fin) fin = { nu: 0, open: {}, opgelost: {}, hint: {}, ...s.fin }; if (s.ere) ere = { i: -1, namen: {}, ...s.ere };
   if (s.chaos) { const { wacht: w, ...rest } = s.chaos; chaos = rest; Object.assign(wacht, w || {}); }
-  dieven = s.dieven || null; ijs = s.ijs || {}; vloekD20 = !!s.vloekD20; vloek = s.vloek || null; tekenIjs();
+  dieven = s.dieven || null; rotatie = s.rotatie !== false; ijs = s.ijs || {}; vloekD20 = !!s.vloekD20; vloek = s.vloek || null; tekenIjs();
   if (vloek) { $("vloek-teken").innerHTML = `<b>Vervloekt · ${schoon(vloek.naam)}</b>${schoon(vloek.tekst)}`; $("vloek-teken").hidden = false; }
   logboek = s.logboek || []; verraders = s.verraders || []; verrader = s.verrader || null; rollenOpen = !!s.publiek?.hal;
   fin.voortgang ||= {};
@@ -3061,7 +3221,8 @@ const SLEUTEL = (window.KRONIEKEN_SESSIE === "test" ? "test-" : "") + "kronieken
 let gebruikt = new Set(); try { gebruikt = new Set(JSON.parse(localStorage.getItem(SLEUTEL) || "[]")); } catch {}
 function bewaar() { try { localStorage.setItem(SLEUTEL, JSON.stringify([...gebruikt])); } catch {} teller(); meld(); }
 function teller() { const over = EVENTS.filter((e) => !gebruikt.has(e.id)).length; $("ev-teller").textContent = `Nog ${over} van de ${EVENTS.length} events over.`; }
-function trekEvent() {
+function trekEvent(id) {
+  const gekozen = typeof id === "string" && EVENTS.find((e) => e.id === id); if (gekozen) { gebruikt.add(gekozen.id); bewaar(); return gekozen; }
   let pot = EVENTS.filter((e) => !gebruikt.has(e.id));
   if (!pot.length) pot = EVENTS; // all used: start over rather than stay silent
   const e = pot[Math.floor(Math.random() * pot.length)]; gebruikt.add(e.id); bewaar(); return e;
@@ -3151,13 +3312,13 @@ function d20Gevolg(r, zegel, n) {
   if (r.soort === "nat20") { fiche(zegel, 1); setTimeout(() => fiche(zegel, 1), 700); return setTimeout(hal, 3000); }
   hal();
 }
-function schaduw() {
-  if (wakker()) return;
+function schaduw(id) {
+  if (wakker()) return; questStop();
   if (binnen === null) { verhaalKlaar = true; proloog?.pause(); $("verhaal").hidden = true; betreden(); }
   if (vloek) { vloek = null; $("vloek-teken").hidden = true; }
   beslist = false; d20Gedaan = false; stage.classList.add("awake"); knoppen(true); $("storm").playbackRate = 1.6;
   $("status").textContent = "De Schaduw ontwaakt"; $("verdict").hidden = true;
-  extra = 1; const nieuw = trekEvent();
+  extra = 1; const nieuw = trekEvent(id);
   halMuziek.stop(1200); fade(vuur, .05, 1200); fade(wind, .55, 1500);
   speel("klok", .9, .8); bliksem(0);
   setTimeout(() => { speel("donder-hard", .9); bliksem(0); }, 700);
@@ -3186,7 +3347,7 @@ function hal() {
   $("status").textContent = "De Schaduw slaapt"; meld();
   fade(vuur, .12, 2500); fade(wind, .2, 2500); clearTimeout(halTerug); halTerug = setTimeout(() => halMuziek.play(), 1200);
 }
-$("b-event").onclick = schaduw; $("b-hall").onclick = hal;
+$("b-event").onclick = () => schaduw(); $("b-hall").onclick = hal;
 $("b-good").onclick = () => uitslag(true); $("b-bad").onclick = () => uitslag(false);
 $("b-d20").onclick = () => werpD20();
 $("b-reset").onclick = () => { gebruikt.clear(); bewaar(); };

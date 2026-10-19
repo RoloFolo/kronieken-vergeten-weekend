@@ -16,6 +16,7 @@
     laadGroot: null, // set by koppeling.js: (naam) => promise of the data URL
     groot(naam) { if (!groot[naam]) groot[naam] = (this.laadGroot ? this.laadGroot(naam).catch(() => null) : Promise.resolve(null)).then((u) => u || data[naam] || null); return groot[naam]; },
     aantal: () => Object.keys(data).length,
+    gezicht: (naam) => GEZICHT[naam] || [.5, .2, .15], // face centre and width, for a zoom on a detail
     op(fn) { wachters.push(fn); },
     rond(el, naam, ruimte = 1) {
       const u = data[naam]; if (!u) return false; const [fx, fy, fw] = GEZICHT[naam] || [.5, .2, .15], S = Math.max(1.05, .5 / fw / ruimte);

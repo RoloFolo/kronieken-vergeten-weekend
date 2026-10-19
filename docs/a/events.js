@@ -48,7 +48,7 @@ window.SCHADUW_EVENTS = [
   { id: "laatste-bier", soort: "dilemma", naam: "Het Offerbier", zegel: null, verlies: 0,
     regel: "De Schaduw eist een offer: het volgende koude bier gaat ongeopend op de schoorsteen en blijft daar tot morgenochtend staan. Weigeren kost de Hoorn van Overvloed 3 fiches.",
     stem: "Ik heb dorst. Het volgende koude bier is voor mij. Zet het bij het vuur… en laat het staan tot de ochtend. Of jullie Hoorn loopt leeg." },
-  { id: "schaduwdrager", soort: "dilemma", naam: "De Schaduwdrager", zegel: null, verlies: 0,
+  { id: "schaduwdrager", soort: "dilemma", naam: "De Staande Wachter", zegel: null, verlies: 0,
     regel: "Wijs samen één Wachter aan die tot middernacht niet op de bank mag zitten. Weigert de groep, dan verliest het Hart 2 fiches.",
     stem: "Eén van jullie draagt mijn last. Kies hem. Tot middernacht geen rust op de bank… of jullie Hart betaalt." },
   { id: "kroon-of-kelk", soort: "dilemma", naam: "De Kroon of de Kelk", zegel: null, verlies: 0,
