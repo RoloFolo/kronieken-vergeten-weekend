@@ -74,6 +74,7 @@ const REGELS = [
   ["fin/dicht", "Enceladus", SCHADUW, "Dit Zegel is te zwak… Het geeft zijn geheim niet prijs. Niet zonder een laatste beproeving."],
   ["fin/open", "Charon", GODFRIED, "Het Zegel is sterk genoeg. Het geeft zijn geheim prijs."],
   ["fin/einde-ere", "Charon", GODFRIED, "De kist is open, en Bouillon is gered. Maar een Wachter wordt niet alleen herinnerd om wat hij redde… ook om wie hij was. Laat ons hen eren."],
+  ["fin/dieven", "Charon", GODFRIED, "De Zegels zijn nog niet vol, en de Schaduw houdt vast wat van ons is. Maar onder ons lopen twee dieven. Jean… Johan… jullie handen zijn snel. Steel terug wat ons toekomt. Werp de dobbelsteen."],
   ["fin/beste-verrader", "Charon", GODFRIED, "De Schaduwkoning had dit weekend vele dienaars. Maar één van hen diende hem trouwer dan alle anderen. Wie diende de Schaduwkoning het best? Dat was…"],
   ["fin/wievolgt-1", "Charon", GODFRIED, "En dan de vraag die elk jaar terugkomt. Wie draagt volgend jaar de fakkel? Laat het lot beslissen."],
   ["fin/wievolgt-2", "Charon", GODFRIED, "Wat een toeval! Het lot heeft gesproken. Wachters… tot in 2027."],

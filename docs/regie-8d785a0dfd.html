@@ -271,6 +271,15 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <button class="groot" id="b-credit" type="button" style="margin-top:8px">Toevoegen</button>
     <div class="lijst" id="cr-lijst" style="margin-top:10px"></div>
   </section>
+  <section class="kaart" data-fase="finale">
+    <h2>De Dieven</h2>
+    <p class="klein" style="margin:0 0 8px">Zijn de Zegels niet vol als de finale begint? Daag de Thieves uit (Jean en Johan): ieder werpt één keer de D20 en steelt fiches terug voor het leegste Zegel. 1 betrapt · 2–9 niets · 10–15 één fiche · 16–19 twee · 20 drie.</p>
+    <p class="klein" id="dief-stand" style="margin:0 0 8px"></p>
+    <button class="goud" id="b-dieven" type="button">Daag de Dieven uit</button>
+    <div class="rij" id="dief-knoppen" style="margin-top:8px"></div>
+    <button id="b-dief-weg" type="button" style="margin-top:8px">Dieven-scherm sluiten</button>
+  </section>
+
   <section class="kaart" data-fase="ere finale">
     <h2>Wie diende de Schaduwkoning het best?</h2>
     <p class="klein" style="margin:0 0 8px">Toon op de tv wat elke Schaduwdrager deed, kies samen wie de Schaduwkoning het best diende, en kroon hem.</p>
@@ -342,15 +351,15 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=121"></script>
-<script src="a/godfried.js?v=121"></script>
-<script src="a/spel.js?v=121"></script>
-<script src="a/wachters.js?v=121"></script>
-<script src="a/rollen.js?v=121"></script>
-<script src="a/firebase-config.js?v=121"></script>
-<script src="a/portretten.js?v=121"></script>
-<script src="a/koppeling.js?v=121"></script>
-<script src="a/voorbereiding.js?v=121"></script>
+<script src="a/events.js?v=122"></script>
+<script src="a/godfried.js?v=122"></script>
+<script src="a/spel.js?v=122"></script>
+<script src="a/wachters.js?v=122"></script>
+<script src="a/rollen.js?v=122"></script>
+<script src="a/firebase-config.js?v=122"></script>
+<script src="a/portretten.js?v=122"></script>
+<script src="a/koppeling.js?v=122"></script>
+<script src="a/voorbereiding.js?v=122"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -470,7 +479,7 @@ function bewaakTvs(s) {
     : "Let op: er schrijven twee tv-vensters tegelijk. Sluit alle tabbladen met ?tv behalve één.";
 }
 function toon(s) {
-  bewaakTvs(s); tekenXpLijst(s); tekenWijzigingen(s);
+  bewaakTvs(s); tekenXpLijst(s); tekenWijzigingen(s); tekenDieven(s);
   // what the traitor did that everyone can see anyway: a frozen seal (no fiches) and a cursed Wachter
   const ijsTxt = Object.entries(s.ijs || {}).filter(([, t]) => t > Date.now()).map(([id, t]) => `❄ ${ZEGELS.find((z) => z.id === id)?.naam} is bevroren tot ${new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}. Tik op ❄ om te ontdooien.`);
   if (s.vloek) ijsTxt.push(`Vervloekt: ${s.vloek.naam}. ${s.vloek.tekst}`);
@@ -672,6 +681,18 @@ $("b-alles-ja").onclick = () => { $("alles-vraag").hidden = true;
   stuur({ cmd: "alles-opnieuw" }); resetMelding("Verstuurd naar de tv… even wachten op bevestiging.", ""); };
 $("b-reset-nee").onclick = () => ($("reset-vraag").hidden = true);
 $("b-reset-ja").onclick = () => { stuur({ cmd: "events-opnieuw" }); $("reset-vraag").hidden = true; };
+// ===== De Dieven (finale) =====
+const DIEVEN = Object.entries(window.KARAKTER || {}).filter(([, k]) => k.klasse === "Thief").map(([n]) => n);
+$("dief-knoppen").innerHTML = DIEVEN.map((n) => `<button type="button" data-n="${n}" disabled>${n} werpt</button>`).join("");
+$("b-dieven").onclick = () => stuur({ cmd: "dieven" });
+$("dief-knoppen").onclick = (e) => { const b = e.target.closest("button"); if (b) { stuur({ cmd: "dief-worp", naam: b.dataset.n }); b.disabled = true; } };
+$("b-dief-weg").onclick = () => stuur({ cmd: "groot-weg" });
+function tekenDieven(s) {
+  const niet = ZEGELS.filter((z) => (s.fiches?.[z.id] ?? 0) < S.drempel).map((z) => `${z.naam.split(" ")[0]} ${s.fiches?.[z.id] ?? 0}/${S.drempel}`);
+  $("dief-stand").textContent = niet.length ? `Nog niet vol: ${niet.join(", ")}.` : "Alle Zegels zijn vol: de Dieven zijn niet nodig.";
+  $("dief-knoppen").querySelectorAll("button").forEach((b) => { const w = s.dieven?.gedaan?.[b.dataset.n]; b.disabled = !s.dieven || w != null; b.textContent = w != null ? `${b.dataset.n}: ${w}` : `${b.dataset.n} werpt`; });
+}
+
 // ===== XP taken back, restore points, and what changed =====
 const veilig = (t) => String(t ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const tijdVan = (t) => new Date(t).toLocaleString("nl-NL", { weekday: "short", hour: "2-digit", minute: "2-digit" });
@@ -687,7 +708,7 @@ function tekenXpLijst(s) {
 }
 const WIJZ = { punt: (l) => `${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})${l.waarom ? `: ${l.waarom}` : ""}`, "punt-terug": (l) => `XP teruggedraaid: ${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})`,
   fiche: (l) => `${zegelNaam(l.id)} ${l.n > 0 ? "+" : "−"}${Math.abs(l.n)} fiche`, bevel: (l) => `Bevel volbracht: ${l.naam}`, kist: (l) => `Reliekenkist geopend: ${l.n} relieken`,
-  uitslag: (l) => `Event ${l.goed ? "gehaald" : "mislukt"}`, chaos: () => "Schaduwkaart gespeeld", "verrader-einde": () => "Schaduwtijd voorbij" };
+  uitslag: (l) => `Event ${l.goed ? "gehaald" : "mislukt"}`, chaos: () => "Schaduwkaart gespeeld", dief: (l) => `Dief ${l.naam} wierp ${l.worp}: ${l.n ? `${l.n} fiche${l.n > 1 ? "s" : ""} gestolen` : "niets"}`, "verrader-einde": () => "Schaduwtijd voorbij" };
 function tekenWijzigingen(s) {
   // the fiches that follow from XP (they drop in one by one) are left out: the XP line says it already
   const log = s.logboek || [], l = log.filter((x, i) => WIJZ[x.type] && !(x.type === "fiche" && log.slice(Math.max(0, i - 6), i).some((p) => p.type === "punt" && x.t - p.t < 15000))).slice(-25).reverse();
