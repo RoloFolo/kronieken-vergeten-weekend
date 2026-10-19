@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#050203">
 <meta name="robots" content="noindex">
-<title>De Verrader</title>
+<title>De Schaduwdrager</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Libre+Baskerville:ital@1&family=Source+Sans+3:wght@400;600;700&display=swap">
 <style>
 /* Layout: the Chaos Lord's secret phone page. One column, sinister: blood red on black.
@@ -57,7 +57,7 @@ button[data-rust]:not([data-rust=""])::after { content: "rust " attr(data-rust);
 <body>
 <main>
   <div class="kop">
-    <h1>De Verrader</h1>
+    <h1>De Schaduwdrager</h1>
     <p id="wie-tekst">De Schaduw heeft jou gekozen. Niemand mag weten dat jij het bent.</p>
   </div>
 
@@ -108,15 +108,15 @@ button[data-rust]:not([data-rust=""])::after { content: "rust " attr(data-rust);
   </section>
 
   <section class="kaart macht">
-    <h2>Eén keer zolang jij verrader bent</h2>
+    <h2>Eén keer zolang jij Schaduwdrager bent</h2>
     <button class="groot" id="c-macht" type="button"><b>Zijn Schaduw</b><small>De Schaduwkoning neemt een halve minuut de Hall over. Daarna lekken twee Zegels elk een fiche.</small></button>
   </section>
 </main>
 <div class="melding" id="melding" role="status"></div>
 
-<script src="a/wachters.js?v=120"></script>
-<script src="a/firebase-config.js?v=120"></script>
-<script src="a/koppeling.js?v=120"></script>
+<script src="a/wachters.js?v=121"></script>
+<script src="a/firebase-config.js?v=121"></script>
+<script src="a/koppeling.js?v=121"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -156,9 +156,9 @@ function teken() {
   $("c-naam-wie").textContent = doel ? `Fluister “${doel}”` : "Kies eerst een Wachter";
   $("c-vloek-wie").textContent = doel ? `Vervloek ${doel}, tot de Schaduw beweegt · 1 kaart` : "Kies eerst een Wachter · 1 kaart";
   document.querySelectorAll("main button").forEach((b) => (b.disabled = !actief()));
-  if (!actief()) { $("verbinding").textContent = IK || FIRE ? "Je bent op dit moment geen verrader" : "Deze link is niet geldig"; return; }
+  if (!actief()) { $("verbinding").textContent = IK || FIRE ? "Je bent op dit moment geen Schaduwdrager" : "Deze link is niet geldig"; return; }
   const tot = FIRE ? stand.tot : stand.verrader?.tot;
-  $("verbinding").textContent = tot ? `Jij bent de verrader tot ${new Date(tot).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}` : "Verbonden · jij bent de verrader";
+  $("verbinding").textContent = tot ? `Jij bent de Schaduwdrager tot ${new Date(tot).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}` : "Verbonden · jij bent de Schaduwdrager";
   for (const [id, k] of Object.entries(RUST)) {
     const s = rustOver(k), b = $(id); b.disabled = s > 0; b.dataset.rust = s > 0 ? mmss(s) : "";
   }
@@ -193,11 +193,11 @@ $("c-vloek").onclick = () => stuur("chaos-vloek", { naam: doel }, `${doel} is ve
 $("c-ijs").onclick = () => stuur("chaos-ijs", { id: gekozen }, "Het Zegel bevriest.");
 $("c-dobbel").onclick = () => stuur("chaos-dobbel", {}, "De dobbelsteen is vervloekt. Sst.");
 $("c-schaduw").onclick = () => stuur("chaos-schaduw", {}, "De Schaduw komt…");
-$("c-macht").onclick = () => { if (confirm("Dit kan maar één keer zolang jij verrader bent. Nu de Hall overnemen?")) stuur("chaos-macht", {}, "De Schaduwkoning spreekt."); };
+$("c-macht").onclick = () => { if (confirm("Dit kan maar één keer zolang jij Schaduwdrager bent. Nu de Hall overnemen?")) stuur("chaos-macht", {}, "De Schaduwkoning spreekt."); };
 teken();
 let wasActief = false;
 Koppeling.start({ rol: "chaos", opStand: (s) => { stand = s || {}; $("punt").classList.add("aan"); teken();
-    const nu = actief(); if (wasActief && !nu) { clearTimeout(window._wegT); window._wegT = setTimeout(() => { if (actief()) return; wasActief = false; const m = $("melding"); m.textContent = "Je tijd als verrader is om. De Schaduw laat je los."; m.classList.add("aan"); clearTimeout(m._t); m._t = setTimeout(() => m.classList.remove("aan"), 12000); }, 5000); return; } wasActief = nu; } })
+    const nu = actief(); if (wasActief && !nu) { clearTimeout(window._wegT); window._wegT = setTimeout(() => { if (actief()) return; wasActief = false; const m = $("melding"); m.textContent = "Je tijd als Schaduwdrager is om. De Schaduw laat je los."; m.classList.add("aan"); clearTimeout(m._t); m._t = setTimeout(() => m.classList.remove("aan"), 12000); }, 5000); return; } wasActief = nu; } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; if (Koppeling.ik) { IK = { naam: Koppeling.ik.naam }; zegWie(); teken(); } });
 </script>
 </body>

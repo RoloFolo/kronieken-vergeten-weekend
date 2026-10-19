@@ -1,4 +1,4 @@
-// De rollen van de Wachters (uit het document "Rollen"). De Chaos Lord is nu de wisselende verrader en is
+// De rollen van de Wachters (uit het document "Rollen"). De Chaos Lord is nu de wisselende Schaduwdrager en is
 // daarom geen vaste rol meer; de Architect is opgegaan in de Shieldbearer. Elf rollen voor elf Wachters.
 //   passief: altijd actief · kracht: één keer per dag · zegels: affiniteit (+1 fiche bij een quest voor dat Zegel)
 //   eed: het fragment van de Eed der Broeders (finale, Akte III) dat deze rol draagt, index in SPEL.eed.fragmenten

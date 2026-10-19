@@ -26,8 +26,8 @@ window.SPEL = {
       intro: "De Hoorn heeft alles gezien wat jullie dit weekend deden. Bewijs dat jullie het zelf ook nog weten." },
     { zegel: "schild", naam: "De Eed der Broeders", soort: "eed",
       intro: "Ieder van jullie draagt een stuk van de eed. Het staat nu in jouw persoonlijke boodschap van Godfried. Alleen samen, in de juiste volgorde, spreken jullie hem uit." },
-    { zegel: "hart", naam: "De Verrader", soort: "verrader",
-      intro: "Het hele weekend liep er een verrader tussen jullie. Niet één, maar telkens een ander. Wijs ze aan." },
+    { zegel: "hart", naam: "De Schaduwdragers", soort: "verrader",
+      intro: "Het hele weekend droeg telkens een ander de Schaduw, verborgen tussen jullie. Wijs ze aan." },
   ],
 
   // Akte I. Per Wachter een herinnering (anekdote) en eventueel een foto in docs/a/fotos/. In te vullen door de organisatoren.

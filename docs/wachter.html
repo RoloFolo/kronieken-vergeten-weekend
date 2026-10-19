@@ -190,7 +190,7 @@ body:not(.bevel-eerst) :is(#vooraf, #gedaante, #hulp, #stap2) { animation: onthu
 .opdrachten p { margin: 0; font-size: 15px; line-height: 1.45; }
 .opdrachten li.gedaan { border-color: rgba(111,191,115,.6); background: rgba(111,191,115,.08); }
 .opdrachten li.gedaan h3::after { content: "  ✓ volbracht"; color: #8fd493; font: 600 12px var(--body); letter-spacing: 0; }
-/* the app: tabs at the bottom; Regie and Verrader open inside the app */
+/* the app: tabs at the bottom; Regie and Schaduwdrager open inside the app */
 :root { --nav-h: calc(62px + env(safe-area-inset-bottom)); }
 body { padding-bottom: var(--nav-h); }
 .tabs { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; height: var(--nav-h); padding-bottom: env(safe-area-inset-bottom); display: flex; justify-content: center;
@@ -388,7 +388,7 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel schaduw verborgen" id="schaduw">
     <h2 class="carved">De Schaduw heeft jou gekozen</h2>
     <p>Vanaf nu werk jij in het geheim voor de Schaduwkoning. Niemand mag het weten. Houd je scherm uit het zicht.</p>
-    <button class="knop rood" type="button" data-naar="verrader">Open je verraderspaneel</button>
+    <button class="knop rood" type="button" data-naar="verrader">Open je Schaduwpaneel</button>
   </section>
 
   <!-- tab: the Round Table -->
@@ -456,14 +456,14 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <p class="slot tab-ik">De Kronieken van het Vergeten Weekend · Bouillon<span id="uit" class="verborgen"><br><button type="button" class="uitlog" id="b-uit">Niet jij? Log uit</button></span><br><button type="button" class="uitlog" id="b-geluid"></button><br><button type="button" class="uitlog verborgen" id="b-speler"></button></p>
 </main>
 <div class="frame verborgen" id="frame-regie"><iframe title="Regie" data-src="regie-8d785a0dfd.html"></iframe></div>
-<div class="frame verborgen" id="frame-verrader"><iframe title="Verraderspaneel" data-src="chaos-06d0ece377.html"></iframe></div>
+<div class="frame verborgen" id="frame-verrader"><iframe title="Schaduwpaneel" data-src="chaos-06d0ece377.html"></iframe></div>
 <nav class="tabs" id="tabs" aria-label="Menu">
   <button type="button" data-tab="ik"><img class="ico" src="a/medaillon-vlam.webp" alt="">Ik</button>
   <button type="button" data-tab="tafel"><img class="ico" src="a/medaillon-schild.webp" alt="">Tafel</button>
   <button type="button" data-tab="tocht" hidden><img class="ico" src="a/reliek-vlam.webp" alt="">Tocht</button>
   <button type="button" data-tab="larp" hidden><img class="ico" src="a/medaillon-hart.webp" alt="">LARP</button>
   <button type="button" data-tab="regie" hidden><img class="ico" src="a/medaillon-hoorn.webp" alt="">Regie</button>
-  <button type="button" data-tab="verrader" class="rood" hidden><img class="ico" src="a/logo.webp" alt="">Verrader</button>
+  <button type="button" data-tab="verrader" class="rood" hidden><img class="ico" src="a/logo.webp" alt="">Schaduwdrager</button>
 </nav>
 <div class="intro verborgen" id="intro" role="dialog" aria-label="Een boodschap van Godfried">
   <div class="strip" id="strip" aria-hidden="true"></div>
@@ -475,15 +475,15 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=120"></script>
-<script src="a/godfried.js?v=120"></script>
-<script src="a/spel.js?v=120"></script>
-<script src="a/rollen.js?v=120"></script>
-<script src="a/firebase-config.js?v=120"></script>
-<script src="a/portretten.js?v=120"></script>
-<script src="a/koppeling.js?v=120"></script>
-<script src="a/tafel.js?v=120"></script>
-<script src="a/voorbereiding.js?v=120"></script>
+<script src="a/wachters.js?v=121"></script>
+<script src="a/godfried.js?v=121"></script>
+<script src="a/spel.js?v=121"></script>
+<script src="a/rollen.js?v=121"></script>
+<script src="a/firebase-config.js?v=121"></script>
+<script src="a/portretten.js?v=121"></script>
+<script src="a/koppeling.js?v=121"></script>
+<script src="a/tafel.js?v=121"></script>
+<script src="a/voorbereiding.js?v=121"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -610,7 +610,7 @@ function verraadEcht(info) {
   const nu = !!info; isVerrader = nu; $("schaduw").classList.toggle("verborgen", !nu);
   if (nu && wasVerrader === false && navigator.vibrate) try { navigator.vibrate([200, 100, 200, 100, 400]); } catch {}
   if (!nu && wasVerrader === true) { // the role ended: by hand (night) or because the time was up
-    melding("Je tijd als verrader is om", "De Schaduw laat je los. Vanaf nu ben je weer een gewone Wachter. Zeg niets: in de finale wordt gezocht wie het waren.");
+    melding("Je tijd als Schaduwdrager is om", "De Schaduw laat je los. Vanaf nu ben je weer een gewone Wachter. Zeg niets: in de finale wordt gezocht wie het waren.");
     const fr = $("frame-verrader").querySelector("iframe"); fr.removeAttribute("src");
     if (navigator.vibrate) try { navigator.vibrate([300, 120, 300]); } catch {}
   }

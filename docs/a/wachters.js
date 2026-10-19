@@ -1,5 +1,5 @@
-// De elf Wachters. Het token zit in de persoonlijke verraderslink (zie de regie); alleen het token van de
-// actieve verrader wordt door de tv geaccepteerd.
+// De elf Wachters. Het token zit in de persoonlijke schaduwlink (zie de regie); alleen het token van de
+// actieve Schaduwdrager wordt door de tv geaccepteerd.
 window.WACHTERS = [
   { naam: "Geert", token: "73d7c262d271" },
   { naam: "Roy", token: "45c0f46ae537" },

@@ -1210,16 +1210,16 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=120"></script>
-<script src="a/godfried.js?v=120"></script>
-<script src="a/spel.js?v=120"></script>
-<script src="a/voorbereiding.js?v=120"></script>
-<script src="a/wachters.js?v=120"></script>
-<script src="a/firebase-config.js?v=120"></script>
-<script src="a/portretten.js?v=120"></script>
-<script src="a/koppeling.js?v=120"></script>
-<script src="a/rollen.js?v=120"></script>
-<script src="a/tafel.js?v=120"></script>
+<script src="a/events.js?v=121"></script>
+<script src="a/godfried.js?v=121"></script>
+<script src="a/spel.js?v=121"></script>
+<script src="a/voorbereiding.js?v=121"></script>
+<script src="a/wachters.js?v=121"></script>
+<script src="a/firebase-config.js?v=121"></script>
+<script src="a/portretten.js?v=121"></script>
+<script src="a/koppeling.js?v=121"></script>
+<script src="a/rollen.js?v=121"></script>
+<script src="a/tafel.js?v=121"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1585,7 +1585,7 @@ function flits() { const f = $("flash"); f.style.setProperty("--fx", `${20 + Mat
 (function vluchten() { setTimeout(() => { if (binnen !== null) nieuweVlucht(); vluchten(); }, 35000 + Math.random() * 30000); })();
 
 // the test dock only appears with ?test in the address
-if (new URLSearchParams(location.search).has("test")) $("regie").hidden = false;
+if (new URLSearchParams(location.search).has("paneel")) $("regie").hidden = false; // the old control panel on the tv itself, only for a local try-out (?test is the test session)
 
 /* ================= countdown to the weekend ================= */
 const START = new Date("2026-11-13T16:00:00+01:00");
@@ -2143,16 +2143,16 @@ function aktePuzzel(a) {
     return { html: `<ol class="aanwijzingen">${S.eed.aanwijzingen.map((t) => `<li>${t}</li>`).join("")}</ol><p class="klein-tv">Ga in de juiste volgorde staan en spreek de eed samen uit.</p>`,
       hint: `De eed begint met: “${S.eed.fragmenten.slice(0, 3).join(" ")}…”`, check: (w) => w === "eed", goed: () => v.push("klaar") };
   }
-  // verrader
+  // Schaduwdrager
   const periodes = verraadPeriodes(), i = periodes.findIndex((_, n) => !v.includes(n));
   const kaarten = periodes.map((p, n) => `<div class="periode ${v.includes(n) ? "ontmaskerd" : ""} ${n === i ? "nu" : ""}">
     <div class="wanneer">${tijd(p.van)}${p.tot ? ` – ${tijd(p.tot)}` : " – nu"}</div>
-    <ul>${p.sporen.length ? p.sporen.map((l) => `<li>${new Date(l.t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}: ${SPOOR[l.cmd]?.(l) ?? "er gebeurde iets vreemds"}</li>`).join("") : "<li>Geen sporen. Deze verrader hield zich gedeisd…</li>"}</ul>
+    <ul>${p.sporen.length ? p.sporen.map((l) => `<li>${new Date(l.t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}: ${SPOOR[l.cmd]?.(l) ?? "er gebeurde iets vreemds"}</li>`).join("") : "<li>Geen sporen. Deze Schaduwdrager hield zich gedeisd…</li>"}</ul>
     <div class="wie-was">${v.includes(n) ? schoon(p.naam) : "?"}</div></div>`).join("");
-  if (!periodes.length) return { klaar: true, html: `<p class="vraag">Er was dit weekend geen verrader actief. De Schaduw stond er alleen voor.</p>` };
+  if (!periodes.length) return { klaar: true, html: `<p class="vraag">Er was dit weekend geen Schaduwdrager actief. De Schaduw stond er alleen voor.</p>` };
   if (i < 0) return { klaar: true, html: `<div class="periodes">${kaarten}</div>` };
-  return { html: `<div class="periodes">${kaarten}</div><p class="klein-tv">Wie was de verrader in de gemarkeerde periode?</p>`,
-    hint: `De verrader van deze periode heeft ${periodes[i].naam.length} letters in zijn naam.`, check: (w) => String(w).toLowerCase() === periodes[i].naam.toLowerCase(), goed: () => v.push(i) };
+  return { html: `<div class="periodes">${kaarten}</div><p class="klein-tv">Wie was de Schaduwdrager in de gemarkeerde periode?</p>`,
+    hint: `De Schaduwdrager van deze periode heeft ${periodes[i].naam.length} letters in zijn naam.`, check: (w) => String(w).toLowerCase() === periodes[i].naam.toLowerCase(), goed: () => v.push(i) };
 }
 function aktePuzzelInfo() {
   const a = S.aktes[fin.nu]; if (!a) return null;
@@ -2343,7 +2343,7 @@ function aftitelingHtml() {
     regel("Schaduw-events doorstaan", tel("uitslag", (l) => l.goed)), regel("Keren dat de Schaduw zich voedde", tel("uitslag", (l) => !l.goed)),
     regel("Keren de D20 geworpen", tel("d20")), regel("Natuurlijke twintigen", tel("d20", (l) => l.worp === 20)),
     regel("Bevelen volbracht", bevelGedaan.size), regel("Relieken gevonden", `${relieken.size} van de ${S.relieken.length}`),
-    regel("Verraders onder de Wachters", verraders.length), regel("Sabotages in het duister", tel("chaos")),
+    regel("Schaduwdragers onder de Wachters", verraders.length), regel("Sabotages in het duister", tel("chaos")),
   ];
   return `<img class="af-logo" src="a/logo.webp" alt=""><div class="af-datum">Bouillon · 13 tot 16 november 2026</div>`
     + (NAMEN.every((n) => PORTRET[n]) ? `<h2 class="carved">De Wachters</h2><div class="af-portretten">${NAMEN.map((n) => `<figure><img src="${PORTRET[n]}" alt=""><b>${schoon(n)}</b><small>${rol(n) ? schoon(rol(n).naam) : "Wachter"}</small></figure>`).join("")}</div>`
@@ -2354,7 +2354,7 @@ function aftitelingHtml() {
     + (FOTOS.length ? `<h2 class="carved">Het weekend in beeld</h2><div class="af-fotos">${FOTOS.map((u) => `<img src="${u}" alt="">`).join("")}</div>` : "")
     + (() => { const { p, v } = scores(), kl = NAMEN.filter((n) => p[n]).sort((a, b) => p[b] - p[a]), vr = NAMEN.filter((n) => v[n]).sort((a, b) => v[b] - v[a]);
         return blok("Het klassement", kl.map((n, i) => regel(`${i + 1}.`, `${schoon(n)} · ${p[n]} XP`, n)), true)
-          + blok("De sluwste verraders", [...(ere.besteVerrader ? [regel("Meester van de Schaduw", schoon(ere.besteVerrader), ere.besteVerrader)] : []), ...vr.filter((n) => n !== ere.besteVerrader).slice(0, 4).map((n) => regel("Hand van de Schaduw", `${schoon(n)} · ${v[n]}`, n))]); })()
+          + blok("Dienaars van de Schaduwkoning", [...(ere.besteVerrader ? [regel("Diende hem het best", schoon(ere.besteVerrader), ere.besteVerrader)] : []), ...vr.filter((n) => n !== ere.besteVerrader).slice(0, 4).map((n) => regel("Hand van de Schaduw", `${schoon(n)} · ${v[n]}`, n))]); })()
     + blok("Titels van het weekend", (ere.extra || []).filter((x) => x.soort === "titel").map((x) => regel(schoon(x.tekst), schoon(x.wie || "?"), x.wie)), true)
     + blok("Momenten om nooit te vergeten", (ere.extra || []).filter((x) => x.soort === "moment").map((x) => `<div class="af-anekdote"><p>${schoon(x.tekst)}</p>${x.wie ? `<b>${schoon(x.wie)}</b>` : ""}</div>`), true)
     + blok("Uitspraken voor de Kronieken", (ere.extra || []).filter((x) => x.soort === "uitspraak").map((x) => `<div class="af-anekdote"><p>“${schoon(x.tekst)}”</p>${x.wie ? `<b>— ${schoon(x.wie)}</b>` : ""}</div>`), true)
@@ -2725,7 +2725,7 @@ function standNu() {
   return ({
     tv: tvId, tvInfo: { apparaat: tvApparaat, versie: tvVersie, sinds: geladenOp, gemeld: Date.now(), geluid: tvMagGeluid() }, fiches: Object.fromEntries(ZEGELS.map((z) => [z.id, z.fiches])), gebruikt: [...gebruikt],
     event: wakker() && EVENT ? { id: EVENT.id, naam: EVENT.naam, regel: EVENT.regel, soort: EVENT.soort, zegel: EVENT.zegel, verlies: EVENT.verlies * extra } : null,
-    scherm: schermNu(), d20: !$("b-d20").disabled, quiz: gq ? { ...gq, uit: [...gq.uit] } : null, kroniek: [...kroniek],
+    scherm: schermNu(), d20: !$("b-d20").disabled, d20Wacht: !!d20Na, quiz: gq ? { ...gq, uit: [...gq.uit] } : null, kroniek: [...kroniek],
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], ronde, fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
@@ -2899,12 +2899,12 @@ function grootMoment(html) { gmGen++; gmTimers.forEach(clearTimeout); gmTimers =
 function grootMomentWeg() { gmGen++; gmTimers.forEach(clearTimeout); gmTimers = []; const g = $("groot-moment"); g.classList.remove("aan"); setTimeout(() => { if (!g.classList.contains("aan")) g.hidden = true; }, 1000); }
 function verradersToon() {
   const lijst = verraderOverzicht();
-  grootMoment(`<div><div class="gm-kop carved">De handen van de Schaduw</div><div class="verraders-lijst">${lijst.length ? lijst.map((x) => `<div class="vk">${PORTRET[x.naam] ? `<img src="${PORTRET[x.naam]}" alt="">` : ""}<div><b>${schoon(x.naam)}</b><small>${x.periodes} keer verrader · ${x.sporen.length} sabotage${x.sporen.length === 1 ? "" : "s"}${x.kost ? ` · ${x.kost} fiche${x.kost === 1 ? "" : "s"} gekost` : ""}</small>${x.sporen.slice(0, 3).map((l) => `<p>${schoon((SPOOR[l.cmd || l.type] || (() => "iets in het duister"))(l))}</p>`).join("")}</div></div>`).join("") : '<p class="gm-onder">Geen verraders dit weekend.</p>'}</div></div>`);
+  grootMoment(`<div><div class="gm-kop carved">De handen van de Schaduw</div><div class="verraders-lijst">${lijst.length ? lijst.map((x) => `<div class="vk">${PORTRET[x.naam] ? `<img src="${PORTRET[x.naam]}" alt="">` : ""}<div><b>${schoon(x.naam)}</b><small>${x.periodes} keer Schaduwdrager · ${x.sporen.length} sabotage${x.sporen.length === 1 ? "" : "s"}${x.kost ? ` · ${x.kost} fiche${x.kost === 1 ? "" : "s"} gekost` : ""}</small>${x.sporen.slice(0, 3).map((l) => `<p>${schoon((SPOOR[l.cmd || l.type] || (() => "iets in het duister"))(l))}</p>`).join("")}</div></div>`).join("") : '<p class="gm-onder">Geen Schaduwdragers dit weekend.</p>'}</div></div>`);
   speel("chaos-2", .7);
 }
 function verraderKroon(naam) {
   if (!NAMEN.includes(naam)) return; ere.besteVerrader = naam; meld();
-  grootMoment(`<div><div class="gm-kop carved">Meester van de Schaduw</div><div id="gm-portret"></div><div class="gm-naam carved" id="gm-naam">…</div></div>`);
+  grootMoment(`<div><div class="gm-kop carved">Wie diende de Schaduwkoning het best?</div><div id="gm-portret"></div><div class="gm-naam carved" id="gm-naam">…</div></div>`);
   const g = gmGen; stemMet("fin/beste-verrader", 1, () => g === gmGen && gmT(400, () => { $("gm-naam").textContent = naam; if (PORTRET[naam]) $("gm-portret").innerHTML = `<img class="gm-portret" src="${PORTRET[naam]}" alt="">`; speel("fin/sfx-goed", .9); speel("gejuich", .7); speel("chaos-1", .5); }), 9000);
 }
 // ===== Who follows? A die with eleven names lands, by the purest chance, on the ones the regie chose =====
@@ -2941,6 +2941,7 @@ const OPDRACHTEN = {
   wievolgt: (o) => wieVolgt(o.namen),
   "groot-weg": () => grootMomentWeg(),
   punt: (o) => punt(o),
+  herworp: () => { if (d20Na) werpD20(true); },
   "punt-terug": (o) => puntTerug(o),
   herstelpunt: (o) => herstelpunt(String(o.waarom || "met de hand").slice(0, 80)),
   herstel: (o) => herstel(String(o.id || "")),
@@ -3087,10 +3088,12 @@ function d20Zegel(goed) { // the Seal a roll touches: the event's own one, else 
   if (goed) return kies(ZEGELS.filter((z) => z.fiches < S.drempel && !bevroren(z.id))) || kies(ZEGELS.filter((z) => z.fiches < S.drempel)) || kies(ZEGELS);
   return EVENT?.zegel || kies(ZEGELS.filter((z) => z.fiches > 0)) || kies(ZEGELS);
 }
-function werpD20() {
-  if (!wakker() || beslist || rollend) return;
-  if (d20Na) { clearTimeout(d20Na); d20Na = null; } // a second throw while the first result is still showing: that one counts
-  rollend = true;
+// one throw per event; only the regie can grant a second (Martin's Chaosshot), while the first result still shows: the second counts
+let d20Gedaan = false;
+function werpD20(herworp) {
+  if (!wakker() || beslist || rollend || d20Gedaan && !herworp) return;
+  if (d20Na) { clearTimeout(d20Na); d20Na = null; }
+  rollend = true; d20Gedaan = true; $("b-d20").disabled = true;
   const d = $("d20"), g = $("d20-getal"), u = $("d20-uitslag");
   const vervloekt = vloekD20; vloekD20 = false; // the traitor's cursed die rolls no higher than 10
   const worp = 1 + Math.floor(Math.random() * (vervloekt ? 10 : 20)), r = D20_UITKOMST.find((x) => worp <= x.tot);
@@ -3111,12 +3114,12 @@ function werpD20() {
     else if (r.soort === "gered") speel("klok", .7, 1.25);
     else if (r.soort === "grap") speel("klok", .6, 1.5);
     else speel("donder", .5);
-    d20Na = setTimeout(() => d20Gevolg(r, zegel, n), r.soort === "grap" ? 9000 : 4200);
+    d20Na = setTimeout(() => d20Gevolg(r, zegel, n), r.soort === "grap" ? 12000 : 9000); meld(); // time for the regie to grant a second throw
   }, 1800);
 }
 function d20Gevolg(r, zegel, n) {
-  d20Na = null; if (!wakker()) return;
-  if (r.soort === "nieuw") { $("d20").hidden = true; extra = 1; $("event").classList.add("show"); return toonEvent(trekEvent()); }
+  d20Na = null; meld(); if (!wakker()) return;
+  if (r.soort === "nieuw") { $("d20").hidden = true; extra = 1; d20Gedaan = false; $("b-d20").disabled = false; $("event").classList.add("show"); return toonEvent(trekEvent()); }
   beslist = true; knoppen(false);
   if (r.soort === "nat1" || r.soort === "faal") { for (let i = 0; i < n; i++) setTimeout(() => fiche(zegel, -1), i * 450); return setTimeout(hal, 1500 + n * 450); }
   if (r.soort === "nat20") { fiche(zegel, 1); setTimeout(() => fiche(zegel, 1), 700); return setTimeout(hal, 3000); }
@@ -3126,7 +3129,7 @@ function schaduw() {
   if (wakker()) return;
   if (binnen === null) { verhaalKlaar = true; proloog?.pause(); $("verhaal").hidden = true; betreden(); }
   if (vloek) { vloek = null; $("vloek-teken").hidden = true; }
-  beslist = false; stage.classList.add("awake"); knoppen(true); $("storm").playbackRate = 1.6;
+  beslist = false; d20Gedaan = false; stage.classList.add("awake"); knoppen(true); $("storm").playbackRate = 1.6;
   $("status").textContent = "De Schaduw ontwaakt"; $("verdict").hidden = true;
   extra = 1; const nieuw = trekEvent();
   halMuziek.stop(1200); fade(vuur, .05, 1200); fade(wind, .55, 1500);
@@ -3159,7 +3162,7 @@ function hal() {
 }
 $("b-event").onclick = schaduw; $("b-hall").onclick = hal;
 $("b-good").onclick = () => uitslag(true); $("b-bad").onclick = () => uitslag(false);
-$("b-d20").onclick = werpD20;
+$("b-d20").onclick = () => werpD20();
 $("b-reset").onclick = () => { gebruikt.clear(); bewaar(); };
 teller();
 $("b-full").onclick = () => document.documentElement.requestFullscreen?.().catch(() => {});

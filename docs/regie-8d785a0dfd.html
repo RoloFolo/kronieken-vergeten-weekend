@@ -139,7 +139,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 
   <section class="kaart" id="s-punt" data-fase="xp">
     <h2>XP geven of afnemen</h2>
-    <p class="klein" style="margin:0 0 8px">Voor een volbrachte quest (de XP staat op de kaart) of iets wat iemand echt deed. Hij krijgt de XP, live aan de Ronde Tafel; het Zegel krijgt fiches zoals op de kaarten: 5–10 XP is 1, 20 is 2, 30 is 3. Was hij op dat moment verrader en kost het XP, dan telt het als verraderswerk.</p>
+    <p class="klein" style="margin:0 0 8px">Voor een volbrachte quest (de XP staat op de kaart) of iets wat iemand echt deed. Hij krijgt de XP, live aan de Ronde Tafel; het Zegel krijgt fiches zoals op de kaarten: 5–10 XP is 1, 20 is 2, 30 is 3. Was hij op dat moment Schaduwdrager en kost het XP, dan telt het als verraderswerk.</p>
     <div class="rij" id="punt-wie" style="grid-template-columns:repeat(3,1fr)"></div>
     <div class="rij" id="punt-zegel" style="margin-top:8px;grid-template-columns:repeat(4,1fr)"><button type="button" data-z="vlam">Vlam</button><button type="button" data-z="hoorn">Hoorn</button><button type="button" data-z="schild">Schild</button><button type="button" data-z="hart">Hart</button></div>
     <div class="rij" id="punt-n" style="margin-top:8px;grid-template-columns:repeat(6,1fr)"><button type="button" data-n="-10">−10</button><button type="button" data-n="-5">−5</button><button type="button" data-n="5">+5</button><button type="button" data-n="10">+10</button><button type="button" data-n="20">+20</button><button type="button" data-n="30">+30</button></div>
@@ -176,6 +176,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
       <button id="b-goed" type="button" disabled>Doorstaan</button>
       <button class="rood" id="b-fout" type="button" disabled>Gefaald</button>
       <button class="goud" id="b-d20" type="button" disabled>Werp de D20</button>
+      <button id="b-herworp" type="button" disabled title="Martins kracht Chaosshot: de tweede worp telt">Herworp (Chaosshot)</button>
       <button id="b-hal" type="button" disabled>Terug naar hall</button>
     </div>
     <p class="klein" id="teller"></p>
@@ -222,21 +223,21 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 
   <section class="kaart" data-fase="hall">
-    <h2>De Verrader</h2>
-    <p class="klein" id="verrader-nu">Nog geen verrader aangewezen.</p>
-    <button class="rood groot" id="b-v-geen" type="button" style="margin-top:10px" hidden>Geen verrader (bijvoorbeeld 's nachts)</button>
-    <p class="klein" style="margin:12px 0 6px">Hoe lang is de volgende verrader het?</p>
+    <h2>De Schaduwdrager</h2>
+    <p class="klein" id="verrader-nu">Nog geen Schaduwdrager aangewezen.</p>
+    <button class="rood groot" id="b-v-geen" type="button" style="margin-top:10px" hidden>Geen Schaduwdrager (bijvoorbeeld 's nachts)</button>
+    <p class="klein" style="margin:12px 0 6px">Hoe lang is de volgende Schaduwdrager het?</p>
     <div class="duur" id="v-duur"><button type="button" data-u="2">2 uur</button><button type="button" data-u="4" class="nu">4 uur</button><button type="button" data-u="6">6 uur</button></div>
-    <p class="klein" style="margin:12px 0 6px">Kies de verrader:</p>
+    <p class="klein" style="margin:12px 0 6px">Kies de Schaduwdrager:</p>
     <div class="namen" id="v-namen"></div>
     <div id="v-link" hidden style="margin-top:10px">
       <p class="klein">Stuur deze link privé naar <b id="v-wie"></b>:</p>
       <input type="text" id="v-url" readonly>
-      <div class="rij" style="margin-top:8px"><button class="goud" id="b-v-kopie" type="button">Kopieer link</button><button id="b-v-stop" type="button">Geen verrader meer</button></div>
+      <div class="rij" style="margin-top:8px"><button class="goud" id="b-v-kopie" type="button">Kopieer link</button><button id="b-v-stop" type="button">Geen Schaduwdrager meer</button></div>
     </div>
     <div id="v-lokaal"><label class="klein" for="v-ww" style="display:block;margin-top:12px">Chaos-wachtwoord (zit dan in de link, alleen op deze telefoon bewaard):</label>
     <input type="password" id="v-ww" autocomplete="off"></div>
-    <p class="klein" id="v-fire" hidden>Kies een Wachter: alleen hij ziet op zijn eigen pagina dat de Schaduw hem gekozen heeft, met de knop naar zijn verraderspaneel. Wie je niet meer kiest, verliest zijn rechten meteen.</p>
+    <p class="klein" id="v-fire" hidden>Kies een Wachter: alleen hij ziet op zijn eigen pagina dat de Schaduw hem gekozen heeft, met de knop naar zijn Schaduwpaneel. Wie je niet meer kiest, verliest zijn rechten meteen.</p>
   </section>
 
   <section class="kaart" id="s-ere" data-fase="ere">
@@ -271,9 +272,9 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div class="lijst" id="cr-lijst" style="margin-top:10px"></div>
   </section>
   <section class="kaart" data-fase="ere finale">
-    <h2>Beste Verrader</h2>
-    <p class="klein" style="margin:0 0 8px">Toon op de tv wat elke verrader deed, kies samen de sluwste, en kroon hem.</p>
-    <button class="groot" id="b-vr-toon" type="button">Toon alle verraders op de tv</button>
+    <h2>Wie diende de Schaduwkoning het best?</h2>
+    <p class="klein" style="margin:0 0 8px">Toon op de tv wat elke Schaduwdrager deed, kies samen wie de Schaduwkoning het best diende, en kroon hem.</p>
+    <button class="groot" id="b-vr-toon" type="button">Toon alle Schaduwdragers op de tv</button>
     <div class="rij" id="vr-kroon" style="margin-top:8px;grid-template-columns:repeat(3,1fr)"></div>
     <button id="b-groot-weg" type="button" style="margin-top:8px">Scherm sluiten</button>
   </section>
@@ -341,15 +342,15 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 </main>
 
-<script src="a/events.js?v=120"></script>
-<script src="a/godfried.js?v=120"></script>
-<script src="a/spel.js?v=120"></script>
-<script src="a/wachters.js?v=120"></script>
-<script src="a/rollen.js?v=120"></script>
-<script src="a/firebase-config.js?v=120"></script>
-<script src="a/portretten.js?v=120"></script>
-<script src="a/koppeling.js?v=120"></script>
-<script src="a/voorbereiding.js?v=120"></script>
+<script src="a/events.js?v=121"></script>
+<script src="a/godfried.js?v=121"></script>
+<script src="a/spel.js?v=121"></script>
+<script src="a/wachters.js?v=121"></script>
+<script src="a/rollen.js?v=121"></script>
+<script src="a/firebase-config.js?v=121"></script>
+<script src="a/portretten.js?v=121"></script>
+<script src="a/koppeling.js?v=121"></script>
+<script src="a/voorbereiding.js?v=121"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -465,7 +466,7 @@ function bewaakTvs(s) {
   const twee = schrijvers.size > 1 || !s.tv;
   $("tv-alarm").hidden = !twee;
   if (twee) $("tv-alarm").textContent = schrijvers.has("oud") || !s.tv
-    ? "Let op: er draait nog een oude tv-pagina die de stand overschrijft (daardoor springt bijvoorbeeld de verrader aan en uit). Zoek en sluit alle tabbladen met ?tv, ook op telefoons en de laptop, en open er één opnieuw."
+    ? "Let op: er draait nog een oude tv-pagina die de stand overschrijft (daardoor springt bijvoorbeeld de Schaduwdrager aan en uit). Zoek en sluit alle tabbladen met ?tv, ook op telefoons en de laptop, en open er één opnieuw."
     : "Let op: er schrijven twee tv-vensters tegelijk. Sluit alle tabbladen met ?tv behalve één.";
 }
 function toon(s) {
@@ -483,7 +484,7 @@ function toon(s) {
   volgFase(s.scherm);
   $("b-schaduw").disabled = actief;
   for (const id of ["b-goed", "b-fout", "b-hal"]) $(id).disabled = !actief;
-  $("b-d20").disabled = !s.d20;
+  $("b-d20").disabled = !s.d20; $("b-herworp").disabled = !s.d20Wacht;
   $("event").hidden = !s.event;
   if (s.event) {
     $("ev-soort").textContent = SOORT[s.event.soort] ?? "";
@@ -514,10 +515,10 @@ function toon(s) {
   $("a-uitleg").textContent = !bezig ? "" : { herinnering: "Tik de naam die de groep noemt.", weekend: "Vul het antwoord van de groep in.", eed: "Druk pas als de groep de hele eed in de juiste volgorde heeft uitgesproken.", verrader: "Tik de naam die de groep beschuldigt." }[p.soort];
   verraderNu = s.verrader || null; toonLink();
   const uur = (t) => new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
-  $("verrader-nu").textContent = verraderNu ? `Verrader nu: ${verraderNu.naam}, sinds ${uur(verraderNu.sinds)}${verraderNu.tot ? ` tot ${uur(verraderNu.tot)}` : ""}.` : "Er is nu geen verrader.";
+  $("verrader-nu").textContent = verraderNu ? `Verrader nu: ${verraderNu.naam}, sinds ${uur(verraderNu.sinds)}${verraderNu.tot ? ` tot ${uur(verraderNu.tot)}` : ""}.` : "Er is nu geen Schaduwdrager.";
   $("b-v-geen").hidden = !verraderNu;
   const einde = [...(s.logboek || [])].reverse().find((l) => l.type === "verrader-einde");
-  if (!verraderNu && einde) $("verrader-nu").textContent = `Er is nu geen verrader. Laatste: ${einde.naam}, gestopt om ${uur(einde.t)} (${{ tijd: "tijd om", regie: "door de regie", "nieuwe verrader": "opgevolgd" }[einde.reden] || "onbekend"}).`;
+  if (!verraderNu && einde) $("verrader-nu").textContent = `Er is nu geen Schaduwdrager. Laatste: ${einde.naam}, gestopt om ${uur(einde.t)} (${{ tijd: "tijd om", regie: "door de regie", "nieuwe verrader": "opgevolgd" }[einde.reden] || "onbekend"}).`;
   document.querySelectorAll("#v-namen button").forEach((b) => b.classList.toggle("nu", b.dataset.n === verraderNu?.naam));
   // frozen seals: the + does nothing, so show it, and let the organisers thaw them
   for (const z of ZEGELS) { const knop = $(`plus-${z.id}`), koud = (s.ijs?.[z.id] || 0) > Date.now();
@@ -589,6 +590,7 @@ $("b-schaduw").onclick = () => stuur({ cmd: "schaduw" });
 $("b-goed").onclick = () => stuur({ cmd: "goed" });
 $("b-fout").onclick = () => stuur({ cmd: "fout" });
 $("b-d20").onclick = () => stuur({ cmd: "d20" });
+$("b-herworp").onclick = () => { stuur({ cmd: "herworp" }); $("b-herworp").disabled = true; };
 $("b-hal").onclick = () => stuur({ cmd: "hal" });
 $("b-reset").onclick = () => ($("reset-vraag").hidden = false);
 $("b-beproeving").onclick = () => stuur({ cmd: "beproeving" });
@@ -618,7 +620,7 @@ $("b-credit").onclick = () => { const t = $("cr-tekst").value.trim(); if (!t) re
 $("b-vr-toon").onclick = () => stuur({ cmd: "verraders-toon" });
 $("b-groot-weg").onclick = () => stuur({ cmd: "groot-weg" });
 $("vr-kroon").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "verrader-kroon", naam: b.dataset.n }); };
-function tekenVerraderKroon(s) { const namen = [...new Set((s.verraders || []).map((v) => v.naam))]; $("vr-kroon").innerHTML = namen.length ? namen.map((n) => `<button type="button" data-n="${n}" class="${s.ere?.besteVerrader === n ? "goud" : ""}">Kroon ${n}</button>`).join("") : '<p class="klein">Nog geen verraders geweest.</p>'; }
+function tekenVerraderKroon(s) { const namen = [...new Set((s.verraders || []).map((v) => v.naam))]; $("vr-kroon").innerHTML = namen.length ? namen.map((n) => `<button type="button" data-n="${n}" class="${s.ere?.besteVerrader === n ? "goud" : ""}">Kroon ${n}</button>`).join("") : '<p class="klein">Nog geen Schaduwdragers geweest.</p>'; }
 let wvKeuze = [];
 function tekenWieVolgt() { $("wv-kies").innerHTML = (window.WACHTERS || []).map((w) => `<button type="button" data-n="${w.naam}" class="${wvKeuze.includes(w.naam) ? "goud" : ""}">${wvKeuze.includes(w.naam) ? "✓ " : ""}${w.naam}</button>`).join(""); $("b-wievolgt").disabled = wvKeuze.length < 2; $("b-wievolgt").textContent = wvKeuze.length < 2 ? "Kies minstens 2 namen" : `Werp de D11 · ${wvKeuze.join(", ")}`; }
 $("wv-kies").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; const n = b.dataset.n; wvKeuze = wvKeuze.includes(n) ? wvKeuze.filter((x) => x !== n) : wvKeuze.length < 3 ? [...wvKeuze, n] : wvKeuze; tekenWieVolgt(); };
