@@ -46,6 +46,32 @@ body.bevel-eerst :is(#vooraf, #spreek-rij, #gedaante, #hulp, #stap2, #stap3, #ve
 .schande-stand { margin: 6px 0 12px; text-align: center; font: 700 14px/1.4 var(--body); }
 .schande-stand.leeg { color: #ffb0a8; } .schande-stand.vol { color: #9fdc9f; }
 .scorebord-app { display: grid; gap: 14px; }
+/* Stefan's LARP page: every Wachter with his guise, role and powers, and room for a goal and a secret */
+.larp-kop p { margin: 8px 0 0; text-align: center; }
+.larp-kop .wanneer { font: 700 12px/1 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: var(--ember); text-align: center; margin-top: 6px; }
+.larp-lijst { display: grid; gap: 14px; }
+.larp-w { display: grid; gap: 10px; padding: 14px; border: 1px solid #4a1c21; background: rgba(20,8,10,.75); }
+.larp-w .lk { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: center; }
+.larp-w .lk img { width: 64px; aspect-ratio: 1; object-fit: contain; filter: drop-shadow(0 4px 8px rgba(0,0,0,.8)); }
+.larp-w .lk b { display: block; font: 700 20px/1.1 var(--carved); text-transform: uppercase; letter-spacing: .04em; color: var(--bronze-hi); }
+.larp-w .lk small { display: block; margin-top: 3px; font: 600 11px/1.3 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: var(--ash); }
+.larp-w .lk .rolnaam { display: block; margin-top: 4px; font: italic 15px/1.3 var(--display); color: #ffb3ab; }
+.larp-w .lk .zg { display: inline-flex; gap: 4px; vertical-align: middle; margin-left: 6px; } .larp-w .lk .zg img { width: 20px; }
+.larp-w .vm { font-size: 14px; line-height: 1.45; } .larp-w .vm b { color: var(--bronze-hi); } .larp-w .vm span { color: var(--ash); font: 600 10px/1 var(--carved); letter-spacing: .18em; text-transform: uppercase; margin-right: 6px; }
+.larp-w label { display: grid; gap: 4px; font: 600 10px/1 var(--carved); letter-spacing: .18em; text-transform: uppercase; color: var(--ash); }
+.larp-w textarea { min-height: 54px; resize: vertical; font: 14px/1.35 var(--body); color: var(--bone); background: rgba(0,0,0,.35); border: 1px solid rgba(239,227,212,.2); padding: 7px 8px; }
+.larp-w.verzegeld .lk .rolnaam { color: var(--ash); }
+.larp-geheim { margin: 12px 0 0; padding: 10px 12px; text-align: center; font: 700 13px/1.4 var(--carved); letter-spacing: .06em; text-transform: uppercase; color: #ffb3ab; border: 1px solid var(--ember); background: rgba(226,50,60,.12); }
+.larp-uitleg { display: grid; gap: 6px; margin-top: 12px; padding: 12px 14px; border: 1px solid rgba(184,149,95,.35); background: rgba(0,0,0,.3); }
+.larp-uitleg p { margin: 0; font-size: 14px; line-height: 1.45; } .larp-uitleg b { color: var(--bronze-hi); }
+.larp-zend textarea, .larp-w textarea { width: 100%; min-height: 70px; resize: vertical; font: 15px/1.4 var(--body); color: var(--bone); background: rgba(0,0,0,.35); border: 1px solid rgba(239,227,212,.25); padding: 8px 10px; }
+.larp-zend textarea { min-height: 110px; }
+.larp-knoppen { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 12px; } .larp-knoppen .knop:only-child { grid-column: 1 / -1; }
+.larp-knoppen .stil { background: none; border-color: rgba(239,227,212,.3); color: var(--ash); }
+.larp-verhaal { margin: 10px 0 0; font: italic 17px/1.55 var(--display); color: var(--bone); text-align: center; }
+.larp-mijn { border-color: var(--ember); box-shadow: inset 0 0 0 1px rgba(226,50,60,.6), 0 0 30px rgba(226,50,60,.25); }
+.larp-ik { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: center; margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(184,149,95,.3); }
+.larp-ik img { width: 48px; } .larp-ik b { display: block; font: 700 16px/1.1 var(--carved); color: var(--bronze-hi); text-transform: uppercase; } .larp-ik small { color: var(--ash); font-size: 13px; }
 .scorebord-app .sb-z { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
 .scorebord-app .sb-z div { display: grid; justify-items: center; gap: 2px; font: 700 18px/1 var(--carved); color: var(--bronze-hi); }
 .scorebord-app .sb-z img { width: 42px; }
@@ -366,6 +392,7 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   </section>
 
   <!-- tab: the Round Table -->
+  <section class="tab verborgen" id="tab-larp" style="display:grid; gap:18px"></section>
   <section class="tab verborgen" id="tab-tafel" style="display:grid; gap:18px">
     <section class="paneel"><h2 class="carved">De Ronde Tafel</h2>
       <p class="tocht-onder" id="tafel-onder">Tik op een Wachter om zijn rol en kracht te zien.</p>
@@ -434,6 +461,7 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <button type="button" data-tab="ik"><img class="ico" src="a/medaillon-vlam.webp" alt="">Ik</button>
   <button type="button" data-tab="tafel"><img class="ico" src="a/medaillon-schild.webp" alt="">Tafel</button>
   <button type="button" data-tab="tocht" hidden><img class="ico" src="a/reliek-vlam.webp" alt="">Tocht</button>
+  <button type="button" data-tab="larp" hidden><img class="ico" src="a/medaillon-hart.webp" alt="">LARP</button>
   <button type="button" data-tab="regie" hidden><img class="ico" src="a/medaillon-hoorn.webp" alt="">Regie</button>
   <button type="button" data-tab="verrader" class="rood" hidden><img class="ico" src="a/logo.webp" alt="">Verrader</button>
 </nav>
@@ -447,15 +475,15 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=115"></script>
-<script src="a/godfried.js?v=115"></script>
-<script src="a/spel.js?v=115"></script>
-<script src="a/rollen.js?v=115"></script>
-<script src="a/firebase-config.js?v=115"></script>
-<script src="a/portretten.js?v=115"></script>
-<script src="a/koppeling.js?v=115"></script>
-<script src="a/tafel.js?v=115"></script>
-<script src="a/voorbereiding.js?v=115"></script>
+<script src="a/wachters.js?v=116"></script>
+<script src="a/godfried.js?v=116"></script>
+<script src="a/spel.js?v=116"></script>
+<script src="a/rollen.js?v=116"></script>
+<script src="a/firebase-config.js?v=116"></script>
+<script src="a/portretten.js?v=116"></script>
+<script src="a/koppeling.js?v=116"></script>
+<script src="a/tafel.js?v=116"></script>
+<script src="a/voorbereiding.js?v=116"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -593,14 +621,14 @@ let tabNu = "ik";
 try { tabNu = localStorage.getItem("kronieken-tab") || "ik"; } catch {}
 // test mode: an organiser can play as an ordinary Wachter on this phone (the regie tab is hidden)
 let alsSpeler = false; try { alsSpeler = localStorage.getItem("kronieken-als-speler") === "ja"; } catch {}
-const beschikbaar = (t) => t === "ik" || t === "tafel" || (t === "tocht" && !!publiek.tocht) || (t === "regie" && !!Koppeling.ik?.admin && !alsSpeler) || (t === "verrader" && isVerrader);
+const beschikbaar = (t) => t === "ik" || t === "tafel" || (t === "larp" && (isLarpLeider() || !!larpStaat.gestart)) || (t === "tocht" && !!publiek.tocht) || (t === "regie" && !!Koppeling.ik?.admin && !alsSpeler) || (t === "verrader" && isVerrader);
 function toonTab(t) {
   if (!beschikbaar(t)) t = "ik"; tabNu = t; try { localStorage.setItem("kronieken-tab", t); } catch {}
   document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-current", b.dataset.tab === t));
   const ik = t === "ik";
   for (const id of ["schaduw", "vooraf", "bevel", "spreek-rij", "gedaante", "hulp", "stap2", "stap3", "verzegeld", "rol-blok", "kroniek", "onbekend"]) $(id).classList.toggle("tab-weg", !ik);
   document.querySelector(".slot").classList.toggle("tab-weg", !ik); $("binnen").classList.toggle("tab-weg", !ik);
-  $("tab-tafel").classList.toggle("verborgen", t !== "tafel"); $("tocht").classList.toggle("tab-weg", t !== "tocht");
+  $("tab-tafel").classList.toggle("verborgen", t !== "tafel"); $("tab-larp").classList.toggle("verborgen", t !== "larp"); if (t === "larp") tekenLarp(); $("tocht").classList.toggle("tab-weg", t !== "tocht");
   for (const naam of ["regie", "verrader"]) {
     const fr = $(`frame-${naam}`), aan = t === naam; fr.classList.toggle("verborgen", !aan);
     const i = fr.querySelector("iframe"); if (aan && !i.getAttribute("src")) i.src = i.dataset.src;
@@ -642,6 +670,56 @@ function tekenHeld() { const el = $("held"), u = wachter && Portret.url(wachter.
   const k = window.KARAKTER?.[wachter.naam]; el.style.backgroundImage = `url(${u})`; Portret.groot(wachter.naam).then((g) => { if (g) el.style.backgroundImage = `url(${g})`; });
   el.innerHTML = `<div class="held-lijst"></div><div class="held-naam"><div class="carved">${schoon(wachter.naam)}</div>${k ? `<small>${schoon(k.ras)} ${schoon(k.klasse)}</small>` : ""}</div>`; }
 Portret.op(() => { tekenHeld(); if (tabNu === "tafel") tekenTafel(); });
+// The LARP (Stefan's order: Het Spel der Rollen). Stefan sees every Wachter with guise, role and powers, writes one story for everyone
+// and a secret task per Wachter, and kicks it off: then every Wachter gets a LARP tab with the story and only his own task.
+let larpStaat = {}, larpGezien = null;
+const isLarpLeider = () => !!mijnBevel()?.larp;
+function opLarp(l) {
+  larpStaat = l || {}; tekenTabs();
+  if (larpStaat.gestart && !isLarpLeider() && larpGezien !== larpStaat.gestart) { const nieuw = larpGezien !== null || lokaal("kronieken-larp-gezien") !== String(larpStaat.gestart);
+    larpGezien = larpStaat.gestart; if (nieuw) { lokaal("kronieken-larp-gezien", String(larpStaat.gestart)); if (navigator.vibrate) try { navigator.vibrate([90, 60, 90]); } catch {} melding("Het Spel der Rollen", "Stefan heeft de LARP afgetrapt. Kijk onder LARP: daar staat jouw geheime opdracht."); } }
+  if (tabNu === "larp") tekenLarp();
+}
+function tekenLarp() { (isLarpLeider() ? tekenLarpLeider : tekenLarpSpeler)(); }
+// a player: Stefan's story and his own secret task, plus his guise as a reminder
+function tekenLarpSpeler() {
+  const el = $("tab-larp"), k = window.KARAKTER?.[wachter?.naam], rol = halOpen() && wachter ? Tafel.rolVan(wachter) : null;
+  el.innerHTML = `<section class="paneel larp-kop"><h2 class="carved">Het Spel der Rollen</h2><div class="wanneer">Stefan leidt</div>
+      ${larpStaat.algemeen ? `<p class="larp-verhaal">${schoon(larpStaat.algemeen).replace(/\n/g, "<br>")}</p>` : ""}</section>
+    <section class="paneel larp-mijn"><h2 class="carved">Jouw geheime opdracht</h2>
+      ${larpStaat.mijn ? `<p class="larp-verhaal">${schoon(larpStaat.mijn).replace(/\n/g, "<br>")}</p>` : '<p class="klein" style="text-align:center;color:var(--ash)">Stefan gaf je geen aparte opdracht. Speel je gedaante.</p>'}
+      <p class="klein" style="text-align:center;color:var(--ash);margin-top:10px">Alleen jij ziet dit. Hou het geheim.</p>
+      ${k ? `<div class="larp-ik">${rol ? `<img src="a/rollen/${rol.id}.webp" alt="">` : ""}<div><b>${schoon(wachter.naam)}</b><small>${schoon(k.ras)} · ${schoon(k.klasse)}${rol ? ` · ${schoon(rol.naam)}` : ""}</small></div></div>` : ""}</section>`;
+}
+// Stefan: every Wachter with guise, role and powers (explained), one story for everyone and a task per Wachter; kick off, update or stop
+function tekenLarpLeider() {
+  const el = $("tab-larp"), b = mijnBevel(), open = true, W = (window.WACHTERS || []).filter((w) => w.naam !== wachter?.naam); // Stefan may read the roles now, to prepare
+  const concept = (k, w) => { const s = `kronieken-larp-${k}`; if (w === undefined) return lokaal(s) || ""; lokaal(s, w); };
+  const gestart = !!larpStaat.gestart;
+  el.innerHTML = `<section class="paneel larp-kop"><h2 class="carved">Het Spel der Rollen</h2><div class="wanneer">Zondagochtend · hooguit een uur</div>
+      <p>${schoon(b?.tekst || "")}</p>
+      <p class="larp-geheim">Alleen jij ziet de rollen al. Houd ze geheim tot de Eerste Dronk.</p></section>
+    <section class="paneel larp-zend"><h2 class="carved">Voor iedereen</h2>
+      <p class="klein" style="margin:0 0 8px;color:var(--ash)">Het verhaal, de setting, het doel van het spel. Iedereen krijgt dit te zien. Mag leeg blijven.</p>
+      <textarea id="larp-algemeen" placeholder="Het is de nacht na de slag. In de burcht…">${schoon(concept("algemeen"))}</textarea>
+      <p class="klein" style="margin:10px 0 0;color:var(--ash)">Per Wachter hieronder één geheime opdracht (mag ook leeg). Alleen die Wachter ziet de zijne. Alles blijft op jouw telefoon tot je aftrapt.</p>
+      <div class="larp-knoppen">${gestart ? '<button class="knop" type="button" id="b-larp-zend">Bijwerken</button><button class="knop stil" type="button" id="b-larp-stop">Stoppen</button>' : '<button class="knop" type="button" id="b-larp-zend">Aftrappen: stuur naar iedereen</button>'}</div>
+      <p class="klein" id="larp-status" style="margin:6px 0 0;text-align:center;color:${gestart ? "#8fd493" : "var(--ash)"}">${gestart ? "✓ Afgetrapt: iedereen heeft de tab LARP." : "Nog niet afgetrapt."}</p></section>
+    <div class="larp-lijst">${W.map((w) => { const k = window.KARAKTER?.[w.naam], rol = open ? Tafel.rolVan(w) : null;
+      return `<section class="larp-w ${rol ? "" : "verzegeld"}"><div class="lk"><img src="${rol ? `a/rollen/${rol.id}.webp` : "a/medaillon-vlam.webp"}" alt="">
+        <div><b>${schoon(w.naam)}</b>${k ? `<small>${schoon(k.ras)} · ${schoon(k.klasse)}</small>` : ""}
+        <span class="rolnaam">${rol ? `${schoon(rol.naam)} · ${schoon(rol.titel)}` : "Rol nog verzegeld"}</span></div></div>
+        ${rol ? (() => { const s = window.ROL_SIMPEL?.[rol.id] || [rol.passief[1], rol.kracht[1]]; return `<div class="vm"><span>Altijd</span>${schoon(s[0])}</div><div class="vm"><span>Eén keer per dag</span>${schoon(s[1])}</div>`; })() : ""}
+        <label>Geheime opdracht voor ${schoon(w.naam)}<textarea data-n="${schoon(w.naam)}" placeholder="Wat moet hij doen, wat weet alleen hij?">${schoon(concept(w.naam))}</textarea></label></section>`; }).join("")}</div>`;
+  $("larp-algemeen").oninput = (e) => concept("algemeen", e.target.value);
+  el.querySelectorAll("textarea[data-n]").forEach((t) => (t.oninput = () => concept(t.dataset.n, t.value)));
+  const stuur = async (aan) => { const per = Object.fromEntries(W.map((w) => [w.naam, concept(w.naam).trim()]));
+    $("larp-status").textContent = "Versturen…"; const ok = await Koppeling.larp(concept("algemeen").trim(), per, aan);
+    if (ok === false) { $("larp-status").textContent = "Niet gelukt. Controleer je verbinding en probeer opnieuw."; return; }
+    if (!FIRE) { larpStaat = aan ? { gestart: Date.now(), algemeen: concept("algemeen") } : {}; } melding(aan ? "Afgetrapt" : "Gestopt", aan ? "Iedereen heeft nu de tab LARP met jouw verhaal en zijn eigen opdracht." : "De tab LARP is bij iedereen weer weg."); tekenLarpLeider(); };
+  $("b-larp-zend").onclick = () => stuur(true);
+  const stop = $("b-larp-stop"); if (stop) stop.onclick = () => stuur(false);
+}
 function tekenTafel() {
   tafelOpen = halOpen();
   $("tafel-onder").textContent = tafelOpen ? "Tik op een Wachter om zijn rol en kracht te zien." : "De rollen zijn nog verzegeld tot de Eerste Dronk.";
@@ -878,7 +956,7 @@ $("b-geluid").onclick = () => { oudGeluid(); if (!geluidAan) { muziek?.pause(); 
 
 zetNaam(); klok(); teken(); tekenTabs(); toonTab(tabNu);
 setInterval(() => { klok(); teken(); }, 1000);
-Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; publiekGeladen = true; teken(); tekenTocht(); tekenKroniek(); if (tabNu === "tafel") tekenTafel(); else tekenScorebord(); }, opVerraad: verraad,
+Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; publiekGeladen = true; teken(); tekenTocht(); tekenKroniek(); if (tabNu === "tafel") tekenTafel(); else tekenScorebord(); }, opVerraad: verraad, opLarp,
   opVooraf: (v) => { mijnVooraf = v || {}; vooraafGetekend = ""; toonVooraf(!$("vooraf").classList.contains("verborgen")); } }).then(() => {
   const ik = Koppeling.ik; if (!ik) return;
   wachter = (window.WACHTERS || []).find((w) => w.naam === ik.naam) || { naam: ik.naam, token: ik.email }; token = wachter.token;

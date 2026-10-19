@@ -75,3 +75,18 @@ window.ROL_VAN = {
 // Zonder verbinding met de tv gaat hij uiterlijk op dit moment vanzelf open.
 window.ROL_UITERLIJK = new Date("2026-11-13T21:00:00+01:00");
 // Het eed-fragment verschijnt pas als de regie Akte III opent.
+
+// Voor Stefans LARP: per rol in gewone woorden wat iemand altijd doet en wat hij één keer per dag kan (zonder spelwoorden als fiches of Zegels).
+window.ROL_SIMPEL = {
+  firekeeper: ["Waakt over het vuur. Zolang er een vuur brandt, beschermt hij de groep tegen onheil.", "Verzamelt iedereen rond het vuur. Wat daar samen gebeurt, telt dubbel."],
+  quartermaster: ["Zorgt dat de groep nooit iets tekortkomt: drank, ijs, eten.", "Koopt een probleem af met een rondje voor iedereen."],
+  feastlord: ["Kookt voor de groep. Een maaltijd van hem maakt iedereen sterker.", "Richt een feestmaal of ontbijt aan dat de groep extra kracht geeft."],
+  shieldbearer: ["Houdt orde. Waar hij is, is het opgeruimd en veilig.", "Neemt een gevaar helemaal alleen op zich, om de groep te beschermen."],
+  warlord: ["Is de scheidsrechter. Bij twijfel beslist hij, en hij mag een regel aanpassen.", "Verzint ter plekke een nieuwe uitdaging voor de groep."],
+  bard: ["Redt de sfeer. Na een tegenslag beurt hij de groep op met een lied, toost of verhaal.", "Vertelt een legende over een andere Wachter, en maakt hem zo groter."],
+  diplomat: ["Heeft de beslissende stem als de groep er samen niet uitkomt.", "Maakt van twee Wachters bondgenoten."],
+  shadow: ["Werkt in het geheim. Wat hij doet, onthult hij pas later.", "Regelt na een tegenslag ongezien iets om de groep te helpen."],
+  ranger: ["Leidt de groep naar buiten. Buiten is hij op zijn sterkst.", "Roept iedereen mee naar buiten, op expeditie."],
+  alchemist: ["Brouwt drankjes, elk met een naam en een ritueel.", "Laat het lot opnieuw beslissen: een worp mag over."],
+  priester: ["Is 's ochtends op zijn sterkst.", "Herstelt wat de groep eerder die dag verloor."],
+};

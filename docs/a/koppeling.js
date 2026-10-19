@@ -6,6 +6,7 @@
 //     /opdrachten  admins sturen alles, de huidige verrader alleen chaos-opdrachten
 //     /ere         de eretitels: welke Wachter welke titel krijgt (alleen admins)
 //     /vooraf/<e>  ieder schrijft en leest alleen zijn eigen plek (bevel aanvaard, herinneringen, kamerwens); admins lezen alles
+//     /larp        Stefans Spel der Rollen: gestart en algemeen leest iedereen, voor/<e> alleen die Wachter; Stefan en de admins schrijven
 //     /portretten  de schilderijen van de Wachters (data-URL per naam): iedereen die is ingelogd leest, admins schrijven (a/portretten.js)
 //   Anders de lokale server (app/server.mjs): /api/stand en /api/stroom.
 //   Anders niets: de pagina werkt dan alleen op zichzelf.
@@ -64,7 +65,7 @@ function geenToegang(email) {
   });
 }
 
-async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraad, opVooraf, opEre }) {
+async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraad, opVooraf, opEre, opLarp }) {
   const [{ initializeApp }, auth, db] = await Promise.all([import(FB + "firebase-app.js"), import(FB + "firebase-auth.js"), import(FB + "firebase-database.js")]);
   const app = initializeApp(window.FIREBASE_CONFIG);
   const a = auth.getAuth(app); await auth.setPersistence(a, auth.browserLocalPersistence);
@@ -113,6 +114,10 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
   if (rol === "wachter") luister(db.onValue, `vooraf/${sleutel(email)}`, (s) => opVooraf?.(s.val() || {}));
   if (rol === "regie" || rol === "tv") luister(db.onValue, "vooraf", (s) => opVooraf?.(s.val() || {})); // the tv only reads it for the credits
   if (alleenAdmin) luister(db.onValue, "ere/toewijzing", (s) => opEre?.(s.val() || {}));
+  if (rol === "wachter") { // the LARP: has Stefan kicked off, his story for everyone, and the secret task for this Wachter (no access yet: silent)
+    const larp = {}; const zend = () => opLarp?.({ ...larp });
+    for (const [k, pad] of [["gestart", "larp/gestart"], ["algemeen", "larp/algemeen"], ["mijn", `larp/voor/${sleutel(email)}`]]) db.onValue(db.ref(d, pad), (s) => { larp[k] = s.val(); zend(); }, () => {});
+  }
   if (rol !== "chaos" && window.Portret) window.Portret.laadGroot = (naam) => db.get(db.ref(d, `portretten-groot/${naam}`)).then((s) => s.val());
   if (rol !== "chaos") db.onValue(db.ref(d, "portretten"), (s) => window.Portret?.zet(s.val() || {}), () => {}); // no access (rules not yet published): just no portraits, no connection alarm
   return {
@@ -129,6 +134,8 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
     uitloggen: () => auth.signOut(a),
     vooraf: (pad, waarde) => metToken(() => db.set(db.ref(d, `vooraf/${sleutel(email)}/${pad}`), waarde)),
     ere: alleenAdmin ? (i, naam) => metToken(() => db.set(db.ref(d, `ere/toewijzing/t${i}`), naam || null)) : null,
+    larp: (algemeen, perNaam, aan) => metToken(() => db.update(db.ref(d, "larp"), { gestart: aan ? Date.now() : null, algemeen: algemeen || null,
+      ...Object.fromEntries(Object.entries(perNaam || {}).map(([n, t]) => [`voor/${sleutel(emailVan(n))}`, t || null])) })),
     portret: alleenAdmin ? (naam, url, groot) => metToken(() => Promise.all([db.set(db.ref(d, `portretten/${naam}`), url || null), db.set(db.ref(d, `portretten-groot/${naam}`), groot || null)])) : null,
   };
 }
@@ -156,6 +163,7 @@ window.Koppeling = {
   uitloggen() { return this.verbinding?.uitloggen?.(); },
   ere(i, naam) { return this.verbinding?.ere ? this.verbinding.ere(i, naam) : null; },
   vooraf(pad, waarde) { return this.verbinding?.vooraf ? this.verbinding.vooraf(pad, waarde) : Promise.resolve(false); },
+  larp(algemeen, perNaam, aan) { return this.verbinding?.larp ? this.verbinding.larp(algemeen, perNaam, aan) : Promise.resolve(false); },
   portret(naam, url, groot) { return this.verbinding?.portret ? this.verbinding.portret(naam, url, groot) : Promise.resolve(false); },
 };
 window.dispatchEvent(new Event("koppeling-klaar"));

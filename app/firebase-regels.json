@@ -28,6 +28,13 @@
         "anekdotes": { "$id": { ".validate": "newData.child('tekst').isString() && newData.child('tekst').val().length <= 2000" } }
       }
     },
+    "larp": {
+      ".read": "auth != null && (auth.token.email === 'stefan@petjoempa.nl' || auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/))",
+      ".write": "auth != null && (auth.token.email === 'stefan@petjoempa.nl' || auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/))",
+      "gestart": { ".read": "auth != null" },
+      "algemeen": { ".read": "auth != null", ".validate": "newData.isString() && newData.val().length < 6000" },
+      "voor": { "$wie": { ".read": "auth != null && auth.token.email.replace('.', ',') === $wie", ".validate": "newData.isString() && newData.val().length < 3000" } }
+    },
     "portretten": {
       ".read": "auth != null",
       ".write": "auth != null && auth.token.email.matches(/^(rob|jean|roland)@petjoempa[.]nl$/)",
