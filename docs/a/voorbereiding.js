@@ -14,17 +14,17 @@ window.VOORAF = {
     Geert: { titel: "De Legendarische Borrelplank", zegel: "hoorn",
       tekst: "Samen met Robin leg jij op de eerste avond een borrelplank die de Kronieken ingaat. Editie 2026: legendarisch, en hij mag nooit leeg raken." },
     Stefan: { titel: "Het Spel der Rollen", zegel: "hart", larp: true, // ziet in zijn app de gedaanten van iedereen
-      tekst: "Jij leidt een LARP-sessie van hooguit een uur: geef iedere Wachter een doel en een geheim, passend bij zijn gedaante. Het verhaal is van jou." },
+      tekst: "Zondagochtend leid jij een LARP-sessie van hooguit een uur: geef iedere Wachter een doel en een geheim, passend bij zijn gedaante. Het verhaal is van jou." },
     Roy: { titel: "Meester van de Frituur", zegel: "vlam",
       tekst: "Jij regelt de frituurpan, de snacks en de sauzen, en het hele weekend warme hapjes. Draag de bakmuts met trots: zonder jou geen gouden vuur." },
     Ivo: { titel: "De Proeverij van de Bard", zegel: "hart",
-      tekst: "Jij schenkt een wijnproeverij, met muziek en bij elke wijn een verhaal. En het hele weekend houd jij de sfeer in de Hall op peil." },
+      tekst: "Op de eerste avond schenk jij een wijnproeverij van hooguit een uur, met muziek en bij elke wijn een verhaal. En het hele weekend houd jij de sfeer in de Hall op peil." },
     Martin: { titel: "Drie Elixers", zegel: "vlam",
-      tekst: "Jij brouwt drie elixers: Vuur voor de fakkeltocht, Schaduw, en een Ochtendbooster (liefst zonder alcohol). Geef elk een naam die de Schaduw doet beven." },
+      tekst: "Jij brouwt minstens drie elixers: Vuur voor de fakkeltocht, Schaduw, en een Ochtendbooster (liefst zonder alcohol). Geef elk een naam die de Schaduw doet beven." },
     Jeroen: { titel: "Het Eerste Avondmaal", zegel: "schild",
       tekst: "Op de eerste avond voed jij de Guild. Het avondmaal is aan jou, met zo’n € 250 uit de schatkist (meer kan, als je het vraagt)." },
     Johan: { titel: "De Taveerne van het Lot", zegel: "schild",
-      tekst: "Jij opent een uur lang een middeleeuwse taveerne: een gokspel voor de hele groep, met drinken, dansen, knokken en gokken." },
+      tekst: "Zaterdag open jij een uur lang een middeleeuwse taveerne: een gokspel voor de hele groep, met drinken, dansen, knokken en gokken." },
   },
 
   // de organisatoren: een symbolisch bevel, zodat zij dezelfde flow doorlopen (telt niet mee voor de Zegels, staat niet in de regie)
