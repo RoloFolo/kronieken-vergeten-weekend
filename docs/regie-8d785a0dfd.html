@@ -74,6 +74,8 @@ main > section.kaart.dicht > h2:first-child { margin-bottom: 0; }
 main > section.kaart.dicht > h2:first-child::after { transform: rotate(-90deg); }
 main > section.kaart.dicht > :not(h2:first-child) { display: none !important; }
 main > section.kaart { scroll-margin-top: 64px; }
+.h2-nu { margin-left: auto; font: 600 13px/1 var(--body); letter-spacing: 0; text-transform: none; color: var(--bronze-hi); }
+main > section.kaart:not(.dicht) .h2-nu { display: none; }
 /* the menu: every part of this tab */
 .menu-blad { position: fixed; inset: 0; z-index: 30; background: rgba(5,2,3,.7); display: grid; align-items: start; justify-items: center; padding: 70px 16px 16px; }
 .menu-blad[hidden] { display: none; }
@@ -167,7 +169,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
 
   <section class="kaart los" id="s-scherm">
-    <h2>Scherm op de tv</h2>
+    <h2>Scherm op de tv <span class="h2-nu" id="scherm-nu"></span></h2>
     <div class="schermen" id="schermen"></div>
     <button class="toggle" id="b-rotatie" type="button" style="margin-top:10px;width:100%"><span>Elke 5 minuten even de Ronde Tafel (45 seconden, alleen vanuit de Guild Hall)</span><span class="vink"></span></button>
   </section>
@@ -429,16 +431,16 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=127"></script>
-<script src="a/quests-tv.js?v=127"></script>
-<script src="a/godfried.js?v=127"></script>
-<script src="a/spel.js?v=127"></script>
-<script src="a/wachters.js?v=127"></script>
-<script src="a/rollen.js?v=127"></script>
-<script src="a/firebase-config.js?v=127"></script>
-<script src="a/portretten.js?v=127"></script>
-<script src="a/koppeling.js?v=127"></script>
-<script src="a/voorbereiding.js?v=127"></script>
+<script src="a/events.js?v=128"></script>
+<script src="a/quests-tv.js?v=128"></script>
+<script src="a/godfried.js?v=128"></script>
+<script src="a/spel.js?v=128"></script>
+<script src="a/wachters.js?v=128"></script>
+<script src="a/rollen.js?v=128"></script>
+<script src="a/firebase-config.js?v=128"></script>
+<script src="a/portretten.js?v=128"></script>
+<script src="a/koppeling.js?v=128"></script>
+<script src="a/voorbereiding.js?v=128"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -563,7 +565,7 @@ function toon(s) {
   const ijsTxt = Object.entries(s.ijs || {}).filter(([, t]) => t > Date.now()).map(([id, t]) => `❄ ${ZEGELS.find((z) => z.id === id)?.naam} is bevroren tot ${new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}. Tik op ❄ om te ontdooien.`);
   if (s.vloek) ijsTxt.push(`Vervloekt: ${s.vloek.naam}. ${s.vloek.tekst}`);
   $("sabotage-status").hidden = !ijsTxt.length; $("sabotage-status").textContent = ijsTxt.join(" ");
-  $("scherm").textContent = SCHERM[s.scherm] ?? "";
+  $("scherm").textContent = SCHERM[s.scherm] ?? ""; $("scherm-nu").textContent = SCHERM[s.scherm] ?? "";
   $("b-verder").textContent = s.scherm === "dronk-wacht" ? "Glazen vol: toost!" : s.scherm === "einde" && s.fin?.einde === 1 ? "Kist is open: naar de eretitels" : "Volgende stap";
   $("b-verder").classList.toggle("goud", s.scherm === "dronk-wacht");
   for (const z of ZEGELS) $(`n-${z.id}`).textContent = s.fiches?.[z.id] ?? 0;
@@ -862,7 +864,7 @@ function harmonica() { // after a tab change: the card that was open last in thi
 document.querySelector("main").addEventListener("click", (e) => { const h = e.target.closest("main > section.kaart > h2:first-child"); if (!h) return; const k = h.parentElement;
   if (k.classList.contains("los")) { const dicht = k.classList.toggle("dicht"); try { localStorage.setItem("kronieken-regie-scherm", dicht ? "dicht" : "open"); } catch {} return; } // the tv screens: open or shut on its own, the same on every tab
   if (k.classList.contains("dicht")) openKaart(k, true); else k.classList.add("dicht"); });
-try { $("s-scherm").classList.toggle("dicht", localStorage.getItem("kronieken-regie-scherm") === "dicht"); } catch {}
+{ let o = null; try { o = localStorage.getItem("kronieken-regie-scherm"); } catch {} $("s-scherm").classList.toggle("dicht", o !== "open"); } // shut unless opened: its title says what the tv shows
 $("b-menu").onclick = () => {
   const l = kaartenNu(), b = $("menu-blad");
   b.innerHTML = `<div><b>${veilig(document.querySelector('#fases button[aria-selected="true"]')?.textContent || "")}</b>${l.map((k, i) => `<button type="button" data-i="${i}" class="${k.classList.contains("dicht") ? "" : "open"}">${veilig(kaartNaam(k))}</button>`).join("")}</div>`;
@@ -870,22 +872,42 @@ $("b-menu").onclick = () => {
 };
 // the action bar: a quest or a Shadow event on the tv gets its buttons at the bottom of every tab
 function tekenBalk(s) {
-  const q = s.quest && s.quest.fase !== "uit" ? s.quest : null, ev = s.scherm === "schaduw";
-  let html = "";
+  // what runs on the tv now, most urgent first; a button either sends its own command or presses the same button in its card
+  const K = window.KARAKTER || {}, q = s.quest && s.quest.fase !== "uit" ? s.quest : null;
+  const knop = (id, t, k = "") => ({ p: id, t: t ?? $(id).textContent.replace(/\s*\(.*\)\s*$/, ""), k, uit: $(id).disabled }); // the card's own button, same text and state
+  let kop = "", sub = "", knoppen = [];
   if (q) {
-    const K = window.KARAKTER || {}, knoppen = QUEST_KNOP[q.id] || [];
-    html = `<p><b>${veilig(q.naam)}</b> · ${veilig($("quest-nu").textContent.split(" · ")[1]?.split("\n")[0] || "")}${q.id === "klasse" && q.hoofd ? `<small>${veilig(q.hoofd)} (${veilig(K[q.hoofd]?.klasse || "")}) met ${veilig((q.mee || []).join(", "))}</small>` : ""}${q.antwoord && (q.id === "wie" || q.id === "zei") ? `<small>Antwoord: ${veilig(q.antwoord)}</small>` : ""}</p>
-      <div class="rij">${knoppen.map(([, t, k], i) => `<button type="button" class="${k}" data-q="${i}">${t}</button>`).join("")}<button type="button" data-qstop="1">Sluiten</button></div>`;
-  } else if (ev) {
-    const knop = (id, t, k) => `<button type="button" class="${k}" data-p="${id}" ${$(id).disabled ? "disabled" : ""}>${t}</button>`;
-    html = `<p><b>Schaduw-event</b>${s.event ? ` · ${veilig(s.event.naam)}` : ""}</p><div class="rij">${knop("b-goed", "Doorstaan", "")}${knop("b-fout", "Gefaald", "rood")}${knop("b-d20", "D20", "goud")}${$("b-herworp").disabled ? "" : knop("b-herworp", "Herworp", "")}${knop("b-hal", "Terug", "")}</div>`;
+    kop = `<b>${veilig(q.naam)}</b> · ${veilig($("quest-nu").textContent.split(" · ")[1]?.split("\n")[0] || "")}`;
+    if (q.id === "klasse" && q.hoofd) sub = `${veilig(q.hoofd)} (${veilig(K[q.hoofd]?.klasse || "")}) met ${veilig((q.mee || []).join(", "))}`;
+    if (q.antwoord && (q.id === "wie" || q.id === "zei")) sub = `Antwoord: ${veilig(q.antwoord)}`;
+    if (q.id === "geheugen") sub = `Reeks van ${q.lengte}, beste tot nu: ${q.beste}`;
+    knoppen = [...(QUEST_KNOP[q.id] || []).map(([cmd, t, k, extra]) => ({ cmd: { cmd, ...(extra || {}) }, t, k })), { cmd: { cmd: "quest-stop" }, t: "Sluiten" }];
+  } else if (s.scherm === "schaduw") {
+    kop = `<b>Schaduw-event</b>${s.event ? ` · ${veilig(s.event.naam)}` : ""}`;
+    knoppen = [knop("b-goed", "Doorstaan"), knop("b-fout", "Gefaald", "rood"), knop("b-d20", "D20", "goud"), ...($("b-herworp").disabled ? [] : [knop("b-herworp", "Herworp")]), knop("b-hal", "Terug")];
+  } else if (s.quiz) {
+    kop = `<b>${veilig($("quiz-wat").textContent)}</b>`;
+    sub = [$("quiz-vraag").textContent, $("quiz-antwoord").textContent].filter(Boolean).map(veilig).join("<br>");
+    knoppen = [knop("b-quiz-goed", "Goed (+1)", "goud"), knop("b-quiz-fout", "Fout (−1)", "rood"), knop("b-quiz-stop", "Stoppen")];
+  } else if (s.dieven && s.dieven.buit == null) {
+    kop = "<b>De Dieven</b> · kies de buit"; sub = veilig($("dief-stand").textContent);
+    knoppen = [0, 1, 2, 3, 4].map((n) => ({ dief: n, t: n ? `+${n}` : "Niets", k: n ? "goud" : "" }));
+  } else if (s.scherm === "finale") {
+    kop = "<b>Finale</b>"; sub = veilig($("fin-status").textContent);
+    knoppen = [knop("b-fin-verder", null, "goud"), knop("b-beproeving", "Beproeving voltooid", "rood"), knop("b-hint", $("b-hint").textContent)];
+  } else if (s.scherm === "ere") {
+    kop = "<b>Ere van de Wachters</b>";
+    knoppen = [knop("b-ere-terug", "Vorige"), knop("b-ere-speel", ereStand.speelt ? "Pauze" : "Afspelen", "goud"), knop("b-ere-volgende", "Volgende"), knop("b-aftiteling", "Aftiteling")];
+  } else if (["verhaal", "dronk", "dronk-wacht", "uitleg"].includes(s.scherm)) {
+    kop = `<b>${veilig(SCHERM[s.scherm] || "")}</b>`;
+    knoppen = [knop("b-verder", null, s.scherm === "dronk-wacht" ? "goud" : "")];
   }
-  const b = $("nu-balk"); b.hidden = !html; document.body.classList.toggle("met-balk", !!html); if (!html) return;
-  b.innerHTML = `<div>${html}</div>`;
-  b.onclick = (e) => { const x = e.target.closest("button"); if (!x || x.disabled) return;
-    if (x.dataset.p) return $(x.dataset.p).click();
-    if (x.dataset.qstop) return stuur({ cmd: "quest-stop" });
-    const [cmd, , , extra] = (QUEST_KNOP[q.id] || [])[+x.dataset.q] || []; if (cmd) stuur({ cmd, ...(extra || {}) }); };
+  const b = $("nu-balk"); b.hidden = !kop; document.body.classList.toggle("met-balk", !!kop); if (!kop) return;
+  b.innerHTML = `<div><p>${kop}${sub ? `<small>${sub}</small>` : ""}</p><div class="rij">${knoppen.map((x, i) => `<button type="button" class="${x.k || ""}" data-i="${i}" ${x.uit ? "disabled" : ""}>${veilig(x.t)}</button>`).join("")}</div></div>`;
+  b.onclick = (e) => { const el = e.target.closest("button[data-i]"); if (!el || el.disabled) return; const x = knoppen[+el.dataset.i];
+    if (x.p) return $(x.p).click();
+    if (x.dief != null) return tweeKeer(el, "Zeker?", () => stuur({ cmd: "dief-buit", n: x.dief }));
+    if (x.cmd) stuur(x.cmd); };
 }
 function kopieMelding(t, fout) { const el = $("kopie-status"); el.hidden = false; el.textContent = t; el.style.color = fout ? "#ff8a80" : "#efe3d4"; }
 $("b-kopie").onclick = () => { stuur({ cmd: "herstelpunt", waarom: "met de hand" }); kopieMelding("Gevraagd aan de tv. Tik op Toon herstelpunten om te zien of hij er staat."); };
