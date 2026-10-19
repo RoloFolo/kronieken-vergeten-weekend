@@ -437,7 +437,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .zaal .z-zit .z-plek { position: absolute; left: -10%; top: -6%; width: 1.7cqi; aspect-ratio: 1; display: grid; place-items: center; border-radius: 50%; font: 700 .8cqi/1 var(--carved); color: var(--bronze-hi); background: #2a0c10; border: .1cqi solid #b8955f; z-index: 2; }
 .zaal .z-zit .z-xp { position: absolute; right: -22%; bottom: -4%; padding: .2cqi .4cqi; border-radius: 1cqi; font: 700 .78cqi/1 var(--carved); color: #170a03; background: linear-gradient(180deg, #f1dfb6, #c9a466); border: .08cqi solid #000; white-space: nowrap; z-index: 2; }
 .zaal .z-zit .z-kroon { position: absolute; left: 50%; top: -1.6cqi; translate: -50% 0; font-size: 1.6cqi; line-height: 1; color: #ffd98a; text-shadow: 0 0 .8cqi rgba(255,200,110,.9), 0 1px 2px #000; z-index: 2; }
-.zaal .z-licht { position: absolute; left: 2.5vw; top: 50%; translate: 0 -50%; height: 70vh; aspect-ratio: 2 / 3; opacity: 0; transition: opacity 1s ease; z-index: 3; }
+.zaal .z-licht { position: absolute; left: 2.5vw; top: 6vh; height: 56vh; aspect-ratio: 2 / 3; opacity: 0; transition: opacity 1s ease; z-index: 3; }
 .stage.in-zaal .zaal .z-licht.aan { opacity: 1; }
 .zaal .z-licht img { width: 100%; height: 100%; object-fit: cover; border: 3px solid #d9b77a; box-shadow: 0 0 0 2px #000, 0 0 50px rgba(110,200,255,.35), 0 20px 40px #000; }
 .zaal .z-licht > div { position: absolute; left: 0; right: 0; bottom: 0; padding: 9vh 1vw 2.2vh; text-align: center; background: linear-gradient(180deg, transparent, rgba(7,4,5,.92) 45%); }
@@ -447,7 +447,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .zaal .z-licht .z-rol { display: flex; align-items: center; justify-content: center; gap: .8vw; margin-top: 1.4vh; font: 700 clamp(16px, 1.6vw, 34px)/1.15 var(--carved); letter-spacing: .04em; color: #ffb3ab; text-shadow: 0 2px 8px #000; }
 .zaal .z-licht .z-rol img { width: clamp(52px, 5.6vw, 116px); height: auto; border: 0; box-shadow: none; filter: drop-shadow(0 2px 6px #000); }
 /* right: everything he did for XP */
-.zaal .z-daden { position: absolute; right: 2.5vw; top: 9vh; width: 25vw; max-height: 41vh; display: grid; align-content: start; gap: 1.2vh; padding: 2.4vh 1.4vw; overflow: hidden; opacity: 0; transition: opacity 1s ease; z-index: 3;
+.zaal .z-daden { position: absolute; left: 2.5vw; top: 64vh; bottom: 3.5vh; width: 23vw; display: grid; align-content: start; gap: 1.2vh; padding: 2.4vh 1.4vw; overflow: hidden; opacity: 0; transition: opacity 1s ease; z-index: 3;
   background: linear-gradient(180deg, rgba(30,10,12,.92), rgba(10,5,6,.95)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.4), 0 20px 50px #000; }
 .stage.in-zaal .zaal .z-daden.aan { opacity: 1; }
 .zaal .z-daden h3 { margin: 0; font: 700 clamp(13px, 1.15vw, 24px)/1 var(--carved); letter-spacing: .28em; text-transform: uppercase; color: var(--ash); text-align: center; }
@@ -460,7 +460,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .zaal .z-daden li span { font: italic clamp(13px, 1.1vw, 23px)/1.3 var(--display); color: var(--bone); }
 .zaal .z-daden .leeg { text-align: center; font: italic clamp(14px, 1.15vw, 24px)/1.4 var(--display); color: var(--ash); }
 /* De Kroniek: Godfried's latest notes, under the deeds, with his face as a seal */
-.zaal .z-kroniek { position: absolute; right: 2.5vw; top: 57vh; bottom: 3.5vh; width: 25vw; padding: 2.4vh 1.3vw 1.6vh; opacity: 0; transition: opacity 1s ease .4s; z-index: 3;
+.zaal .z-kroniek { position: absolute; right: 2.5vw; top: 9vh; bottom: 3.5vh; width: 25vw; padding: 2.4vh 1.3vw 1.6vh; opacity: 0; transition: opacity 1s ease .4s; z-index: 3;
   background: radial-gradient(ellipse at 30% 0%, rgba(120,30,30,.35), transparent 60%), linear-gradient(180deg, rgba(34,12,14,.94), rgba(10,5,6,.96));
   border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.4), inset 0 0 0 5px rgba(10,5,6,.9), inset 0 0 0 6px rgba(184,149,95,.35), 0 20px 50px #000; }
 .stage.in-zaal .zaal .z-kroniek.aan { opacity: 1; }
@@ -1265,17 +1265,17 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=125"></script>
-<script src="a/godfried.js?v=125"></script>
-<script src="a/spel.js?v=125"></script>
-<script src="a/voorbereiding.js?v=125"></script>
-<script src="a/wachters.js?v=125"></script>
-<script src="a/firebase-config.js?v=125"></script>
-<script src="a/portretten.js?v=125"></script>
-<script src="a/koppeling.js?v=125"></script>
-<script src="a/rollen.js?v=125"></script>
-<script src="a/quests-tv.js?v=125"></script>
-<script src="a/tafel.js?v=125"></script>
+<script src="a/events.js?v=126"></script>
+<script src="a/godfried.js?v=126"></script>
+<script src="a/spel.js?v=126"></script>
+<script src="a/voorbereiding.js?v=126"></script>
+<script src="a/wachters.js?v=126"></script>
+<script src="a/firebase-config.js?v=126"></script>
+<script src="a/portretten.js?v=126"></script>
+<script src="a/koppeling.js?v=126"></script>
+<script src="a/rollen.js?v=126"></script>
+<script src="a/quests-tv.js?v=126"></script>
+<script src="a/tafel.js?v=126"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2060,7 +2060,7 @@ function zaalKroniek() {
     if (l.type === "chaos") return [zIco("vlam"), "In het verborgene sloeg de Schaduw toe."];
     return null;
   };
-  const lijst = []; for (let i = logboek.length - 1; i >= 0 && lijst.length < 3; i--) { const r = regel(logboek[i]); if (r) lijst.push([...r, logboek[i].t]); }
+  const lijst = []; for (let i = logboek.length - 1; i >= 0 && lijst.length < 7; i--) { const r = regel(logboek[i]); if (r) lijst.push([...r, logboek[i].t]); }
   el.innerHTML = `<h3>De Kroniek</h3><div class="zk-sub">zoals Godfried het optekende</div>`
     + (lijst.length ? `<ol>${lijst.map(([i, t, ts]) => `<li>${i}<p>${t}<small>${tijd(ts)}</small></p></li>`).join("")}</ol>` : '<p class="zk-leeg">Het perkament is nog leeg. Schrijf geschiedenis, Wachters.</p>');
   el.querySelectorAll(".zk-ico[data-n]").forEach((i) => Portret.rond(i, i.dataset.n, 1.3)); // the face, as on the seats
@@ -2090,7 +2090,7 @@ function zaalKaart(w) {
   const daden = logboek.filter((l) => l.type === "punt" && l.naam === w.naam).reverse(), stand = scorebordData().stand;
   const plek = Object.entries(stand).sort((a, b) => b[1] - a[1]).findIndex(([n]) => n === w.naam) + 1;
   $("z-daden").innerHTML = `<h3>Zijn daden</h3><div class="z-totaal">${xp} XP<small>${plek}e plaats aan de tafel</small></div>`
-    + (daden.length ? `<ol>${daden.slice(0, 7).map((l) => { const x = xpVan(l), z = ZEGELS.find((q) => q.id === l.zegel); return `<li>${z ? `<img src="${z.medaille}" alt="">` : "<i></i>"}<b class="${x < 0 ? "min" : ""}">${x > 0 ? "+" : "−"}${Math.abs(x)} XP${z ? ` · ${schoon(z.naam.split(" ")[0])}` : ""}</b><span>${schoon(l.waarom || "")}</span></li>`; }).join("")}</ol>` : '<p class="leeg">Nog geen daden in de Kronieken.</p>');
+    + (daden.length ? `<ol>${daden.slice(0, 3).map((l) => { const x = xpVan(l), z = ZEGELS.find((q) => q.id === l.zegel); return `<li>${z ? `<img src="${z.medaille}" alt="">` : "<i></i>"}<b class="${x < 0 ? "min" : ""}">${x > 0 ? "+" : "−"}${Math.abs(x)} XP${z ? ` · ${schoon(z.naam.split(" ")[0])}` : ""}</b><span>${schoon(l.waarom || "")}</span></li>`; }).join("")}</ol>` : '<p class="leeg">Nog geen daden in de Kronieken.</p>');
   $("z-daden").classList.add("aan"); document.querySelectorAll("#z-ring .z-zit").forEach((z) => z.classList.toggle("licht", z.dataset.naam === w.naam));
   $("z-kaart").innerHTML = `<div class="in">${rol ? `<div class="wie">${schoon(w.naam)}</div><h2 class="carved">${schoon(rol.naam)}</h2><div class="titel">${schoon(rol.titel)}</div><p>${schoon(rol.tekst)}</p>` : `<h2 class="carved">${schoon(w.naam)}</h2>`}</div>`;
 }
