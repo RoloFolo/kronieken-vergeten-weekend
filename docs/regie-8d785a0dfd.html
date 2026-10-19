@@ -63,6 +63,32 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
 .schermen { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .schermen button.nu { border-color: var(--bronze); background: rgba(184,149,95,.2); color: var(--bronze-hi); }
 /* one tab per phase of the weekend; the status, the tv warnings and the screen switch stay above the tabs */
+/* the tabs with a menu beside them */
+.fase-kop { position: sticky; top: 0; z-index: 10; min-width: 0; display: flex; gap: 6px; align-items: center; background: var(--bg); margin: 0 -2px; }
+.fase-kop .fases { position: static; flex: 1; min-width: 0; margin: 0; }
+.fase-kop #b-menu { flex: none; width: 42px; height: 38px; padding: 0; font-size: 20px; line-height: 1; border-radius: 10px; }
+/* harmonica: one card open per tab; tap a title to open it */
+main > section.kaart > h2:first-child { cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; user-select: none; }
+main > section.kaart > h2:first-child::after { content: "▾"; font-size: .9em; color: var(--bronze); transition: transform .2s; }
+main > section.kaart.dicht > h2:first-child { margin-bottom: 0; }
+main > section.kaart.dicht > h2:first-child::after { transform: rotate(-90deg); }
+main > section.kaart.dicht > :not(h2:first-child) { display: none !important; }
+main > section.kaart { scroll-margin-top: 64px; }
+/* the menu: every part of this tab */
+.menu-blad { position: fixed; inset: 0; z-index: 30; background: rgba(5,2,3,.7); display: grid; align-items: start; justify-items: center; padding: 70px 16px 16px; }
+.menu-blad[hidden] { display: none; }
+.menu-blad > div { width: 100%; max-width: 488px; display: grid; gap: 6px; padding: 12px; border-radius: 12px; border: 1px solid #6e5230; background: linear-gradient(180deg, #1e0e0e, #0e0708); box-shadow: 0 20px 50px #000; }
+.menu-blad b { font: 700 12px/1 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: var(--ash); padding: 4px 4px 6px; }
+.menu-blad button { text-align: left; }
+.menu-blad button.open { border-color: var(--bronze); color: var(--bronze-hi); }
+/* the action bar: what runs on the tv now, with its buttons, on every tab */
+.nu-balk { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: linear-gradient(180deg, rgba(30,10,12,.97), rgba(12,6,7,.99)); border-top: 1px solid var(--bronze); box-shadow: 0 -10px 30px rgba(0,0,0,.7); }
+.nu-balk[hidden] { display: none; }
+.nu-balk > div { max-width: 520px; margin: 0 auto; display: grid; gap: 8px; }
+.nu-balk p { margin: 0; font-size: 13px; color: var(--bone); } .nu-balk p b { color: var(--bronze-hi); } .nu-balk p small { display: block; color: var(--ash); }
+.nu-balk .rij { grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 6px; }
+.nu-balk .rij button { padding: 10px 6px; font-size: 14px; }
+body.met-balk { padding-bottom: 190px; }
 .fases { position: sticky; top: 0; z-index: 10; display: flex; gap: 6px; overflow-x: auto; padding: 8px 2px; margin: 0 -2px; background: var(--bg); scrollbar-width: none; }
 .fases::-webkit-scrollbar { display: none; }
 .fases button { flex: none; padding: 9px 13px; border-radius: 999px; font: 700 12px/1 var(--carved); letter-spacing: .1em; text-transform: uppercase; color: var(--ash); background: rgba(0,0,0,.3); border: 1px solid var(--line); }
@@ -121,12 +147,15 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   <div class="kaart" id="tv-stil" hidden style="border-color:var(--bronze);color:var(--bronze-hi)">De tv mag nog geen geluid afspelen. Klik één keer op het tv-scherm (met de muis van de laptop), anders hoort niemand Godfried.</div>
 
   <button class="goud groot" id="b-oproep" type="button" style="margin:0">Oproep: iedereen naar het scherm</button>
+  <div class="fase-kop">
   <nav class="fases" id="fases" role="tablist" aria-label="Fases">
     <button type="button" role="tab" data-fase="vooraf">Vooraf</button><button type="button" role="tab" data-fase="start">Start</button>
     <button type="button" role="tab" data-fase="hall">Hall</button><button type="button" role="tab" data-fase="xp">XP</button><button type="button" role="tab" data-fase="quests">Quests</button><button type="button" role="tab" data-fase="godfried">Godfried</button><button type="button" role="tab" data-fase="tocht">Tocht</button>
     <button type="button" role="tab" data-fase="finale">Finale</button><button type="button" role="tab" data-fase="ere">Ere</button>
     <button type="button" role="tab" data-fase="beheer">Beheer</button>
   </nav>
+  <button id="b-menu" type="button" aria-label="Onderdelen van deze tab">☰</button>
+  </div>
 
   <section class="kaart" id="intro" data-fase="start">
     <h2>Intro</h2>
@@ -137,7 +166,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <p class="klein">Klik één keer op de tv-laptop zelf voordat je start, anders mag de browser geen geluid afspelen. Zet vooraf elf gevulde glazen klaar. Na het verhaal vraagt Godfried iedereen zijn glas te pakken; de tv geeft daar een minuut voor. Druk eerder op "Glazen vol: toost!" als iedereen er klaar voor is: Godfried brengt de toost uit en de Hall opent. Verder slaat "Volgende stap" het lopende deel over.</p>
   </section>
 
-  <section class="kaart">
+  <section class="kaart los" id="s-scherm">
     <h2>Scherm op de tv</h2>
     <div class="schermen" id="schermen"></div>
     <button class="toggle" id="b-rotatie" type="button" style="margin-top:10px;width:100%"><span>Elke 5 minuten even de Ronde Tafel (45 seconden, alleen vanuit de Guild Hall)</span><span class="vink"></span></button>
@@ -154,7 +183,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <p class="klein" id="punt-stand" style="margin:8px 0 0"></p>
     <div id="punt-laatst" style="display:grid;gap:2px;margin-top:10px"></div>
   </section>
-  <section class="kaart" data-fase="quests">
+  <section class="kaart" data-fase="quests" hidden>
     <h2>Nu op de tv</h2>
     <p class="klein" id="quest-nu" style="margin:0">Geen quest.</p>
     <div class="rij" id="quest-knoppen" style="margin-top:8px"></div>
@@ -397,17 +426,19 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     </div>
   </section>
 </main>
+<div class="menu-blad" id="menu-blad" hidden></div>
+<div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=126"></script>
-<script src="a/quests-tv.js?v=126"></script>
-<script src="a/godfried.js?v=126"></script>
-<script src="a/spel.js?v=126"></script>
-<script src="a/wachters.js?v=126"></script>
-<script src="a/rollen.js?v=126"></script>
-<script src="a/firebase-config.js?v=126"></script>
-<script src="a/portretten.js?v=126"></script>
-<script src="a/koppeling.js?v=126"></script>
-<script src="a/voorbereiding.js?v=126"></script>
+<script src="a/events.js?v=127"></script>
+<script src="a/quests-tv.js?v=127"></script>
+<script src="a/godfried.js?v=127"></script>
+<script src="a/spel.js?v=127"></script>
+<script src="a/wachters.js?v=127"></script>
+<script src="a/rollen.js?v=127"></script>
+<script src="a/firebase-config.js?v=127"></script>
+<script src="a/portretten.js?v=127"></script>
+<script src="a/koppeling.js?v=127"></script>
+<script src="a/voorbereiding.js?v=127"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -527,7 +558,7 @@ function bewaakTvs(s) {
     : "Let op: er schrijven twee tv-vensters tegelijk. Sluit alle tabbladen met ?tv behalve één.";
 }
 function toon(s) {
-  bewaakTvs(s); $("b-rotatie").classList.toggle("aan", s.rotatie !== false); tekenXpLijst(s); tekenWijzigingen(s); tekenDieven(s); tekenQuest(s);
+  bewaakTvs(s); $("b-rotatie").classList.toggle("aan", s.rotatie !== false); tekenXpLijst(s); tekenWijzigingen(s); tekenDieven(s); tekenQuest(s); queueMicrotask(() => tekenBalk(s));
   // what the traitor did that everyone can see anyway: a frozen seal (no fiches) and a cursed Wachter
   const ijsTxt = Object.entries(s.ijs || {}).filter(([, t]) => t > Date.now()).map(([id, t]) => `❄ ${ZEGELS.find((z) => z.id === id)?.naam} is bevroren tot ${new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}. Tik op ❄ om te ontdooien.`);
   if (s.vloek) ijsTxt.push(`Vervloekt: ${s.vloek.naam}. ${s.vloek.tekst}`);
@@ -635,6 +666,7 @@ function kiesFase(f) {
   fase = f; try { localStorage.setItem("kronieken-regie-fase", f); } catch {}
   document.querySelectorAll("#fases button").forEach((b) => { b.setAttribute("aria-selected", b.dataset.fase === f); if (b.dataset.fase === f) b.scrollIntoView({ block: "nearest", inline: "nearest" }); });
   document.querySelectorAll("main [data-fase]:not(button)").forEach((el) => el.classList.toggle("fase-weg", !el.dataset.fase.split(" ").includes(f)));
+  if (typeof harmonica === "function") harmonica();
 }
 function volgFase(scherm) { // mark the tab of what the tv shows, and jump there when the tv changes screen
   tvFase = FASE_VAN[scherm] || null;
@@ -814,6 +846,47 @@ tekenEq();
 const EV_SOORT = { opdracht: "Opdrachten", dilemma: "Dilemma's (de groep kiest)", vreemd: "Vreemde regels" };
 $("ev-lijst").innerHTML = Object.entries(EV_SOORT).map(([k, t]) => { const l = (window.SCHADUW_EVENTS || []).filter((e) => e.soort === k); return l.length ? `<div><b class="klein" style="margin:0">${t}</b><div class="ev-knoppen">${l.map((e) => `<button type="button" data-ev="${e.id}" title="${veilig(e.regel)}"><b>${veilig(e.naam)}</b><small>${veilig(e.regel)}</small></button>`).join("")}</div></div>` : ""; }).join("");
 $("ev-lijst").onclick = (e) => { const b = e.target.closest("button"); if (b) tweeKeer(b, "Tik nog eens: de Schaduw ontwaakt", () => stuur({ cmd: "schaduw", id: b.dataset.ev })); };
+
+// ===== harmonica, menu and action bar: everything per part together, without scrolling back up =====
+function kaartenNu() { return [...document.querySelectorAll("main > section.kaart:not(.los)")].filter((k) => k.querySelector(":scope > h2:first-child") && !k.hidden && !k.classList.contains("fase-weg")); }
+function kaartNaam(k) { return k.querySelector(":scope > h2").textContent.trim(); }
+function openKaart(k, scroll) {
+  kaartenNu().forEach((x) => x.classList.toggle("dicht", x !== k));
+  try { localStorage.setItem(`kronieken-regie-open-${fase}`, kaartNaam(k)); } catch {}
+  if (scroll) requestAnimationFrame(() => k.scrollIntoView({ block: "start", behavior: "smooth" }));
+}
+function harmonica() { // after a tab change: the card that was open last in this tab, otherwise the first
+  const l = kaartenNu(); if (!l.length) return; let n = null; try { n = localStorage.getItem(`kronieken-regie-open-${fase}`); } catch {}
+  const k = l.find((x) => kaartNaam(x) === n) || l[0]; l.forEach((x) => x.classList.toggle("dicht", x !== k));
+}
+document.querySelector("main").addEventListener("click", (e) => { const h = e.target.closest("main > section.kaart > h2:first-child"); if (!h) return; const k = h.parentElement;
+  if (k.classList.contains("los")) { const dicht = k.classList.toggle("dicht"); try { localStorage.setItem("kronieken-regie-scherm", dicht ? "dicht" : "open"); } catch {} return; } // the tv screens: open or shut on its own, the same on every tab
+  if (k.classList.contains("dicht")) openKaart(k, true); else k.classList.add("dicht"); });
+try { $("s-scherm").classList.toggle("dicht", localStorage.getItem("kronieken-regie-scherm") === "dicht"); } catch {}
+$("b-menu").onclick = () => {
+  const l = kaartenNu(), b = $("menu-blad");
+  b.innerHTML = `<div><b>${veilig(document.querySelector('#fases button[aria-selected="true"]')?.textContent || "")}</b>${l.map((k, i) => `<button type="button" data-i="${i}" class="${k.classList.contains("dicht") ? "" : "open"}">${veilig(kaartNaam(k))}</button>`).join("")}</div>`;
+  b.hidden = false; b.onclick = (e) => { const x = e.target.closest("button"); b.hidden = true; if (x) openKaart(l[+x.dataset.i], true); };
+};
+// the action bar: a quest or a Shadow event on the tv gets its buttons at the bottom of every tab
+function tekenBalk(s) {
+  const q = s.quest && s.quest.fase !== "uit" ? s.quest : null, ev = s.scherm === "schaduw";
+  let html = "";
+  if (q) {
+    const K = window.KARAKTER || {}, knoppen = QUEST_KNOP[q.id] || [];
+    html = `<p><b>${veilig(q.naam)}</b> · ${veilig($("quest-nu").textContent.split(" · ")[1]?.split("\n")[0] || "")}${q.id === "klasse" && q.hoofd ? `<small>${veilig(q.hoofd)} (${veilig(K[q.hoofd]?.klasse || "")}) met ${veilig((q.mee || []).join(", "))}</small>` : ""}${q.antwoord && (q.id === "wie" || q.id === "zei") ? `<small>Antwoord: ${veilig(q.antwoord)}</small>` : ""}</p>
+      <div class="rij">${knoppen.map(([, t, k], i) => `<button type="button" class="${k}" data-q="${i}">${t}</button>`).join("")}<button type="button" data-qstop="1">Sluiten</button></div>`;
+  } else if (ev) {
+    const knop = (id, t, k) => `<button type="button" class="${k}" data-p="${id}" ${$(id).disabled ? "disabled" : ""}>${t}</button>`;
+    html = `<p><b>Schaduw-event</b>${s.event ? ` · ${veilig(s.event.naam)}` : ""}</p><div class="rij">${knop("b-goed", "Doorstaan", "")}${knop("b-fout", "Gefaald", "rood")}${knop("b-d20", "D20", "goud")}${$("b-herworp").disabled ? "" : knop("b-herworp", "Herworp", "")}${knop("b-hal", "Terug", "")}</div>`;
+  }
+  const b = $("nu-balk"); b.hidden = !html; document.body.classList.toggle("met-balk", !!html); if (!html) return;
+  b.innerHTML = `<div>${html}</div>`;
+  b.onclick = (e) => { const x = e.target.closest("button"); if (!x || x.disabled) return;
+    if (x.dataset.p) return $(x.dataset.p).click();
+    if (x.dataset.qstop) return stuur({ cmd: "quest-stop" });
+    const [cmd, , , extra] = (QUEST_KNOP[q.id] || [])[+x.dataset.q] || []; if (cmd) stuur({ cmd, ...(extra || {}) }); };
+}
 function kopieMelding(t, fout) { const el = $("kopie-status"); el.hidden = false; el.textContent = t; el.style.color = fout ? "#ff8a80" : "#efe3d4"; }
 $("b-kopie").onclick = () => { stuur({ cmd: "herstelpunt", waarom: "met de hand" }); kopieMelding("Gevraagd aan de tv. Tik op Toon herstelpunten om te zien of hij er staat."); };
 $("b-kopie-lijst").onclick = async () => {
