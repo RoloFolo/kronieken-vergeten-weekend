@@ -22,7 +22,7 @@ window.VOORAF = {
     Martin: { titel: "Drie Elixers", zegel: "vlam",
       tekst: "Jij brouwt minstens drie elixers: één voor Vuur, één voor Schaduw en één voor Ochtenddauw. Geef elk een naam die de Schaduw doet beven." },
     Jeroen: { titel: "Het Eerste Avondmaal", zegel: "schild",
-      tekst: "Op de eerste avond voed jij de Guild. Het avondmaal is aan jou, met zo’n € 250 uit de schatkist (meer kan, als je het vraagt)." },
+      tekst: "Op de eerste avond voed jij de Guild. Het avondmaal is aan jou, met zo’n € 250 uit de schatkist (meer kan, als je het vraagt). Je mag Jean om hulp vragen." },
     Johan: { titel: "De Taveerne van het Lot", zegel: "schild",
       tekst: "Zaterdag open jij een uur lang een middeleeuwse taveerne. Creëer een gokspel voor de hele groep, met drinken, dansen, knokken en gokken. Hoe je dat invult, is aan jou." },
   },
