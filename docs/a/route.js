@@ -27,9 +27,9 @@ window.ROUTE = {
     { id: "ere", plan: "zo-titels", tijd: "2026-11-15T15:00", naam: "Ere en aftiteling", icoon: "a/logo.webp", na: "finale", info: "De eretitels, wie volgt in 2027, en de aftiteling." },
   ],
   // the road on each painting (fractions of width and height), and which point is the castle and which the gate
-  tv: { beeld: "a/route/tv.webp", w: 2752, h: 1536, kasteel: 16, poort: 21,
+  tv: { beeld: "a/route/tv.webp", w: 2752, h: 1536, kasteel: 19, poort: 26,
     pad: [[.128, .577], [.16, .59], [.144, .615], [.103, .645], [.081, .683], [.094, .728], [.138, .762], [.206, .773], [.27, .75], [.325, .733], [.45, .717], [.53, .683], [.62, .655],
-      [.65, .58], [.57, .51], [.6, .4], [.75, .23], [.81, .33], [.81, .47], [.79, .6], [.845, .645], [.905, .62], [.92, .5]] },
+      [.562, .556], [.494, .478], [.52, .44], [.587, .422], [.661, .356], [.717, .278], [.748, .222], [.779, .289], [.847, .4], [.79, .46], [.735, .522], [.8, .585], [.86, .644], [.915, .622], [.93, .55]] },
   app: { beeld: "a/route/app.webp", w: 1536, h: 2752, kasteel: 17, poort: 31,
     pad: [[.333, .225], [.422, .239], [.533, .254], [.594, .273], [.522, .292], [.367, .304], [.322, .316], [.444, .332], [.622, .341], [.733, .357], [.689, .378], [.533, .397],
       [.367, .409], [.267, .434], [.3, .459], [.444, .496], [.522, .515], [.585, .545], [.589, .571], [.533, .62], [.456, .658], [.367, .695], [.333, .726], [.422, .763], [.489, .794],
@@ -84,14 +84,14 @@ window.ROUTE = {
     const metLabel = new Set(H.map((h, i) => i).filter((i) => staten[i] === "open").slice(0, 4)); // labels only for the next four (and his own moment): the rest is in the list
     let defs = "", mark = "", lab = "";
     H.forEach((h, i) => {
-      const [x, y] = xy[i], st = staten[i], eigen = opt.wie && h.bevel?.includes(opt.wie), groot = st !== "dicht" && (h.anker || eigen || i === volgende), rr = groot ? r * 1.35 : r;
+      const [x, y] = xy[i], st = staten[i], eigen = opt.wie && h.bevel?.includes(opt.wie), rr = i === volgende && st !== "dicht" ? r * 2 : st === "gehaald" ? r * .72 : (h.anker || eigen) ? r * 1.25 : r;
       const beeld = h.bevel && opt.portret ? (opt.portret(eigen ? opt.wie : h.bevel[0]) || "") : h.icoon || "";
       defs += `<clipPath id="rk-${variant}-${h.id}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(rr - 4).toFixed(1)}"/></clipPath>`;
       const cls = `rh ${st}${i === volgende ? " nu" : ""}${eigen ? " eigen" : ""}`;
-      if (st === "dicht") mark += `<g class="${cls}" data-id="${h.id}"><circle cx="${x}" cy="${y}" r="${r * .62}" class="rh-zegel"/><text x="${x}" y="${y + fs * .34}" class="rh-vraag" font-size="${fs}">?</text></g>`;
-      else mark += `<g class="${cls}" data-id="${h.id}">${i === volgende ? `<circle cx="${x}" cy="${y}" r="${rr + 14}" class="rh-puls"/>` : ""}<circle cx="${x}" cy="${y}" r="${rr}" class="rh-rand"/>`
+      if (st === "dicht") mark += `<g class="${cls}" data-id="${h.id}"><circle cx="${x}" cy="${y}" r="${r * .7}" fill="url(#rgl-${variant})" class="rh-gloei"/><circle cx="${x}" cy="${y}" r="${r * .16}" class="rh-kern"/></g>`;
+      else mark += `<g class="${cls}" data-id="${h.id}">${i === volgende ? `<circle cx="${x}" cy="${y}" r="${rr + 10}" class="rh-puls"/><circle cx="${x}" cy="${y}" r="${rr + 22}" class="rh-puls laat"/>` : ""}<circle cx="${x}" cy="${y}" r="${rr}" class="rh-rand"/>`
         + (beeld ? `<image href="${esc(beeld)}" x="${x - rr}" y="${y - rr}" width="${rr * 2}" height="${rr * 2}" preserveAspectRatio="xMidYMid slice" clip-path="url(#rk-${variant}-${h.id})"/>` : "")
-        + (st === "gehaald" ? `<circle cx="${x + rr * .7}" cy="${y - rr * .7}" r="${r * .42}" class="rh-vink"/><text x="${x + rr * .7}" y="${y - rr * .7 + fs * .3}" class="rh-vinkt" font-size="${fs * .8}">✓</text>` : "") + "</g>";
+        + "</g>";
       if (opt.labels !== false && st === "open" && (metLabel.has(i) || eigen)) { // a label for what is still to come
         const t1 = klok(h), t2 = h.naam, bw = Math.max(t2.length, 6) * fs * .52 + 28, onder = variant === "tv" ? i % 2 === 1 : x > v.w * .55;
         const lx = Math.max(12, Math.min(v.w - bw - 12, variant === "tv" ? x - bw / 2 : onder ? x - rr - 14 - bw : x + rr + 14)), ly = variant === "tv" ? (onder ? y + rr + 12 : y - rr - 12 - fs * 2.3) : y - fs * 1.15;
@@ -99,7 +99,7 @@ window.ROUTE = {
       }
     });
     return `<svg class="route-svg" viewBox="0 0 ${v.w} ${v.h}" preserveAspectRatio="xMidYMid ${opt.passend ? "meet" : "slice"}" xmlns="http://www.w3.org/2000/svg">
-      <defs>${defs}<filter id="rg-${variant}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${r * .35}"/></filter></defs>
+      <defs>${defs}<radialGradient id="rgl-${variant}"><stop offset="0" stop-color="#ffc070"/><stop offset=".3" stop-color="#e2323c" stop-opacity=".9"/><stop offset="1" stop-color="#5a0a0c" stop-opacity="0"/></radialGradient><filter id="rg-${variant}" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${r * .35}"/></filter></defs>
       <image href="${v.beeld}" width="${v.w}" height="${v.h}"/>
       <path d="${padD(w, w.tot)}" class="rp-weg"/><path d="${padD(w, tot)}" class="rp-gloed" filter="url(#rg-${variant})"/><path d="${padD(w, tot)}" class="rp-af"/>
       ${mark}${lab}</svg>`;
@@ -112,14 +112,15 @@ window.ROUTE = {
 .route-svg .rp-gloed { fill: none; stroke: #ff5a2a; stroke-width: 24; opacity: .55; }
 .route-svg .rp-af { fill: none; stroke: #ffd98a; stroke-width: 8; stroke-linecap: round; }
 .route-svg .rh-rand { fill: #120708; stroke: #d9b77a; stroke-width: 5; }
-.route-svg .rh.gehaald .rh-rand { stroke: #8fd493; } .route-svg .rh.gehaald image { opacity: .7; }
-.route-svg .rh.nu .rh-rand { stroke: #ffd98a; stroke-width: 9; }
+.route-svg .rh.gehaald .rh-rand { stroke: #8a6a3a; stroke-width: 4; } .route-svg .rh.gehaald image { opacity: .5; filter: grayscale(.5); }
+.route-svg .rh.nu .rh-rand { stroke: #ffd98a; stroke-width: 10; filter: drop-shadow(0 0 18px rgba(255, 170, 80, .9)); }
+.route-svg .rh-puls.laat { animation-delay: .9s; }
 .route-svg .rh.eigen .rh-rand { stroke: #ff5a3c; stroke-width: 9; }
 .route-svg .rh-puls { fill: none; stroke: #ffd98a; stroke-width: 6; transform-box: fill-box; transform-origin: center; animation: rpuls 1.8s ease-out infinite; }
 @keyframes rpuls { from { opacity: .9; transform: scale(.8); } to { opacity: 0; transform: scale(1.6); } }
-.route-svg .rh-zegel { fill: #5a0f12; stroke: #2a0507; stroke-width: 5; }
-.route-svg .rh-vraag { fill: #e9b9a0; text-anchor: middle; font-family: var(--carved, serif); font-weight: 700; }
-.route-svg .rh-vink { fill: #1f6b2e; stroke: #8fd493; stroke-width: 3; } .route-svg .rh-vinkt { fill: #fff; text-anchor: middle; font-weight: 700; }
+.route-svg .rh-gloei { animation: rgloei 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.route-svg .rh-kern { fill: #ffd2a0; opacity: .85; }
+@keyframes rgloei { 0%, 100% { opacity: .65; transform: scale(.9); } 50% { opacity: 1; transform: scale(1.08); } }
 .route-svg .rl rect { fill: rgba(14, 6, 7, .9); stroke: #6e5230; stroke-width: 2; }
 .route-svg .rl.nu rect { stroke: #ffd98a; stroke-width: 4; } .route-svg .rl.eigen rect { stroke: #ff5a3c; stroke-width: 4; }
 .route-svg .rl-tijd { fill: #d9b77a; font-family: var(--carved, serif); font-weight: 700; letter-spacing: .06em; }
