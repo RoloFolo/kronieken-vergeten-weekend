@@ -1280,19 +1280,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=138"></script>
-<script src="a/godfried.js?v=138"></script>
-<script src="a/spel.js?v=138"></script>
-<script src="a/voorbereiding.js?v=138"></script>
-<script src="a/wachters.js?v=138"></script>
-<script src="a/firebase-config.js?v=138"></script>
-<script src="a/portretten.js?v=138"></script>
-<script src="a/koppeling.js?v=138"></script>
-<script src="a/rollen.js?v=138"></script>
-<script src="a/quests-tv.js?v=138"></script>
-<script src="a/planning.js?v=138"></script>
-<script src="a/route.js?v=138"></script>
-<script src="a/tafel.js?v=138"></script>
+<script src="a/events.js?v=139"></script>
+<script src="a/godfried.js?v=139"></script>
+<script src="a/spel.js?v=139"></script>
+<script src="a/voorbereiding.js?v=139"></script>
+<script src="a/wachters.js?v=139"></script>
+<script src="a/firebase-config.js?v=139"></script>
+<script src="a/portretten.js?v=139"></script>
+<script src="a/koppeling.js?v=139"></script>
+<script src="a/rollen.js?v=139"></script>
+<script src="a/quests-tv.js?v=139"></script>
+<script src="a/planning.js?v=139"></script>
+<script src="a/route.js?v=139"></script>
+<script src="a/tafel.js?v=139"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2532,12 +2532,15 @@ function ereStap(n, auto) { // show title n, reveal the name after a moment, the
 // 3 sabotage cards a day (steal a fiche = 1, force a Shadow event = 2); teasing effects are free but have a cooldown.
 let chaos = { dag: "", kaarten: 3 };
 const KAARTEN_PER_DAG = 3, wacht = {};
+// the day's cards plus a bonus card (earned with a secret task) that lasts as long as he is the Schaduwdrager; the day's cards go first
+const kaartenNu = () => chaos.kaarten + (chaos.bonus || 0);
+function gebruikKaarten(n) { const dag = Math.min(n, chaos.kaarten); chaos.kaarten -= dag; chaos.bonus = Math.max(0, (chaos.bonus || 0) - (n - dag)); }
 function chaosDag() { const d = new Date().toLocaleDateString("sv-SE"); if (chaos.dag !== d) chaos = { ...chaos, dag: d, kaarten: KAARTEN_PER_DAG }; }
 function mag(naam, sec) { const nu = Date.now(); if ((wacht[naam] || 0) > nu) return false; wacht[naam] = nu + sec * 1000; return true; }
 function flikker(ms = 2500) { stage.classList.add("omen"); setTimeout(() => stage.classList.remove("omen"), ms); }
 // With Firebase the database rules already check the sender's own account; locally the personal token decides.
 // a traitor period ends by hand (night) or when its time is up
-function eindigVerraad(reden) { if (!verrader) return; const p = verraders[verraders.length - 1]; if (p && !p.tot) p.tot = Date.now(); log("verrader-einde", { naam: verrader.naam, reden }); verrader = null; }
+function eindigVerraad(reden) { if (!verrader) return; if (chaos.bonus > 0) log("geheim-rest", { naam: verrader.naam, n: chaos.bonus }); const p = verraders[verraders.length - 1]; if (p && !p.tot) p.tot = Date.now(); log("verrader-einde", { naam: verrader.naam, reden }); verrader = null; }
 setInterval(() => { if (verrader?.tot && Date.now() > verrader.tot) { eindigVerraad("tijd"); meld(); } }, 15000);
 function echteVerrader(o) { return !!verrader && (o.van ? o.van === Koppeling.emailVan(verrader.naam) : !window.FIREBASE_CONFIG && o.token === verrader.token); }
 // A flock of ravens going wild: painted ravens swirl across the screen, and a few dive straight at the
@@ -2766,18 +2769,18 @@ const CHAOS_RAW = {
     }, 7600);
   },
   "chaos-steel": (o) => {
-    chaosDag(); if (binnen === null || paneelNu || chaos.kaarten < 1) return;
+    chaosDag(); if (binnen === null || paneelNu || kaartenNu() < 1) return;
     const z = ZEGELS.find((x) => x.id === o.id); if (!z || z.fiches < 1) return;
-    chaos.kaarten -= 1; flikker(1800); speel("chaos-3", 1); setTimeout(() => fiche(z.id, -1), 900); meld();
+    gebruikKaarten(1); flikker(1800); speel("chaos-3", 1); setTimeout(() => fiche(z.id, -1), 900); meld();
   },
   "chaos-schaduw": () => {
-    chaosDag(); if (binnen === null || paneelNu || wakker() || chaos.kaarten < 2) return;
-    chaos.kaarten -= 2; meld(); schaduw();
+    chaosDag(); if (binnen === null || paneelNu || wakker() || kaartenNu() < 2) return;
+    gebruikKaarten(2); meld(); schaduw();
   },
   // ---- new sabotage ----
   "chaos-vloek": (o) => { // 1 card: a Wachter is cursed until the next Shadow event
-    chaosDag(); const n = wachterNaam(o.naam); if (!n || !inHal() || truc || chaos.kaarten < 1) return;
-    chaos.kaarten -= 1; truc = true; vloek = { naam: n, tekst: VLOEKEN[Math.floor(Math.random() * VLOEKEN.length)] };
+    chaosDag(); const n = wachterNaam(o.naam); if (!n || !inHal() || truc || kaartenNu() < 1) return;
+    gebruikKaarten(1); truc = true; vloek = { naam: n, tekst: VLOEKEN[Math.floor(Math.random() * VLOEKEN.length)] };
     demp(true); flikker(2400); bliksem(0);
     $("vloek-naam").textContent = n; $("vloek-tekst").textContent = vloek.tekst; $("vloek").hidden = false;
     stemMet(`chaos-naam-${n.toLowerCase()}`, 1, () => stemMet("chaos-vloek", 1, () => setTimeout(() => {
@@ -2786,17 +2789,17 @@ const CHAOS_RAW = {
     }, 6000)));
   },
   "chaos-ijs": (o) => { // 2 cards: a seal takes no fiches for half an hour
-    chaosDag(); const z = ZEGELS.find((x) => x.id === o.id); if (!z || binnen === null || chaos.kaarten < 2 || bevroren(z.id)) return;
-    chaos.kaarten -= 2; ijs[z.id] = Date.now() + 30 * 60000; tekenIjs();
+    chaosDag(); const z = ZEGELS.find((x) => x.id === o.id); if (!z || binnen === null || kaartenNu() < 2 || bevroren(z.id)) return;
+    gebruikKaarten(2); ijs[z.id] = Date.now() + 30 * 60000; tekenIjs();
     speel("chaos-ijs", 1); speel("glazen", .45, 1.7); setTimeout(() => speel("wind", .5, .7), 200);
   },
   "chaos-wissel": (o) => { // 1 card: a fiche jumps from one seal to another
     chaosDag(); const van = ZEGELS.find((x) => x.id === o.id), naar = ZEGELS.find((x) => x.id === o.naar);
-    if (!van || !naar || van === naar || !inHal() || chaos.kaarten < 1 || van.fiches < 1 || bevroren(naar.id)) return;
-    chaos.kaarten -= 1; flikker(1600); speel("chaos-1", .8); fiche(van.id, -1); setTimeout(() => fiche(naar.id, 1), 1100);
+    if (!van || !naar || van === naar || !inHal() || kaartenNu() < 1 || van.fiches < 1 || bevroren(naar.id)) return;
+    gebruikKaarten(1); flikker(1600); speel("chaos-1", .8); fiche(van.id, -1); setTimeout(() => fiche(naar.id, 1), 1100);
   },
   "chaos-dobbel": () => { // 2 cards: the next D20 rolls no higher than 10. Nobody sees it.
-    chaosDag(); if (vloekD20 || chaos.kaarten < 2) return; chaos.kaarten -= 2; vloekD20 = true;
+    chaosDag(); if (vloekD20 || kaartenNu() < 2) return; gebruikKaarten(2); vloekD20 = true;
   },
   "chaos-macht": () => { // once per traitor period: the Shadow King takes over the Hall
     if (!verrader || chaos.macht === verrader.sinds || !inHal() || truc) return;
@@ -2951,6 +2954,7 @@ function scores() {
     if (l.type === "punt" && l.naam in p) { const xp = xpVan(l); if (l.verrader && xp < 0) v[l.naam] += -xp; else p[l.naam] += xp; }
     if (l.type === "chaos" && l.naam in v) v[l.naam] += 10;
     if (l.type === "geheim-ok" && l.naam in v) v[l.naam] += 20; // a secret task, done unseen
+    if (l.type === "geheim-rest" && l.naam in v) v[l.naam] += 10 * (l.n || 1); // its bonus card, unused when his time ended
   }
   return { p, v };
 }
@@ -3205,7 +3209,7 @@ const OPDRACHTEN = {
     const t = L.find((x) => x.id === o.id) || (L.filter((x) => !gehad.has(x.id))[0] ? L.filter((x) => !gehad.has(x.id))[Math.floor(Math.random() * L.filter((x) => !gehad.has(x.id)).length)] : L[Math.floor(Math.random() * L.length)]);
     if (!t) return; chaos = { ...chaos, opdracht: { id: t.id, naam: t.naam, tekst: t.tekst, t: Date.now() } }; log("geheim", { naam: verrader.naam, id: t.id }); meld(); },
   "geheim-oordeel": (o) => { const op = chaos.opdracht; if (!op || !verrader) return;
-    if (o.ok) { log("geheim-ok", { naam: verrader.naam, id: op.id, naamOpdracht: op.naam }); chaosDag(); chaos = { ...chaos, kaarten: chaos.kaarten + 1 }; } // and an extra sabotage card for today
+    if (o.ok) { log("geheim-ok", { naam: verrader.naam, id: op.id, naamOpdracht: op.naam }); chaos = { ...chaos, bonus: (chaos.bonus || 0) + 1 }; } // and an extra sabotage card for today
     chaos = { ...chaos, opdracht: { ...op, oordeel: o.ok ? "ok" : "nee" } }; meld(); },
   rotatie: (o) => { rotatie = !!o.aan; rotatieOp = Date.now(); meld(); },
   plan: (o) => { if (!o.id) return; if (o.klaar === true || o.klaar === false) planning[o.id] = o.klaar; else delete planning[o.id]; meld(); }, // the regie's planning: ticked by hand // the phones' button now opens the Round Table hall

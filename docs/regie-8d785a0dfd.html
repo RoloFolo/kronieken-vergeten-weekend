@@ -503,17 +503,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=138"></script>
-<script src="a/quests-tv.js?v=138"></script>
-<script src="a/planning.js?v=138"></script>
-<script src="a/godfried.js?v=138"></script>
-<script src="a/spel.js?v=138"></script>
-<script src="a/wachters.js?v=138"></script>
-<script src="a/rollen.js?v=138"></script>
-<script src="a/firebase-config.js?v=138"></script>
-<script src="a/portretten.js?v=138"></script>
-<script src="a/koppeling.js?v=138"></script>
-<script src="a/voorbereiding.js?v=138"></script>
+<script src="a/events.js?v=139"></script>
+<script src="a/quests-tv.js?v=139"></script>
+<script src="a/planning.js?v=139"></script>
+<script src="a/godfried.js?v=139"></script>
+<script src="a/spel.js?v=139"></script>
+<script src="a/wachters.js?v=139"></script>
+<script src="a/rollen.js?v=139"></script>
+<script src="a/firebase-config.js?v=139"></script>
+<script src="a/portretten.js?v=139"></script>
+<script src="a/koppeling.js?v=139"></script>
+<script src="a/voorbereiding.js?v=139"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -963,7 +963,7 @@ function tekenXpLijst(s) {
 }
 const WIJZ = { punt: (l) => `${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})${l.waarom ? `: ${l.waarom}` : ""}`, "punt-terug": (l) => `XP teruggedraaid: ${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})`,
   fiche: (l) => `${zegelNaam(l.id)} ${l.n > 0 ? "+" : "−"}${Math.abs(l.n)} fiche`, bevel: (l) => `Bevel volbracht: ${l.naam}`, kist: (l) => `Reliekenkist geopend: ${l.n} relieken`,
-  uitslag: (l) => `Event ${l.goed ? "gehaald" : "mislukt"}`, chaos: () => "Schaduwkaart gespeeld", geheim: (l) => `Geheime opdracht voor ${l.naam}`, "geheim-ok": (l) => `${l.naam} volbracht zijn geheime opdracht (+20 Schaduwpunten, +1 kaart)`, quest: (l) => `Quest ${l.naam}: ${l.goed ? "gelukt" : "mislukt"}${l.n ? ` (+${l.n} fiche${l.n > 1 ? "s" : ""})` : ""}`, klasse: (l) => `Klassemoment: ${l.hoofd}, ${l.quest}`, citaat: (l) => `Wie zei het? “${l.tekst}”${l.naam ? ` (${l.naam})` : ""}`, dief: (l) => `De Dieven stalen ${l.n ? `${l.n} fiche${l.n > 1 ? "s" : ""} terug` : "niets"}`, "verrader-einde": () => "Schaduwtijd voorbij" };
+  uitslag: (l) => `Event ${l.goed ? "gehaald" : "mislukt"}`, chaos: () => "Schaduwkaart gespeeld", geheim: (l) => `Geheime opdracht voor ${l.naam}`, "geheim-ok": (l) => `${l.naam} volbracht zijn geheime opdracht (+20 Schaduwpunten, +1 kaart)`, "geheim-rest": (l) => `${l.naam}: extra kaart niet gebruikt, telt als +${10 * (l.n || 1)} Schaduwpunten`, quest: (l) => `Quest ${l.naam}: ${l.goed ? "gelukt" : "mislukt"}${l.n ? ` (+${l.n} fiche${l.n > 1 ? "s" : ""})` : ""}`, klasse: (l) => `Klassemoment: ${l.hoofd}, ${l.quest}`, citaat: (l) => `Wie zei het? “${l.tekst}”${l.naam ? ` (${l.naam})` : ""}`, dief: (l) => `De Dieven stalen ${l.n ? `${l.n} fiche${l.n > 1 ? "s" : ""} terug` : "niets"}`, "verrader-einde": () => "Schaduwtijd voorbij" };
 function tekenWijzigingen(s) {
   // the fiches that follow from XP (they drop in one by one) are left out: the XP line says it already
   const log = s.logboek || [], l = log.filter((x, i) => WIJZ[x.type] && !(x.type === "fiche" && log.slice(Math.max(0, i - 6), i).some((p) => p.type === "punt" && x.t - p.t < 15000))).slice(-25).reverse();

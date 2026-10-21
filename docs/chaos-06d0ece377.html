@@ -124,9 +124,9 @@ button[data-rust]:not([data-rust=""])::after { content: "rust " attr(data-rust);
 </main>
 <div class="melding" id="melding" role="status"></div>
 
-<script src="a/wachters.js?v=138"></script>
-<script src="a/firebase-config.js?v=138"></script>
-<script src="a/koppeling.js?v=138"></script>
+<script src="a/wachters.js?v=139"></script>
+<script src="a/firebase-config.js?v=139"></script>
+<script src="a/koppeling.js?v=139"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -152,7 +152,7 @@ $("namen").onclick = (e) => { const b = e.target.closest("button"); if (!b) retu
 function melding(t) { const m = $("melding"); m.textContent = t; m.classList.add("aan"); clearTimeout(m._t); m._t = setTimeout(() => m.classList.remove("aan"), 2400); }
 const actief = () => FIRE ? !!stand.naam : !!IK && stand.verrader?.token === TOKEN;
 const sinds = () => FIRE ? stand.sinds : stand.verrader?.sinds;
-function kaartenOver() { const d = new Date().toLocaleDateString("sv-SE"); return stand.chaos?.dag === d ? stand.chaos.kaarten : 3; }
+function kaartenOver() { const d = new Date().toLocaleDateString("sv-SE"); return (stand.chaos?.dag === d ? stand.chaos.kaarten : 3) + (stand.chaos?.bonus || 0); } // plus the bonus card from a secret task
 // rests come from the tv: seconds left per tease
 const RUST = { "c-omen": "omen", "c-naam": "naam", "c-duister": "duister", "c-dertien": "dertien", "c-vals": "vals", "c-zwerm": "zwerm", "c-lied": "lied", "c-hoop": "hoop", "c-bliksem": "bliksem", "c-raaf": "raaf" };
 const rustOver = (k) => Math.max(0, Math.ceil(((stand.chaos?.wacht || {})[k] - Date.now()) / 1000)) || 0;
@@ -160,7 +160,7 @@ const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 function tekenGeheim() { // the secret task the regie gave: only here
   const op = stand.chaos?.opdracht, el = $("geheim"); el.hidden = !op; if (!op) return;
   $("geheim-naam").textContent = op.naam; $("geheim-tekst").textContent = op.tekst;
-  $("geheim-staat").textContent = op.oordeel === "ok" ? "De Schaduwkoning is tevreden: +20 voor jou, en een extra sabotagekaart voor vandaag." : op.oordeel === "nee" ? "De Schaduwkoning zag het anders. Volgende keer beter." : op.gemeld ? "Gemeld. De Schaduwkoning oordeelt…" : "Lukt het ongemerkt? Meld het hieronder.";
+  $("geheim-staat").textContent = op.oordeel === "ok" ? "De Schaduwkoning is tevreden: +20 voor jou, en een extra sabotagekaart zolang jij Schaduwdrager bent. Gebruik je hem niet, dan telt hij aan het eind als +10." : op.oordeel === "nee" ? "De Schaduwkoning zag het anders. Volgende keer beter." : op.gemeld ? "Gemeld. De Schaduwkoning oordeelt…" : "Lukt het ongemerkt? Meld het hieronder.";
   $("c-geheim").hidden = !!op.gemeld;
 }
 function teken() {
