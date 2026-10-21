@@ -27,9 +27,10 @@ window.ROUTE = {
     { id: "ere", plan: "zo-titels", tijd: "2026-11-15T15:00", naam: "Ere en aftiteling", icoon: "a/logo.webp", na: "finale", info: "De eretitels, wie volgt in 2027, en de aftiteling." },
   ],
   // the road on each painting (fractions of width and height), and which point is the castle and which the gate
-  tv: { beeld: "a/route/tv.webp", w: 2752, h: 1536, kasteel: 19, poort: 26,
-    pad: [[.128, .577], [.16, .59], [.144, .615], [.103, .645], [.081, .683], [.094, .728], [.138, .762], [.206, .773], [.27, .75], [.325, .733], [.45, .717], [.53, .683], [.62, .655],
-      [.562, .556], [.494, .478], [.52, .44], [.587, .422], [.661, .356], [.717, .278], [.748, .222], [.779, .289], [.847, .4], [.79, .46], [.735, .522], [.8, .585], [.86, .644], [.915, .622], [.93, .55]] },
+  tv: { beeld: "a/route/tv.webp", w: 2752, h: 1536, kasteel: 22, poort: 34,
+    pad: [[.128, .577], [.16, .59], [.144, .615], [.103, .645], [.081, .683], [.094, .728], [.138, .762], [.206, .773], [.27, .75], [.325, .733], [.45, .717], [.53, .683],
+      [.6, .662], [.66, .63], [.689, .609], [.65, .575], [.58, .538], [.514, .508], [.534, .466], [.567, .43], [.594, .363], [.66, .28], [.748, .222],
+      [.779, .253], [.742, .312], [.779, .348], [.838, .383], [.828, .425], [.766, .466], [.733, .508], [.742, .531], [.792, .561], [.802, .626], [.845, .65], [.908, .626], [.931, .597]] },
   app: { beeld: "a/route/app.webp", w: 1536, h: 2752, kasteel: 17, poort: 31,
     pad: [[.333, .225], [.422, .239], [.533, .254], [.594, .273], [.522, .292], [.367, .304], [.322, .316], [.444, .332], [.622, .341], [.733, .357], [.689, .378], [.533, .397],
       [.367, .409], [.267, .434], [.3, .459], [.444, .496], [.522, .515], [.585, .545], [.589, .571], [.533, .62], [.456, .658], [.367, .695], [.333, .726], [.422, .763], [.489, .794],
@@ -80,15 +81,15 @@ window.ROUTE = {
     const v = R[variant], { w, s, xy } = plekken(v), nu = opt.nu ?? Date.now(), klaar = opt.klaar || new Set();
     const staten = H.map((h) => staat(h, nu, klaar, opt.wie)), volgende = H.findIndex((h, i) => staten[i] !== "gehaald");
     const tot = volgende < 0 ? w.tot : volgende === 0 ? 0 : s[volgende - 1] + (s[volgende] - s[volgende - 1]) * .5;
-    const r = v.w > v.h ? 44 : 58, fs = v.w > v.h ? 38 : 52;
+    const r = v.w > v.h ? 58 : 70, fs = v.w > v.h ? 40 : 52;
     const metLabel = new Set(H.map((h, i) => i).filter((i) => staten[i] === "open").slice(0, 4)); // labels only for the next four (and his own moment): the rest is in the list
     let defs = "", mark = "", lab = "";
     H.forEach((h, i) => {
-      const [x, y] = xy[i], st = staten[i], eigen = opt.wie && h.bevel?.includes(opt.wie), rr = i === volgende && st !== "dicht" ? r * 2 : st === "gehaald" ? r * .72 : (h.anker || eigen) ? r * 1.25 : r;
+      const [x, y] = xy[i], st = staten[i], eigen = opt.wie && h.bevel?.includes(opt.wie), rr = i === volgende && st !== "dicht" ? r * 1.9 : (h.anker || eigen) ? r * 1.2 : r;
       const beeld = h.bevel && opt.portret ? (opt.portret(eigen ? opt.wie : h.bevel[0]) || "") : h.icoon || "";
       defs += `<clipPath id="rk-${variant}-${h.id}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(rr - 4).toFixed(1)}"/></clipPath>`;
       const cls = `rh ${st}${i === volgende ? " nu" : ""}${eigen ? " eigen" : ""}`;
-      if (st === "dicht") mark += `<g class="${cls}" data-id="${h.id}"><circle cx="${x}" cy="${y}" r="${r * .7}" fill="url(#rgl-${variant})" class="rh-gloei"/><circle cx="${x}" cy="${y}" r="${r * .16}" class="rh-kern"/></g>`;
+      if (st === "dicht") mark += `<g class="${cls}" data-id="${h.id}"><circle cx="${x}" cy="${y}" r="${r}" fill="url(#rgl-${variant})" class="rh-gloei"/><circle cx="${x}" cy="${y}" r="${r * .26}" class="rh-kern"/></g>`;
       else mark += `<g class="${cls}" data-id="${h.id}">${i === volgende ? `<circle cx="${x}" cy="${y}" r="${rr + 10}" class="rh-puls"/><circle cx="${x}" cy="${y}" r="${rr + 22}" class="rh-puls laat"/>` : ""}<circle cx="${x}" cy="${y}" r="${rr}" class="rh-rand"/>`
         + (beeld ? `<image href="${esc(beeld)}" x="${x - rr}" y="${y - rr}" width="${rr * 2}" height="${rr * 2}" preserveAspectRatio="xMidYMid slice" clip-path="url(#rk-${variant}-${h.id})"/>` : "")
         + "</g>";

@@ -1280,19 +1280,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=135"></script>
-<script src="a/godfried.js?v=135"></script>
-<script src="a/spel.js?v=135"></script>
-<script src="a/voorbereiding.js?v=135"></script>
-<script src="a/wachters.js?v=135"></script>
-<script src="a/firebase-config.js?v=135"></script>
-<script src="a/portretten.js?v=135"></script>
-<script src="a/koppeling.js?v=135"></script>
-<script src="a/rollen.js?v=135"></script>
-<script src="a/quests-tv.js?v=135"></script>
-<script src="a/planning.js?v=135"></script>
-<script src="a/route.js?v=135"></script>
-<script src="a/tafel.js?v=135"></script>
+<script src="a/events.js?v=136"></script>
+<script src="a/godfried.js?v=136"></script>
+<script src="a/spel.js?v=136"></script>
+<script src="a/voorbereiding.js?v=136"></script>
+<script src="a/wachters.js?v=136"></script>
+<script src="a/firebase-config.js?v=136"></script>
+<script src="a/portretten.js?v=136"></script>
+<script src="a/koppeling.js?v=136"></script>
+<script src="a/rollen.js?v=136"></script>
+<script src="a/quests-tv.js?v=136"></script>
+<script src="a/planning.js?v=136"></script>
+<script src="a/route.js?v=136"></script>
+<script src="a/tafel.js?v=136"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2986,7 +2986,7 @@ function routeKlaar() {
   const s = { planning, logboek, publiek: { hal: rollenOpen }, kroniek: [...kroniek], kistGeopend, fin, scherm: schermNu(), bevelen: [...bevelGedaan] }, P = window.PLANNING || [];
   return new Set((window.ROUTE?.haltes || []).filter((h) => { const p = P.find((x) => x.id === h.plan); return p && window.planKlaar?.(p, s, planHand); }).map((h) => h.id));
 }
-const overTijd = (ms) => { const m = Math.round(ms / 60000); return m <= 0 ? "nu" : m < 60 ? `over ${m} min` : `over ${Math.floor(m / 60)} uur${m % 60 >= 10 ? ` ${m % 60} min` : ""}`; };
+const overTijd = (ms) => { const m = Math.round(ms / 60000), d = Math.round(m / 1440); return m <= 0 ? "nu" : m < 60 ? `over ${m} min` : m < 1440 ? `over ${Math.floor(m / 60)} uur${m % 60 >= 10 ? ` ${m % 60} min` : ""}` : d <= 1 ? "morgen" : `over ${d} dagen`; };
 function tekenRoute() {
   if (!window.Route) return; const klaar = routeKlaar(), nu = Date.now();
   $("r-kaart").innerHTML = Route.svg("tv", { klaar, nu, portret: (n) => PORTRET[n] || Portret.url(n) });
