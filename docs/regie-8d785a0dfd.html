@@ -64,6 +64,52 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 2px; }
 .schermen button.nu { border-color: var(--bronze); background: rgba(184,149,95,.2); color: var(--bronze-hi); }
 /* one tab per phase of the weekend; the status, the tv warnings and the screen switch stay above the tabs */
 /* the tabs with a menu beside them */
+/* the top: what the tv shows (and switching it), then Planning | Acties, then the parts */
+.kop { display: flex; align-items: center; gap: 10px; }
+.kop h1 { flex: 1; margin: 0; text-align: left; font-size: 17px; white-space: nowrap; }
+.kop-punt { width: 10px; height: 10px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 8px var(--ember); }
+.kop-punt.aan { background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.kop-knop { width: 42px; height: 42px; padding: 0; font-size: 20px; border-radius: 50%; }
+.kop-knop.aan { border-color: var(--bronze); color: var(--bronze-hi); background: rgba(184,149,95,.2); }
+.kop-vast { position: sticky; top: 0; z-index: 10; display: grid; gap: 8px; padding: 8px 0; margin: 0 -2px; background: var(--bg); min-width: 0; }
+.tv-balk { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.tv-nu { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; text-align: left; padding: 10px 12px; border-color: #6e5230; background: linear-gradient(180deg, rgba(30,14,14,.9), rgba(14,7,8,.95)); }
+.tv-nu small { white-space: nowrap; font: 700 11px/1 var(--carved); letter-spacing: .18em; text-transform: uppercase; color: var(--ash); }
+.tv-nu b { color: var(--bronze-hi); font-size: 16px; } .tv-nu .pijl { color: var(--bronze); transition: transform .2s; } .tv-nu.open .pijl { transform: rotate(180deg); }
+.tv-oproep { padding: 10px 12px; font-weight: 700; border-color: var(--bronze); color: var(--bronze-hi); }
+.tv-kies { display: grid; gap: 8px; padding: 10px; border: 1px solid #6e5230; border-radius: 10px; background: rgba(14,7,8,.97); }
+.tv-kies[hidden] { display: none; }
+.rij1 { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.rij1 button { padding: 11px; font: 700 14px/1 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: var(--ash); }
+.rij1 button.aan { color: #1a0f08; background: linear-gradient(180deg, var(--bronze-hi), var(--bronze)); border-color: var(--bronze); }
+.rij1 button.tv::after, .rij2 button.tv::after { content: " ●"; color: var(--ember); }
+.rij2 { position: static; margin: 0; padding: 0 2px; }
+.rij2:empty { display: none; }
+/* the planning: a timeline, the next step on top, what is done at the bottom */
+.plan { display: grid; gap: 0; }
+.plan-dag { margin: 18px 0 6px 30px; font: 700 13px/1 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: var(--bronze-hi); scroll-margin-top: 200px; }
+.plan-dag:first-child { margin-top: 2px; }
+.stap { position: relative; padding-left: 30px; scroll-margin-top: 200px; }
+.stap::before { content: ""; position: absolute; left: 11px; top: 0; bottom: 0; width: 2px; background: rgba(184,149,95,.3); }
+.stap::after { content: ""; position: absolute; left: 5px; top: 15px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--bronze); background: var(--bg); }
+.stap.volgende::after { background: var(--bronze-hi); box-shadow: 0 0 12px rgba(255,200,120,.8); }
+.stap.klaar::after { background: var(--ok); border-color: var(--ok); }
+.stap-kop { width: 100%; display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; text-align: left; padding: 9px 10px; margin: 4px 0; border-color: rgba(239,227,212,.12); background: rgba(255,255,255,.03); }
+.stap-tijd { grid-column: 1 / -1; font: 700 12px/1.2 var(--body); color: var(--bronze); } .stap-tijd:empty { display: none; }
+.stap-titel { font-weight: 700; color: var(--bone); }
+.stap-staat { font: 700 12px/1 var(--carved); letter-spacing: .1em; text-transform: uppercase; color: var(--bronze-hi); }
+.stap.klaar .stap-staat { color: var(--ok); } .stap.klaar .stap-titel { color: var(--ash); }
+.stap.volgende .stap-kop { border-color: var(--bronze); background: rgba(184,149,95,.12); }
+.stap-lijf { display: none; gap: 10px; padding: 4px 2px 14px; }
+.stap.open .stap-lijf { display: grid; }
+.stap-tekst { margin: 0; font-size: 14px; color: var(--bone); }
+.stap-blok { display: grid; gap: 10px; padding-top: 6px; border-top: 1px solid rgba(239,227,212,.1); }
+.stap-blok h2, .stap-blok h3 { margin: 4px 0 0; font: 700 13px/1 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: var(--ash); }
+.stap-klaar { border-style: dashed; color: var(--ash); }
+.plan-gedaan { margin-top: 18px; }
+.plan-gedaan > button { width: 100%; text-align: left; color: var(--ash); }
+.plan-gedaan > div { display: none; margin-top: 8px; }
+.plan-gedaan.open > div { display: grid; }
 .fase-kop { position: sticky; top: 0; z-index: 10; min-width: 0; display: flex; gap: 6px; align-items: center; background: var(--bg); margin: 0 -2px; }
 .fase-kop .fases { position: static; flex: 1; min-width: 0; margin: 0; }
 .fase-kop #b-menu { flex: none; width: 42px; height: 38px; padding: 0; font-size: 20px; line-height: 1; border-radius: 10px; }
@@ -145,7 +191,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 </head>
 <body>
 <main>
-  <h1>Regie · De Kronieken</h1>
+  <header class="kop"><h1>Regie · De Kronieken</h1><span class="kop-punt" id="kop-punt" title="Verbinding met de tv"></span><button type="button" class="kop-knop" id="b-beheer" aria-label="Beheer">⚙</button></header>
 
   <div class="kaart status" aria-live="polite">
     <span class="punt" id="punt"></span>
@@ -158,16 +204,25 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   <div class="kaart" id="tv-dood" hidden style="border-color:var(--ember);color:#ffd2d0"></div>
   <div class="kaart" id="tv-stil" hidden style="border-color:var(--bronze);color:var(--bronze-hi)">De tv mag nog geen geluid afspelen. Klik één keer op het tv-scherm (met de muis van de laptop), anders hoort niemand Godfried.</div>
 
-  <button class="goud groot" id="b-oproep" type="button" style="margin:0">Oproep: iedereen naar het scherm</button>
-  <div class="fase-kop">
+  <div class="kop-vast">
+    <div class="tv-balk"><button type="button" class="tv-nu" id="b-tv-open"><small>Op de tv</small><b id="tv-scherm">…</b><span class="pijl">▾</span></button><button type="button" class="tv-oproep" id="b-oproep">🔔 Oproep</button></div>
+    <div class="tv-kies" id="tv-kies" hidden></div>
+    <nav class="rij1" id="rij1"><button type="button" data-hoofd="plan">Planning</button><button type="button" data-hoofd="acties">Acties</button></nav>
+  <div class="fase-kop" hidden>
   <nav class="fases" id="fases" role="tablist" aria-label="Fases">
     <button type="button" role="tab" data-fase="vooraf">Vooraf</button><button type="button" role="tab" data-fase="start">Start</button>
     <button type="button" role="tab" data-fase="hall">Hall</button><button type="button" role="tab" data-fase="xp">XP</button><button type="button" role="tab" data-fase="quests">Quests</button><button type="button" role="tab" data-fase="godfried">Godfried</button><button type="button" role="tab" data-fase="tocht">Tocht</button>
     <button type="button" role="tab" data-fase="finale">Finale</button><button type="button" role="tab" data-fase="ere">Ere</button>
     <button type="button" role="tab" data-fase="beheer">Beheer</button>
   </nav>
-  <button id="b-menu" type="button" aria-label="Kaart van de regie">☰</button>
+  <button id="b-menu" type="button" hidden>☰</button>
   </div>
+    <nav class="fases rij2" id="rij2"></nav>
+  </div>
+  <section class="plan" id="plan" data-fase="plan">
+    <div id="plan-lijst"></div>
+    <div class="plan-gedaan" id="plan-gedaan" hidden><button type="button" id="plan-gedaan-kop">Afgehandeld</button><div id="plan-gedaan-lijst"></div></div>
+  </section>
 
   <section class="kaart" id="intro" data-fase="start">
     <h2>Intro</h2>
@@ -441,16 +496,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=131"></script>
-<script src="a/quests-tv.js?v=131"></script>
-<script src="a/godfried.js?v=131"></script>
-<script src="a/spel.js?v=131"></script>
-<script src="a/wachters.js?v=131"></script>
-<script src="a/rollen.js?v=131"></script>
-<script src="a/firebase-config.js?v=131"></script>
-<script src="a/portretten.js?v=131"></script>
-<script src="a/koppeling.js?v=131"></script>
-<script src="a/voorbereiding.js?v=131"></script>
+<script src="a/events.js?v=132"></script>
+<script src="a/quests-tv.js?v=132"></script>
+<script src="a/planning.js?v=132"></script>
+<script src="a/godfried.js?v=132"></script>
+<script src="a/spel.js?v=132"></script>
+<script src="a/wachters.js?v=132"></script>
+<script src="a/rollen.js?v=132"></script>
+<script src="a/firebase-config.js?v=132"></script>
+<script src="a/portretten.js?v=132"></script>
+<script src="a/koppeling.js?v=132"></script>
+<script src="a/voorbereiding.js?v=132"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -532,7 +588,7 @@ function tekenGodfried(s) {
   $("quiz-antwoord").textContent = v && q.fase !== "intro" ? `Antwoord: ${v.antwoord}` : "";
   $("b-quiz-goed").disabled = $("b-quiz-fout").disabled = q.fase !== "vraag";
 }
-$("b-oproep").onclick = () => { const b = $("b-oproep"); stuur({ cmd: "oproep" }); b.disabled = true; b.textContent = "De klok luidt…"; setTimeout(() => { b.disabled = false; b.textContent = "Oproep: iedereen naar het scherm"; }, 12000); };
+$("b-oproep").onclick = () => { const b = $("b-oproep"); stuur({ cmd: "oproep" }); b.disabled = true; b.textContent = "De klok luidt…"; setTimeout(() => { b.disabled = false; b.textContent = "🔔 Oproep"; }, 12000); };
 
 for (const z of ZEGELS) {
   const el = document.createElement("div"); el.className = "zegel";
@@ -570,12 +626,12 @@ function bewaakTvs(s) {
     : "Let op: er schrijven twee tv-vensters tegelijk. Sluit alle tabbladen met ?tv behalve één.";
 }
 function toon(s) {
-  bewaakTvs(s); $("b-rotatie").classList.toggle("aan", s.rotatie !== false); tekenXpLijst(s); tekenWijzigingen(s); tekenDieven(s); tekenQuest(s); queueMicrotask(() => tekenBalk(s));
+  bewaakTvs(s); $("b-rotatie").classList.toggle("aan", s.rotatie !== false); tekenXpLijst(s); tekenWijzigingen(s); tekenDieven(s); tekenQuest(s); tekenPlan(s); queueMicrotask(() => tekenBalk(s));
   // what the traitor did that everyone can see anyway: a frozen seal (no fiches) and a cursed Wachter
   const ijsTxt = Object.entries(s.ijs || {}).filter(([, t]) => t > Date.now()).map(([id, t]) => `❄ ${ZEGELS.find((z) => z.id === id)?.naam} is bevroren tot ${new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}. Tik op ❄ om te ontdooien.`);
   if (s.vloek) ijsTxt.push(`Vervloekt: ${s.vloek.naam}. ${s.vloek.tekst}`);
   $("sabotage-status").hidden = !ijsTxt.length; $("sabotage-status").textContent = ijsTxt.join(" ");
-  $("scherm").textContent = SCHERM[s.scherm] ?? ""; $("scherm-nu").textContent = SCHERM[s.scherm] ?? "";
+  $("scherm").textContent = SCHERM[s.scherm] ?? ""; $("tv-scherm").textContent = SCHERM[s.scherm] ?? "…"; $("scherm-nu").textContent = SCHERM[s.scherm] ?? "";
   $("b-verder").textContent = s.scherm === "dronk-wacht" ? "Glazen vol: toost!" : s.scherm === "einde" && s.fin?.einde === 1 ? "Kist is open: naar de eretitels" : "Volgende stap";
   $("b-verder").classList.toggle("goud", s.scherm === "dronk-wacht");
   for (const z of ZEGELS) $(`n-${z.id}`).textContent = s.fiches?.[z.id] ?? 0;
@@ -637,7 +693,7 @@ function toon(s) {
 let kopStatus = { online: true, kapot: 0, fout: 0 }, kreegStand = false;
 function tekenVerbinding() {
   const k = kopStatus, goed = kreegStand && k.online && !k.kapot && !k.fout;
-  $("punt").classList.toggle("aan", goed);
+  $("punt").classList.toggle("aan", goed); $("kop-punt").classList.toggle("aan", goed);
   $("verbinding").textContent = !kreegStand ? "Verbinden met de tv…" : !k.online ? "Geen internet: knoppen wachten tot de verbinding terug is" : k.kapot ? "Verbinding herstellen…" : k.fout ? "Laatste knop kwam niet aan. Probeer opnieuw." : "Verbonden";
 }
 addEventListener("koppeling-status", (e) => { kopStatus = e.detail; tekenVerbinding(); });
@@ -672,21 +728,116 @@ $("b-start").onclick = () => stuur({ cmd: "start" });
 $("b-verder").onclick = () => stuur({ cmd: "verder" });
 $("b-fin-verder").onclick = () => stuur({ cmd: "verder" });
 // ---------- tabs per phase ----------
-const FASE_VAN = { quest: "quests", start: "start", verhaal: "start", dronk: "start", "dronk-wacht": "start", uitleg: "start", hal: "hall", schaduw: "hall", tafel: "hall", tocht: "tocht", kist: "tocht", finale: "finale", einde: "finale", ere: "ere" };
-let fase = null, tvFase = null, vorigScherm = null;
+// ===== De opbouw: bovenaan wat op de tv staat, dan Planning | Acties, dan de onderdelen; Beheer achter het tandwiel =====
+const ACTIES = [["schaduw", "De Schaduw"], ["zegels", "Zegels"], ["drager", "Schaduwdrager"], ["xp", "XP"], ["quests", "Quests"]];
+const ACTIE_KAART = { "De Schaduw": "schaduw", "Schaduw-events": "schaduw", "De Zegels": "zegels", "De Schaduwdrager": "drager", "XP geven of afnemen": "xp", "Wat er veranderde": "xp",
+  "Quests": "quests", "Klassemoment": "quests", "Wie zei het?": "quests", "Eigen quest": "quests", "Portretten": "beheer", "Herstelpunten": "beheer", "Beheer": "beheer", "Verbinding": "beheer" };
+const kaartOp = (naam) => [...document.querySelectorAll("main > section.kaart")].find((k) => k.querySelector(":scope > h2")?.firstChild?.textContent.trim() === naam);
+const planEsc = (t) => String(t ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const planStap = {}; // id -> the step element
+{
+  // the tv screens move into the bar at the top; the old card goes
+  $("tv-kies").append($("schermen"), $("b-rotatie")); $("s-scherm").hidden = true;
+  $("b-tv-open").onclick = () => { const k = $("tv-kies"); k.hidden = !k.hidden; $("b-tv-open").classList.toggle("open", !k.hidden); };
+  $("schermen").addEventListener("click", () => { $("tv-kies").hidden = true; $("b-tv-open").classList.remove("open"); });
+  // the connection and the tv's version go to Beheer
+  const verb = document.createElement("section"); verb.className = "kaart"; verb.innerHTML = "<h2>Verbinding</h2>";
+  verb.append(document.querySelector(".kaart.status"), $("tv-info")); kaartOp("Portretten").before(verb);
+  // the planning: one long list with a timeline, each step with what it needs
+  const plan = $("plan");
+  for (const p of window.PLANNING || []) {
+    const el = document.createElement("div"); el.className = "stap"; el.dataset.id = p.id; el.dataset.dag = p.dag;
+    el.innerHTML = `<button type="button" class="stap-kop"><span class="stap-tijd">${planEsc(p.tijd)}</span><span class="stap-titel">${planEsc(p.titel)}</span><span class="stap-staat"></span></button><div class="stap-lijf">${p.tekst ? `<p class="stap-tekst">${planEsc(p.tekst)}</p>` : ""}</div>`;
+    const lijf = el.querySelector(".stap-lijf");
+    if (p.scherm) lijf.insertAdjacentHTML("beforeend", `<button type="button" class="goud" data-zet="${p.scherm}">Zet op de tv: ${planEsc(SCHERM[p.scherm] || p.scherm)}</button>`);
+    if (p.in) { const r = document.createElement("div"); r.className = "rij"; p.in.forEach((id) => $(id) && r.append($(id))); lijf.append(r); }
+    for (const naam of p.kaart || []) { const k = kaartOp(naam); if (!k) continue; const blok = document.createElement("div"); blok.className = "stap-blok";
+      if ((p.kaart.length > 1)) blok.insertAdjacentHTML("beforeend", `<h3>${planEsc(naam)}</h3>`);
+      [...k.children].filter((c) => !(c.tagName === "H2" && c === k.firstElementChild)).forEach((c) => blok.append(c)); lijf.append(blok); k.hidden = true; k.dataset.fase = "weg"; }
+    if (p.bevel) lijf.insertAdjacentHTML("beforeend", `<div class="rij">${p.bevel.map((n) => `<button type="button" data-bevel-plan="${planEsc(n)}">Bevel van ${planEsc(n)} volbracht</button>`).join("")}</div>`);
+    if (p.ga) lijf.insertAdjacentHTML("beforeend", `<button type="button" data-ga="${p.ga}">Naar Acties · ${planEsc(ACTIES.find(([f]) => f === p.ga)?.[1] || p.ga)}</button>`);
+    lijf.insertAdjacentHTML("beforeend", '<button type="button" class="stap-klaar" data-klaar="1"></button>');
+    planStap[p.id] = el; $("plan-lijst").append(el); // in the page at once: the buttons moved in here must be findable
+  }
+  // the Godfried card is spread over the planning; what is left of it (the quiz panel, read by the action bar) stays hidden
+  const gf = $("s-godfried"); gf.hidden = true; gf.dataset.fase = "weg";
+  // every other card belongs to an action tab or to Beheer
+  for (const k of document.querySelectorAll("main > section.kaart")) { if (k.dataset.fase === "weg" || k.id === "plan") continue;
+    const naam = k.querySelector(":scope > h2")?.firstChild?.textContent.trim(); const f = k.id === "event" ? "schaduw" : ACTIE_KAART[naam]; if (f) k.dataset.fase = f; else if (!k.hidden) k.dataset.fase = "beheer"; }
+  plan.addEventListener("click", (e) => {
+    const b = e.target.closest("button"); if (!b) return; const st = b.closest(".stap");
+    if (b.classList.contains("stap-kop")) { st.classList.toggle("open"); planOpen[st.dataset.id] = st.classList.contains("open"); return; }
+    if (b.dataset.zet) return document.querySelector(`#schermen [data-s="${b.dataset.zet}"]`)?.click();
+    if (b.dataset.ga) return kiesFase(b.dataset.ga);
+    if (b.dataset.bevelPlan) { if (!b.disabled) stuur({ cmd: "bevel", naam: b.dataset.bevelPlan }); return; }
+    if (b.dataset.klaar) stuur({ cmd: "plan", id: st.dataset.id, klaar: !st.classList.contains("klaar") });
+  });
+  $("plan-gedaan-kop").onclick = () => $("plan-gedaan").classList.toggle("open");
+  kaartOp("De Schaduw")?.after(kaartOp("Schaduw-events")); // the big button first, the list of all events under it
+}
+const planOpen = {};
+// is a step done? an organiser's tick (stored on the tv), otherwise what the game itself shows
+function stapKlaar(p, s) {
+  const hand = s.planning?.[p.id]; if (hand === true || hand === false) return hand;
+  const log = s.logboek || [], V = window.VOORAF || {};
+  const auto = { stap2: () => Date.now() >= +V.stap2, stap3: () => Date.now() >= +V.stap3, hal: () => !!s.publiek?.hal,
+    quiz1: () => log.some((l) => l.type === "quiz" && l.nr === 1), quiz2: () => log.some((l) => l.type === "quiz" && l.nr === 2), quiz3: () => log.some((l) => l.type === "quiz" && l.nr === 3),
+    hfd2: () => (s.kroniek || []).includes(2), hfd3: () => (s.kroniek || []).includes(3), kist: () => !!s.kistGeopend, finale: () => (s.fin?.einde ?? 0) >= 1 || ["einde", "ere"].includes(s.scherm) }[p.auto];
+  if (auto) return !!auto();
+  if (p.bevel) return p.bevel.every((n) => (s.bevelen || []).includes(n));
+  return false;
+}
+let planVolgende = null;
+function tekenPlan(s) {
+  const P = window.PLANNING || [], D = window.PLANNING_DAGEN || {}, open = [], klaar = [];
+  for (const p of P) (stapKlaar(p, s) ? klaar : open).push(p);
+  const volg = open[0]?.id || null; if (volg !== planVolgende) { if (planVolgende) delete planOpen[planVolgende]; planVolgende = volg; }
+  const lijst = $("plan-lijst"), gedaan = $("plan-gedaan-lijst"); let dag = null;
+  lijst.querySelectorAll(".plan-dag").forEach((d) => d.remove());
+  for (const p of open) { if (p.dag !== dag) { dag = p.dag; const h = document.createElement("div"); h.className = "plan-dag"; h.dataset.dag = dag; h.textContent = D[dag] || dag; lijst.append(h); } lijst.append(planStap[p.id]); }
+  for (const p of klaar) gedaan.append(planStap[p.id]);
+  for (const p of P) { const el = planStap[p.id], k = klaar.includes(p), hand = s.planning?.[p.id];
+    el.classList.toggle("klaar", k); el.classList.toggle("volgende", p.id === volg);
+    el.classList.toggle("open", planOpen[p.id] ?? p.id === volg);
+    el.querySelector(".stap-staat").textContent = k ? "✓" : p.id === volg ? "nu" : "";
+    el.querySelector(".stap-klaar").textContent = k ? "Toch nog niet klaar" : "✓ Klaar, door naar de volgende";
+    el.querySelectorAll("[data-bevel-plan]").forEach((b) => { const ok = (s.bevelen || []).includes(b.dataset.bevelPlan); b.disabled = ok; b.textContent = `${ok ? "✓ " : ""}Bevel van ${b.dataset.bevelPlan} volbracht`; });
+    void hand; }
+  $("plan-gedaan").hidden = !klaar.length; $("plan-gedaan-kop").textContent = `Afgehandeld (${klaar.length})`;
+}
+function naarDag(dag) {
+  kiesFase("plan"); let el = $("plan-lijst").querySelector(`.plan-dag[data-dag="${dag}"]`);
+  if (!el) { $("plan-gedaan").classList.add("open"); el = $("plan-gedaan-lijst").querySelector(`.stap[data-dag="${dag}"]`); }
+  if (el) requestAnimationFrame(() => el.scrollIntoView({ block: "start", behavior: "smooth" }));
+}
+function openStap(id) { const el = planStap[id]; if (!el) return; planOpen[id] = true; el.classList.add("open"); if (el.closest("#plan-gedaan")) $("plan-gedaan").classList.add("open"); requestAnimationFrame(() => el.scrollIntoView({ block: "start", behavior: "smooth" })); }
+
+// which part follows the tv: a scene of the planning opens its step, a Shadow event or a quest its action tab
+const STAP_VAN = { start: "vr-opening", verhaal: "vr-opening", dronk: "vr-opening", "dronk-wacht": "vr-opening", uitleg: "vr-opening", tocht: "za-tocht", kist: "za-kist", finale: "zo-finale", einde: "zo-finale", ere: "zo-titels" };
+const ACTIE_VAN = { schaduw: "schaduw", quest: "quests" };
+let fase = null, tvFase = null, vorigScherm = null, laatsteActie = "schaduw";
 function kiesFase(f) {
-  fase = f; try { localStorage.setItem("kronieken-regie-fase", f); } catch {}
-  document.querySelectorAll("#fases button").forEach((b) => { b.setAttribute("aria-selected", b.dataset.fase === f); if (b.dataset.fase === f) b.scrollIntoView({ block: "nearest", inline: "nearest" }); });
+  if (!f || !["plan", "beheer", ...ACTIES.map(([x]) => x)].includes(f)) f = "plan";
+  fase = f; if (ACTIES.some(([x]) => x === f)) laatsteActie = f; try { localStorage.setItem("kronieken-regie-fase", f); } catch {}
+  const hoofd = f === "plan" ? "plan" : f === "beheer" ? "beheer" : "acties";
+  document.querySelectorAll("#rij1 button").forEach((b) => { b.classList.toggle("aan", b.dataset.hoofd === hoofd); b.classList.toggle("tv", b.dataset.hoofd === (tvFase === "plan" ? "plan" : tvFase ? "acties" : "")); });
+  $("rij1").hidden = hoofd === "beheer"; $("b-beheer").classList.toggle("aan", hoofd === "beheer");
+  $("rij2").innerHTML = hoofd === "plan" ? Object.entries(window.PLANNING_DAGEN || {}).map(([d, t]) => `<button type="button" data-dag="${d}">${t.split(" ")[0]}</button>`).join("")
+    : hoofd === "acties" ? ACTIES.map(([x, t]) => `<button type="button" data-fase="${x}" aria-selected="${x === f}" class="${x === tvFase ? "tv" : ""}">${t}</button>`).join("")
+    : '<button type="button" data-terug="1">← Terug</button>';
   document.querySelectorAll("main [data-fase]:not(button)").forEach((el) => el.classList.toggle("fase-weg", !el.dataset.fase.split(" ").includes(f)));
   if (typeof harmonica === "function") harmonica();
 }
-function volgFase(scherm) { // mark the tab of what the tv shows, and jump there when the tv changes screen
-  tvFase = FASE_VAN[scherm] || null;
-  document.querySelectorAll("#fases button").forEach((b) => b.classList.toggle("tv", b.dataset.fase === tvFase));
-  if (scherm !== vorigScherm) { if (vorigScherm !== null && tvFase) kiesFase(tvFase); vorigScherm = scherm; }
+function volgFase(scherm) { // follow the tv: when it changes screen, jump to its step or action tab
+  const actie = ACTIE_VAN[scherm], stap = STAP_VAN[scherm]; tvFase = actie || (stap ? "plan" : null);
+  if (scherm !== vorigScherm) { if (vorigScherm !== null) { if (actie) kiesFase(actie); else if (stap) { kiesFase("plan"); openStap(stap); } } vorigScherm = scherm; }
+  document.querySelectorAll("#rij1 button").forEach((b) => b.classList.toggle("tv", b.dataset.hoofd === (tvFase === "plan" ? "plan" : tvFase ? "acties" : "")));
+  document.querySelectorAll("#rij2 [data-fase]").forEach((b) => b.classList.toggle("tv", b.dataset.fase === tvFase));
 }
-$("fases").onclick = (e) => { const b = e.target.closest("button"); if (b) kiesFase(b.dataset.fase); };
-{ let f = null; try { f = localStorage.getItem("kronieken-regie-fase"); } catch {} kiesFase(f || "hall"); }
+$("rij1").onclick = (e) => { const b = e.target.closest("button"); if (b) kiesFase(b.dataset.hoofd === "plan" ? "plan" : laatsteActie); };
+$("rij2").onclick = (e) => { const b = e.target.closest("button"); if (!b) return; if (b.dataset.dag) return naarDag(b.dataset.dag); if (b.dataset.terug) return kiesFase("plan"); kiesFase(b.dataset.fase); };
+$("b-beheer").onclick = () => kiesFase(fase === "beheer" ? "plan" : "beheer");
+{ let f = null; try { f = localStorage.getItem("kronieken-regie-fase"); } catch {} kiesFase(f); }
 $("b-schaduw").onclick = () => stuur({ cmd: "schaduw" });
 $("b-goed").onclick = () => stuur({ cmd: "goed" });
 $("b-fout").onclick = () => stuur({ cmd: "fout" });

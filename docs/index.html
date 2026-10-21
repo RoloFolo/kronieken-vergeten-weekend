@@ -1265,17 +1265,17 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=131"></script>
-<script src="a/godfried.js?v=131"></script>
-<script src="a/spel.js?v=131"></script>
-<script src="a/voorbereiding.js?v=131"></script>
-<script src="a/wachters.js?v=131"></script>
-<script src="a/firebase-config.js?v=131"></script>
-<script src="a/portretten.js?v=131"></script>
-<script src="a/koppeling.js?v=131"></script>
-<script src="a/rollen.js?v=131"></script>
-<script src="a/quests-tv.js?v=131"></script>
-<script src="a/tafel.js?v=131"></script>
+<script src="a/events.js?v=132"></script>
+<script src="a/godfried.js?v=132"></script>
+<script src="a/spel.js?v=132"></script>
+<script src="a/voorbereiding.js?v=132"></script>
+<script src="a/wachters.js?v=132"></script>
+<script src="a/firebase-config.js?v=132"></script>
+<script src="a/portretten.js?v=132"></script>
+<script src="a/koppeling.js?v=132"></script>
+<script src="a/rollen.js?v=132"></script>
+<script src="a/quests-tv.js?v=132"></script>
+<script src="a/tafel.js?v=132"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2808,7 +2808,7 @@ function standNu() {
     event: wakker() && EVENT ? { id: EVENT.id, naam: EVENT.naam, regel: EVENT.regel, soort: EVENT.soort, zegel: EVENT.zegel, verlies: EVENT.verlies * extra } : null,
     scherm: schermNu(), d20: !$("b-d20").disabled, d20Wacht: !!d20Na, quiz: gq ? { ...gq, uit: [...gq.uit] } : null, kroniek: [...kroniek],
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], ronde, fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
-    ijs, vloek, vloekD20, dieven, quest: quest ? { id: quest.id, naam: quest.naam, fase: quest.fase, lengte: quest.lengte || 0, beste: quest.beste || 0, hoofd: quest.hoofd || null, mee: quest.mee || null, antwoord: quest.antwoord || null } : null, rotatie,
+    ijs, vloek, vloekD20, dieven, planning, quest: quest ? { id: quest.id, naam: quest.naam, fase: quest.fase, lengte: quest.lengte || 0, beste: quest.beste || 0, hoofd: quest.hoofd || null, mee: quest.mee || null, antwoord: quest.antwoord || null } : null, rotatie,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
     publiek: { ronde, levend: Date.now(), tafel: paneelNu === "tafel", kroniek: [...kroniek], scores: scorebordData(), hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
     tochtOpen, kistGeopend,
@@ -2850,7 +2850,7 @@ const gqT = (ms, fn) => gqTimers.push(setTimeout(fn, ms));
 function gqZeg(naam, klaar, reserve = 7000) { if (gqStem) fade(gqStem, 0, 300); gqStem = stemMet(naam, 1, () => { gqStem = null; klaar?.(); }, reserve); }
 function quizStart(nr) {
   const r = window.GODFRIED.quiz[nr - 1]; if (!r) return; quizStop(true);
-  gq = { nr, i: -1, fase: "intro", uit: [] }; meld();
+  gq = { nr, i: -1, fase: "intro", uit: [] }; log("quiz", { nr }); meld();
   const q = $("gquiz"); $("gq-kop").textContent = r.titel;
   $("gq-zegels").innerHTML = r.vragen.map((v) => `<span data-z="${v.zegel}"><img src="${medaille(v.zegel)}" alt=""></span>`).join("");
   $("gq-zegel").textContent = ""; const vr = $("gq-vraag"); vr.className = "gq-vraag intro"; vr.textContent = r.intro.tekst; $("gq-antwoord").className = "gq-antwoord carved";
@@ -2951,7 +2951,7 @@ function tafelEven() { // a Wachter asked for the Round Table: 45 seconds, then 
 }
 // every five minutes the Guild Hall turns to the Round Table for 45 seconds (the regie can switch it off);
 // first in the light: whoever got XP since the last turn, otherwise the next one at the table
-let rotatie = true, rotatieOp = Date.now();
+let rotatie = true, rotatieOp = Date.now(), planning = {};
 setInterval(() => {
   if (!rotatie || !standGeladen || passief || Date.now() - rotatieOp < 5 * 60000) return;
   if (schermNu() !== "hal" || oproepBezig || !$("groot-moment").hidden || questBezig()) return;
@@ -3155,7 +3155,8 @@ function oproep() { // all music falls silent, then three loud strokes of the ch
 const OPDRACHTEN = {
   oproep: () => oproep(),
   scorebord: () => tafelEven(),
-  rotatie: (o) => { rotatie = !!o.aan; rotatieOp = Date.now(); meld(); }, // the phones' button now opens the Round Table hall
+  rotatie: (o) => { rotatie = !!o.aan; rotatieOp = Date.now(); meld(); },
+  plan: (o) => { if (!o.id) return; if (o.klaar === true || o.klaar === false) planning[o.id] = o.klaar; else delete planning[o.id]; meld(); }, // the regie's planning: ticked by hand // the phones' button now opens the Round Table hall
   "tafel-kies": (o) => tafelKies(o.naam),
   "scorebord-weg": () => scorebordWeg(),
   "verraders-toon": () => verradersToon(),
@@ -3219,7 +3220,7 @@ const OPDRACHTEN = {
   ere: (o) => { const n = Math.max(0, Math.min(ereLijst().length, (ere.stap ?? -1) + o.d)); ereStap(n, ere.speelt); },
   // without Firebase the regie stores the assignment here, in the tv's own state
   "ere-toewijs": (o) => { ere.toewijzing ||= {}; if (o.naam) ere.toewijzing[`t${o.i}`] = String(o.naam).slice(0, 40); else delete ere.toewijzing[`t${o.i}`]; meld(); },
-  "alles-opnieuw": async () => { await herstelpunt("vlak vóór alles opnieuw"); ronde = Date.now(); kroniek = new Set(); openingGehad = false; quizStop(); vertelSla(true); tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
+  "alles-opnieuw": async () => { await herstelpunt("vlak vóór alles opnieuw"); planning = {}; ronde = Date.now(); kroniek = new Set(); openingGehad = false; quizStop(); vertelSla(true); tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
     setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); }, // back to the welcome screen, so the regie shows "Start verhaal" again
 };
 // With Firebase only the tv laptop logs in (address ends in ?tv); public visitors just see the countdown.
@@ -3237,7 +3238,7 @@ function laadStand(s) {
   ronde = s.ronde || 1; kroniek = new Set(s.kroniek || []);
   if (s.fin) fin = { nu: 0, open: {}, opgelost: {}, hint: {}, ...s.fin }; if (s.ere) ere = { i: -1, namen: {}, ...s.ere };
   if (s.chaos) { const { wacht: w, ...rest } = s.chaos; chaos = rest; Object.assign(wacht, w || {}); }
-  dieven = s.dieven || null; rotatie = s.rotatie !== false; ijs = s.ijs || {}; vloekD20 = !!s.vloekD20; vloek = s.vloek || null; tekenIjs();
+  dieven = s.dieven || null; rotatie = s.rotatie !== false; planning = s.planning || {}; ijs = s.ijs || {}; vloekD20 = !!s.vloekD20; vloek = s.vloek || null; tekenIjs();
   if (vloek) { $("vloek-teken").innerHTML = `<b>Vervloekt · ${schoon(vloek.naam)}</b>${schoon(vloek.tekst)}`; $("vloek-teken").hidden = false; }
   logboek = s.logboek || []; verraders = s.verraders || []; verrader = s.verrader || null; rollenOpen = !!s.publiek?.hal;
   fin.voortgang ||= {};
