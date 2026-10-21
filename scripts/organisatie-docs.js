@@ -5,6 +5,8 @@
 const fs = require("fs"), path = require("path");
 const { Document, Packer, Paragraph, TextRun, AlignmentType, BorderStyle, Table, TableRow, TableCell, WidthType, ShadingType, ExternalHyperlink } = require("docx");
 const uit = process.argv[2] || ".", id09 = process.argv[3];
+// private things, like the address of the house: in scripts/prive.json, which never goes into this public repo
+const PRIVE = (() => { try { return JSON.parse(fs.readFileSync(path.join(__dirname, "prive.json"), "utf8")); } catch { return {}; } })();
 // the game's own data, so the proposal always matches the app
 const window = {};
 for (const f of ["docs/a/wachters.js", "docs/a/spel.js", "docs/a/rollen.js", "docs/a/voorbereiding.js", "docs/a/godfried.js"]) new Function("window", fs.readFileSync(f, "utf8"))(window);
@@ -153,6 +155,7 @@ const draaiboek = [
   bullet("Inpakken: laptop + lader, HDMI-kabel, stekkerdozen, 4 potten met etiketten, fiches, questkaarten, regelboek, kaarsen, aanmaakhout, kist (op slot, vol bouillonblokjes en cadeautjes), de 5 relieken, rugzak met shotglaasjes en drank, powerbanks. Laptop, beamer of tv, HDMI-kabel en bluetooth-speaker: Jean."),
 
   h("Vrijdag 13 november"),
+  ...(PRIVE.adres ? [p([b("Adres huisje: "), t(PRIVE.adres)])] : []),
   h3("Vóór de rest · Roland, Rob en Jean zijn binnen"),
   bullet("Laptop aan de tv (of aan Stefans beamer), index.html?tv openen, inloggen, één keer klikken voor geluid. Regie op je telefoon: het lampje moet groen zijn."),
   bullet("Vier Zegel-potten met hun stroken op de schoorsteen."),
@@ -191,11 +194,14 @@ const draaiboek = [
   bullet([R("Oproep"), t(", dan regie → Godfried → "), R("Quiz II"), t(".")]),
   h3("18:00 · Meester van de Frituur"),
   bullet([t("Roy bakt: frites, snacks en sauzen, met bakmuts"), ...volbracht("Roy")]),
-  h3("19:30 · de Wachterstocht"),
+  h3("19:40 · de Wachterstocht"),
   bullet([t("Vóór vertrek: regie → scherm "), R("Wachterstocht"), t(": de camera vliegt naar het kasteel, Godfried leest voor. De vijf opdrachten staan nu op ieders telefoon.")]),
+  bullet([b("± 20:00 vertrek"), t(" naar het kasteel (rijtijd vanaf het huisje vooraf even checken).")]),
+  bullet([b("20:20 op locatie"), t(": parkeren en naar de ingang lopen (± 10 minuten).")]),
+  bullet([b("20:30 aanwezig bij het kasteel"), t(": dan begint onze tocht.")]),
   bullet("Mee: Martins Vuur-elixer, de rugzak met shotglaasjes en drank (één van ons drieën), powerbank, regie op een telefoon. Fakkels krijgen we bij het kasteel."),
   bullet("In het kasteel: elke gelukte opdracht afvinken in de regie (Wachterstocht). De relieken blijven thuis."),
-  h3("± 21:30 · terug: de Reliekenkist"),
+  h3("± 22:00 · terug: de Reliekenkist"),
   bullet([t("Regie → "), R("Open de Reliekenkist"), t(": Godfried opent de kist, elk gevonden reliek rijst op. Deel tegelijk de echte relieken uit. Elk reliek is in de finale één hint waard.")]),
   bullet([t("Daarna regie → Godfried → "), R("Hoofdstuk III vertellen"), t(": Jeruzalem 1099, de geweigerde kroon, zijn dood, Boudewijn koning. Nodig voor de quiz van zondag.")]),
   bullet("Rest van de avond vrij, met Martins Schaduw-elixer."),

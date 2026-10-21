@@ -29,3 +29,6 @@ print/portretten/
 print/oorkondes.pdf
 print/oorkondes.html
 print/geluid/*.mp3
+
+# private things (the address of the house): never in this public repo
+scripts/prive.json
