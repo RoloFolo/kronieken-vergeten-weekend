@@ -79,6 +79,16 @@ main > section.kaart:not(.dicht) .h2-nu { display: none; }
 /* the menu: every part of this tab */
 .menu-blad { position: fixed; inset: 0; z-index: 30; background: rgba(5,2,3,.7); display: grid; align-items: start; justify-items: center; padding: 70px 16px 16px; }
 .menu-blad[hidden] { display: none; }
+.menu-blad { overflow: auto; }
+.menu-blad .mk { display: grid; gap: 6px; padding: 10px 2px; border-top: 1px solid rgba(239,227,212,.1); }
+.menu-blad .mk-tab { padding: 4px 2px; background: none; border: 0; font: 700 14px/1.2 var(--carved); letter-spacing: .12em; text-transform: uppercase; color: var(--bronze-hi); }
+.menu-blad .mk-tab small { display: block; margin-top: 3px; font: 13px/1.35 var(--body); letter-spacing: 0; text-transform: none; color: var(--ash); }
+.menu-blad .mk-tv { font: 600 11px/1 var(--body); letter-spacing: .04em; color: var(--ember); }
+.menu-blad .mk.nu { background: rgba(184,149,95,.08); border-radius: 8px; padding-left: 8px; padding-right: 8px; }
+.menu-blad .mk.nu .mk-tab { color: #ffd98a; }
+.menu-blad .mk-delen { display: flex; flex-wrap: wrap; gap: 6px; }
+.menu-blad .mk-delen button { padding: 8px 11px; font-size: 14px; }
+
 .menu-blad > div { width: 100%; max-width: 488px; display: grid; gap: 6px; padding: 12px; border-radius: 12px; border: 1px solid #6e5230; background: linear-gradient(180deg, #1e0e0e, #0e0708); box-shadow: 0 20px 50px #000; }
 .menu-blad b { font: 700 12px/1 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: var(--ash); padding: 4px 4px 6px; }
 .menu-blad button { text-align: left; }
@@ -156,7 +166,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <button type="button" role="tab" data-fase="finale">Finale</button><button type="button" role="tab" data-fase="ere">Ere</button>
     <button type="button" role="tab" data-fase="beheer">Beheer</button>
   </nav>
-  <button id="b-menu" type="button" aria-label="Onderdelen van deze tab">☰</button>
+  <button id="b-menu" type="button" aria-label="Kaart van de regie">☰</button>
   </div>
 
   <section class="kaart" id="intro" data-fase="start">
@@ -225,7 +235,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div id="ev-lijst" style="display:grid;gap:14px"></div>
   </section>
 
-  <section class="kaart" id="s-godfried" data-fase="godfried finale">
+  <section class="kaart" id="s-godfried" data-fase="godfried">
     <h2>Godfried</h2>
     <p class="klein" style="margin:0 0 8px">Zijn verhaal (de quizvragen komen hieruit) en elke avond vóór het eten vier vragen, één per Zegel: goed +1, fout −1.</p>
     <div class="rij"><button id="b-hfd-2" type="button">Hoofdstuk II vertellen</button><button id="b-hfd-3" type="button">Hoofdstuk III vertellen</button></div>
@@ -339,7 +349,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div class="lijst" id="ere-lijst"></div>
   </section>
 
-  <section class="kaart" data-fase="xp ere">
+  <section class="kaart" data-fase="ere">
     <h2>Voor de aftiteling</h2>
     <p class="klein" style="margin:0 0 8px">Gebeurt er iets wat de Kronieken moeten onthouden? Zet het erin: een extra titel, een moment of een uitspraak. Het komt in de aftiteling.</p>
     <div class="rij" id="cr-soort" style="grid-template-columns:repeat(3,1fr)"><button type="button" data-s="titel" class="goud">Titel</button><button type="button" data-s="moment">Moment</button><button type="button" data-s="uitspraak">Uitspraak</button></div>
@@ -358,7 +368,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <button id="b-dief-weg" type="button" style="margin-top:8px">Dieven-scherm sluiten</button>
   </section>
 
-  <section class="kaart" data-fase="ere finale">
+  <section class="kaart" data-fase="ere">
     <h2>Wie diende de Schaduwkoning het best?</h2>
     <p class="klein" style="margin:0 0 8px">Toon op de tv wat elke Schaduwdrager deed, kies samen wie de Schaduwkoning het best diende, en kroon hem.</p>
     <button class="groot" id="b-vr-toon" type="button">Toon alle Schaduwdragers op de tv</button>
@@ -390,7 +400,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div class="lijst" id="links"></div>
   </section>
 
-  <section class="kaart" data-fase="vooraf beheer">
+  <section class="kaart" data-fase="vooraf">
     <h2>Portretten</h2>
     <p class="klein" style="margin:0 0 10px">Eén keer doen: kies de elf schilderijen (bestandsnaam begint met de naam, zoals in Jeans map Fotos). Ze worden verkleind en in de database gezet, alleen zichtbaar voor wie is ingelogd. App en tv tonen ze dan vanzelf: aan de Ronde Tafel, bij XP, eretitels en aftiteling.</p>
     <label class="groot knop-label" style="display:block;text-align:center;cursor:pointer;padding:12px;border:1px solid #b8955f">Kies de portretten<input type="file" id="portret-kies" accept="image/*" multiple hidden></label>
@@ -405,7 +415,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <p class="klein" id="kopie-status" hidden></p>
     <div id="kopie-lijst" style="display:grid;gap:6px;margin-top:8px"></div>
   </section>
-  <section class="kaart" data-fase="beheer xp">
+  <section class="kaart" data-fase="xp">
     <h2>Wat er veranderde</h2>
     <p class="klein" style="margin:0 0 8px">Wat de tv als laatste bijhield, nieuwste bovenaan.</p>
     <ol id="wijzigingen" class="wijz"></ol>
@@ -431,16 +441,16 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=128"></script>
-<script src="a/quests-tv.js?v=128"></script>
-<script src="a/godfried.js?v=128"></script>
-<script src="a/spel.js?v=128"></script>
-<script src="a/wachters.js?v=128"></script>
-<script src="a/rollen.js?v=128"></script>
-<script src="a/firebase-config.js?v=128"></script>
-<script src="a/portretten.js?v=128"></script>
-<script src="a/koppeling.js?v=128"></script>
-<script src="a/voorbereiding.js?v=128"></script>
+<script src="a/events.js?v=129"></script>
+<script src="a/quests-tv.js?v=129"></script>
+<script src="a/godfried.js?v=129"></script>
+<script src="a/spel.js?v=129"></script>
+<script src="a/wachters.js?v=129"></script>
+<script src="a/rollen.js?v=129"></script>
+<script src="a/firebase-config.js?v=129"></script>
+<script src="a/portretten.js?v=129"></script>
+<script src="a/koppeling.js?v=129"></script>
+<script src="a/voorbereiding.js?v=129"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -865,10 +875,21 @@ document.querySelector("main").addEventListener("click", (e) => { const h = e.ta
   if (k.classList.contains("los")) { const dicht = k.classList.toggle("dicht"); try { localStorage.setItem("kronieken-regie-scherm", dicht ? "dicht" : "open"); } catch {} return; } // the tv screens: open or shut on its own, the same on every tab
   if (k.classList.contains("dicht")) openKaart(k, true); else k.classList.add("dicht"); });
 { let o = null; try { o = localStorage.getItem("kronieken-regie-scherm"); } catch {} $("s-scherm").classList.toggle("dicht", o !== "open"); } // shut unless opened: its title says what the tv shows
+// the menu is a map of the whole regie: every tab with what it is for and its parts; tap a tab or a part to go there
+const TAB_UITLEG = { vooraf: "Voor het weekend: wat iedereen invult, de persoonlijke links, de portretten", start: "Het begin: verhaal, Eerste Dronk, uitleg",
+  hall: "Tijdens het weekend: Schaduw-events, de Zegels, de Schaduwdrager", xp: "XP geven, terugdraaien en wat er veranderde",
+  quests: "Quests op de tv, klassemomenten, Wie zei het?, eigen quest, een Schaduw-event kiezen", godfried: "Godfrieds verhalen en de drie quizzen",
+  tocht: "Zaterdagavond: de Wachterstocht en de Reliekenkist", finale: "Zondag: de vier aktes en de Dieven",
+  ere: "Het slot: eretitels, aftiteling, wie diende de Schaduwkoning, wie volgt", beheer: "Herstelpunten en het spel opnieuw beginnen" };
 $("b-menu").onclick = () => {
-  const l = kaartenNu(), b = $("menu-blad");
-  b.innerHTML = `<div><b>${veilig(document.querySelector('#fases button[aria-selected="true"]')?.textContent || "")}</b>${l.map((k, i) => `<button type="button" data-i="${i}" class="${k.classList.contains("dicht") ? "" : "open"}">${veilig(kaartNaam(k))}</button>`).join("")}</div>`;
-  b.hidden = false; b.onclick = (e) => { const x = e.target.closest("button"); b.hidden = true; if (x) openKaart(l[+x.dataset.i], true); };
+  const b = $("menu-blad"), tabs = [...document.querySelectorAll("#fases button")];
+  const delen = (f) => [...document.querySelectorAll("main > section.kaart:not(.los)")].filter((k) => k.dataset.fase?.split(" ").includes(f) && !k.hidden && k.querySelector(":scope > h2:first-child"));
+  b.innerHTML = `<div><b>Kaart van de regie</b>${tabs.map((t) => { const f = t.dataset.fase;
+    return `<div class="mk ${f === fase ? "nu" : ""}"><button type="button" class="mk-tab" data-f="${f}">${veilig(t.textContent)}${f === tvFase ? ' <span class="mk-tv">● nu op de tv</span>' : ""}<small>${veilig(TAB_UITLEG[f] || "")}</small></button>
+      <div class="mk-delen">${delen(f).map((k) => `<button type="button" data-f="${f}" data-n="${veilig(kaartNaam(k))}">${veilig(kaartNaam(k))}</button>`).join("")}</div></div>`; }).join("")}</div>`;
+  b.hidden = false; b.scrollTop = 0;
+  b.onclick = (e) => { if (e.target === b) { b.hidden = true; return; } const x = e.target.closest("button"); if (!x) return; b.hidden = true; kiesFase(x.dataset.f);
+    const k = x.dataset.n && kaartenNu().find((y) => kaartNaam(y) === x.dataset.n); if (k) openKaart(k, true); else window.scrollTo({ top: 0, behavior: "smooth" }); };
 };
 // the action bar: a quest or a Shadow event on the tv gets its buttons at the bottom of every tab
 function tekenBalk(s) {
