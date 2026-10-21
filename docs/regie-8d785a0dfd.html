@@ -496,17 +496,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=132"></script>
-<script src="a/quests-tv.js?v=132"></script>
-<script src="a/planning.js?v=132"></script>
-<script src="a/godfried.js?v=132"></script>
-<script src="a/spel.js?v=132"></script>
-<script src="a/wachters.js?v=132"></script>
-<script src="a/rollen.js?v=132"></script>
-<script src="a/firebase-config.js?v=132"></script>
-<script src="a/portretten.js?v=132"></script>
-<script src="a/koppeling.js?v=132"></script>
-<script src="a/voorbereiding.js?v=132"></script>
+<script src="a/events.js?v=133"></script>
+<script src="a/quests-tv.js?v=133"></script>
+<script src="a/planning.js?v=133"></script>
+<script src="a/godfried.js?v=133"></script>
+<script src="a/spel.js?v=133"></script>
+<script src="a/wachters.js?v=133"></script>
+<script src="a/rollen.js?v=133"></script>
+<script src="a/firebase-config.js?v=133"></script>
+<script src="a/portretten.js?v=133"></script>
+<script src="a/koppeling.js?v=133"></script>
+<script src="a/voorbereiding.js?v=133"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -721,7 +721,7 @@ $("portret-kies").onchange = async (e) => { const W = window.WACHTERS || [], los
   for (const f of e.target.files) { const w = W.find((x) => f.name.toLowerCase().startsWith(x.naam.toLowerCase() + " ") || f.name.toLowerCase().startsWith(x.naam.toLowerCase() + ".")); if (!w) { los.push(f.name); continue; }
     $("portret-status").textContent = `Bezig: ${w.naam}…`; const ok = await Koppeling.portret(w.naam, await Portret.verklein(f), await Portret.verklein(f, 1024, .86)); if (ok === false) los.push(`${f.name} (niet opgeslagen)`); }
   e.target.value = ""; tekenPortretten(); if (los.length) $("portret-status").textContent += ` Niet gelukt: ${los.join(", ")}.`; };
-Koppeling.start({ rol: "regie", opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); tekenGodfried(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); }, opEre: (t) => { ereToewijzing = t || {}; tekenEreRegie(); } })
+Koppeling.start({ rol: "regie", opPlanning: (p) => { planHand = p || {}; if (laatsteStand) tekenPlan(laatsteStand); }, opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); tekenGodfried(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); }, opEre: (t) => { ereToewijzing = t || {}; tekenEreRegie(); } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; });
 
 $("b-start").onclick = () => stuur({ cmd: "start" });
@@ -770,15 +770,15 @@ const planStap = {}; // id -> the step element
     if (b.dataset.zet) return document.querySelector(`#schermen [data-s="${b.dataset.zet}"]`)?.click();
     if (b.dataset.ga) return kiesFase(b.dataset.ga);
     if (b.dataset.bevelPlan) { if (!b.disabled) stuur({ cmd: "bevel", naam: b.dataset.bevelPlan }); return; }
-    if (b.dataset.klaar) stuur({ cmd: "plan", id: st.dataset.id, klaar: !st.classList.contains("klaar") });
+    if (b.dataset.klaar) { const klaar = !st.classList.contains("klaar"); if (!Koppeling.planning(st.dataset.id, klaar)) stuur({ cmd: "plan", id: st.dataset.id, klaar }); } // the database; without it (local laptop server) via the tv
   });
   $("plan-gedaan-kop").onclick = () => $("plan-gedaan").classList.toggle("open");
   kaartOp("De Schaduw")?.after(kaartOp("Schaduw-events")); // the big button first, the list of all events under it
 }
-const planOpen = {};
+const planOpen = {}; let planHand = {}; // planHand: the ticks in the database
 // is a step done? an organiser's tick (stored on the tv), otherwise what the game itself shows
 function stapKlaar(p, s) {
-  const hand = s.planning?.[p.id]; if (hand === true || hand === false) return hand;
+  const hand = planHand[p.id] ?? s.planning?.[p.id]; if (hand === true || hand === false) return hand;
   const log = s.logboek || [], V = window.VOORAF || {};
   const auto = { stap2: () => Date.now() >= +V.stap2, stap3: () => Date.now() >= +V.stap3, hal: () => !!s.publiek?.hal,
     quiz1: () => log.some((l) => l.type === "quiz" && l.nr === 1), quiz2: () => log.some((l) => l.type === "quiz" && l.nr === 2), quiz3: () => log.some((l) => l.type === "quiz" && l.nr === 3),
@@ -921,7 +921,7 @@ let resetWacht = null;
 function resetMelding(t, soort) { const el = $("alles-status"); el.hidden = false; el.textContent = t; el.style.color = soort === "goed" ? "#8fd493" : soort === "fout" ? "#ff8a80" : "#efe3d4"; }
 $("b-alles-ja").onclick = () => { $("alles-vraag").hidden = true;
   clearTimeout(resetWacht?.timer); resetWacht = { ronde: laatsteStand?.ronde, timer: setTimeout(() => { resetWacht = null; resetMelding("✗ De tv reageerde niet. Staat de tv aan (index.html?tv op de laptop), is hij ingelogd en op de nieuwste versie (Ctrl+F5)? Probeer het daarna opnieuw.", "fout"); }, 15000) };
-  stuur({ cmd: "alles-opnieuw" }); resetMelding("Verstuurd naar de tv… even wachten op bevestiging.", ""); };
+  stuur({ cmd: "alles-opnieuw" }); for (const p of window.PLANNING || []) if (planHand[p.id] != null) Koppeling.planning(p.id, null); resetMelding("Verstuurd naar de tv… even wachten op bevestiging.", ""); };
 $("b-reset-nee").onclick = () => ($("reset-vraag").hidden = true);
 $("b-reset-ja").onclick = () => { stuur({ cmd: "events-opnieuw" }); $("reset-vraag").hidden = true; };
 // ===== De Dieven (finale) =====

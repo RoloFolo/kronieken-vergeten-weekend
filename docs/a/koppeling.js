@@ -73,7 +73,7 @@ function geenToegang(email) {
   });
 }
 
-async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraad, opVooraf, opEre, opLarp }) {
+async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraad, opVooraf, opEre, opLarp, opPlanning }) {
   const [{ initializeApp }, auth, db] = await Promise.all([import(FB + "firebase-app.js"), import(FB + "firebase-auth.js"), import(FB + "firebase-database.js")]);
   const app = initializeApp(window.FIREBASE_CONFIG);
   const a = auth.getAuth(app); await auth.setPersistence(a, auth.browserLocalPersistence);
@@ -122,6 +122,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
   if (rol === "wachter") luister(db.onValue, `vooraf/${sleutel(email)}`, (s) => opVooraf?.(s.val() || {}));
   if (rol === "regie" || rol === "tv") luister(db.onValue, "vooraf", (s) => opVooraf?.(s.val() || {})); // the tv only reads it for the credits
   if (alleenAdmin) luister(db.onValue, "ere/toewijzing", (s) => opEre?.(s.val() || {}));
+  if (rol === "regie") luister(db.onValue, "ere/planning", (s) => opPlanning?.(s.val() || {})); // the organisers' ticks in the planning, straight in the database (also when the tv is off)
   if (rol === "wachter") { // the LARP: has Stefan kicked off, his story for everyone, and the secret task for this Wachter (no access yet: silent)
     const larp = {}; const zend = () => opLarp?.({ ...larp });
     for (const [k, pad] of [["gestart", "larp/gestart"], ["algemeen", "larp/algemeen"], ["mijn", `larp/voor/${sleutel(email)}`]]) db.onValue(db.ref(d, sessiePad(pad)), (s) => { larp[k] = s.val(); zend(); }, () => {});
@@ -141,6 +142,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
     stuur: (o) => metToken(() => db.push(db.ref(d, sessiePad("opdrachten")), { ...o, van: email, t: Date.now() })),
     uitloggen: () => auth.signOut(a),
     vooraf: (pad, waarde) => metToken(() => db.set(db.ref(d, sessiePad(`vooraf/${sleutel(email)}/${pad}`)), waarde)),
+    planning: rol === "regie" ? (id, klaar) => metToken(() => db.set(db.ref(d, sessiePad(`ere/planning/${id}`)), typeof klaar === "boolean" ? klaar : null)) : null,
     ere: alleenAdmin ? (i, naam) => metToken(() => db.set(db.ref(d, sessiePad(`ere/toewijzing/t${i}`)), naam || null)) : null,
     // restore points: the tv stores a copy of the whole state; the regie lists them and asks the tv to go back to one
     // the list is small (time and reason), the copies are big and only fetched one at a time; at most 40 are kept
@@ -182,6 +184,7 @@ window.Koppeling = {
   uitloggen() { return this.verbinding?.uitloggen?.(); },
   ere(i, naam) { return this.verbinding?.ere ? this.verbinding.ere(i, naam) : null; },
   vooraf(pad, waarde) { return this.verbinding?.vooraf ? this.verbinding.vooraf(pad, waarde) : Promise.resolve(false); },
+  planning(id, klaar) { return this.verbinding?.planning ? this.verbinding.planning(id, klaar) : null; },
   herstelBewaar(stand, waarom) { return this.verbinding?.herstelBewaar ? this.verbinding.herstelBewaar(stand, waarom) : Promise.resolve(false); },
   herstelLijst() { return this.verbinding?.herstelLijst ? this.verbinding.herstelLijst() : Promise.resolve([]); },
   herstelHaal(id) { return this.verbinding?.herstelHaal ? this.verbinding.herstelHaal(id) : Promise.resolve(null); },
