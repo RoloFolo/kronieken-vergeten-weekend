@@ -182,7 +182,7 @@ const draaiboek = [
 
   h("Zaterdag 14 november"),
   h3("09:30 · ontbijt"),
-  bullet([t("Martins Ochtendbooster"), t(" (één van zijn elixers, minstens drie).")]),
+  bullet([t("Martins Ochtenddauw"), t(" (één van zijn elixers, minstens drie).")]),
   h3("10:30 · Hoofdstuk II"),
   bullet([R("Oproep"), t(", dan regie → Godfried → "), R("Hoofdstuk II vertellen"), t(" (keizer Hendrik IV, broer Boudewijn, Bouillon verpand aan de prins-bisschop van Luik).")]),
   h3("11:00 · De Taveerne van het Lot (± 1 uur)"),
@@ -209,7 +209,7 @@ const draaiboek = [
   h("Zondag 15 november"),
   h3("09:30 · ontbijt"),
   h3("10:30 · Het Spel der Rollen (± 1 uur)"),
-  bullet([t("Stefans LARP-sessie: iedereen in kostuum, ieder met een doel en een geheim"), ...volbracht("Stefan")]),
+  bullet([t("Stefans LARP-sessie: iedereen in kostuum, sportief mag ook; zijn instructies kwamen vrijdag en zaterdag al"), ...volbracht("Stefan")]),
   h3("12:30 · lunch, laatste quests"),
   h3("13:30 · Quiz III"),
   bullet([R("Oproep"), t(", dan regie → Godfried → "), R("Quiz III"), t(": de laatste vier vragen sterken (of verzwakken) de Zegels vlak voor de finale.")]),
