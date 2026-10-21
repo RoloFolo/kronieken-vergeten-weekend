@@ -236,7 +236,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   <section class="kaart los" id="s-scherm">
     <h2>Scherm op de tv <span class="h2-nu" id="scherm-nu"></span></h2>
     <div class="schermen" id="schermen"></div>
-    <button class="toggle" id="b-rotatie" type="button" style="margin-top:10px;width:100%"><span>Elke 5 minuten even de Ronde Tafel (45 seconden, alleen vanuit de Guild Hall)</span><span class="vink"></span></button>
+    <button class="toggle" id="b-rotatie" type="button" style="margin-top:10px;width:100%"><span>Elke 5 minuten 45 seconden: twee keer de Ronde Tafel, dan de Route (alleen vanuit de Guild Hall)</span><span class="vink"></span></button>
   </section>
 
   <section class="kaart" id="s-punt" data-fase="xp">
@@ -496,17 +496,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=133"></script>
-<script src="a/quests-tv.js?v=133"></script>
-<script src="a/planning.js?v=133"></script>
-<script src="a/godfried.js?v=133"></script>
-<script src="a/spel.js?v=133"></script>
-<script src="a/wachters.js?v=133"></script>
-<script src="a/rollen.js?v=133"></script>
-<script src="a/firebase-config.js?v=133"></script>
-<script src="a/portretten.js?v=133"></script>
-<script src="a/koppeling.js?v=133"></script>
-<script src="a/voorbereiding.js?v=133"></script>
+<script src="a/events.js?v=134"></script>
+<script src="a/quests-tv.js?v=134"></script>
+<script src="a/planning.js?v=134"></script>
+<script src="a/godfried.js?v=134"></script>
+<script src="a/spel.js?v=134"></script>
+<script src="a/wachters.js?v=134"></script>
+<script src="a/rollen.js?v=134"></script>
+<script src="a/firebase-config.js?v=134"></script>
+<script src="a/portretten.js?v=134"></script>
+<script src="a/koppeling.js?v=134"></script>
+<script src="a/voorbereiding.js?v=134"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -522,10 +522,10 @@ const ZEGELS = [
   { id: "hart", naam: "Hart van de Ardennen", img: "a/medaillon-hart.webp" },
 ];
 const SOORT = { opdracht: "Opdracht", dilemma: "Dilemma", vreemd: "Vreemde zaak" };
-const SCHERM = { quest: "Quest", start: "Welkomstscherm", verhaal: "Verhaal", dronk: "De Eerste Dronk", "dronk-wacht": "Wacht op drankjes", uitleg: "Uitleg", hal: "Guild Hall", schaduw: "Schaduw-event", tafel: "Ronde Tafel", tocht: "Wachterstocht", kist: "Reliekenkist", finale: "Finale", ere: "Ere van de Wachters", einde: "Overwinning" };
+const SCHERM = { route: "De Route", quest: "Quest", start: "Welkomstscherm", verhaal: "Verhaal", dronk: "De Eerste Dronk", "dronk-wacht": "Wacht op drankjes", uitleg: "Uitleg", hal: "Guild Hall", schaduw: "Schaduw-event", tafel: "Ronde Tafel", tocht: "Wachterstocht", kist: "Reliekenkist", finale: "Finale", ere: "Ere van de Wachters", einde: "Overwinning" };
 const S = window.SPEL;
 let laatste = {};
-const KNOPPEN = [["hal", "Guild Hall"], ["tafel", "Ronde Tafel"], ["tocht", "Wachter&shy;stocht"], ["kist", "Relieken&shy;kist"], ["finale", "Finale"], ["ere", "Ere"]];
+const KNOPPEN = [["hal", "Guild Hall"], ["tafel", "Ronde Tafel"], ["route", "De Route"], ["tocht", "Wachter&shy;stocht"], ["kist", "Relieken&shy;kist"], ["finale", "Finale"], ["ere", "Ere"]];
 $("schermen").innerHTML = KNOPPEN.map(([id, t]) => `<button type="button" data-s="${id}">${t}</button>`).join("");
 $("schermen").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "scherm", naam: b.dataset.s }); };
 $("tocht").innerHTML = S.tocht.map((o) => `<button class="toggle" type="button" data-id="${o.id}"><span>${o.naam}</span><span class="vink"></span></button>`).join("");
@@ -777,16 +777,7 @@ const planStap = {}; // id -> the step element
 }
 const planOpen = {}; let planHand = {}; // planHand: the ticks in the database
 // is a step done? an organiser's tick (stored on the tv), otherwise what the game itself shows
-function stapKlaar(p, s) {
-  const hand = planHand[p.id] ?? s.planning?.[p.id]; if (hand === true || hand === false) return hand;
-  const log = s.logboek || [], V = window.VOORAF || {};
-  const auto = { stap2: () => Date.now() >= +V.stap2, stap3: () => Date.now() >= +V.stap3, hal: () => !!s.publiek?.hal,
-    quiz1: () => log.some((l) => l.type === "quiz" && l.nr === 1), quiz2: () => log.some((l) => l.type === "quiz" && l.nr === 2), quiz3: () => log.some((l) => l.type === "quiz" && l.nr === 3),
-    hfd2: () => (s.kroniek || []).includes(2), hfd3: () => (s.kroniek || []).includes(3), kist: () => !!s.kistGeopend, finale: () => (s.fin?.einde ?? 0) >= 1 || ["einde", "ere"].includes(s.scherm) }[p.auto];
-  if (auto) return !!auto();
-  if (p.bevel) return p.bevel.every((n) => (s.bevelen || []).includes(n));
-  return false;
-}
+function stapKlaar(p, s) { return window.planKlaar(p, s, planHand); }
 let planVolgende = null;
 function tekenPlan(s) {
   const P = window.PLANNING || [], D = window.PLANNING_DAGEN || {}, open = [], klaar = [];

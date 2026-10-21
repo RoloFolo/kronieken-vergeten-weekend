@@ -32,6 +32,25 @@ html, body { overflow-x: hidden; }
 .kop { text-align: center; display: grid; gap: 4px; }
 .kop small { font: 700 12px/1 var(--carved); letter-spacing: .35em; color: var(--ash); text-transform: uppercase; }
 .kop h1 { margin: 0; font-size: clamp(26px, 8vw, 38px); line-height: 1.1; }
+/* De Route: the quest map, with what is coming and what to bring */
+.route-app { padding: 16px 12px 14px; }
+.route-app h2 { margin: 0 0 10px; text-align: center; }
+.route-kaart svg { display: block; width: 100%; height: auto; border: 1px solid #4a1c21; }
+.route-kaart .rh, .route-kaart .rl { cursor: pointer; }
+.route-detail h3 { margin: 0; font: 700 22px/1.15 var(--carved); text-transform: uppercase; letter-spacing: .04em; color: var(--bronze-hi); }
+.route-detail .wanneer { margin-top: 6px; font: 700 12px/1 var(--carved); letter-spacing: .18em; text-transform: uppercase; color: var(--ember); }
+.route-detail p { margin: 12px 0 0; font-size: 15px; line-height: 1.5; }
+.route-detail .mee { margin-top: 12px; padding: 10px 12px; border-left: 2px solid var(--bronze); background: rgba(0,0,0,.3); font-size: 14px; }
+.route-detail .mee b { color: var(--bronze-hi); }
+.route-detail .knop { width: 100%; }
+.route-detail .jouw { display: inline-block; margin-top: 10px; padding: 5px 10px; border: 1px solid #ff5a3c; color: #ffb3a8; font: 700 11px/1 var(--carved); letter-spacing: .16em; text-transform: uppercase; }
+.route-komt { display: grid; gap: 8px; }
+.route-komt button { display: grid; grid-template-columns: 58px 1fr auto; align-items: center; gap: 10px; text-align: left; padding: 10px 12px; color: var(--bone); background: rgba(0,0,0,.3); border: 1px solid #4a1c21; font: inherit; }
+.route-komt button .t { font: 700 15px/1 var(--carved); color: var(--bronze-hi); }
+.route-komt button .n { font-size: 15px; line-height: 1.25; } .route-komt button .n small { display: block; color: var(--ash); font-size: 12px; margin-top: 2px; }
+.route-komt button.eigen { border-color: #ff5a3c; } .route-komt button.nu { border-color: var(--bronze); background: rgba(184,149,95,.12); }
+.route-komt button .z { font-size: 18px; color: var(--ash); }
+#tabs button.nieuw::after { content: ""; position: absolute; top: 4px; right: 18%; width: 9px; height: 9px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 8px var(--ember); }
 .paneel { position: relative; padding: 22px 20px 24px; background: var(--paneel); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 16px 44px #000; }
 .paneel h2 { margin: 0 0 10px; font-size: 13px; letter-spacing: .3em; text-align: center; }
 .brief { font: italic 17px/1.6 var(--display); text-align: center; }
@@ -393,6 +412,7 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
 
   <!-- tab: the Round Table -->
   <section class="tab verborgen" id="tab-larp" style="display:grid; gap:18px"></section>
+  <section class="tab verborgen" id="tab-route" style="display:grid; gap:18px"></section>
   <section class="tab verborgen" id="tab-tafel" style="display:grid; gap:18px">
     <section class="paneel"><h2 class="carved">De Ronde Tafel</h2>
       <p class="tocht-onder" id="tafel-onder">Tik op een Wachter om zijn rol en kracht te zien.</p>
@@ -460,6 +480,7 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
 <nav class="tabs" id="tabs" aria-label="Menu">
   <button type="button" data-tab="ik"><img class="ico" src="a/medaillon-vlam.webp" alt="">Ik</button>
   <button type="button" data-tab="tafel"><img class="ico" src="a/medaillon-schild.webp" alt="">Tafel</button>
+  <button type="button" data-tab="route"><img class="ico" src="a/route/kasteel.webp" alt="" style="border-radius:50%">Route</button>
   <button type="button" data-tab="tocht" hidden><img class="ico" src="a/reliek-vlam.webp" alt="">Tocht</button>
   <button type="button" data-tab="larp" hidden><img class="ico" src="a/medaillon-hart.webp" alt="">LARP</button>
   <button type="button" data-tab="regie" hidden><img class="ico" src="a/medaillon-hoorn.webp" alt="">Regie</button>
@@ -475,15 +496,16 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=133"></script>
-<script src="a/godfried.js?v=133"></script>
-<script src="a/spel.js?v=133"></script>
-<script src="a/rollen.js?v=133"></script>
-<script src="a/firebase-config.js?v=133"></script>
-<script src="a/portretten.js?v=133"></script>
-<script src="a/koppeling.js?v=133"></script>
-<script src="a/tafel.js?v=133"></script>
-<script src="a/voorbereiding.js?v=133"></script>
+<script src="a/wachters.js?v=134"></script>
+<script src="a/godfried.js?v=134"></script>
+<script src="a/spel.js?v=134"></script>
+<script src="a/rollen.js?v=134"></script>
+<script src="a/firebase-config.js?v=134"></script>
+<script src="a/portretten.js?v=134"></script>
+<script src="a/koppeling.js?v=134"></script>
+<script src="a/tafel.js?v=134"></script>
+<script src="a/voorbereiding.js?v=134"></script>
+<script src="a/route.js?v=134"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -621,13 +643,14 @@ let tabNu = "ik";
 try { tabNu = localStorage.getItem("kronieken-tab") || "ik"; } catch {}
 // test mode: an organiser can play as an ordinary Wachter on this phone (the regie tab is hidden)
 let alsSpeler = false; try { alsSpeler = localStorage.getItem("kronieken-als-speler") === "ja"; } catch {}
-const beschikbaar = (t) => t === "ik" || t === "tafel" || (t === "larp" && (isLarpLeider() || !!larpStaat.gestart)) || (t === "tocht" && !!publiek.tocht) || (t === "regie" && !!Koppeling.ik?.admin && !alsSpeler) || (t === "verrader" && isVerrader);
+const beschikbaar = (t) => t === "ik" || t === "tafel" || t === "route" || (t === "larp" && (isLarpLeider() || !!larpStaat.gestart)) || (t === "tocht" && !!publiek.tocht) || (t === "regie" && !!Koppeling.ik?.admin && !alsSpeler) || (t === "verrader" && isVerrader);
 function toonTab(t) {
   if (!beschikbaar(t)) t = "ik"; tabNu = t; try { localStorage.setItem("kronieken-tab", t); } catch {}
   document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-current", b.dataset.tab === t));
   const ik = t === "ik";
   for (const id of ["schaduw", "vooraf", "bevel", "spreek-rij", "gedaante", "hulp", "stap2", "stap3", "verzegeld", "rol-blok", "kroniek", "onbekend"]) $(id).classList.toggle("tab-weg", !ik);
   document.querySelector(".slot").classList.toggle("tab-weg", !ik); $("binnen").classList.toggle("tab-weg", !ik);
+  $("tab-route").classList.toggle("verborgen", t !== "route"); if (t === "route") tekenRoute();
   $("tab-tafel").classList.toggle("verborgen", t !== "tafel"); $("tab-larp").classList.toggle("verborgen", t !== "larp"); if (t === "larp") tekenLarp(); $("tocht").classList.toggle("tab-weg", t !== "tocht");
   for (const naam of ["regie", "verrader"]) {
     const fr = $(`frame-${naam}`), aan = t === naam; fr.classList.toggle("verborgen", !aan);
@@ -642,6 +665,43 @@ function tekenIkIcoon() { const b = document.querySelector('#tabs button[data-ta
   if (!oud.classList.contains("gezicht")) { const el = document.createElement("span"); el.className = "ico gezicht"; oud.replaceWith(el); }
   Portret.rond(b.querySelector(".ico"), wachter.naam); }
 Portret.op(tekenIkIcoon);
+// ===== De Route: the map of the weekend; reached haltes come from the tv (publiek.route), the rest opens about half a day ahead =====
+let routeKeuze = null;
+const routeDag = (h) => new Date(h.tijd + "+01:00").toLocaleDateString("nl-NL", { weekday: "short", day: "numeric", month: "short" });
+function routeStaten() { const klaar = new Set(publiek.route || []), nu = Date.now(), wie = wachter?.naam; return { klaar, nu, wie, st: (h) => Route.staat(h, nu, klaar, wie) }; }
+function tekenRoute() {
+  const el = $("tab-route"); if (!el || !window.Route || el.classList.contains("verborgen")) return;
+  const { klaar, nu, wie, st } = routeStaten(), H = window.ROUTE.haltes, volg = Route.volgende(nu, klaar, wie);
+  const kies = H.find((h) => h.id === routeKeuze && st(h) !== "dicht") || null, eigen = (h) => !!wie && !!h.bevel?.includes(wie);
+  const komt = H.filter((h) => st(h) === "open");
+  const knop = (h) => `<button type="button" data-route="${h.id}" class="${eigen(h) ? "eigen" : ""} ${h === volg ? "nu" : ""}"><span class="t">${Route.klok(h)}</span><span class="n">${schoon(h.naam)}<small>${routeDag(h)}${eigen(h) ? " · jouw moment" : h === volg ? " · volgende" : ""}</small></span><span class="z">›</span></button>`;
+  el.innerHTML = `<section class="paneel route-app"><h2 class="carved">De Route</h2><div class="route-kaart">${Route.svg("app", { klaar, nu, wie, portret: (n) => Portret.url(n), passend: true })}</div>
+      <p class="klein" style="margin:10px 2px 0;color:var(--ash);text-align:center">Tik op een halte. Verzegelde haltes openen vanzelf, ongeveer een halve dag van tevoren.</p></section>
+    ${kies ? routeDetail(kies, eigen(kies)) : ""}
+    <section class="paneel"><h2 class="carved" style="margin:0 0 12px;font-size:20px">Wat komt er</h2><div class="route-komt">${komt.map(knop).join("") || '<p class="klein" style="margin:0;color:var(--ash)">Nog alles verzegeld. Godfried onthult de route vanzelf.</p>'}</div></section>`;
+  el.querySelectorAll("[data-route], .route-kaart [data-id]").forEach((b) => (b.onclick = () => { const id = b.dataset.route || b.dataset.id, h = H.find((x) => x.id === id);
+    if (!h || st(h) === "dicht") return; routeKeuze = id; piep("tik", .35); tekenRoute(); requestAnimationFrame(() => $("route-detail")?.scrollIntoView({ behavior: "smooth", block: "start" })); }));
+  setTimeout(routeGezien, 0); // after the page has finished loading (this can run during start-up)
+}
+function routeDetail(h, eigen) {
+  const b = eigen ? window.VOORAF?.bevelen?.[wachter.naam] : null;
+  const naar = h.link === "tocht" ? (beschikbaar("tocht") ? '<button type="button" class="knop" data-naar="tocht">Open de Tocht-pagina</button>' : '<p class="klein" style="color:var(--ash)">De Tocht-pagina opent zodra de Wachterstocht begint.</p>')
+    : h.link === "larp" ? (beschikbaar("larp") ? '<button type="button" class="knop" data-naar="larp">Open de LARP-pagina</button>' : '<p class="klein" style="color:var(--ash)">De LARP-pagina opent zodra Stefan de LARP aftrapt.</p>') : "";
+  return `<section class="paneel route-detail" id="route-detail"><h3>${schoon(h.naam)}</h3><div class="wanneer">${routeDag(h)} · ${Route.klok(h)}${h.sub ? ` · ${schoon(h.sub)}` : ""}</div>
+    ${eigen ? `<span class="jouw">Jouw moment${b ? ` · ${schoon(b.titel)}` : ""}</span>` : ""}
+    ${h.info ? `<p>${schoon(h.info)}</p>` : ""}${h.mee ? `<div class="mee"><b>Meenemen:</b> ${schoon(h.mee)}</div>` : ""}
+    ${h.nav ? `<a class="knop" href="${h.nav}" target="_blank" rel="noopener">Navigeer naar het kasteel</a>` : ""}${naar}</section>`;
+}
+// a red dot on the tab when a halte opened that this Wachter has not seen yet (and a short buzz)
+function routeNieuw() {
+  if (!window.Route) return; const { st } = routeStaten(), open = window.ROUTE.haltes.filter((h) => st(h) === "open").map((h) => h.id);
+  let gezien = []; try { gezien = JSON.parse(lokaal("kronieken-route-gezien") || "[]"); } catch {}
+  const nieuw = open.some((id) => !gezien.includes(id)), b = document.querySelector('#tabs button[data-tab="route"]');
+  if (b) { if (nieuw && !b.classList.contains("nieuw") && tabNu !== "route" && gezien.length && navigator.vibrate) try { navigator.vibrate(60); } catch {} b.classList.toggle("nieuw", nieuw && tabNu !== "route"); }
+}
+function routeGezien() { const { st } = routeStaten(); lokaal("kronieken-route-gezien", JSON.stringify(window.ROUTE.haltes.filter((h) => st(h) !== "dicht").map((h) => h.id))); routeNieuw(); }
+setInterval(() => { routeNieuw(); if (tabNu === "route") tekenRoute(); }, 60000);
+Portret.op(() => { if (tabNu === "route") tekenRoute(); });
 function tekenTabs() {
   document.querySelectorAll("#tabs button").forEach((b) => (b.hidden = !beschikbaar(b.dataset.tab)));
   tekenIkIcoon();
@@ -956,7 +1016,7 @@ $("b-geluid").onclick = () => { oudGeluid(); if (!geluidAan) { muziek?.pause(); 
 
 zetNaam(); klok(); teken(); tekenTabs(); toonTab(tabNu);
 setInterval(() => { klok(); teken(); }, 1000);
-Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; publiekGeladen = true; teken(); tekenTocht(); tekenKroniek(); if (tabNu === "tafel") tekenTafel(); else tekenScorebord(); }, opVerraad: verraad, opLarp,
+Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; publiekGeladen = true; teken(); tekenTocht(); tekenKroniek(); if (tabNu === "tafel") tekenTafel(); else tekenScorebord(); if (tabNu === "route") tekenRoute(); routeNieuw(); }, opVerraad: verraad, opLarp,
   opVooraf: (v) => { mijnVooraf = v || {}; vooraafGetekend = ""; toonVooraf(!$("vooraf").classList.contains("verborgen")); } }).then(() => {
   const ik = Koppeling.ik; if (!ik) return;
   wachter = (window.WACHTERS || []).find((w) => w.naam === ik.naam) || { naam: ik.naam, token: ik.email }; token = wachter.token;

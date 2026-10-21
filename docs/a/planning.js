@@ -35,3 +35,13 @@ window.PLANNING = [
 
 ];
 window.PLANNING_DAGEN = { vooraf: "Vooraf", vr: "Vrijdag 13 nov", za: "Zaterdag 14 nov", zo: "Zondag 15 nov" };
+// is a step done? an organiser's tick (hand: from the database), otherwise what the game itself shows (s: the tv's state). Used by the regie, the tv and the Route.
+window.planKlaar = (p, s, hand = {}) => {
+  const h = hand[p.id] ?? s.planning?.[p.id]; if (h === true || h === false) return h;
+  const log = s.logboek || [], V = window.VOORAF || {}, quiz = (n) => log.some((l) => l.type === "quiz" && l.nr === n);
+  const auto = { stap2: () => Date.now() >= +V.stap2, stap3: () => Date.now() >= +V.stap3, hal: () => !!s.publiek?.hal, quiz1: () => quiz(1), quiz2: () => quiz(2), quiz3: () => quiz(3),
+    hfd2: () => (s.kroniek || []).includes(2), hfd3: () => (s.kroniek || []).includes(3), kist: () => !!s.kistGeopend, finale: () => (s.fin?.einde ?? 0) >= 1 || ["einde", "ere"].includes(s.scherm) }[p.auto];
+  if (auto) return !!auto();
+  if (p.bevel) return p.bevel.every((n) => (s.bevelen || []).includes(n));
+  return false;
+};

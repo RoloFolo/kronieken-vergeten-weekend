@@ -414,7 +414,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 /* the hall of the Round Table: one painting split in layers (floor, edge, table) that load in like a stage */
 .zaal { position: absolute; inset: 0; z-index: 7; overflow: hidden; background: #050203; pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 1.2s ease, visibility 0s linear 1.2s; }
 .stage.in-zaal .zaal { opacity: 1; visibility: visible; pointer-events: auto; transition: opacity 1.2s ease; }
-.stage.in-zaal .hall { opacity: 0; pointer-events: none; }
+.stage.in-zaal .hall, .stage.in-route .hall { opacity: 0; pointer-events: none; }
 .zaal .z-beeld { position: absolute; container-type: inline-size; } /* sized by zaalMaat(): object-fit cover, by hand */
 .zaal .z-vloer, .zaal .z-rand, .zaal .z-vuur { position: absolute; inset: 0; width: 100%; height: 100%; }
 .zaal .z-vloer { transform: scale(1.1); filter: brightness(.55); transition: transform 3.5s cubic-bezier(.2,.8,.3,1), filter 2.5s ease; }
@@ -478,6 +478,19 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .zaal .z-kroniek li p b { font-style: normal; font-weight: 700; color: #ffd98a; }
 .zaal .z-kroniek li small { display: block; margin-top: .3vh; font: 600 clamp(9px, .72vw, 15px)/1 var(--carved); letter-spacing: .16em; text-transform: uppercase; color: var(--ash); }
 .zaal .z-kroniek .zk-leeg { margin-top: 3vh; text-align: center; font: italic clamp(13px, 1.05vw, 22px)/1.4 var(--display); color: var(--ash); }
+/* De Route: the quest map, shown in the rotation and before every halte */
+.route { position: absolute; inset: 0; z-index: 7; overflow: hidden; background: #050203; pointer-events: none; opacity: 0; visibility: hidden; transition: opacity 1.2s ease, visibility 0s linear 1.2s; }
+.stage.in-route .route { opacity: 1; visibility: visible; transition: opacity 1.2s ease; }
+.route .r-kaart, .route .route-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.route .r-titel { position: absolute; top: 2.4vh; left: 0; right: 0; margin: 0; text-align: center; font-size: clamp(22px, 2.3vw, 46px); letter-spacing: .2em; filter: drop-shadow(0 3px 8px #000); }
+.route .r-balk { position: absolute; left: 50%; bottom: 5vh; translate: -50% 0; display: flex; align-items: center; gap: 1.2vw; padding: 1.1vh 2.4vw 1.1vh 1.1vh; border-radius: 999px;
+  background: linear-gradient(180deg, rgba(30,10,12,.94), rgba(10,5,6,.96)); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.4), 0 20px 50px #000; }
+.route .r-balk img { width: 8vh; height: 8vh; border-radius: 50%; object-fit: cover; border: 2px solid #d9b77a; box-shadow: 0 0 24px rgba(255,170,80,.35); }
+.route .r-balk small { display: block; font: 700 clamp(11px, .9vw, 18px)/1 var(--carved); letter-spacing: .24em; text-transform: uppercase; color: var(--ash); }
+.route .r-balk b { display: block; margin-top: .6vh; font: 700 clamp(20px, 2vw, 42px)/1 var(--carved); color: #ffd98a; }
+.route .r-balk span { display: block; margin-top: .5vh; font: italic clamp(14px, 1.2vw, 26px)/1.2 var(--display); color: var(--bone); }
+.route .r-tijd { position: absolute; left: 30vw; right: 30vw; bottom: 1.8vh; height: 5px; background: rgba(255,255,255,.1); border-radius: 3px; overflow: hidden; opacity: 0; transition: opacity .6s; }
+.route .r-tijd.aan { opacity: 1; } .route .r-tijd i { display: block; height: 100%; background: linear-gradient(90deg, var(--ember), #ffb05a); transform-origin: left; }
 .zaal .z-tijd { position: absolute; left: 30vw; right: 30vw; bottom: 2.5vh; height: 5px; background: rgba(255,255,255,.1); border-radius: 3px; overflow: hidden; opacity: 0; transition: opacity .6s; }
 .zaal .z-tijd.aan { opacity: 1; } .zaal .z-tijd i { display: block; height: 100%; background: linear-gradient(90deg, var(--ember), #ffb05a); transform-origin: left; }
 .zaal .z-stoel { position: absolute; width: 5.6cqi; translate: -50% -50%; filter: drop-shadow(0 .5cqi .8cqi #000); opacity: 0; transform: rotate(var(--hoek)) translateY(-2.5cqi) scale(.7);
@@ -1176,6 +1189,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     <div class="d-tekst"><h1 class="carved">De Schaduwkoning is verslagen</h1><p id="d-zin"></p><div class="d-code carved" id="d-code"></div></div>
   </div>
   <div class="witlicht" id="witlicht"></div>
+  <div class="route" id="route" aria-live="polite"><div class="r-kaart" id="r-kaart"></div><h1 class="r-titel carved">De Route</h1><div class="r-balk" id="r-balk"></div><div class="r-tijd" id="r-tijd"><i></i></div></div>
   <div class="zaal" id="zaal" aria-live="polite">
     <div class="z-beeld" id="z-beeld">
       <img class="z-vloer" src="a/zaal/vloer.webp" alt="">
@@ -1207,6 +1221,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
       <div class="puzzel" id="puzzel"></div>
     </section>
     <section class="sub" id="p-tafel"></section>
+    <section class="sub" id="p-route"></section>
     <section class="sub" id="p-ere">
       <div class="ere" id="ere"></div>
     </section>
@@ -1265,17 +1280,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=133"></script>
-<script src="a/godfried.js?v=133"></script>
-<script src="a/spel.js?v=133"></script>
-<script src="a/voorbereiding.js?v=133"></script>
-<script src="a/wachters.js?v=133"></script>
-<script src="a/firebase-config.js?v=133"></script>
-<script src="a/portretten.js?v=133"></script>
-<script src="a/koppeling.js?v=133"></script>
-<script src="a/rollen.js?v=133"></script>
-<script src="a/quests-tv.js?v=133"></script>
-<script src="a/tafel.js?v=133"></script>
+<script src="a/events.js?v=134"></script>
+<script src="a/godfried.js?v=134"></script>
+<script src="a/spel.js?v=134"></script>
+<script src="a/voorbereiding.js?v=134"></script>
+<script src="a/wachters.js?v=134"></script>
+<script src="a/firebase-config.js?v=134"></script>
+<script src="a/portretten.js?v=134"></script>
+<script src="a/koppeling.js?v=134"></script>
+<script src="a/rollen.js?v=134"></script>
+<script src="a/quests-tv.js?v=134"></script>
+<script src="a/planning.js?v=134"></script>
+<script src="a/route.js?v=134"></script>
+<script src="a/tafel.js?v=134"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1964,7 +1981,7 @@ let logboek = [], verraders = [], verrader = null;
 function log(type, data = {}) { logboek.push({ t: Date.now(), type, ...data }); if (logboek.length > 800) logboek.shift(); }
 const medaille = (id) => ZEGELS.find((z) => z.id === id)?.medaille;
 function paneel(naam) {
-  if (zaalTijdelijk && naam !== "tafel" && naam !== zaalTijdelijk.terug) { clearTimeout(zaalTijdelijk.timer); zaalTijdelijk = null; clearInterval(zaalTik); $("z-tijd").classList.remove("aan"); }
+  if (zaalTijdelijk && naam !== zaalTijdelijk.scherm && naam !== zaalTijdelijk.terug) { clearTimeout(zaalTijdelijk.timer); zaalTijdelijk = null; clearInterval(zaalTik); $("z-tijd").classList.remove("aan"); $("r-tijd").classList.remove("aan"); }
   const wasTocht = paneelNu === "tocht", wasFinale = paneelNu;
   paneelNu = naam; const p = $("paneel"); stage.classList.toggle("met-paneel", !!naam); stage.classList.toggle("in-ere", naam === "ere");
   if (naam !== "ere" && !$("aftiteling").hidden) aftitelingUit();
@@ -1980,6 +1997,7 @@ function paneel(naam) {
   stage.classList.toggle("in-kist", naam === "kist"); if (naam === "kist" && !kistBezig) { kistMaat(); tekenKistzaal(); }
   stage.classList.toggle("in-einde", naam === "einde"); if (naam === "einde") tekenEinde();
   stage.classList.toggle("in-finale", naam === "finale"); if (naam === "finale" && wasFinale !== "finale") finaleIn(); if (wasFinale === "finale" && naam !== "finale") finaleUit(naam);
+  stage.classList.toggle("in-route", naam === "route"); if (naam === "route") tekenRoute();
   clearInterval(tafelRonde); stage.classList.toggle("in-zaal", naam === "tafel"); if (naam === "tafel") tekenTvTafel(); else zaalVuurStop();
   if (naam === "tocht") tekenTocht(); if (naam === "kist") tekenKist(); if (naam === "ere") tekenEre();
   meld();
@@ -2810,7 +2828,7 @@ function standNu() {
     tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], ronde, fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20, dieven, planning, quest: quest ? { id: quest.id, naam: quest.naam, fase: quest.fase, lengte: quest.lengte || 0, beste: quest.beste || 0, hoofd: quest.hoofd || null, mee: quest.mee || null, antwoord: quest.antwoord || null } : null, rotatie,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
-    publiek: { ronde, levend: Date.now(), tafel: paneelNu === "tafel", kroniek: [...kroniek], scores: scorebordData(), hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
+    publiek: { ronde, levend: Date.now(), tafel: paneelNu === "tafel", route: window.ROUTE ? [...routeKlaar()] : [], kroniek: [...kroniek], scores: scorebordData(), hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
     tochtOpen, kistGeopend,
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   });
@@ -2939,14 +2957,15 @@ function scorebordData() {
 }
 let sbTimer = null, sbTik = null;
 let zaalTijdelijk = null, zaalTik = null;
-function tafelEven() { // a Wachter asked for the Round Table: 45 seconds, then the tv goes back
+function tafelEven(scherm = "tafel") { // the Round Table (a Wachter asked, or the rotation) or the Route: 45 seconds, then the tv goes back
   if (wakker() || gq || vertelLoopt || !$("verhaal").hidden || ["finale", "ere", "einde", "tocht", "kist"].includes(paneelNu) || !$("groot-moment").hidden) return; // busy: the tv keeps what it shows
-  if (paneelNu === "tafel" && !zaalTijdelijk) return; // the regie put it there: it stays
+  if ((paneelNu === "tafel" || paneelNu === "route") && !zaalTijdelijk) return; // the regie put it there: it stays
   const terug = zaalTijdelijk ? zaalTijdelijk.terug : paneelNu, eind = Date.now() + 45000;
-  clearTimeout(zaalTijdelijk?.timer); clearInterval(zaalTik);
-  if (paneelNu !== "tafel") paneel("tafel");
-  zaalTijdelijk = { terug, timer: setTimeout(() => { zaalTijdelijk = null; clearInterval(zaalTik); $("z-tijd").classList.remove("aan"); if (paneelNu === "tafel") paneel(terug); }, 45000) };
-  const balk = $("z-tijd-balk"); $("z-tijd").classList.add("aan");
+  clearTimeout(zaalTijdelijk?.timer); clearInterval(zaalTik); $("z-tijd").classList.remove("aan"); $("r-tijd").classList.remove("aan");
+  if (paneelNu !== scherm) paneel(scherm);
+  const tijd = $(scherm === "route" ? "r-tijd" : "z-tijd"), balk = tijd.querySelector("i");
+  zaalTijdelijk = { terug, scherm, timer: setTimeout(() => { zaalTijdelijk = null; clearInterval(zaalTik); tijd.classList.remove("aan"); if (paneelNu === scherm) paneel(terug); }, 45000) };
+  tijd.classList.add("aan");
   zaalTik = setInterval(() => { balk.style.transform = `scaleX(${Math.max(0, eind - Date.now()) / 45000})`; }, 200);
 }
 // every five minutes the Guild Hall turns to the Round Table for 45 seconds (the regie can switch it off);
@@ -2957,8 +2976,29 @@ setInterval(() => {
   if (schermNu() !== "hal" || oproepBezig || !$("groot-moment").hidden || questBezig()) return;
   const p = logboek.filter((l) => l.type === "punt" && l.t > rotatieOp).at(-1), W = window.WACHTERS || [];
   rotatieOp = Date.now(); if (p) { const i = W.findIndex((w) => w.naam === p.naam); if (i >= 0) tafelI = i; }
-  tafelEven();
+  const dag = new Date().toDateString(), route = routeBijna() || dag !== rotatieDag || rotatieTel % 3 === 2; rotatieDag = dag; rotatieTel++;
+  tafelEven(route ? "route" : "tafel");
 }, 15000);
+let rotatieTel = 0, rotatieDag = "";
+// ===== De Route: the quest map. Which haltes are reached comes from the planning (the organisers' ticks and the game itself) =====
+let planHand = {};
+function routeKlaar() {
+  const s = { planning, logboek, publiek: { hal: rollenOpen }, kroniek: [...kroniek], kistGeopend, fin, scherm: schermNu(), bevelen: [...bevelGedaan] }, P = window.PLANNING || [];
+  return new Set((window.ROUTE?.haltes || []).filter((h) => { const p = P.find((x) => x.id === h.plan); return p && window.planKlaar?.(p, s, planHand); }).map((h) => h.id));
+}
+const overTijd = (ms) => { const m = Math.round(ms / 60000); return m <= 0 ? "nu" : m < 60 ? `over ${m} min` : `over ${Math.floor(m / 60)} uur${m % 60 >= 10 ? ` ${m % 60} min` : ""}`; };
+function tekenRoute() {
+  if (!window.Route) return; const klaar = routeKlaar(), nu = Date.now();
+  $("r-kaart").innerHTML = Route.svg("tv", { klaar, nu, portret: (n) => PORTRET[n] || Portret.url(n) });
+  const h = Route.volgende(nu, klaar), open = h && Route.staat(h, nu, klaar) !== "dicht";
+  $("r-balk").innerHTML = h ? `<img src="a/godfried/gezicht.webp" alt=""><div><small>Volgende halte</small><b>${open ? schoon(h.naam) : "Nog verzegeld…"}</b><span>${Route.klok(h)} · ${overTijd(Route.tijd(h) - nu)}</span></div>`
+    : '<img src="a/godfried/gezicht.webp" alt=""><div><small>De Route</small><b>Volbracht</b><span>De Kronieken zijn geschreven.</span></div>';
+}
+setInterval(() => { if (paneelNu === "route") tekenRoute(); }, 60000);
+// a halte that is open and starts within 15 minutes: then the rotation shows only the Route
+function routeBijna() { if (!window.Route) return false; const klaar = routeKlaar(), nu = Date.now();
+  return window.ROUTE.haltes.some((h) => !klaar.has(h.id) && Route.staat(h, nu, klaar) === "open" && Route.tijd(h) - nu <= 15 * 60000 && Route.tijd(h) - nu >= -5 * 60000); }
+
 function tafelKies(naam) { // a Wachter tapped someone in his app while the hall is on screen
   if (paneelNu !== "tafel") return; const W = window.WACHTERS || [], i = W.findIndex((w) => w.naam === naam); if (i < 0) return;
   tafelPauze = Date.now() + 30000; tafelI = i; zaalKaart(W[i]);
@@ -3257,7 +3297,7 @@ function bewaakTv(s) {
   document.body.appendChild(el); el.querySelector("button").onclick = () => location.reload();
 }
 if (!window.FIREBASE_CONFIG || new URLSearchParams(location.search).has("tv"))
-  Koppeling.start({ rol: "tv", opStand: laadStand, opOpdracht: (o) => { if (!passief) OPDRACHTEN[o.cmd]?.(o); }, opEre: (t) => { toewijzing = t || {}; }, opVooraf: (v) => { voorafAlles = v || {}; } }).then((v) => { server = !!v; });
+  Koppeling.start({ rol: "tv", opPlanning: (p) => { planHand = p || {}; meld(); if (paneelNu === "route") tekenRoute(); }, opStand: laadStand, opOpdracht: (o) => { if (!passief) OPDRACHTEN[o.cmd]?.(o); }, opEre: (t) => { toewijzing = t || {}; }, opVooraf: (v) => { voorafAlles = v || {}; } }).then((v) => { server = !!v; });
 
 /* ================= Schaduw-event ================= */
 let stem = null, typer = null, stormTimer = null, beslist = false;
