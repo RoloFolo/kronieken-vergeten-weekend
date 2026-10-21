@@ -124,9 +124,9 @@ button[data-rust]:not([data-rust=""])::after { content: "rust " attr(data-rust);
 </main>
 <div class="melding" id="melding" role="status"></div>
 
-<script src="a/wachters.js?v=137"></script>
-<script src="a/firebase-config.js?v=137"></script>
-<script src="a/koppeling.js?v=137"></script>
+<script src="a/wachters.js?v=138"></script>
+<script src="a/firebase-config.js?v=138"></script>
+<script src="a/koppeling.js?v=138"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -160,13 +160,13 @@ const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 function tekenGeheim() { // the secret task the regie gave: only here
   const op = stand.chaos?.opdracht, el = $("geheim"); el.hidden = !op; if (!op) return;
   $("geheim-naam").textContent = op.naam; $("geheim-tekst").textContent = op.tekst;
-  $("geheim-staat").textContent = op.oordeel === "ok" ? "De Schaduwkoning is tevreden: +20 voor jou." : op.oordeel === "nee" ? "De Schaduwkoning zag het anders. Volgende keer beter." : op.gemeld ? "Gemeld. De Schaduwkoning oordeelt…" : "Lukt het ongemerkt? Meld het hieronder.";
+  $("geheim-staat").textContent = op.oordeel === "ok" ? "De Schaduwkoning is tevreden: +20 voor jou, en een extra sabotagekaart voor vandaag." : op.oordeel === "nee" ? "De Schaduwkoning zag het anders. Volgende keer beter." : op.gemeld ? "Gemeld. De Schaduwkoning oordeelt…" : "Lukt het ongemerkt? Meld het hieronder.";
   $("c-geheim").hidden = !!op.gemeld;
 }
 function teken() {
   tekenGeheim();
   const over = kaartenOver(), fiches = stand.fiches || {}, hal = stand.scherm === "hal", inSpel = ["hal", "schaduw"].includes(stand.scherm);
-  $("kaarten").innerHTML = [0, 1, 2].map((i) => `<span class="${i < over ? "" : "op"}"></span>`).join("");
+  $("kaarten").innerHTML = Array.from({ length: Math.max(3, over) }, (_, i) => i).map((i) => `<span class="${i < over ? "" : "op"}"></span>`).join("");
   document.querySelectorAll("#zegels button").forEach((b) => b.classList.toggle("gekozen", b.dataset.id === gekozen));
   document.querySelectorAll("#namen button").forEach((b) => b.classList.toggle("gekozen", b.dataset.n === doel));
   document.querySelectorAll("[data-n]").forEach((s) => { if (s.classList.contains("n")) s.textContent = fiches[s.dataset.n] ?? 0; });

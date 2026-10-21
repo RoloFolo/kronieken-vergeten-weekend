@@ -268,7 +268,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   </section>
   <section class="kaart" data-fase="quests">
     <h2>Wie zei het?</h2>
-    <p class="klein" style="margin:0 0 8px">Typ een uitspraak van dit weekend en tik wie hem zei. De tv toont de uitspraak; jij onthult daarna wie het was. De uitspraken worden bewaard voor de aftiteling.</p>
+    <p class="klein" style="margin:0 0 8px">Typ een uitspraak van dit weekend en tik wie hem zei. De tv toont de uitspraak; jij onthult daarna wie het was. De uitspraken komen vanzelf in de aftiteling, bij “Uitspraken voor de Kronieken”.</p>
     <textarea id="zei-tekst" maxlength="240" rows="2" placeholder="De uitspraak" class="veld"></textarea>
     <div class="namen" id="zei-wie" style="margin-top:8px"></div>
     <button class="goud" id="b-zei" type="button" style="margin-top:8px;width:100%" disabled>Kies eerst uitspraak en wie</button>
@@ -370,7 +370,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div id="geheim-blok" hidden style="margin-top:12px;padding:12px;border:1px dashed var(--ember);border-radius:8px">
       <b class="klein" style="margin:0;display:block;color:#ffb3a8">Geheime opdracht</b>
       <p class="klein" id="geheim-nu" style="margin:6px 0 8px"></p>
-      <div class="rij" id="geheim-oordeel" hidden><button class="goud" type="button" data-ok="1">Klopt: +20 Schaduwpunten</button><button type="button" data-ok="">Niet gelukt</button></div>
+      <div class="rij" id="geheim-oordeel" hidden><button class="goud" type="button" data-ok="1">Klopt: +20 en een extra kaart</button><button type="button" data-ok="">Niet gelukt</button></div>
       <button class="rood" id="b-geheim" type="button" style="width:100%;margin-top:8px">Geef een willekeurige opdracht</button>
       <details style="margin-top:8px"><summary class="klein">Of kies er zelf één</summary><div class="lijst" id="geheim-lijst" style="margin-top:8px"></div></details>
     </div>
@@ -503,17 +503,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=137"></script>
-<script src="a/quests-tv.js?v=137"></script>
-<script src="a/planning.js?v=137"></script>
-<script src="a/godfried.js?v=137"></script>
-<script src="a/spel.js?v=137"></script>
-<script src="a/wachters.js?v=137"></script>
-<script src="a/rollen.js?v=137"></script>
-<script src="a/firebase-config.js?v=137"></script>
-<script src="a/portretten.js?v=137"></script>
-<script src="a/koppeling.js?v=137"></script>
-<script src="a/voorbereiding.js?v=137"></script>
+<script src="a/events.js?v=138"></script>
+<script src="a/quests-tv.js?v=138"></script>
+<script src="a/planning.js?v=138"></script>
+<script src="a/godfried.js?v=138"></script>
+<script src="a/spel.js?v=138"></script>
+<script src="a/wachters.js?v=138"></script>
+<script src="a/rollen.js?v=138"></script>
+<script src="a/firebase-config.js?v=138"></script>
+<script src="a/portretten.js?v=138"></script>
+<script src="a/koppeling.js?v=138"></script>
+<script src="a/voorbereiding.js?v=138"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -934,7 +934,7 @@ $("geheim-oordeel").onclick = (e) => { const b = e.target.closest("button"); if 
 function tekenGeheim(s) {
   const v = s.verrader, op = s.chaos?.opdracht; $("geheim-blok").hidden = !v;
   if (!v) return; const gehad = new Set((s.logboek || []).filter((l) => l.type === "geheim" && l.naam === v.naam).map((l) => l.id));
-  $("geheim-nu").textContent = !op ? `${v.naam} heeft nog geen geheime opdracht.` : `${op.naam}: ${op.tekst} · ${op.oordeel === "ok" ? "✓ goedgekeurd (+20)" : op.oordeel === "nee" ? "afgekeurd" : op.gemeld ? "Hij meldt: volbracht. Klopt dat?" : "nog bezig"}`;
+  $("geheim-nu").textContent = !op ? `${v.naam} heeft nog geen geheime opdracht.` : `${op.naam}: ${op.tekst} · ${op.oordeel === "ok" ? "✓ goedgekeurd (+20 en een extra kaart)" : op.oordeel === "nee" ? "afgekeurd" : op.gemeld ? "Hij meldt: volbracht. Klopt dat?" : "nog bezig"}`;
   $("geheim-oordeel").hidden = !(op?.gemeld && !op.oordeel);
   $("b-geheim").textContent = op ? "Geef een nieuwe willekeurige opdracht" : "Geef een willekeurige opdracht";
   document.querySelectorAll("#geheim-lijst button").forEach((b) => b.classList.toggle("al", gehad.has(b.dataset.g)));
@@ -963,7 +963,7 @@ function tekenXpLijst(s) {
 }
 const WIJZ = { punt: (l) => `${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})${l.waarom ? `: ${l.waarom}` : ""}`, "punt-terug": (l) => `XP teruggedraaid: ${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})`,
   fiche: (l) => `${zegelNaam(l.id)} ${l.n > 0 ? "+" : "−"}${Math.abs(l.n)} fiche`, bevel: (l) => `Bevel volbracht: ${l.naam}`, kist: (l) => `Reliekenkist geopend: ${l.n} relieken`,
-  uitslag: (l) => `Event ${l.goed ? "gehaald" : "mislukt"}`, chaos: () => "Schaduwkaart gespeeld", geheim: (l) => `Geheime opdracht voor ${l.naam}`, "geheim-ok": (l) => `${l.naam} volbracht zijn geheime opdracht (+20 Schaduwpunten)`, quest: (l) => `Quest ${l.naam}: ${l.goed ? "gelukt" : "mislukt"}${l.n ? ` (+${l.n} fiche${l.n > 1 ? "s" : ""})` : ""}`, klasse: (l) => `Klassemoment: ${l.hoofd}, ${l.quest}`, citaat: (l) => `Wie zei het? “${l.tekst}”${l.naam ? ` (${l.naam})` : ""}`, dief: (l) => `De Dieven stalen ${l.n ? `${l.n} fiche${l.n > 1 ? "s" : ""} terug` : "niets"}`, "verrader-einde": () => "Schaduwtijd voorbij" };
+  uitslag: (l) => `Event ${l.goed ? "gehaald" : "mislukt"}`, chaos: () => "Schaduwkaart gespeeld", geheim: (l) => `Geheime opdracht voor ${l.naam}`, "geheim-ok": (l) => `${l.naam} volbracht zijn geheime opdracht (+20 Schaduwpunten, +1 kaart)`, quest: (l) => `Quest ${l.naam}: ${l.goed ? "gelukt" : "mislukt"}${l.n ? ` (+${l.n} fiche${l.n > 1 ? "s" : ""})` : ""}`, klasse: (l) => `Klassemoment: ${l.hoofd}, ${l.quest}`, citaat: (l) => `Wie zei het? “${l.tekst}”${l.naam ? ` (${l.naam})` : ""}`, dief: (l) => `De Dieven stalen ${l.n ? `${l.n} fiche${l.n > 1 ? "s" : ""} terug` : "niets"}`, "verrader-einde": () => "Schaduwtijd voorbij" };
 function tekenWijzigingen(s) {
   // the fiches that follow from XP (they drop in one by one) are left out: the XP line says it already
   const log = s.logboek || [], l = log.filter((x, i) => WIJZ[x.type] && !(x.type === "fiche" && log.slice(Math.max(0, i - 6), i).some((p) => p.type === "punt" && x.t - p.t < 15000))).slice(-25).reverse();

@@ -1280,19 +1280,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=137"></script>
-<script src="a/godfried.js?v=137"></script>
-<script src="a/spel.js?v=137"></script>
-<script src="a/voorbereiding.js?v=137"></script>
-<script src="a/wachters.js?v=137"></script>
-<script src="a/firebase-config.js?v=137"></script>
-<script src="a/portretten.js?v=137"></script>
-<script src="a/koppeling.js?v=137"></script>
-<script src="a/rollen.js?v=137"></script>
-<script src="a/quests-tv.js?v=137"></script>
-<script src="a/planning.js?v=137"></script>
-<script src="a/route.js?v=137"></script>
-<script src="a/tafel.js?v=137"></script>
+<script src="a/events.js?v=138"></script>
+<script src="a/godfried.js?v=138"></script>
+<script src="a/spel.js?v=138"></script>
+<script src="a/voorbereiding.js?v=138"></script>
+<script src="a/wachters.js?v=138"></script>
+<script src="a/firebase-config.js?v=138"></script>
+<script src="a/portretten.js?v=138"></script>
+<script src="a/koppeling.js?v=138"></script>
+<script src="a/rollen.js?v=138"></script>
+<script src="a/quests-tv.js?v=138"></script>
+<script src="a/planning.js?v=138"></script>
+<script src="a/route.js?v=138"></script>
+<script src="a/tafel.js?v=138"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2456,7 +2456,9 @@ function aftitelingHtml() {
           + blok("Dienaars van de Schaduwkoning", [...(ere.besteVerrader ? [regel("Diende hem het best", schoon(ere.besteVerrader), ere.besteVerrader)] : []), ...vr.filter((n) => n !== ere.besteVerrader).slice(0, 4).map((n) => regel("Hand van de Schaduw", `${schoon(n)} · ${v[n]}`, n))]); })()
     + blok("Titels van het weekend", (ere.extra || []).filter((x) => x.soort === "titel").map((x) => regel(schoon(x.tekst), schoon(x.wie || "?"), x.wie)), true)
     + blok("Momenten om nooit te vergeten", (ere.extra || []).filter((x) => x.soort === "moment").map((x) => `<div class="af-anekdote"><p>${schoon(x.tekst)}</p>${x.wie ? `<b>${schoon(x.wie)}</b>` : ""}</div>`), true)
-    + blok("Uitspraken voor de Kronieken", (ere.extra || []).filter((x) => x.soort === "uitspraak").map((x) => `<div class="af-anekdote"><p>“${schoon(x.tekst)}”</p>${x.wie ? `<b>— ${schoon(x.wie)}</b>` : ""}</div>`), true)
+    + blok("Uitspraken voor de Kronieken", [...(ere.extra || []).filter((x) => x.soort === "uitspraak").map((x) => ({ tekst: x.tekst, wie: x.wie })), ...logboek.filter((l) => l.type === "citaat").map((l) => ({ tekst: l.tekst, wie: l.naam }))]
+      .filter((x, i, a) => x.tekst && a.findIndex((y) => y.tekst.trim().toLowerCase() === x.tekst.trim().toLowerCase()) === i) // also the quotes from "Wie zei het?", each once
+      .map((x) => `<div class="af-anekdote"><p>“${schoon(x.tekst)}”</p>${x.wie ? `<b>— ${schoon(x.wie)}</b>` : ""}</div>`), true)
     + blok("Het best in hun rol", NAMEN.filter((n) => ere.inrol?.[n]).map((n) => regel(window.KARAKTER?.[n] ? `${schoon(window.KARAKTER[n].ras)} ${schoon(window.KARAKTER[n].klasse)}` : "Wachter", schoon(n), n)))
     + blok("Het weekend in cijfers", cijfers, true)
     + blok("Met de stemmen van", [regel("De verteller", "Godfried van Bouillon"), regel("De vijand", "De Schaduwkoning")])
@@ -3203,7 +3205,7 @@ const OPDRACHTEN = {
     const t = L.find((x) => x.id === o.id) || (L.filter((x) => !gehad.has(x.id))[0] ? L.filter((x) => !gehad.has(x.id))[Math.floor(Math.random() * L.filter((x) => !gehad.has(x.id)).length)] : L[Math.floor(Math.random() * L.length)]);
     if (!t) return; chaos = { ...chaos, opdracht: { id: t.id, naam: t.naam, tekst: t.tekst, t: Date.now() } }; log("geheim", { naam: verrader.naam, id: t.id }); meld(); },
   "geheim-oordeel": (o) => { const op = chaos.opdracht; if (!op || !verrader) return;
-    if (o.ok) log("geheim-ok", { naam: verrader.naam, id: op.id, naamOpdracht: op.naam });
+    if (o.ok) { log("geheim-ok", { naam: verrader.naam, id: op.id, naamOpdracht: op.naam }); chaosDag(); chaos = { ...chaos, kaarten: chaos.kaarten + 1 }; } // and an extra sabotage card for today
     chaos = { ...chaos, opdracht: { ...op, oordeel: o.ok ? "ok" : "nee" } }; meld(); },
   rotatie: (o) => { rotatie = !!o.aan; rotatieOp = Date.now(); meld(); },
   plan: (o) => { if (!o.id) return; if (o.klaar === true || o.klaar === false) planning[o.id] = o.klaar; else delete planning[o.id]; meld(); }, // the regie's planning: ticked by hand // the phones' button now opens the Round Table hall
