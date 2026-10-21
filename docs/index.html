@@ -1280,19 +1280,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=136"></script>
-<script src="a/godfried.js?v=136"></script>
-<script src="a/spel.js?v=136"></script>
-<script src="a/voorbereiding.js?v=136"></script>
-<script src="a/wachters.js?v=136"></script>
-<script src="a/firebase-config.js?v=136"></script>
-<script src="a/portretten.js?v=136"></script>
-<script src="a/koppeling.js?v=136"></script>
-<script src="a/rollen.js?v=136"></script>
-<script src="a/quests-tv.js?v=136"></script>
-<script src="a/planning.js?v=136"></script>
-<script src="a/route.js?v=136"></script>
-<script src="a/tafel.js?v=136"></script>
+<script src="a/events.js?v=137"></script>
+<script src="a/godfried.js?v=137"></script>
+<script src="a/spel.js?v=137"></script>
+<script src="a/voorbereiding.js?v=137"></script>
+<script src="a/wachters.js?v=137"></script>
+<script src="a/firebase-config.js?v=137"></script>
+<script src="a/portretten.js?v=137"></script>
+<script src="a/koppeling.js?v=137"></script>
+<script src="a/rollen.js?v=137"></script>
+<script src="a/quests-tv.js?v=137"></script>
+<script src="a/planning.js?v=137"></script>
+<script src="a/route.js?v=137"></script>
+<script src="a/tafel.js?v=137"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2075,7 +2075,7 @@ function zaalKroniek() {
     if (l.type === "bevel") return [ico(l.naam), `${wie(l.naam)} volbracht zijn Bevel.`];
     if (l.type === "kist") return [zIco("hart"), `De Reliekenkist ging open: <b>${l.n}</b> relieken gevonden.`];
     if (l.type === "dief") return [zIco("schild"), l.n ? `De Dieven stalen <b>${l.n}</b> fiche${l.n > 1 ? "s" : ""} terug uit de Schaduw.` : "De Dieven kwamen met lege handen terug."];
-    if (l.type === "chaos") return [zIco("vlam"), "In het verborgene sloeg de Schaduw toe."];
+    if (l.type === "chaos" || l.type === "geheim-ok") return [zIco("vlam"), "In het verborgene sloeg de Schaduw toe."];
     return null;
   };
   const lijst = []; for (let i = logboek.length - 1; i >= 0 && lijst.length < 7; i--) { const r = regel(logboek[i]); if (r) lijst.push([...r, logboek[i].t]); }
@@ -2698,6 +2698,8 @@ const valsGehad = new Set();
 const wachterNaam = (n) => (window.WACHTERS || []).find((w) => w.naam === n)?.naam;
 const CHAOS_RAW = {
   // ---- free teases, each with its own rest ----
+  "chaos-opdracht-klaar": (o) => { // the Schaduwdrager says he did his secret task; the regie judges it
+    if (!echteVerrader(o) || !chaos.opdracht || chaos.opdracht.gemeld) return; chaos = { ...chaos, opdracht: { ...chaos.opdracht, gemeld: Date.now() } }; meld(); },
   "chaos-naam": (o) => { // a whispered name on screen: suspicion, or a frame-up
     const n = wachterNaam(o.naam); if (!n || !inHal() || truc || !mag("naam", 90)) return;
     speel(`chaos-naam-${n.toLowerCase()}`, 1); flikker(3000); speel("knars", .35, 1.3);
@@ -2808,7 +2810,7 @@ const CHAOS_RAW = {
 };
 const CHAOS = Object.fromEntries(Object.entries(CHAOS_RAW).map(([cmd, fn]) => [cmd, (o) => {
   if (!echteVerrader(o)) return; const voor = JSON.stringify([chaos, wacht]);
-  fn(o); if (JSON.stringify([chaos, wacht]) !== voor) { log("chaos", { cmd, naam: verrader.naam, id: o.id, naar: o.naar, doel: o.naam }); meld(); }
+  fn(o); if (cmd !== "chaos-opdracht-klaar" && JSON.stringify([chaos, wacht]) !== voor) { log("chaos", { cmd, naam: verrader.naam, id: o.id, naar: o.naar, doel: o.naam }); meld(); }
 }]));
 
 /* ================= link with the laptop server (app/server.mjs) ================= */
@@ -2946,6 +2948,7 @@ function scores() {
   for (const l of logboek) {
     if (l.type === "punt" && l.naam in p) { const xp = xpVan(l); if (l.verrader && xp < 0) v[l.naam] += -xp; else p[l.naam] += xp; }
     if (l.type === "chaos" && l.naam in v) v[l.naam] += 10;
+    if (l.type === "geheim-ok" && l.naam in v) v[l.naam] += 20; // a secret task, done unseen
   }
   return { p, v };
 }
@@ -3195,6 +3198,13 @@ function oproep() { // all music falls silent, then three loud strokes of the ch
 const OPDRACHTEN = {
   oproep: () => oproep(),
   scorebord: () => tafelEven(),
+  geheim: (o) => { // the regie gives the Schaduwdrager a secret task (at random, or the one it chose); a new one replaces the old
+    if (!verrader) return; const L = window.SCHADUW_OPDRACHTEN || [], gehad = new Set(logboek.filter((l) => l.type === "geheim").map((l) => l.id));
+    const t = L.find((x) => x.id === o.id) || (L.filter((x) => !gehad.has(x.id))[0] ? L.filter((x) => !gehad.has(x.id))[Math.floor(Math.random() * L.filter((x) => !gehad.has(x.id)).length)] : L[Math.floor(Math.random() * L.length)]);
+    if (!t) return; chaos = { ...chaos, opdracht: { id: t.id, naam: t.naam, tekst: t.tekst, t: Date.now() } }; log("geheim", { naam: verrader.naam, id: t.id }); meld(); },
+  "geheim-oordeel": (o) => { const op = chaos.opdracht; if (!op || !verrader) return;
+    if (o.ok) log("geheim-ok", { naam: verrader.naam, id: op.id, naamOpdracht: op.naam });
+    chaos = { ...chaos, opdracht: { ...op, oordeel: o.ok ? "ok" : "nee" } }; meld(); },
   rotatie: (o) => { rotatie = !!o.aan; rotatieOp = Date.now(); meld(); },
   plan: (o) => { if (!o.id) return; if (o.klaar === true || o.klaar === false) planning[o.id] = o.klaar; else delete planning[o.id]; meld(); }, // the regie's planning: ticked by hand // the phones' button now opens the Round Table hall
   "tafel-kies": (o) => tafelKies(o.naam),

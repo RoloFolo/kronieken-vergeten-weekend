@@ -13,6 +13,17 @@ window.QUESTS_TV = {
     tekst: "Kijk naar de Zegels. Roep ze daarna samen in de juiste volgorde. Elke ronde komt er één bij." },
 };
 
+// Secret tasks for the Schaduwdrager: the regie gives one (at random or chosen), only his Shadow panel shows it.
+// Done unseen and confirmed by the regie: 20 Shadow points for him (they count for "Wie diende de Schaduwkoning het best?").
+window.SCHADUW_OPDRACHTEN = [
+  { id: "toost", naam: "De Valse Toost", tekst: "Laat de hele groep proosten op iets wat jij verzint, zonder dat iemand vraagt waarom." },
+  { id: "glas", naam: "Het Verkeerde Glas", tekst: "Laat iemand ongemerkt uit jouw glas drinken." },
+  { id: "echo", naam: "De Echo", tekst: "Herhaal vijf keer de laatste woorden van dezelfde Wachter, zonder dat hij het doorheeft." },
+  { id: "woord", naam: "Het Woord", tekst: "Laat drie verschillende Wachters het woord ‘Bouillon’ zeggen, zonder dat je het zelf zegt." },
+  { id: "bevel", naam: "Het Valse Bevel", tekst: "Laat de groep iets doen ‘omdat Godfried het zei’: van plaats wisselen, opstaan of een lied inzetten." },
+  { id: "getuige", naam: "De Valse Getuige", tekst: "Laat bij ‘Wie zei het?’ de groep de verkeerde naam kiezen." },
+];
+
 window.QUEST_POSES = [
   "Het Laatste Avondmaal: allemaal aan één kant van de tafel, de held van de dag in het midden.",
   "De overwinning: de held van de dag op de schouders van de rest.",

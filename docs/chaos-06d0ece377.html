@@ -23,6 +23,8 @@ main { max-width: 480px; margin: 0 auto; display: grid; gap: 16px; }
 h1 { margin: 0; font: 700 26px/1.1 var(--carved); letter-spacing: .14em; text-transform: uppercase; color: transparent; -webkit-text-stroke: 1px var(--ember); text-shadow: 0 0 18px rgba(255,40,40,.6); }
 .kop p { margin: 0; font: italic 15px/1.4 "Libre Baskerville", Georgia, serif; color: var(--ash); }
 h2 { margin: 0 0 10px; font: 700 13px/1 var(--carved); letter-spacing: .2em; text-transform: uppercase; color: var(--ember); }
+.geheim { border-color: #c4161f; box-shadow: inset 0 0 0 1px rgba(255,90,60,.5), 0 0 30px rgba(196,22,31,.35); }
+.geheim-naam { margin: 0 0 6px; font: 700 18px/1.2 var(--carved, serif); letter-spacing: .06em; text-transform: uppercase; color: #ffb3a8; }
 .kaart { background: linear-gradient(180deg, rgba(40,6,10,.85), rgba(12,3,5,.95)); border: 1px solid var(--line); box-shadow: inset 0 0 0 1px rgba(196,22,31,.35), 0 10px 30px #000; border-radius: 10px; padding: 14px; }
 .status { display: flex; justify-content: space-between; align-items: center; font-size: 14px; color: var(--ash); }
 .punt { width: 10px; height: 10px; border-radius: 50%; background: #444; display: inline-block; margin-right: 8px; }
@@ -65,6 +67,14 @@ button[data-rust]:not([data-rust=""])::after { content: "rust " attr(data-rust);
     <span><span class="punt" id="punt"></span><span id="verbinding">Verbinden…</span></span>
     <span class="kaarten" id="kaarten" aria-label="Sabotagekaarten vandaag"></span>
   </div>
+
+  <section class="kaart geheim" id="geheim" hidden>
+    <h2>Geheime opdracht van de Schaduwkoning</h2>
+    <p class="geheim-naam" id="geheim-naam"></p>
+    <p id="geheim-tekst"></p>
+    <p class="klein" id="geheim-staat"></p>
+    <button class="groot" id="c-geheim" type="button">Volbracht, en niemand zag het</button>
+  </section>
 
   <section class="kaart">
     <h2>Kies je doelwit</h2>
@@ -114,9 +124,9 @@ button[data-rust]:not([data-rust=""])::after { content: "rust " attr(data-rust);
 </main>
 <div class="melding" id="melding" role="status"></div>
 
-<script src="a/wachters.js?v=136"></script>
-<script src="a/firebase-config.js?v=136"></script>
-<script src="a/koppeling.js?v=136"></script>
+<script src="a/wachters.js?v=137"></script>
+<script src="a/firebase-config.js?v=137"></script>
+<script src="a/koppeling.js?v=137"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -147,7 +157,14 @@ function kaartenOver() { const d = new Date().toLocaleDateString("sv-SE"); retur
 const RUST = { "c-omen": "omen", "c-naam": "naam", "c-duister": "duister", "c-dertien": "dertien", "c-vals": "vals", "c-zwerm": "zwerm", "c-lied": "lied", "c-hoop": "hoop", "c-bliksem": "bliksem", "c-raaf": "raaf" };
 const rustOver = (k) => Math.max(0, Math.ceil(((stand.chaos?.wacht || {})[k] - Date.now()) / 1000)) || 0;
 const mmss = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+function tekenGeheim() { // the secret task the regie gave: only here
+  const op = stand.chaos?.opdracht, el = $("geheim"); el.hidden = !op; if (!op) return;
+  $("geheim-naam").textContent = op.naam; $("geheim-tekst").textContent = op.tekst;
+  $("geheim-staat").textContent = op.oordeel === "ok" ? "De Schaduwkoning is tevreden: +20 voor jou." : op.oordeel === "nee" ? "De Schaduwkoning zag het anders. Volgende keer beter." : op.gemeld ? "Gemeld. De Schaduwkoning oordeelt…" : "Lukt het ongemerkt? Meld het hieronder.";
+  $("c-geheim").hidden = !!op.gemeld;
+}
 function teken() {
+  tekenGeheim();
   const over = kaartenOver(), fiches = stand.fiches || {}, hal = stand.scherm === "hal", inSpel = ["hal", "schaduw"].includes(stand.scherm);
   $("kaarten").innerHTML = [0, 1, 2].map((i) => `<span class="${i < over ? "" : "op"}"></span>`).join("");
   document.querySelectorAll("#zegels button").forEach((b) => b.classList.toggle("gekozen", b.dataset.id === gekozen));
@@ -176,6 +193,7 @@ function teken() {
 }
 setInterval(teken, 1000);
 const stuur = async (cmd, extra = {}, tekst) => { const ok = await Koppeling.stuur({ cmd, ...(FIRE ? {} : { token: TOKEN }), ...extra }); if (ok === false) melding("Dat kwam niet aan: de verbinding hapert. Probeer het zo opnieuw."); else if (tekst) melding(tekst); };
+$("c-geheim").onclick = () => { if (confirm("Echt volbracht, zonder dat iemand het doorhad?")) stuur("chaos-opdracht-klaar", {}, "Gemeld bij de Schaduwkoning."); };
 $("c-omen").onclick = () => stuur("chaos-omen", {}, "De Schaduw fluistert…");
 $("c-naam").onclick = () => stuur("chaos-naam", { naam: doel }, `Je fluistert ${doel}…`);
 $("c-duister").onclick = () => stuur("chaos-duister", {}, "Het licht dooft.");

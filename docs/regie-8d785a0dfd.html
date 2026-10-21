@@ -367,6 +367,13 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
   <section class="kaart" data-fase="hall">
     <h2>De Schaduwdrager</h2>
     <p class="klein" id="verrader-nu">Nog geen Schaduwdrager aangewezen.</p>
+    <div id="geheim-blok" hidden style="margin-top:12px;padding:12px;border:1px dashed var(--ember);border-radius:8px">
+      <b class="klein" style="margin:0;display:block;color:#ffb3a8">Geheime opdracht</b>
+      <p class="klein" id="geheim-nu" style="margin:6px 0 8px"></p>
+      <div class="rij" id="geheim-oordeel" hidden><button class="goud" type="button" data-ok="1">Klopt: +20 Schaduwpunten</button><button type="button" data-ok="">Niet gelukt</button></div>
+      <button class="rood" id="b-geheim" type="button" style="width:100%;margin-top:8px">Geef een willekeurige opdracht</button>
+      <details style="margin-top:8px"><summary class="klein">Of kies er zelf één</summary><div class="lijst" id="geheim-lijst" style="margin-top:8px"></div></details>
+    </div>
     <button class="rood groot" id="b-v-geen" type="button" style="margin-top:10px" hidden>Geen Schaduwdrager (bijvoorbeeld 's nachts)</button>
     <p class="klein" style="margin:12px 0 6px">Hoe lang is de volgende Schaduwdrager het?</p>
     <div class="duur" id="v-duur"><button type="button" data-u="2">2 uur</button><button type="button" data-u="4" class="nu">4 uur</button><button type="button" data-u="6">6 uur</button></div>
@@ -496,17 +503,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=136"></script>
-<script src="a/quests-tv.js?v=136"></script>
-<script src="a/planning.js?v=136"></script>
-<script src="a/godfried.js?v=136"></script>
-<script src="a/spel.js?v=136"></script>
-<script src="a/wachters.js?v=136"></script>
-<script src="a/rollen.js?v=136"></script>
-<script src="a/firebase-config.js?v=136"></script>
-<script src="a/portretten.js?v=136"></script>
-<script src="a/koppeling.js?v=136"></script>
-<script src="a/voorbereiding.js?v=136"></script>
+<script src="a/events.js?v=137"></script>
+<script src="a/quests-tv.js?v=137"></script>
+<script src="a/planning.js?v=137"></script>
+<script src="a/godfried.js?v=137"></script>
+<script src="a/spel.js?v=137"></script>
+<script src="a/wachters.js?v=137"></script>
+<script src="a/rollen.js?v=137"></script>
+<script src="a/firebase-config.js?v=137"></script>
+<script src="a/portretten.js?v=137"></script>
+<script src="a/koppeling.js?v=137"></script>
+<script src="a/voorbereiding.js?v=137"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -626,7 +633,7 @@ function bewaakTvs(s) {
     : "Let op: er schrijven twee tv-vensters tegelijk. Sluit alle tabbladen met ?tv behalve één.";
 }
 function toon(s) {
-  bewaakTvs(s); $("b-rotatie").classList.toggle("aan", s.rotatie !== false); tekenXpLijst(s); tekenWijzigingen(s); tekenDieven(s); tekenQuest(s); tekenPlan(s); queueMicrotask(() => tekenBalk(s));
+  bewaakTvs(s); $("b-rotatie").classList.toggle("aan", s.rotatie !== false); tekenXpLijst(s); tekenWijzigingen(s); tekenDieven(s); tekenQuest(s); tekenGeheim(s); tekenPlan(s); queueMicrotask(() => tekenBalk(s));
   // what the traitor did that everyone can see anyway: a frozen seal (no fiches) and a cursed Wachter
   const ijsTxt = Object.entries(s.ijs || {}).filter(([, t]) => t > Date.now()).map(([id, t]) => `❄ ${ZEGELS.find((z) => z.id === id)?.naam} is bevroren tot ${new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}. Tik op ❄ om te ontdooien.`);
   if (s.vloek) ijsTxt.push(`Vervloekt: ${s.vloek.naam}. ${s.vloek.tekst}`);
@@ -919,6 +926,19 @@ $("b-reset-ja").onclick = () => { stuur({ cmd: "events-opnieuw" }); $("reset-vra
 const DIEVEN = Object.entries(window.KARAKTER || {}).filter(([, k]) => k.klasse === "Thief").map(([n]) => n);
 $("dief-knoppen").innerHTML = [0, 1, 2, 3, 4].map((n) => `<button type="button" data-n="${n}" disabled>${n ? `+${n}` : "Niets"}</button>`).join("");
 $("b-dieven").onclick = () => stuur({ cmd: "dieven" });
+// the Schaduwdrager's secret task: only his panel shows it; he reports, the regie judges
+$("geheim-lijst").innerHTML = (window.SCHADUW_OPDRACHTEN || []).map((o) => `<button type="button" data-g="${o.id}" style="text-align:left"><b>${o.naam}</b><br><span class="klein">${o.tekst}</span></button>`).join("");
+$("geheim-lijst").onclick = (e) => { const b = e.target.closest("button"); if (b) tweeKeer(b, "Tik nog eens: opdracht geven", () => stuur({ cmd: "geheim", id: b.dataset.g })); };
+$("b-geheim").onclick = () => tweeKeer($("b-geheim"), "Zeker? Hij krijgt hem meteen", () => stuur({ cmd: "geheim" }));
+$("geheim-oordeel").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "geheim-oordeel", ok: !!b.dataset.ok }); };
+function tekenGeheim(s) {
+  const v = s.verrader, op = s.chaos?.opdracht; $("geheim-blok").hidden = !v;
+  if (!v) return; const gehad = new Set((s.logboek || []).filter((l) => l.type === "geheim" && l.naam === v.naam).map((l) => l.id));
+  $("geheim-nu").textContent = !op ? `${v.naam} heeft nog geen geheime opdracht.` : `${op.naam}: ${op.tekst} · ${op.oordeel === "ok" ? "✓ goedgekeurd (+20)" : op.oordeel === "nee" ? "afgekeurd" : op.gemeld ? "Hij meldt: volbracht. Klopt dat?" : "nog bezig"}`;
+  $("geheim-oordeel").hidden = !(op?.gemeld && !op.oordeel);
+  $("b-geheim").textContent = op ? "Geef een nieuwe willekeurige opdracht" : "Geef een willekeurige opdracht";
+  document.querySelectorAll("#geheim-lijst button").forEach((b) => b.classList.toggle("al", gehad.has(b.dataset.g)));
+}
 $("b-rotatie").onclick = () => { const aan = !$("b-rotatie").classList.contains("aan"); $("b-rotatie").classList.toggle("aan", aan); stuur({ cmd: "rotatie", aan }); };
 $("dief-knoppen").onclick = (e) => { const b = e.target.closest("button"); if (b) tweeKeer(b, "Zeker?", () => stuur({ cmd: "dief-buit", n: +b.dataset.n })); };
 $("b-dief-weg").onclick = () => stuur({ cmd: "groot-weg" });
@@ -943,7 +963,7 @@ function tekenXpLijst(s) {
 }
 const WIJZ = { punt: (l) => `${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})${l.waarom ? `: ${l.waarom}` : ""}`, "punt-terug": (l) => `XP teruggedraaid: ${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})`,
   fiche: (l) => `${zegelNaam(l.id)} ${l.n > 0 ? "+" : "−"}${Math.abs(l.n)} fiche`, bevel: (l) => `Bevel volbracht: ${l.naam}`, kist: (l) => `Reliekenkist geopend: ${l.n} relieken`,
-  uitslag: (l) => `Event ${l.goed ? "gehaald" : "mislukt"}`, chaos: () => "Schaduwkaart gespeeld", quest: (l) => `Quest ${l.naam}: ${l.goed ? "gelukt" : "mislukt"}${l.n ? ` (+${l.n} fiche${l.n > 1 ? "s" : ""})` : ""}`, klasse: (l) => `Klassemoment: ${l.hoofd}, ${l.quest}`, citaat: (l) => `Wie zei het? “${l.tekst}”${l.naam ? ` (${l.naam})` : ""}`, dief: (l) => `De Dieven stalen ${l.n ? `${l.n} fiche${l.n > 1 ? "s" : ""} terug` : "niets"}`, "verrader-einde": () => "Schaduwtijd voorbij" };
+  uitslag: (l) => `Event ${l.goed ? "gehaald" : "mislukt"}`, chaos: () => "Schaduwkaart gespeeld", geheim: (l) => `Geheime opdracht voor ${l.naam}`, "geheim-ok": (l) => `${l.naam} volbracht zijn geheime opdracht (+20 Schaduwpunten)`, quest: (l) => `Quest ${l.naam}: ${l.goed ? "gelukt" : "mislukt"}${l.n ? ` (+${l.n} fiche${l.n > 1 ? "s" : ""})` : ""}`, klasse: (l) => `Klassemoment: ${l.hoofd}, ${l.quest}`, citaat: (l) => `Wie zei het? “${l.tekst}”${l.naam ? ` (${l.naam})` : ""}`, dief: (l) => `De Dieven stalen ${l.n ? `${l.n} fiche${l.n > 1 ? "s" : ""} terug` : "niets"}`, "verrader-einde": () => "Schaduwtijd voorbij" };
 function tekenWijzigingen(s) {
   // the fiches that follow from XP (they drop in one by one) are left out: the XP line says it already
   const log = s.logboek || [], l = log.filter((x, i) => WIJZ[x.type] && !(x.type === "fiche" && log.slice(Math.max(0, i - 6), i).some((p) => p.type === "punt" && x.t - p.t < 15000))).slice(-25).reverse();
