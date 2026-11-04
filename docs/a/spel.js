@@ -21,13 +21,13 @@ window.SPEL = {
   drempel: 12,            // fiches waarbij een Zegel zijn akte vanzelf opent; anders eerst een beproeving
   aktes: [
     { zegel: "vlam", naam: "Het Vuur der Herinnering", soort: "herinnering",
-      intro: "Het vuur onthoudt alles, ook wat jullie liever vergeten. Het toont jullie gênantste momenten… raad van welke Wachter ze zijn." },
+      intro: "Het vuur onthoudt alles, ook wat jullie liever vergeten. Drie Wachters vertellen hetzelfde verhaal: één spreekt de waarheid, twee liegen. Wie van de drie?" },
     { zegel: "hoorn", naam: "Het Feestmaal", soort: "weekend",
       intro: "De Hoorn heeft alles gezien wat jullie dit weekend deden. Bewijs dat jullie het zelf ook nog weten." },
     { zegel: "schild", naam: "De Eed der Broeders", soort: "eed",
-      intro: "Ieder van jullie draagt een stuk van de eed. Het staat nu in jouw persoonlijke boodschap van Godfried. Alleen samen, in de juiste volgorde, spreken jullie hem uit." },
+      intro: "Weten jullie nog wat wij zwoeren bij de Eerste Dronk? Leg de woorden in de juiste volgorde… en hef dan samen het glas." },
     { zegel: "hart", naam: "De Schaduwdragers", soort: "verrader",
-      intro: "Het hele weekend droeg telkens een ander de Schaduw, verborgen tussen jullie. Wijs ze aan." },
+      intro: "Het hele weekend droeg telkens een ander de Schaduw. Wie diende de Schaduwkoning het best… en wie liet hem in de steek?" },
   ],
 
   // Akte I. Per Wachter een herinnering (anekdote) en eventueel een foto in docs/a/fotos/. In te vullen door de organisatoren.
@@ -39,6 +39,8 @@ window.SPEL = {
 
   // Akte III. Eén fragment per Wachter, in de juiste volgorde. Welke rol welk fragment draagt, staat in rollen.js;
   // het fragment verschijnt op de persoonlijke pagina zodra de regie Akte III opent.
+  // Act III: Godfried's toast of the First Drink, in pieces
+  proost: ["Bij het vuur", "dat nooit dooft,", "bij de hoorn", "die nooit leeg raakt,", "bij het schild", "van onze broederschap,", "en bij het hart", "van de Ardennen:", "Wij waken.", "Proost!"],
   eed: {
     fragmenten: ["Bij het vuur", "dat nooit dooft", "bij de hoorn", "die nooit leeg raakt", "bij het schild", "van onze broederschap", "en het hart", "van de Ardennen", "zweren wij", "voor elkaar", "te waken."],
     aanwijzingen: [

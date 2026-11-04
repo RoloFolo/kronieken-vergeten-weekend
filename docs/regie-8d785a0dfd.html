@@ -360,6 +360,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
       <div class="rij"><input type="number" inputmode="numeric" id="a-getal-in" placeholder="Getal"><button class="goud" id="b-getal" type="button">Antwoord</button></div>
     </div>
     <div class="namen" id="a-zegels" hidden></div>
+    <div class="namen" id="a-tegels" hidden style="grid-template-columns:repeat(2,1fr)"></div>
     <button class="goud groot" id="b-eed" type="button" hidden>De eed is juist uitgesproken</button>
     <p class="klein" id="a-uitleg"></p>
   </section>
@@ -458,7 +459,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 
   <section class="kaart" data-fase="vooraf">
     <h2>Persoonlijke links</h2>
-    <p class="klein" style="margin:0 0 10px">Stuur iedere Wachter vooraf zijn eigen link. Tot het weekend toont hij het aftellen; na de Eerste Dronk breekt het zegel en verschijnt zijn rol. In Akte III staat daar ook zijn stuk van de eed.</p>
+    <p class="klein" style="margin:0 0 10px">Stuur iedere Wachter vooraf zijn eigen link. Tot het weekend toont hij het aftellen; na de Eerste Dronk breekt het zegel en verschijnt zijn rol.</p>
     <div class="lijst" id="links"></div>
   </section>
 
@@ -503,17 +504,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=139"></script>
-<script src="a/quests-tv.js?v=139"></script>
-<script src="a/planning.js?v=139"></script>
-<script src="a/godfried.js?v=139"></script>
-<script src="a/spel.js?v=139"></script>
-<script src="a/wachters.js?v=139"></script>
-<script src="a/rollen.js?v=139"></script>
-<script src="a/firebase-config.js?v=139"></script>
-<script src="a/portretten.js?v=139"></script>
-<script src="a/koppeling.js?v=139"></script>
-<script src="a/voorbereiding.js?v=139"></script>
+<script src="a/events.js?v=140"></script>
+<script src="a/quests-tv.js?v=140"></script>
+<script src="a/planning.js?v=140"></script>
+<script src="a/godfried.js?v=140"></script>
+<script src="a/spel.js?v=140"></script>
+<script src="a/wachters.js?v=140"></script>
+<script src="a/rollen.js?v=140"></script>
+<script src="a/firebase-config.js?v=140"></script>
+<script src="a/portretten.js?v=140"></script>
+<script src="a/koppeling.js?v=140"></script>
+<script src="a/voorbereiding.js?v=140"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -548,7 +549,8 @@ $("a-namen").onclick = (e) => { const b = e.target.closest("button"); if (b) stu
 $("a-zegels").innerHTML = ZEGELS.map((z) => `<button type="button" data-z="${z.id}"><img src="${z.img}" alt="" style="width:36px;height:36px"><br>${z.naam.split(" ")[0]}</button>`).join("");
 $("a-zegels").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "antwoord", w: b.dataset.z }); };
 $("b-getal").onclick = () => { const v = $("a-getal-in").value.trim(); if (v !== "") { stuur({ cmd: "antwoord", w: v }); $("a-getal-in").value = ""; } };
-$("b-eed").onclick = () => stuur({ cmd: "antwoord", w: "eed" });
+$("b-eed").onclick = () => stuur({ cmd: "antwoord", w: "verder" });
+$("a-tegels").onclick = (e) => { const b = e.target.closest("button"); if (b && !b.disabled) stuur({ cmd: "antwoord", w: `tegel:${b.dataset.i}` }); };
 // the traitor: pick a Wachter, then send him his personal link in a private message
 try { $("v-ww").value = localStorage.getItem("kronieken-chaos-ww") || ""; } catch {}
 $("v-ww").oninput = () => { try { localStorage.setItem("kronieken-chaos-ww", $("v-ww").value); } catch {} toonLink(); };
@@ -671,11 +673,14 @@ function toon(s) {
   const p = S.aktes[fin.nu], vol = (s.fiches?.[p.zegel] ?? 0) >= S.drempel, open = vol || fin.open?.[p.zegel], klaar = !!fin.opgelost?.[p.zegel];
   $("fin-status").textContent = klaar ? "Deze akte is volbracht." : open ? "De akte staat open op de tv." : "Zegel is niet vol genoeg: de groep moet eerst een beproeving doorstaan (bedenk er zelf één, of laat de D20 beslissen).";
   const info = s.aktevraag || {}, bezig = open && !klaar;
-  $("a-namen").hidden = !(bezig && ["herinnering", "verrader"].includes(p.soort));
-  $("a-getal").hidden = !(bezig && p.soort === "weekend" && !info.zegelVraag);
+  $("a-namen").hidden = !(bezig && !info.knop && (["herinnering", "verrader"].includes(p.soort) || (p.soort === "weekend" && !info.zegelVraag)));
+  document.querySelectorAll("#a-namen button").forEach((b) => b.classList.toggle("goud", !!info.drie?.includes(b.dataset.n))); // Act I: the three in front
+  $("a-getal").hidden = true;
   $("a-zegels").hidden = !(bezig && p.soort === "weekend" && info.zegelVraag);
-  $("b-eed").hidden = !(bezig && p.soort === "eed");
-  $("a-uitleg").textContent = !bezig ? "" : { herinnering: "Tik de naam die de groep noemt.", weekend: "Vul het antwoord van de groep in.", eed: "Druk pas als de groep de hele eed in de juiste volgorde heeft uitgesproken.", verrader: "Tik de naam die de groep beschuldigt." }[p.soort];
+  $("a-tegels").hidden = !(bezig && p.soort === "eed" && info.tegels);
+  if (info.tegels) $("a-tegels").innerHTML = info.tegels.map((t) => `<button type="button" data-i="${t.i}" ${t.gelegd ? "disabled" : ""}>${t.tekst}</button>`).join("");
+  $("b-eed").hidden = !(bezig && info.knop); $("b-eed").textContent = info.knop || "";
+  $("a-uitleg").textContent = !bezig ? "" : { herinnering: info.knop ? "Na de schandpaal: druk op de knop." : "Wie van de drie (goud gemarkeerd)? Tik de naam die de groep kiest. Eén keer raden.", weekend: "Tik wat de groep antwoordt. Eén keer raden.", eed: "Tik de stukken in de volgorde die de groep roept. Fout = de Schaduw lacht, opnieuw.", verrader: "Tik de naam die de groep noemt. Twee kansen per vraag." }[p.soort];
   verraderNu = s.verrader || null; toonLink();
   const uur = (t) => new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
   $("verrader-nu").textContent = verraderNu ? `Verrader nu: ${verraderNu.naam}, sinds ${uur(verraderNu.sinds)}${verraderNu.tot ? ` tot ${uur(verraderNu.tot)}` : ""}.` : "Er is nu geen Schaduwdrager.";

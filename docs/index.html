@@ -803,6 +803,17 @@ body:has(#verhaal.toost:not([hidden])) .crest { opacity: 0; }
 .af-twee .af-regel b { font-size: clamp(15px, 1.4vw, 30px); }
 .af-twee .af-anekdote { max-width: none; margin: 0 0 1.6vh; text-align: left; }
 .af-anekdote { margin: 0 auto 2.4vh; max-width: 62vw; }
+.af-anekdote.met-gezicht { display: grid; grid-template-columns: auto 1fr; gap: 1.4vw; align-items: center; text-align: left; }
+.af-anekdote.met-gezicht img { width: 7vw; aspect-ratio: 2 / 3; object-fit: cover; border: 2px solid #b8955f; box-shadow: 0 0 0 2px #000; }
+/* Act I: the three in front; Act III: the pieces of the toast */
+#g-inhoud .drie { display: flex; justify-content: center; gap: 2.2vw; margin: 2vh 0 1vh; }
+#g-inhoud .drie figure { margin: 0; display: grid; justify-items: center; gap: .8vh; }
+#g-inhoud .drie img { height: 19vh; aspect-ratio: 2 / 3; object-fit: cover; border: 2px solid #d9b77a; box-shadow: 0 0 0 2px #000, 0 0 24px rgba(226,50,60,.4); }
+#g-inhoud .drie figcaption { font-size: clamp(16px, 1.5vw, 30px); color: #ffd98a; letter-spacing: .06em; text-transform: uppercase; }
+#g-inhoud .tegels { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.2vh 1vw; margin: 2vh auto; max-width: 60vw; }
+#g-inhoud .tegel { padding: 1vh 1.3vw; border: 1px solid #b8955f; background: rgba(20,10,8,.85); font: italic clamp(16px, 1.5vw, 30px)/1.2 var(--display); color: #f3e3c4; transition: opacity .4s, transform .4s; }
+#g-inhoud .tegel.weg { opacity: .12; transform: scale(.9); }
+#g-inhoud .proost-zin { min-height: 2.6em; }
 .af-anekdote p { margin: 0 0 .6vh; font: italic clamp(15px, 1.45vw, 30px)/1.45 var(--display); color: #fff3dc; }
 .af-anekdote b { font: 700 clamp(13px, 1.2vw, 24px)/1.2 var(--carved); letter-spacing: .08em; color: #d9b77a; }
 .af-anekdote b small { font: italic 400 .85em var(--display); letter-spacing: 0; color: #e8d6b4; opacity: .8; }
@@ -1280,19 +1291,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=139"></script>
-<script src="a/godfried.js?v=139"></script>
-<script src="a/spel.js?v=139"></script>
-<script src="a/voorbereiding.js?v=139"></script>
-<script src="a/wachters.js?v=139"></script>
-<script src="a/firebase-config.js?v=139"></script>
-<script src="a/portretten.js?v=139"></script>
-<script src="a/koppeling.js?v=139"></script>
-<script src="a/rollen.js?v=139"></script>
-<script src="a/quests-tv.js?v=139"></script>
-<script src="a/planning.js?v=139"></script>
-<script src="a/route.js?v=139"></script>
-<script src="a/tafel.js?v=139"></script>
+<script src="a/events.js?v=140"></script>
+<script src="a/godfried.js?v=140"></script>
+<script src="a/spel.js?v=140"></script>
+<script src="a/voorbereiding.js?v=140"></script>
+<script src="a/wachters.js?v=140"></script>
+<script src="a/firebase-config.js?v=140"></script>
+<script src="a/portretten.js?v=140"></script>
+<script src="a/koppeling.js?v=140"></script>
+<script src="a/rollen.js?v=140"></script>
+<script src="a/quests-tv.js?v=140"></script>
+<script src="a/planning.js?v=140"></script>
+<script src="a/route.js?v=140"></script>
+<script src="a/tafel.js?v=140"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2180,23 +2191,40 @@ const zegelNaamVan = (id) => ZEGELS.find((z) => z.id === id)?.naam ?? id;
 const tijd = (t) => new Date(t).toLocaleString("nl-NL", { weekday: "long", hour: "2-digit", minute: "2-digit" });
 const schoon = (t) => String(t).replace(/[<>&]/g, "");
 
-// --- Akte II: questions about the weekend, answered from the app's own log ---
+// --- Akte II: light questions about the weekend, from what the game kept (quotes, XP, class moments); frozen once asked ---
 function weekendVragen() {
-  const tel = (type, f = () => true) => logboek.filter((l) => l.type === type && f(l)).length;
+  if (fin.weekendVragen) return fin.weekendVragen;
+  const h = (s) => hashNaam(s + ronde), uniek = (l, k) => l.filter((x, i) => l.findIndex((y) => k(y) === k(x)) === i), kies = (l, n, z) => [...l].sort((x, y) => h(z + x.t) - h(z + y.t)).slice(0, n);
   const verlies = {}; for (const l of logboek) if (l.type === "fiche" && l.n < 0) verlies[l.id] = (verlies[l.id] || 0) + 1;
   const meest = Math.max(0, ...Object.values(verlies)), zwaarst = Object.keys(verlies).filter((k) => verlies[k] === meest);
-  return [
-    { vraag: "Hoeveel Schaduw-events hebben jullie dit weekend doorstaan?", antwoord: [tel("uitslag", (l) => l.goed)] },
-    { vraag: "Hoe vaak heeft de Schaduw zich gevoed?", antwoord: [tel("uitslag", (l) => !l.goed)] },
-    { vraag: "Hoe vaak is de D20 geworpen?", antwoord: [tel("d20")] },
-    { vraag: "Welk Zegel verloor de meeste fiches?", zegel: true, antwoord: zwaarst.length ? zwaarst : ZEGELS.map((z) => z.id) },
-    { vraag: "Hoeveel relieken vonden jullie in het kasteel?", antwoord: [relieken.size] },
-  ];
+  const citaten = kies(uniek(logboek.filter((l) => l.type === "citaat" && NAMEN.includes(l.naam) && l.tekst), (l) => l.tekst.trim().toLowerCase()), 2, "c").map((l) => ({ vraag: `Wie zei: “${l.tekst}”?`, antwoord: [l.naam] }));
+  const xp = kies(uniek(logboek.filter((l) => l.type === "punt" && NAMEN.includes(l.naam) && xpVan(l) > 0 && String(l.waarom || "").length > 6), (l) => l.waarom.trim().toLowerCase()), 2, "x").map((l) => ({ vraag: `Wie kreeg XP voor: “${l.waarom}”?`, antwoord: [l.naam] }));
+  const klasse = kies(uniek(logboek.filter((l) => l.type === "klasse" && NAMEN.includes(l.hoofd)), (l) => l.quest), 1, "k").map((l) => ({ vraag: `Wie was de hoofdpersoon bij het klassemoment “${l.quest}”?`, antwoord: [l.hoofd] }));
+  const p = scores().p, top = Math.max(...NAMEN.map((n) => p[n] || 0)), meestFiches = Math.max(...ZEGELS.map((z) => z.fiches));
+  const basis = [citaten[0], xp[0], klasse[0], citaten[1], xp[1]].filter(Boolean).slice(0, 4);
+  const extra = [{ vraag: "Wie heeft op dit moment de meeste XP aan de Ronde Tafel?", antwoord: NAMEN.filter((n) => (p[n] || 0) === top) },
+    { vraag: "Welk Zegel verloor dit weekend de meeste fiches?", zegel: true, antwoord: zwaarst.length ? zwaarst : ZEGELS.map((z) => z.id) },
+    { vraag: "Welk Zegel heeft nu de meeste fiches?", zegel: true, antwoord: ZEGELS.filter((z) => z.fiches === meestFiches).map((z) => z.id) }];
+  return (fin.weekendVragen = [...basis, ...extra].slice(0, 5));
 }
-// --- Akte IV: the traitor periods (each one a different Wachter) with the sabotage done in them ---
+// --- Akte IV: three questions about the Schaduwdragers: who served best, who let the Shadow down, who pressed every button at once ---
 function verraadPeriodes() {
   return verraders.map((v, i) => { const tot = v.tot ?? verraders[i + 1]?.van ?? null;
     return { ...v, tot, sporen: logboek.filter((l) => l.type === "chaos" && l.naam === v.naam && l.t >= v.van && (!tot || l.t < tot)) }; });
+}
+function schaduwVragen() {
+  if (fin.schaduwVragen) return fin.schaduwVragen;
+  const dragers = [...new Set(verraders.map((p) => p.naam))].filter((n) => NAMEN.includes(n)); if (!dragers.length) return (fin.schaduwVragen = []);
+  const v = scores().v, daden = (n) => logboek.filter((l) => (l.type === "chaos" || l.type === "geheim-ok") && l.naam === n).length;
+  const tempo = (n) => { const t = logboek.filter((l) => l.type === "chaos" && l.naam === n).map((l) => l.t).sort((a, b) => a - b); let best = 0;
+    for (let i = 0; i < t.length; i++) { let j = i; while (j < t.length && t[j] - t[i] <= 10 * 60000) j++; best = Math.max(best, j - i); } return best; };
+  const uiterst = (f, hoog) => { const w = dragers.map(f), m = hoog ? Math.max(...w) : Math.min(...w); return { m, wie: dragers.filter((n) => f(n) === m) }; };
+  const best = uiterst((n) => v[n] || 0, true), q = [{ vraag: "Wie diende de Schaduwkoning het best?", antwoord: best.wie }];
+  if (dragers.length > 1) {
+    const lui = uiterst(daden, false); q.push({ vraag: lui.m === 0 ? "Wie was Schaduwdrager… en liet de Schaduwkoning volledig in de steek?" : "Wie deed als Schaduwdrager het minst voor de Schaduwkoning?", antwoord: lui.wie });
+    const druk = uiterst(tempo, true); if (druk.m > 1) q.push({ vraag: "Wie drukte als een bezetene alle knoppen achter elkaar in?", antwoord: druk.wie });
+  }
+  return (fin.schaduwVragen = q);
 }
 const SPOOR = { "chaos-steel": (l) => `er verdween een fiche uit de ${zegelNaamVan(l.id)}`, "chaos-schaduw": () => "de Schaduw werd opgeroepen", "chaos-omen": () => "er klonk een fluistering",
   "chaos-bliksem": () => "de bliksem sloeg onverwacht in",
@@ -2205,58 +2233,76 @@ const SPOOR = { "chaos-steel": (l) => `er verdween een fiche uit de ${zegelNaamV
   "chaos-vloek": (l) => `${l.doel} werd vervloekt`, "chaos-ijs": (l) => `de ${zegelNaamVan(l.id)} bevroor`,
   "chaos-wissel": (l) => `een fiche sprong van de ${zegelNaamVan(l.id)} naar de ${zegelNaamVan(l.naar)}`,
   "chaos-dobbel": () => "de dobbelsteen werd vervloekt", "chaos-macht": () => "de Schaduwkoning nam de Hall over", "chaos-raaf": () => "de raaf schrok op", "chaos-valse-hoop": (l) => `de ${zegelNaamVan(l.id)} steeg… en zakte weer` };
-// Act I: per Wachter one embarrassing moment he sent in about himself (the earliest), in an order fixed per round;
-// whoever sent nothing ends up at the pillory. Without Firebase (a local test) the example memories from spel.js.
+// Act I: "Wie van de drie?" At most five embarrassing moments, each from a different Wachter (who sent several is picked once).
+// Three Wachters come to the front: the one it happened to and two others (whoever stood in front least goes first). All three tell it
+// as their own story, two bluff; the rest guess, once. Whoever sent nothing goes to the pillory first. The other moments go into the credits.
+// Without Firebase (a local test) the example memories from spel.js.
 const hashNaam = (s) => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
-function schandeLijst() {
-  if (!Object.keys(voorafAlles).length) return S.herinneringen;
-  const eigen = {}; for (const a of anekdotes()) if (a.van && (!a.over || a.over === a.van)) (eigen[a.van] ||= []).push(a);
-  return [...NAMEN].sort((x, y) => hashNaam(x + ronde) - hashNaam(y + ronde))
-    .map((n) => eigen[n]?.length ? { wie: n, tekst: [...eigen[n]].sort((p, q) => (p.t || 0) - (q.t || 0))[0].tekst } : { wie: n, schandpaal: true });
+const VUUR_MAX = 5;
+function vuurBron() {
+  if (!Object.keys(voorafAlles).length) return (S.herinneringen || []).filter((h) => h.tekst && NAMEN.includes(h.wie)).map((h) => ({ wie: h.wie, tekst: h.tekst, t: 0 }));
+  return anekdotes().filter((a) => a.van && (!a.over || a.over === a.van)).map((a) => ({ wie: a.van, tekst: a.tekst, t: a.t || 0 }));
 }
+function vuurRondes() {
+  if (fin.vuur) return fin.vuur;
+  const eigen = {}; for (const a of vuurBron()) (eigen[a.wie] ||= []).push(a);
+  const voor = Object.fromEntries(NAMEN.map((n) => [n, 0]));
+  const rondes = Object.keys(eigen).sort((x, y) => hashNaam(x + ronde) - hashNaam(y + ronde)).slice(0, VUUR_MAX).map((wie, k) => {
+    const l = eigen[wie], a = l[hashNaam(wie + ronde + "a") % l.length]; voor[wie]++;
+    const mee = NAMEN.filter((n) => n !== wie).sort((x, y) => voor[x] - voor[y] || hashNaam(x + ronde + k) - hashNaam(y + ronde + k)).slice(0, 2); mee.forEach((n) => voor[n]++);
+    return { wie, tekst: a.tekst, drie: [wie, ...mee].sort((x, y) => hashNaam(x + k + ronde + "d") - hashNaam(y + k + ronde + "d")) };
+  });
+  return (fin.vuur = rondes);
+}
+const vuurLeeg = () => Object.keys(voorafAlles).length ? NAMEN.filter((n) => !anekdotes().some((a) => a.van === n)) : (S.herinneringen || []).filter((h) => !h.tekst).map((h) => h.wie);
 const schandpaalGehoord = new Set();
 function schandpaalStem(i) { if (schandpaalGehoord.has(`${ronde}-${i}`)) return; schandpaalGehoord.add(`${ronde}-${i}`); setTimeout(() => { speel("fin/fout-2", .9); setTimeout(() => gZeg("schandpaal", () => {}, 12000), 2200); }, 900); }
-function aktePuzzel(a) {
+const fragmentTekst = () => (S.proost || []).join(" ");
+function aktePuzzel(a, stil) {
   const v = fin.voortgang[a.zegel] ||= [];
   if (a.soort === "herinnering") {
-    const lijst = schandeLijst(), i = lijst.findIndex((_, n) => !v.includes(n));
-    const sterren = lijst.map((h, n) => `<span class="ster ${v.includes(n) ? "aan" : ""}">${v.includes(n) ? schoon(h.wie) : "✦"}</span>`).join("");
+    const rondes = vuurRondes(), leeg = vuurLeeg(), stappen = [...(leeg.length ? ["paal"] : []), ...rondes.map((_, n) => n)], i = stappen.findIndex((x) => !v.includes(x));
+    const sterren = rondes.map((r, n) => `<span class="ster ${v.includes(n) ? "aan" : ""}">${v.includes(n) ? schoon(r.wie) : "✦"}</span>`).join("");
     if (i < 0) return { klaar: true, html: `<div class="sterren">${sterren}</div>` };
-    const h = lijst[i];
-    if (h.schandpaal) { schandpaalStem(i); return { html: `<div class="sterren">${sterren}</div><div class="schandpaal">${Array.from({ length: 18 }, (_, n) => `<i style="left:${(n * 37) % 100}%;animation-delay:${-(n * .7) % 6}s"></i>`).join("")}<b class="carved">${schoon(h.wie)}</b></div><p class="vraag">${schoon(h.wie)} liet het vuur leeg.</p><p class="klein-tv">Pek en veren! Aan de schandpaal vertelt hij zijn gênantste moment, hier en nu. Daarna tikt de regie zijn naam aan.</p>`,
-      hint: "Hij staat al aan de schandpaal.", check: (w) => String(w).toLowerCase() === h.wie.toLowerCase(), goed: () => v.push(i) }; }
-    return { html: `<div class="sterren">${sterren}</div>${h.foto ? `<img class="herinnering-foto" src="${h.foto}" alt="">` : ""}<p class="vraag">${schoon(h.tekst)}</p><p class="klein-tv">Wie is deze Wachter?</p>`,
-      hint: `Zijn naam begint met een ${h.wie[0]}.`, check: (w) => String(w).toLowerCase() === h.wie.toLowerCase(), goed: () => v.push(i) };
+    const st = stappen[i];
+    if (st === "paal") { if (!stil) schandpaalStem(0); return { html: `<div class="sterren">${sterren}</div><div class="schandpaal">${Array.from({ length: 18 }, (_, n) => `<i style="left:${(n * 37) % 100}%;animation-delay:${-(n * .7) % 6}s"></i>`).join("")}<b class="carved">${leeg.map(schoon).join(" · ")}</b></div><p class="vraag">${leeg.length > 1 ? "Zij lieten" : `${schoon(leeg[0])} liet`} het vuur leeg.</p><p class="klein-tv">Pek en veren! Aan de schandpaal vertelt ieder zijn gênantste moment, hier en nu.</p>`,
+      knop: "Schandpaal gehad: verder", check: (w) => w === "verder", goed: () => v.push("paal") }; }
+    const r = rondes[st];
+    return { html: `<div class="sterren">${sterren}</div><p class="vraag">${schoon(r.tekst)}</p><div class="drie">${r.drie.map((n) => `<figure>${PORTRET[n] ? `<img src="${PORTRET[n]}" alt="">` : ""}<figcaption class="carved">${schoon(n)}</figcaption></figure>`).join("")}</div><p class="klein-tv">Wie van de drie? Ieder vertelt het als zijn eigen verhaal: twee bluffen, één spreekt de waarheid. Eén keer raden.</p>`,
+      drie: r.drie, hint: `Zijn naam begint met een ${r.wie[0]}.`, check: (w) => String(w).toLowerCase() === r.wie.toLowerCase(), goed: () => v.push(st), mis: () => v.push(st), onthul: r.wie };
   }
   if (a.soort === "weekend") {
     const vragen = weekendVragen(), i = vragen.findIndex((_, n) => !v.includes(n));
     const bekers = vragen.map((_, n) => `<span class="beker ${v.includes(n) ? "vol" : ""}"></span>`).join("");
     if (i < 0) return { klaar: true, html: `<div class="bekers">${bekers}</div>` };
-    const q = vragen[i];
-    return { html: `<div class="bekers">${bekers}</div><p class="vraag">${q.vraag}</p>`,
-      hint: q.zegel ? `Het was de ${zegelNaamVan(q.antwoord[0])}.` : `Het antwoord is ${q.antwoord[0]}.`,
-      check: (w) => q.antwoord.map(String).includes(String(w).toLowerCase()), goed: () => v.push(i) };
+    const q = vragen[i], uit = q.zegel ? zegelNaamVan(q.antwoord[0]) : q.antwoord.join(" of ");
+    return { html: `<div class="bekers">${bekers}</div><p class="vraag">${schoon(q.vraag)}</p><p class="klein-tv">Eén keer raden.</p>`, zegelVraag: !!q.zegel,
+      hint: q.zegel ? `Het Zegel begint met een ${zegelNaamVan(q.antwoord[0])[0]}.` : `De naam begint met een ${q.antwoord[0][0]}.`,
+      check: (w) => q.antwoord.map((x) => String(x).toLowerCase()).includes(String(w).toLowerCase()), goed: () => v.push(i), mis: () => v.push(i), onthul: uit };
   }
-  if (a.soort === "eed") {
-    if (v.includes("klaar")) return { klaar: true, html: `<p class="vraag eed">“${S.eed.fragmenten.join(" ")}”</p>` };
-    return { html: `<ol class="aanwijzingen">${S.eed.aanwijzingen.map((t) => `<li>${t}</li>`).join("")}</ol><p class="klein-tv">Ga in de juiste volgorde staan en spreek de eed samen uit.</p>`,
-      hint: `De eed begint met: “${S.eed.fragmenten.slice(0, 3).join(" ")}…”`, check: (w) => w === "eed", goed: () => v.push("klaar") };
+  if (a.soort === "eed") { // Godfried's toast of the First Drink, in pieces: the group calls them in order, the regie taps them, the toast grows on the screen
+    const F = S.proost || [], volgorde = F.map((_, n) => n).sort((x, y) => hashNaam("p" + x + ronde) - hashNaam("p" + y + ronde)), gelegd = v.filter((x) => typeof x === "number");
+    if (gelegd.length >= F.length) return { klaar: true, html: `<p class="vraag eed">“${schoon(fragmentTekst())}”</p>` };
+    return { html: `<p class="vraag eed proost-zin">${gelegd.length ? `“${schoon(gelegd.map((n) => F[n]).join(" "))}…”` : "…"}</p><div class="tegels">${volgorde.map((n) => `<span class="tegel ${gelegd.includes(n) ? "weg" : ""}">${schoon(F[n])}</span>`).join("")}</div><p class="klein-tv">De proost van de Eerste Dronk. Roep de woorden in de juiste volgorde.</p>`,
+      tegels: volgorde.map((n) => ({ i: n, tekst: F[n], gelegd: gelegd.includes(n) })), hint: `Het volgende stuk: “${F[gelegd.length]}”`,
+      check: (w) => w === `tegel:${gelegd.length}`, goed: () => v.push(gelegd.length) };
   }
-  // Schaduwdrager
-  const periodes = verraadPeriodes(), i = periodes.findIndex((_, n) => !v.includes(n));
-  const kaarten = periodes.map((p, n) => `<div class="periode ${v.includes(n) ? "ontmaskerd" : ""} ${n === i ? "nu" : ""}">
-    <div class="wanneer">${tijd(p.van)}${p.tot ? ` – ${tijd(p.tot)}` : " – nu"}</div>
-    <ul>${p.sporen.length ? p.sporen.map((l) => `<li>${new Date(l.t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}: ${SPOOR[l.cmd]?.(l) ?? "er gebeurde iets vreemds"}</li>`).join("") : "<li>Geen sporen. Deze Schaduwdrager hield zich gedeisd…</li>"}</ul>
-    <div class="wie-was">${v.includes(n) ? schoon(p.naam) : "?"}</div></div>`).join("");
-  if (!periodes.length) return { klaar: true, html: `<p class="vraag">Er was dit weekend geen Schaduwdrager actief. De Schaduw stond er alleen voor.</p>` };
-  if (i < 0) return { klaar: true, html: `<div class="periodes">${kaarten}</div>` };
-  return { html: `<div class="periodes">${kaarten}</div><p class="klein-tv">Wie was de Schaduwdrager in de gemarkeerde periode?</p>`,
-    hint: `De Schaduwdrager van deze periode heeft ${periodes[i].naam.length} letters in zijn naam.`, check: (w) => String(w).toLowerCase() === periodes[i].naam.toLowerCase(), goed: () => v.push(i) };
+  // the Schaduwdragers: three questions, the periods with their traces beside them (the names show once the act is done)
+  const vragen = schaduwVragen(), periodes = verraadPeriodes(), i = vragen.findIndex((_, n) => !v.includes(n)), af = i < 0;
+  if (!vragen.length) return { klaar: true, html: `<p class="vraag">Er was dit weekend geen Schaduwdrager actief. De Schaduw stond er alleen voor.</p>` };
+  const kaarten = periodes.map((p) => `<div class="periode ${af ? "ontmaskerd" : ""}"><div class="wanneer">${tijd(p.van)}${p.tot ? ` – ${tijd(p.tot)}` : " – nu"}</div>
+    <ul>${p.sporen.length ? p.sporen.slice(-4).map((l) => `<li>${new Date(l.t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}: ${SPOOR[l.cmd]?.(l) ?? "er gebeurde iets vreemds"}</li>`).join("") : "<li>Geen sporen. Deze Schaduwdrager hield zich gedeisd…</li>"}</ul>
+    <div class="wie-was">${af ? schoon(p.naam) : "?"}</div></div>`).join("");
+  if (af) return { klaar: true, html: `<div class="periodes">${kaarten}</div>` };
+  const q = vragen[i], sleutel = `${a.zegel}-${i}`, fout = fin.mis?.[sleutel] || 0;
+  return { html: `<div class="periodes">${kaarten}</div><p class="vraag">${schoon(q.vraag)}</p><p class="klein-tv">${fout ? "Nog één kans…" : "Twee kansen."}</p>`,
+    hint: `De naam begint met een ${q.antwoord[0][0]}.`, check: (w) => q.antwoord.map((x) => x.toLowerCase()).includes(String(w).toLowerCase()), goed: () => v.push(i),
+    mis: () => { (fin.mis ||= {})[sleutel] = fout + 1; if (fout + 1 >= 2) v.push(i); }, onthul: fout + 1 >= 2 ? q.antwoord.join(" of ") : null, schaduw: true };
 }
 function aktePuzzelInfo() {
-  const a = S.aktes[fin.nu]; if (!a) return null;
-  const vragen = a.soort === "weekend" ? weekendVragen() : null, stap = fin.voortgang[a.zegel]?.length ?? 0;
-  return { soort: a.soort, zegelVraag: !!(vragen && vragen[stap]?.zegel), stap };
+  const a = S.aktes[fin.nu]; if (!a || fin.opgelost[a.zegel] || !(fin.open[a.zegel] || zegelVol(a.zegel))) return a ? { soort: a.soort, stap: 0 } : null;
+  const p = aktePuzzel(a, true);
+  return { soort: a.soort, stap: fin.voortgang[a.zegel]?.length ?? 0, zegelVraag: !!p.zegelVraag, drie: p.drie || null, tegels: p.tegels || null, knop: p.knop || null };
 }
 // The finale plays in the last vault. Opening (first time): the Shadow King mocks, Godfried explains. Each act: the camera
 // flies to its socket, the title rises while Godfried reads the act, then the question card comes up. A right answer flashes
@@ -2298,7 +2344,7 @@ function tekenFinale() {
 function kaartHtml() {
   const a = S.aktes[fin.nu], open = fin.open[a.zegel] || zegelVol(a.zegel), stap = fin.voortgang[a.zegel]?.length ?? 0;
   let h = `<div class="g-kop"><img src="${medaille(a.zegel)}" alt=""><span>Akte ${ROMEIN[fin.nu]}</span><b class="carved">${a.naam}</b></div>`;
-  if (fin.opgelost[a.zegel] && a.soort === "eed") h += `<p class="vraag eed">“${S.eed.fragmenten.join(" ")}”</p>`; // the sworn oath stays on the card
+  if (fin.opgelost[a.zegel] && a.soort === "eed") h += `<p class="vraag eed">“${schoon(fragmentTekst())}”</p><p class="klein-tv">Hef het glas!</p>`; // the toast stays on the card
   if (fin.opgelost[a.zegel]) return h + `<p class="vraag">Volbracht. Het ${["eerste", "tweede", "derde", "vierde"][fin.nu]} cijfer is <b>${S.slotcode[fin.nu]}</b>.</p>`;
   if (!open) return h + `<p class="dichtbord">Dit Zegel is niet sterk genoeg om zijn geheim prijs te geven. Doorsta eerst een laatste beproeving.</p>`;
   const p = aktePuzzel(a);
@@ -2324,7 +2370,6 @@ function finaleIn() {
 function finaleUit(naar) { gStop(); kaartWeg(); titel(null, false); if (naar !== "einde") { halMuziek.vol(.5, 3000); fade(vuur, .12, 2500); fade(wind, .2, 2500); } }
 function akteIn(stil) {
   gStop(); tekenFinale(); const a = S.aktes[fin.nu];
-  if (a?.soort === "eed" && !fin.eedOpen) { fin.eedOpen = true; meld(); } // the phones show their piece of the oath as soon as Act III begins, also when the finale gets there by itself
   if (S.aktes.every((x) => fin.opgelost[x.zegel])) { kaartWeg(); return gCam(""); }
   if (stil && fin.intro?.[a.zegel]) { gCam("vraag"); return kaartIn(); }
   kaartWeg(); titel(a, false); gCam("nis", fin.nu);
@@ -2351,12 +2396,18 @@ function antwoord(w) {
   const k = $("g-kaart"); k.classList.remove("goed", "fout"); void k.offsetWidth;
   if (p.check(w)) {
     p.goed(); flits("goud"); k.classList.add("goed"); speel("fin/sfx-goed", .9);
-    if (aktePuzzel(a).klaar) { fin.opgelost[a.zegel] = true; meld(); if (a.soort === "eed") { kaartWissel(); return cijferValt(fin.nu, 10000); } return cijferValt(fin.nu); } // the act is complete: its digit falls into the lock
+    if (aktePuzzel(a).klaar) { fin.opgelost[a.zegel] = true; meld(); if (a.soort === "eed") { kaartWissel(); setTimeout(() => { stemKanaal(speel("dronk-5", 1)); speel("proost-klink", 1); setTimeout(() => speel("gejuich", .8), 600); }, 900); return cijferValt(fin.nu, 9000); } return cijferValt(fin.nu); } // the act is complete: its digit falls into the lock
     meld(); gT(350, () => gZeg(gWillekeurig("goed"), () => {}, 5000)); gT(2000, kaartWissel); gT(2400, () => { gTimers = []; });
   } else {
     flits("rood"); k.classList.add("fout"); speel("fin/sfx-fout", .8); speel("donder", .45);
     const s = $("g-stempel"); s.textContent = "De Schaduw lacht"; s.classList.remove("aan"); void s.offsetWidth; s.classList.add("aan");
-    gT(450, () => gZeg(gWillekeurig("fout"), () => { gTimers = []; }, 7000));
+    if (p.schaduw) { const g = $("gewelf"); g.classList.add("rood", "beeft"); speel("donder-hard", 1); setTimeout(() => flits("rood"), 700); setTimeout(() => g.classList.remove("rood", "beeft"), 2600); } // the Shadow King himself, for a moment
+    gT(450, () => gZeg(gWillekeurig(p.schaduw ? "lach" : "fout"), () => { gTimers = []; }, 7000));
+    if (p.mis) { // one guess (Acts I and II) or two (Act IV): then the answer shows and the act goes on
+      p.mis(); meld(); if (p.onthul) s.textContent = `Het was ${p.onthul}`;
+      if (aktePuzzel(a).klaar) { fin.opgelost[a.zegel] = true; meld(); gT(3600, () => cijferValt(fin.nu)); }
+      else gT(3400, () => { kaartWissel(); gTimers = []; });
+    }
   }
 }
 function cijferValt(i, lees = 0) {
@@ -2449,7 +2500,7 @@ function aftitelingHtml() {
       : blok("De Wachters", NAMEN.map((n) => regel(rol(n) ? `${schoon(rol(n).naam)}<br><small>${schoon(rol(n).titel)}</small>` : "Wachter", schoon(n), n)), true))
     + blok("Ere van de Wachters", ereLijst().slice(0, 15).map((x) => regel(schoon(x.t.naam), schoon(x.wie), x.wie)))
     + blok("De bevelen van Godfried", NAMEN.filter((n) => window.VOORAF?.bevelen?.[n]).map((n) => regel(`${schoon(window.VOORAF.bevelen[n].titel)}${bevelGedaan.has(n) ? " ✓" : ""}`, schoon(n), n)), true)
-    + blok("De gênantste momenten", anekdotes().map((a) => `<div class="af-anekdote"><p>“${schoon(a.tekst)}”</p><b>${schoon(a.van || a.over)}${a.over && a.van && a.over !== a.van ? ` <small>· over ${schoon(a.over)}</small>` : ""}</b></div>`), true)
+    + blok("De gênantste momenten", anekdotes().filter((a) => !(fin.vuur || []).some((r) => r.tekst === a.tekst)).map((a) => { const wie = a.over || a.van; return `<div class="af-anekdote met-gezicht">${PORTRET[wie] ? `<img src="${PORTRET[wie]}" alt="">` : ""}<div><p>“${schoon(a.tekst)}”</p><b>${schoon(a.van || a.over)}${a.over && a.van && a.over !== a.van ? ` <small>· over ${schoon(a.over)}</small>` : ""}</b></div></div>`; }), true)
     + (FOTOS.length ? `<h2 class="carved">Het weekend in beeld</h2><div class="af-fotos">${FOTOS.map((u) => `<img src="${u}" alt="">`).join("")}</div>` : "")
     + (() => { const { p, v } = scores(), kl = NAMEN.filter((n) => p[n]).sort((a, b) => p[b] - p[a]), vr = NAMEN.filter((n) => v[n]).sort((a, b) => v[b] - v[a]);
         return blok("Het klassement", kl.map((n, i) => regel(`${i + 1}.`, `${schoon(n)} · ${p[n]} XP`, n)), true)
