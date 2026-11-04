@@ -1291,19 +1291,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=140"></script>
-<script src="a/godfried.js?v=140"></script>
-<script src="a/spel.js?v=140"></script>
-<script src="a/voorbereiding.js?v=140"></script>
-<script src="a/wachters.js?v=140"></script>
-<script src="a/firebase-config.js?v=140"></script>
-<script src="a/portretten.js?v=140"></script>
-<script src="a/koppeling.js?v=140"></script>
-<script src="a/rollen.js?v=140"></script>
-<script src="a/quests-tv.js?v=140"></script>
-<script src="a/planning.js?v=140"></script>
-<script src="a/route.js?v=140"></script>
-<script src="a/tafel.js?v=140"></script>
+<script src="a/events.js?v=141"></script>
+<script src="a/godfried.js?v=141"></script>
+<script src="a/spel.js?v=141"></script>
+<script src="a/voorbereiding.js?v=141"></script>
+<script src="a/wachters.js?v=141"></script>
+<script src="a/firebase-config.js?v=141"></script>
+<script src="a/portretten.js?v=141"></script>
+<script src="a/koppeling.js?v=141"></script>
+<script src="a/rollen.js?v=141"></script>
+<script src="a/quests-tv.js?v=141"></script>
+<script src="a/planning.js?v=141"></script>
+<script src="a/route.js?v=141"></script>
+<script src="a/tafel.js?v=141"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -3319,6 +3319,10 @@ const OPDRACHTEN = {
   "geen-verrader": () => { eindigVerraad("regie"); meld(); },
   ontdooi: (o) => { if (ijs[o.id]) { ijs[o.id] = Date.now() - 1; tekenIjs(); } },
   hint: () => hintVoor(),
+  "akte-gehaald": () => { // the regie skips the rest of an act (not fun, taking too long): it counts as done and its digit falls
+    if (paneelNu !== "finale") return; const a = S.aktes[fin.nu]; if (!a || fin.opgelost[a.zegel]) return;
+    gStop(); titel(null, false); fin.opgelost[a.zegel] = true; (fin.intro ||= {})[a.zegel] = true; meld();
+    gCam("vraag"); kaartIn(); flits("goud"); speel("fin/sfx-goed", .9); cijferValt(fin.nu, 1500); },
   "ere-speel": () => { ere.speelt = true; const n = ere.stap == null || ere.stap < 0 || ere.stap >= ereLijst().length ? 0 : ere.stap; ereStap(n, true); },
   aftiteling: () => { ereStop(); aftiteling(); },
   "aftiteling-uit": () => aftitelingUit(),

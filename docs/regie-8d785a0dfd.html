@@ -354,6 +354,9 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
       <button class="rood" id="b-beproeving" type="button">Beproeving voltooid</button>
       <button class="goud" id="b-hint" type="button">Hint (kost een reliek)</button>
     </div>
+    <div class="rij" style="margin:0 0 10px;grid-template-columns:1fr">
+      <button id="b-akte-gehaald" type="button">Akte gehaald: door naar het cijfer</button>
+    </div>
     <h2>Antwoord van de groep</h2>
     <div class="namen" id="a-namen" hidden></div>
     <div id="a-getal" hidden>
@@ -504,17 +507,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=140"></script>
-<script src="a/quests-tv.js?v=140"></script>
-<script src="a/planning.js?v=140"></script>
-<script src="a/godfried.js?v=140"></script>
-<script src="a/spel.js?v=140"></script>
-<script src="a/wachters.js?v=140"></script>
-<script src="a/rollen.js?v=140"></script>
-<script src="a/firebase-config.js?v=140"></script>
-<script src="a/portretten.js?v=140"></script>
-<script src="a/koppeling.js?v=140"></script>
-<script src="a/voorbereiding.js?v=140"></script>
+<script src="a/events.js?v=141"></script>
+<script src="a/quests-tv.js?v=141"></script>
+<script src="a/planning.js?v=141"></script>
+<script src="a/godfried.js?v=141"></script>
+<script src="a/spel.js?v=141"></script>
+<script src="a/wachters.js?v=141"></script>
+<script src="a/rollen.js?v=141"></script>
+<script src="a/firebase-config.js?v=141"></script>
+<script src="a/portretten.js?v=141"></script>
+<script src="a/koppeling.js?v=141"></script>
+<script src="a/voorbereiding.js?v=141"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -549,6 +552,7 @@ $("a-namen").onclick = (e) => { const b = e.target.closest("button"); if (b) stu
 $("a-zegels").innerHTML = ZEGELS.map((z) => `<button type="button" data-z="${z.id}"><img src="${z.img}" alt="" style="width:36px;height:36px"><br>${z.naam.split(" ")[0]}</button>`).join("");
 $("a-zegels").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "antwoord", w: b.dataset.z }); };
 $("b-getal").onclick = () => { const v = $("a-getal-in").value.trim(); if (v !== "") { stuur({ cmd: "antwoord", w: v }); $("a-getal-in").value = ""; } };
+$("b-akte-gehaald").onclick = () => tweeKeer($("b-akte-gehaald"), "Zeker? De akte telt als gehaald", () => stuur({ cmd: "akte-gehaald" }));
 $("b-eed").onclick = () => stuur({ cmd: "antwoord", w: "verder" });
 $("a-tegels").onclick = (e) => { const b = e.target.closest("button"); if (b && !b.disabled) stuur({ cmd: "antwoord", w: `tegel:${b.dataset.i}` }); };
 // the traitor: pick a Wachter, then send him his personal link in a private message
@@ -694,6 +698,7 @@ function toon(s) {
   document.querySelectorAll("#v-namen button").forEach((b) => b.classList.toggle("nu", b.dataset.n === verraderNu?.naam));
   $("b-beproeving").disabled = !!(vol || fin.open?.[p.zegel] || fin.opgelost?.[p.zegel]);
   const vrij = [...gevonden].filter((k) => !op.has(k)).length;
+  $("b-akte-gehaald").disabled = klaar; // skip the rest of this act
   $("b-hint").disabled = !vrij || fin.hint?.[p.zegel] === (fin.voortgang?.[p.zegel]?.length ?? 0) || klaar || !open;
   $("b-hint").textContent = `Hint (${vrij} reliek${vrij === 1 ? "" : "en"} over)`;
   ereStand = s.ere || {}; tekenEreRegie(); tekenInrol(); tekenCredits(); tekenVerraderKroon(s);
@@ -1082,7 +1087,7 @@ function tekenBalk(s) {
     knoppen = [0, 1, 2, 3, 4].map((n) => ({ dief: n, t: n ? `+${n}` : "Niets", k: n ? "goud" : "" }));
   } else if (s.scherm === "finale") {
     kop = "<b>Finale</b>"; sub = veilig($("fin-status").textContent);
-    knoppen = [knop("b-fin-verder", null, "goud"), knop("b-beproeving", "Beproeving voltooid", "rood"), knop("b-hint", $("b-hint").textContent)];
+    knoppen = [knop("b-fin-verder", null, "goud"), knop("b-beproeving", "Beproeving voltooid", "rood"), knop("b-hint", $("b-hint").textContent), knop("b-akte-gehaald", "Akte gehaald")];
   } else if (s.scherm === "ere") {
     kop = "<b>Ere van de Wachters</b>";
     knoppen = [knop("b-ere-terug", "Vorige"), knop("b-ere-speel", ereStand.speelt ? "Pauze" : "Afspelen", "goud"), knop("b-ere-volgende", "Volgende"), knop("b-aftiteling", "Aftiteling")];
@@ -1093,6 +1098,7 @@ function tekenBalk(s) {
   const b = $("nu-balk"); b.hidden = !kop; document.body.classList.toggle("met-balk", !!kop); if (!kop) return;
   b.innerHTML = `<div><p>${kop}${sub ? `<small>${sub}</small>` : ""}</p><div class="rij">${knoppen.map((x, i) => `<button type="button" class="${x.k || ""}" data-i="${i}" ${x.uit ? "disabled" : ""}>${veilig(x.t)}</button>`).join("")}</div></div>`;
   b.onclick = (e) => { const el = e.target.closest("button[data-i]"); if (!el || el.disabled) return; const x = knoppen[+el.dataset.i];
+    if (x.p === "b-akte-gehaald") return tweeKeer(el, "Zeker?", () => stuur({ cmd: "akte-gehaald" })); // asks first, here too
     if (x.p) return $(x.p).click();
     if (x.dief != null) return tweeKeer(el, "Zeker?", () => stuur({ cmd: "dief-buit", n: x.dief }));
     if (x.cmd) stuur(x.cmd); };
