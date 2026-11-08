@@ -72,7 +72,7 @@ const beslissen = [
   bullet([link("08 Draaiboek", drive("draaiboek")), g(" · van de link versturen tot het vertrek op maandag")]),
   bullet([link("05 Inkooplijst", drive("inkoop")), g(" · wat er gekocht moet worden, met ‘Wie regelt’")]),
   bullet([link("04 Schaduw-events", drive("events")), g(" · alle events, alleen voor ons")]),
-  bullet([link("01 Regelboek", drive("regelboek")), g(" · "), link("02 Questkaarten", drive("quest")), g(" · "), link("03 Vaas-etiketten", drive("vazen"))]),
+  bullet([link("01 Regelboek", drive("regelboek")), g(" · "), link("02 Questkaarten", drive("quest")), g(" · "), link("03 Vaasband", drive("vazen"))]),
   p([t("De app: "), link("persoonlijke pagina", SITE + "wachter.html"), t(" · "), link("regie", SITE + "regie-8d785a0dfd.html"), t(" · "), link("tv", SITE + "index.html?tv")]),
 
   h("1. Wie krijgt welke rol"),
@@ -152,13 +152,13 @@ const draaiboek = [
   h3("Donderdag 12 november"),
   bullet("19:00: stap 3 gaat vanzelf open: de Schaduwkoning neemt de app even over."),
   bullet("Aankomsttijd doorgeven aan de contactpersoon van het huis."),
-  bullet("Inpakken: laptop + lader, HDMI-kabel, stekkerdozen, 4 potten met etiketten, fiches, questkaarten, regelboek, kaarsen, aanmaakhout, kist (op slot, vol bouillonblokjes en cadeautjes), de 5 relieken, rugzak met shotglaasjes en drank, powerbanks. Laptop, beamer of tv, HDMI-kabel en bluetooth-speaker: Jean."),
+  bullet("Inpakken: laptop + lader, HDMI-kabel, stekkerdozen, de questvaas met zijn band, questkaarten, regelboek, kaarsen, aanmaakhout, kist (op slot, vol bouillonblokjes en cadeautjes), de 5 relieken, rugzak met shotglaasjes en drank, powerbanks. Laptop, beamer of tv, HDMI-kabel en bluetooth-speaker: Jean."),
 
   h("Vrijdag 13 november"),
   ...(PRIVE.adres ? [p([b("Adres huisje: "), t(PRIVE.adres)])] : []),
   h3("Vóór de rest · Roland, Rob en Jean zijn binnen"),
   bullet("Laptop aan de tv (of aan Stefans beamer), index.html?tv openen, inloggen, één keer klikken voor geluid. Regie op je telefoon: het lampje moet groen zijn."),
-  bullet("Vier Zegel-potten met hun stroken op de schoorsteen."),
+  bullet("De questvaas met zijn band op de schoorsteen."),
   bullet("De questkaarten in vier stapels (één per Zegel) in de Guild Hall, regelboek op tafel. Kist en relieken uit het zicht."),
   h3("16:00 · aankomst"),
   bullet("De tv staat op het welkomstscherm met de aftelling. Iedereen installeert zich en kleedt zich om."),
@@ -170,7 +170,7 @@ const draaiboek = [
   bullet([R("Volgende stap"), t(" slaat het lopende deel over als het moet.")]),
   h3("17:45 · borrel"),
   bullet([t("Robin en Geert: de Legendarische Borrelplank"), ...volbracht("beiden")]),
-  bullet("De quests beginnen: fiches in de potten, melden bij een hoeder, die zet ze met + op de tv."),
+  bullet("De quests beginnen: kaart in de vaas, melden bij een hoeder, die geeft de XP in de regie."),
   h3("19:00 · Quiz I"),
   bullet([R("Oproep"), t(" (de kerkklok roept iedereen naar het scherm), dan regie → Godfried → "), R("Quiz I"), t(": vier vragen, één per Zegel. Goed +1, fout −1. ± 10 min.")]),
   h3("19:15 · het Eerste Avondmaal"),
@@ -231,7 +231,7 @@ const draaiboek = [
   h("Maandag 16 november"),
   bullet("Ontbijt."),
   bullet("Opruimen volgens het huis: vegen, afwas, koelkast en vaatwasser leeg, afval sorteren, bedden afhalen, de BBQ schoonmaken. Anders gaat het van de borg (€600) af."),
-  bullet("Spullen terug: laptop, kabels, potten, kist, relieken. Vertrek op de tijd uit de boeking (meestal 10:00)."),
+  bullet("Spullen terug: laptop, kabels, vaas, kist, relieken. Vertrek op de tijd uit de boeking (meestal 10:00)."),
 ];
 
 (async () => {

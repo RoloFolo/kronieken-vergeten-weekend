@@ -1,7 +1,7 @@
 // De questkaarten: Jeans 30 quests (okt 2026) en 12 Dirty Quests (dirty: persoonlijker, geniepiger), verdeeld over de vier Zegels.
 // Vier stapels, één per Zegel: de achterkant toont het Zegel. soort: solo | duo | groep;
 // xp: Jeans moeilijkheid (5 makkelijk, 10 gemiddeld, 20 moeilijk, 30 legendarisch); fiches: wat de regie aftikt (5/10 = 1, 20 = 2, 30 = 3).
-// Een volbrachte kaart gaat in de vaas van zijn Zegel; een organisator tikt de fiches af in de regie.
+// Een volbrachte kaart gaat in de questvaas (één vaas voor alles); een organisator geeft de XP in de regie, het Zegel krijgt zijn fiches op de tv.
 // Bewijs: een getuige, foto of filmpje, of de regie. Bij duo's telt het voor beiden, bij groepen voor wie actief meedeed.
 window.QUESTS = [
   // ---------- Vlam van Waakzaamheid: scherp blijven, sluw spelen, niemand mag het doorhebben ----------

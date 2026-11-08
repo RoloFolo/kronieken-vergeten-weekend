@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<title>Vaasband – De Kronieken van het Vergeten Weekend</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Libre+Baskerville:ital@1&display=swap">
+<style>
+/* One band for the one quest vase: the full length of an A4 by three quarters of its height (297×157.5 mm), on a landscape A4. Cut along the dashed line. */
+@page { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+html, body { margin: 0; background: #fff; }
+.vel { width: 297mm; height: 210mm; overflow: hidden; }
+.band { position: relative; height: 157.5mm; display: grid; grid-template-columns: 46mm 1fr 46mm; align-items: center; padding: 0 10mm; color: #efe3d4; border-bottom: .2mm dashed #999;
+  background: radial-gradient(ellipse 55% 90% at 50% 45%, rgba(150,18,28,.6), transparent 70%), radial-gradient(ellipse 30% 90% at 6% 50%, rgba(110,14,20,.45), transparent 70%), radial-gradient(ellipse 30% 90% at 94% 50%, rgba(110,14,20,.45), transparent 70%), linear-gradient(180deg, #1a0709, #0b0405); }
+.band::before { content: ""; position: absolute; inset: 6mm 4mm; border-top: .8mm solid #b8955f; border-bottom: .8mm solid #b8955f; box-shadow: inset 0 .7mm 0 rgba(226,50,60,.6), inset 0 -.7mm 0 rgba(226,50,60,.6); pointer-events: none; }
+.zij { display: grid; justify-items: center; gap: 6mm; }
+.zij img { width: 20mm; height: 20mm; border-radius: 50%; opacity: .5; filter: grayscale(.2) drop-shadow(0 1mm 2mm #000); }
+.midden { text-align: center; display: grid; justify-items: center; gap: 4mm; }
+.carved { font-family: "Cinzel", Georgia, serif; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #e4cc98; text-shadow: 0 .3mm 0 #5a3f1e, 0 0 3mm rgba(0,0,0,.6); } /* solid gold: a gradient clipped to text leaves hairlines in Chrome PDFs */
+.kop { font-size: 4.2mm; letter-spacing: .3em; color: #b89a6a; white-space: nowrap; }
+.titel { font-size: 15mm; line-height: 1; }
+.zegels { display: flex; gap: 7mm; margin: 2mm 0; }
+.zegels figure { margin: 0; display: grid; justify-items: center; gap: 2mm; }
+.zegels img { width: 30mm; height: 30mm; border-radius: 50%; filter: drop-shadow(0 0 5mm rgba(226,50,60,.5)) drop-shadow(0 1mm 2mm #000); }
+.zegels figcaption { font: 700 3.2mm/1.15 "Cinzel", Georgia, serif; letter-spacing: .06em; text-transform: uppercase; color: #cdb08a; }
+.onder { font: italic 5.2mm/1.4 "Libre Baskerville", Georgia, serif; color: #e6d5c2; max-width: 150mm; }
+.sier { font: 700 3mm/1 "Cinzel", Georgia, serif; letter-spacing: .5em; color: #9b7a4c; }
+</style>
+</head>
+<body>
+<section class="vel">
+  <div class="band">
+    <div class="zij"><img src="kaartbeeld/vlam.png" alt=""><img src="kaartbeeld/hoorn.png" alt=""></div>
+    <div class="midden">
+      <div class="kop carved">De Kronieken van het Vergeten Weekend</div>
+      <div class="titel carved">Volbrachte Quests</div>
+      <div class="zegels">
+        <figure><img src="kaartbeeld/vlam.png" alt=""><figcaption>Vlam van<br>Waakzaamheid</figcaption></figure>
+        <figure><img src="kaartbeeld/hoorn.png" alt=""><figcaption>Hoorn van<br>Overvloed</figcaption></figure>
+        <figure><img src="kaartbeeld/schild.png" alt=""><figcaption>Schild van<br>Broederschap</figcaption></figure>
+        <figure><img src="kaartbeeld/hart.png" alt=""><figcaption>Hart van<br>de Ardennen</figcaption></figure>
+      </div>
+      <div class="onder">Quest volbracht? Kaart erin, en meld het aan een hoeder.<br>De Zegels groeien op de tv.</div>
+      <div class="sier">✦ Wij waken ✦</div>
+    </div>
+    <div class="zij"><img src="kaartbeeld/schild.png" alt=""><img src="kaartbeeld/hart.png" alt=""></div>
+  </div>
+</section>
+</body>
+</html>
