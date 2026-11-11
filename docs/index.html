@@ -1292,19 +1292,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=142"></script>
-<script src="a/godfried.js?v=142"></script>
-<script src="a/spel.js?v=142"></script>
-<script src="a/voorbereiding.js?v=142"></script>
-<script src="a/wachters.js?v=142"></script>
-<script src="a/firebase-config.js?v=142"></script>
-<script src="a/portretten.js?v=142"></script>
-<script src="a/koppeling.js?v=142"></script>
-<script src="a/rollen.js?v=142"></script>
-<script src="a/quests-tv.js?v=142"></script>
-<script src="a/planning.js?v=142"></script>
-<script src="a/route.js?v=142"></script>
-<script src="a/tafel.js?v=142"></script>
+<script src="a/events.js?v=143"></script>
+<script src="a/godfried.js?v=143"></script>
+<script src="a/spel.js?v=143"></script>
+<script src="a/voorbereiding.js?v=143"></script>
+<script src="a/wachters.js?v=143"></script>
+<script src="a/firebase-config.js?v=143"></script>
+<script src="a/portretten.js?v=143"></script>
+<script src="a/koppeling.js?v=143"></script>
+<script src="a/rollen.js?v=143"></script>
+<script src="a/quests-tv.js?v=143"></script>
+<script src="a/planning.js?v=143"></script>
+<script src="a/route.js?v=143"></script>
+<script src="a/tafel.js?v=143"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2502,6 +2502,7 @@ function aftitelingHtml() {
     + (NAMEN.every((n) => PORTRET[n]) ? `<h2 class="carved">De Wachters</h2><div class="af-portretten">${NAMEN.map((n) => `<figure><img src="${PORTRET[n]}" alt=""><b>${schoon(n)}</b><small>${rol(n) ? schoon(rol(n).naam) : "Wachter"}</small></figure>`).join("")}</div>`
       : blok("De Wachters", NAMEN.map((n) => AFWEZIG[n] ? regel(`<i>${schoon(AFWEZIG[n])}</i>`, schoon(n), n) : regel(rol(n) ? `${schoon(rol(n).naam)}<br><small>${schoon(rol(n).titel)}</small>` : "Wachter", schoon(n), n)), true))
     + blok("Ere van de Wachters", ereLijst().slice(0, 15).map((x) => regel(schoon(x.t.naam), schoon(x.wie), x.wie)))
+    + blok("Eervolle vermelding", EERVOL.map((e) => `<div class="af-anekdote met-gezicht">${PORTRET[e.wie] ? `<img src="${PORTRET[e.wie]}" alt="">` : ""}<div><p><b>${schoon(e.titel)}.</b> ${schoon(e.tekst)}</p><b>${schoon(e.wie)}</b></div></div>`))
     + blok("Gemist aan de Ronde Tafel", Object.keys(AFWEZIG).map((n) => `<div class="af-anekdote met-gezicht">${PORTRET[n] ? `<img src="${PORTRET[n]}" alt="" style="filter:grayscale(1)">` : ""}<div><p>${schoon(AFWEZIG[n])}. Volgend jaar beter…</p><b>${schoon(n)}</b></div></div>`), true)
     + blok("De bevelen van Godfried", AANWEZIG.filter((n) => window.VOORAF?.bevelen?.[n]).map((n) => regel(`${schoon(window.VOORAF.bevelen[n].titel)}${bevelGedaan.has(n) ? " ✓" : ""}`, schoon(n), n)), true)
     + blok("De gênantste momenten", anekdotes().filter((a) => !(fin.vuur || []).some((r) => r.tekst === a.tekst)).map((a) => { const wie = a.over || a.van; return `<div class="af-anekdote met-gezicht">${PORTRET[wie] ? `<img src="${PORTRET[wie]}" alt="">` : ""}<div><p>“${schoon(a.tekst)}”</p><b>${schoon(a.van || a.over)}${a.over && a.van && a.over !== a.van ? ` <small>· over ${schoon(a.over)}</small>` : ""}</b></div></div>`; }), true)
@@ -2544,6 +2545,8 @@ const PORTRET = {};
 Portret.op(() => { for (const n of NAMEN) if (Portret.url(n)) { PORTRET[n] = PORTRET[n] || Portret.url(n); Portret.groot(n).then((u) => { if (u) PORTRET[n] = u; }); } portretKnop?.(); });
 const idb = (r) => new Promise((ok, nee) => { r.onsuccess = () => ok(r.result); r.onerror = () => nee(r.error); });
 const portretDb = () => { const r = indexedDB.open("kronieken", 2); r.onupgradeneeded = () => { for (const s of ["portretten", "fotos"]) if (!r.result.objectStoreNames.contains(s)) r.result.createObjectStore(s); }; return idb(r); };
+// honourable mentions in the credits, earned before the weekend even began
+const EERVOL = [{ wie: "Johan", titel: "De Bouillonmeester", tekst: "Kwam al vóór het weekend met een hamer en drie dozen Maggi naar Bouillon. Het hele kasteel ruikt naar kippensoep." }];
 const FOTOS = [];
 function fotoKnop() { $("b-fotos").textContent = `Foto's laden (${FOTOS.length})`; }
 (async () => { try { const st = (await portretDb()).transaction("fotos").objectStore("fotos"); (await idb(st.getAll())).forEach((b) => FOTOS.push(URL.createObjectURL(b))); } catch {} fotoKnop(); })();
