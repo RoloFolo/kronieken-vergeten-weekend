@@ -14,7 +14,7 @@ window.PLANNING = [
   { id: "vr-borrel", dag: "vr", tijd: "17:45", titel: "Borrel: de Legendarische Borrelplank", tekst: "Geert en Robin. De quests beginnen: fiches in de potten, melden bij een hoeder.", bevel: ["Geert", "Robin"] },
   { id: "vr-quiz1", dag: "vr", tijd: "19:00", titel: "Quiz I", tekst: "Eerst Oproep, dan de quiz: vier vragen, één per Zegel. Goed +1, fout −1. ± 10 min.", in: ["b-quiz-1"], auto: "quiz1" },
   { id: "vr-avondmaal", dag: "vr", tijd: "19:15", titel: "Het Eerste Avondmaal", tekst: "Jeroen kookt.", bevel: ["Jeroen"] },
-  { id: "vr-proeverij", dag: "vr", tijd: "21:00", titel: "De Proeverij van de Bard", tekst: "Ivo schenkt zijn wijnen, hooguit een uur.", bevel: ["Ivo"] },
+  { id: "vr-proeverij", dag: "vr", tijd: "21:00", titel: "De Bierproeverij", tekst: "Rob en Jean schenken bijzondere bieren, hooguit een uur." },
 
   { id: "za-ontbijt", dag: "za", tijd: "09:30", titel: "Ontbijt", tekst: "Met Martins Ochtenddauw." },
   { id: "za-hfd2", dag: "za", tijd: "10:30", titel: "Hoofdstuk II", tekst: "Eerst Oproep. Keizer Hendrik IV, broer Boudewijn, Bouillon verpand aan de prins-bisschop van Luik.", in: ["b-hfd-2"], auto: "hfd2" },

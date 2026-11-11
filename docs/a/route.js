@@ -9,7 +9,7 @@ window.ROUTE = {
     { id: "borrel", plan: "vr-borrel", tijd: "2026-11-13T17:45", naam: "De Legendarische Borrelplank", bevel: ["Geert", "Robin"], info: "Geert en Robin dekken de plank. De quests beginnen." },
     { id: "quiz1", plan: "vr-quiz1", tijd: "2026-11-13T19:00", naam: "Godfrieds Quiz I", icoon: "a/godfried/gezicht.webp", info: "Vier vragen, één per Zegel. Goed sterkt het Zegel, fout verzwakt het." },
     { id: "avondmaal", plan: "vr-avondmaal", tijd: "2026-11-13T19:15", naam: "Het Eerste Avondmaal", bevel: ["Jeroen"], info: "Jeroen voedt de Guild." },
-    { id: "proeverij", plan: "vr-proeverij", tijd: "2026-11-13T21:00", naam: "De Proeverij van de Bard", bevel: ["Ivo"], info: "Ivo neemt de Wachters mee op een wijnreis van hooguit een uur." },
+    { id: "proeverij", plan: "vr-proeverij", tijd: "2026-11-13T21:00", naam: "De Bierproeverij", bevel: ["Rob", "Jean"], info: "Rob en Jean nemen de Wachters mee langs bijzondere bieren, hooguit een uur." },
     { id: "ontbijt", plan: "za-ontbijt", tijd: "2026-11-14T09:30", naam: "Ontbijt met Ochtenddauw", bevel: ["Martin"], info: "Martins elixer tegen de nacht." },
     { id: "hfd2", plan: "za-hfd2", tijd: "2026-11-14T10:30", naam: "Godfrieds verhaal · II", icoon: "a/godfried/gezicht.webp", info: "Godfried vertelt verder. Luister goed: de quiz komt eruit." },
     { id: "taveerne", plan: "za-taveerne", tijd: "2026-11-14T11:00", naam: "De Taveerne van het Lot", bevel: ["Johan"], info: "Johan opent een uur lang zijn middeleeuwse taveerne." },

@@ -51,6 +51,7 @@ html, body { overflow-x: hidden; }
 .route-komt button.eigen { border-color: #ff5a3c; } .route-komt button.nu { border-color: var(--bronze); background: rgba(184,149,95,.12); }
 .route-komt button .z { font-size: 18px; color: var(--ash); }
 #tabs button.nieuw::after { content: ""; position: absolute; top: 4px; right: 18%; width: 9px; height: 9px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 8px var(--ember); }
+.stoel.weg { filter: grayscale(1) brightness(.65); } .stoel.weg small { font-style: italic; } /* a Wachter who could not come */
 .paneel { position: relative; padding: 22px 20px 24px; background: var(--paneel); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 16px 44px #000; }
 .paneel h2 { margin: 0 0 10px; font-size: 13px; letter-spacing: .3em; text-align: center; }
 .brief { font: italic 17px/1.6 var(--display); text-align: center; }
@@ -496,16 +497,16 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=141"></script>
-<script src="a/godfried.js?v=141"></script>
-<script src="a/spel.js?v=141"></script>
-<script src="a/rollen.js?v=141"></script>
-<script src="a/firebase-config.js?v=141"></script>
-<script src="a/portretten.js?v=141"></script>
-<script src="a/koppeling.js?v=141"></script>
-<script src="a/tafel.js?v=141"></script>
-<script src="a/voorbereiding.js?v=141"></script>
-<script src="a/route.js?v=141"></script>
+<script src="a/wachters.js?v=142"></script>
+<script src="a/godfried.js?v=142"></script>
+<script src="a/spel.js?v=142"></script>
+<script src="a/rollen.js?v=142"></script>
+<script src="a/firebase-config.js?v=142"></script>
+<script src="a/portretten.js?v=142"></script>
+<script src="a/koppeling.js?v=142"></script>
+<script src="a/tafel.js?v=142"></script>
+<script src="a/voorbereiding.js?v=142"></script>
+<script src="a/route.js?v=142"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -526,7 +527,8 @@ const schoon = (t) => String(t).replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": 
 
 let publiek = {}, getekend = "", vorige = null;
 const ORGANISATOREN = ["Rob", "Jean", "Roland"];
-const mijnBevel = () => wachter && (V.bevelen?.[wachter.naam] || (ORGANISATOREN.includes(wachter.naam) ? V.hoederBevel : null)); // the organisers get a symbolic order, so they walk the same flow (it counts for nothing)
+const mijnBevel = () => { const b = wachter && (V.bevelen?.[wachter.naam] || (ORGANISATOREN.includes(wachter.naam) ? V.hoederBevel : null)); // the organisers get a symbolic order, so they walk the same flow
+  let ja = false; try { ja = !!mijnVooraf?.bevel?.aanvaard; } catch {} return b && ja && b.tekst?.includes("10 man") ? { ...b, tekst: b.tekst.replace("10 man", "11 man") } : b; }; // who already accepted keeps the text he accepted (it counts for nothing)
 const halTest = ORGANISATOREN && new URLSearchParams(location.search).has("hal"); // organisers: ?hal in the link shows the Hall early anyway
 // before the weekend: players never see an open Hall; organisers do while the tv is really running (a live test, publiek.levend is at most 3 minutes old)
 const tvLeeft = () => Date.now() - (publiek.levend || 0) < 3 * 60000;

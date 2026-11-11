@@ -6,7 +6,7 @@ window.WACHTERS = [
   { naam: "Martin", token: "a58e37cfa9e8" },
   { naam: "Stefan", token: "5521b0ef3112" },
   { naam: "Jeroen", token: "030a99d4495b" },
-  { naam: "Ivo", token: "450cee76d279" },
+  { naam: "Ivo", token: "450cee76d279", afwezig: "Verdwaald in de mist" }, // kan dit jaar niet mee: grijs aan de Ronde Tafel, niet in de loting van quests, wel in de aftiteling
   { naam: "Johan", token: "c5c466f8e54b" },
   { naam: "Robin", token: "4d4125991750" },
   { naam: "Rob", token: "698ea404809b", organisator: true },

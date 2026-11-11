@@ -430,6 +430,7 @@ button:focus-visible { outline: 2px solid var(--bone); outline-offset: 3px; }
 .stage.in-zaal .zaal .z-tafel { transform: none; opacity: 1; }
 .zaal .z-ring { position: absolute; inset: 0; }
 .zaal .z-stoel { z-index: 1; } .zaal .z-zit { z-index: 2; } /* faces and names above the chairs */
+.zaal .z-zit.weg { filter: grayscale(1) brightness(.6); opacity: .8; } .zaal .z-zit.weg .z-xp { font-style: italic; } /* could not come */
 .zaal .z-zit.verschuif { transition: left 1.4s cubic-bezier(.5,0,.2,1), top 1.4s cubic-bezier(.5,0,.2,1); }
 .zaal .z-zit .gz { position: absolute; inset: 6%; border-radius: 50%; border: .22cqi solid #b8955f; background-color: #1a0d0e; box-shadow: 0 0 0 .15cqi #000, 0 .3cqi .6cqi rgba(0,0,0,.9); transition: transform .5s, box-shadow .5s; }
 .zaal .z-zit .m.met-gezicht > img { visibility: hidden; }
@@ -1291,19 +1292,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=141"></script>
-<script src="a/godfried.js?v=141"></script>
-<script src="a/spel.js?v=141"></script>
-<script src="a/voorbereiding.js?v=141"></script>
-<script src="a/wachters.js?v=141"></script>
-<script src="a/firebase-config.js?v=141"></script>
-<script src="a/portretten.js?v=141"></script>
-<script src="a/koppeling.js?v=141"></script>
-<script src="a/rollen.js?v=141"></script>
-<script src="a/quests-tv.js?v=141"></script>
-<script src="a/planning.js?v=141"></script>
-<script src="a/route.js?v=141"></script>
-<script src="a/tafel.js?v=141"></script>
+<script src="a/events.js?v=142"></script>
+<script src="a/godfried.js?v=142"></script>
+<script src="a/spel.js?v=142"></script>
+<script src="a/voorbereiding.js?v=142"></script>
+<script src="a/wachters.js?v=142"></script>
+<script src="a/firebase-config.js?v=142"></script>
+<script src="a/portretten.js?v=142"></script>
+<script src="a/koppeling.js?v=142"></script>
+<script src="a/rollen.js?v=142"></script>
+<script src="a/quests-tv.js?v=142"></script>
+<script src="a/planning.js?v=142"></script>
+<script src="a/route.js?v=142"></script>
+<script src="a/tafel.js?v=142"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1769,19 +1770,19 @@ function startDronk() {
   $("brief").hidden = true; document.querySelectorAll(".zegel-kant").forEach((z) => (z.hidden = true));
   $("dronk").hidden = false; $("dronk-regel").textContent = ""; $("dronk-hint").textContent = "";
   halMuziek.vol(.12, 2000);
-  setTimeout(() => { $("dronk-tekst").textContent = "Eén ding nog, Wachters. Een broederschap begint met een dronk. Elf Wachters… elf glazen. Ze staan voor jullie klaar. Pak je glas… en kom bij het vuur."; $("dronk-tekst").hidden = false; }, 1200);
+  setTimeout(() => { $("dronk-tekst").innerHTML = "Eén ding nog, Wachters. Een broederschap begint met een dronk. <s>Elf</s> Tien Wachters… <s>elf</s> tien glazen. Ze staan voor jullie klaar. Pak je glas… en kom bij het vuur."; $("dronk-tekst").hidden = false; }, 1200);
   setTimeout(() => speelStem("dronk-intro", () => {
     $("dronk-tekst").hidden = true;
     // the eleven glasses stand ready: a minute to take one, then Godfried raises his (the regie can start sooner)
     dronkWacht = true; meld();
     $("dronk-regel").textContent = "Pak je glas"; $("dronk-regel").classList.add("aan");
     halMuziek.vol(.35, 3000);
-    let over = 60; const tel = () => { if (!dronkWacht) return; $("dronk-hint").textContent = `Elf Wachters, elf glazen. Over ${over} seconden heft Godfried het zijne.`; if (over-- <= 0) return startToost(); dronkTel = setTimeout(tel, 1000); }; tel();
+    let over = 60; const tel = () => { if (!dronkWacht) return; $("dronk-hint").innerHTML = `<s>Elf</s> Tien Wachters, <s>elf</s> tien glazen. Over ${over} seconden heft Godfried het zijne.`; if (over-- <= 0) return startToost(); dronkTel = setTimeout(tel, 1000); }; tel();
   }), 1200);
 }
 function startToost() {
   if (!dronkWacht || toostBezig) return; dronkWacht = false; toostBezig = true; clearTimeout(dronkTel); meld();
-  halMuziek.vol(.1, 1500); $("dronk-hint").textContent = "Elf Wachters, elf glazen. Hef je glas, proost op elkaar en laat het weekend beginnen!";
+  halMuziek.vol(.1, 1500); $("dronk-hint").innerHTML = "<s>Elf</s> Tien Wachters, <s>elf</s> tien glazen. Hef je glas, proost op elkaar en laat het weekend beginnen!";
   $("verhaal").classList.add("toost");
   const el = $("dronk-regel"); el.classList.remove("aan"); void el.offsetWidth; el.textContent = "Hef het glas!"; el.classList.add("aan");
   speelStem("dronk-toost", () => setTimeout(() => dronkRegel(0), 500), 9000);
@@ -1904,7 +1905,7 @@ function fakkeltocht(nu) {
   const t = (nu - fakkelStart) / 1000, zicht = Math.min(1, Math.max(0, (t - 1.2) / 1.4)), kop = .6 + Math.max(0, t - 1.2) * .028;
   if (!zicht) return requestAnimationFrame(fakkeltocht);
   // each torch: a warm glow on the rock, then a real little flame (a flickering teardrop, white-yellow core, orange to red tip)
-  for (let i = 0; i < 11; i++) {
+  for (let i = 0; i < AANWEZIG.length; i++) {
     const s = kop - i * .055; if (s < 0 || s > 1) continue;
     const [px, py0] = op(s), py = py0 - Math.abs(Math.sin(t * 2.6 + i * 1.7)) * W * .0005; // a small step up and down while walking
     const fl = .8 + .2 * Math.sin(t * 17 + i * 3.1) + Math.random() * .12, r = W * .0018, h = r * (2.9 + .8 * Math.sin(t * 11 + i)) * fl, w = r * .95;
@@ -2098,7 +2099,7 @@ function zaalKroniek() {
 function zaalStand() {
   zaalKroniek();
   const W = window.WACHTERS || [], n = W.length, stand = scorebordData().stand;
-  const volgorde = [...W].sort((a, b) => (stand[b.naam] || 0) - (stand[a.naam] || 0) || W.indexOf(a) - W.indexOf(b));
+  const volgorde = [...W].sort((a, b) => !!a.afwezig - !!b.afwezig || (stand[b.naam] || 0) - (stand[a.naam] || 0) || W.indexOf(a) - W.indexOf(b));
   const stoelen = [...Array(n).keys()]; // like the app: number 1 at the top beside the hearth, then clockwise
   const iemand = Object.values(stand).some((x) => x);
   document.querySelectorAll("#z-ring .z-zit").forEach((z) => {
@@ -2106,7 +2107,8 @@ function zaalStand() {
     if (x != null) { z.style.left = `${x.toFixed(2)}%`; z.style.top = `${y.toFixed(2)}%`; }
     const m = z.querySelector(".m"), gz = z.querySelector(".gz"), heeft = Portret.rond(gz, naam, 1.15); gz.hidden = !heeft; m.classList.toggle("met-gezicht", heeft);
     m.querySelectorAll(".z-plek, .z-xp, .z-kroon").forEach((e) => e.remove());
-    m.insertAdjacentHTML("beforeend", `<span class="z-plek">${r + 1}</span><span class="z-xp">${stand[naam] || 0} XP</span>${iemand && r === 0 ? '<span class="z-kroon">♛</span>' : ""}`);
+    z.classList.toggle("weg", !!AFWEZIG[naam]);
+    m.insertAdjacentHTML("beforeend", AFWEZIG[naam] ? `<span class="z-xp">${schoon(AFWEZIG[naam])}</span>` : `<span class="z-plek">${r + 1}</span><span class="z-xp">${stand[naam] || 0} XP</span>${iemand && r === 0 ? '<span class="z-kroon">♛</span>' : ""}`);
   });
   setTimeout(() => document.querySelectorAll("#z-ring .z-zit").forEach((z) => z.classList.add("verschuif")), 4000); // after the entrance, places glide
 }
@@ -2140,7 +2142,7 @@ function tekenTvTafel() {
     $("z-ring").onclick = (e) => { const z = e.target.closest(".z-zit"); if (!z) return; tafelPauze = Date.now() + 30000; tafelI = W.findIndex((w) => w.naam === z.dataset.naam); zaalKaart(W[tafelI]); };
   }
   zaalStand(); zaalKaart(W[tafelI % n]); zaalVuurStart(); zaalGeluid(true);
-  clearInterval(tafelRonde); tafelRonde = setInterval(() => { if (Date.now() < tafelPauze) return; tafelI = (tafelI + 1) % n; zaalKaart(W[tafelI]); }, 9000);
+  clearInterval(tafelRonde); tafelRonde = setInterval(() => { if (Date.now() < tafelPauze) return; tafelI = (tafelI + 1) % n; if (W[tafelI]?.afwezig) tafelI = (tafelI + 1) % n; zaalKaart(W[tafelI]); }, 9000);
 }
 // the hall sounds alive: crackling fire, chatter and laughter
 let zaalSfeer = null;
@@ -2187,6 +2189,7 @@ function tekenKist(nieuw) {
 }
 function zegelVol(id) { return (ZEGELS.find((z) => z.id === id)?.fiches ?? 0) >= S.drempel; }
 const NAMEN = (window.WACHTERS || []).map((w) => w.naam);
+const AFWEZIG = Object.fromEntries((window.WACHTERS || []).filter((w) => w.afwezig).map((w) => [w.naam, w.afwezig])), AANWEZIG = NAMEN.filter((n) => !AFWEZIG[n]); // Wachters who could not come: grey at the table, never drawn for a quest
 const zegelNaamVan = (id) => ZEGELS.find((z) => z.id === id)?.naam ?? id;
 const tijd = (t) => new Date(t).toLocaleString("nl-NL", { weekday: "long", hour: "2-digit", minute: "2-digit" });
 const schoon = (t) => String(t).replace(/[<>&]/g, "");
@@ -2249,12 +2252,12 @@ function vuurRondes() {
   const voor = Object.fromEntries(NAMEN.map((n) => [n, 0]));
   const rondes = Object.keys(eigen).sort((x, y) => hashNaam(x + ronde) - hashNaam(y + ronde)).slice(0, VUUR_MAX).map((wie, k) => {
     const l = eigen[wie], a = l[hashNaam(wie + ronde + "a") % l.length]; voor[wie]++;
-    const mee = NAMEN.filter((n) => n !== wie).sort((x, y) => voor[x] - voor[y] || hashNaam(x + ronde + k) - hashNaam(y + ronde + k)).slice(0, 2); mee.forEach((n) => voor[n]++);
+    const mee = AANWEZIG.filter((n) => n !== wie).sort((x, y) => voor[x] - voor[y] || hashNaam(x + ronde + k) - hashNaam(y + ronde + k)).slice(0, 2); mee.forEach((n) => voor[n]++);
     return { wie, tekst: a.tekst, drie: [wie, ...mee].sort((x, y) => hashNaam(x + k + ronde + "d") - hashNaam(y + k + ronde + "d")) };
   });
   return (fin.vuur = rondes);
 }
-const vuurLeeg = () => Object.keys(voorafAlles).length ? NAMEN.filter((n) => !anekdotes().some((a) => a.van === n)) : (S.herinneringen || []).filter((h) => !h.tekst).map((h) => h.wie);
+const vuurLeeg = () => Object.keys(voorafAlles).length ? AANWEZIG.filter((n) => !anekdotes().some((a) => a.van === n)) : (S.herinneringen || []).filter((h) => !h.tekst).map((h) => h.wie);
 const schandpaalGehoord = new Set();
 function schandpaalStem(i) { if (schandpaalGehoord.has(`${ronde}-${i}`)) return; schandpaalGehoord.add(`${ronde}-${i}`); setTimeout(() => { speel("fin/fout-2", .9); setTimeout(() => gZeg("schandpaal", () => {}, 12000), 2200); }, 900); }
 const fragmentTekst = () => (S.proost || []).join(" ");
@@ -2497,9 +2500,10 @@ function aftitelingHtml() {
   ];
   return `<img class="af-logo" src="a/logo.webp" alt=""><div class="af-datum">Bouillon · 13 tot 16 november 2026</div>`
     + (NAMEN.every((n) => PORTRET[n]) ? `<h2 class="carved">De Wachters</h2><div class="af-portretten">${NAMEN.map((n) => `<figure><img src="${PORTRET[n]}" alt=""><b>${schoon(n)}</b><small>${rol(n) ? schoon(rol(n).naam) : "Wachter"}</small></figure>`).join("")}</div>`
-      : blok("De Wachters", NAMEN.map((n) => regel(rol(n) ? `${schoon(rol(n).naam)}<br><small>${schoon(rol(n).titel)}</small>` : "Wachter", schoon(n), n)), true))
+      : blok("De Wachters", NAMEN.map((n) => AFWEZIG[n] ? regel(`<i>${schoon(AFWEZIG[n])}</i>`, schoon(n), n) : regel(rol(n) ? `${schoon(rol(n).naam)}<br><small>${schoon(rol(n).titel)}</small>` : "Wachter", schoon(n), n)), true))
     + blok("Ere van de Wachters", ereLijst().slice(0, 15).map((x) => regel(schoon(x.t.naam), schoon(x.wie), x.wie)))
-    + blok("De bevelen van Godfried", NAMEN.filter((n) => window.VOORAF?.bevelen?.[n]).map((n) => regel(`${schoon(window.VOORAF.bevelen[n].titel)}${bevelGedaan.has(n) ? " ✓" : ""}`, schoon(n), n)), true)
+    + blok("Gemist aan de Ronde Tafel", Object.keys(AFWEZIG).map((n) => `<div class="af-anekdote met-gezicht">${PORTRET[n] ? `<img src="${PORTRET[n]}" alt="" style="filter:grayscale(1)">` : ""}<div><p>${schoon(AFWEZIG[n])}. Volgend jaar beter…</p><b>${schoon(n)}</b></div></div>`), true)
+    + blok("De bevelen van Godfried", AANWEZIG.filter((n) => window.VOORAF?.bevelen?.[n]).map((n) => regel(`${schoon(window.VOORAF.bevelen[n].titel)}${bevelGedaan.has(n) ? " ✓" : ""}`, schoon(n), n)), true)
     + blok("De gênantste momenten", anekdotes().filter((a) => !(fin.vuur || []).some((r) => r.tekst === a.tekst)).map((a) => { const wie = a.over || a.van; return `<div class="af-anekdote met-gezicht">${PORTRET[wie] ? `<img src="${PORTRET[wie]}" alt="">` : ""}<div><p>“${schoon(a.tekst)}”</p><b>${schoon(a.van || a.over)}${a.over && a.van && a.over !== a.van ? ` <small>· over ${schoon(a.over)}</small>` : ""}</b></div></div>`; }), true)
     + (FOTOS.length ? `<h2 class="carved">Het weekend in beeld</h2><div class="af-fotos">${FOTOS.map((u) => `<img src="${u}" alt="">`).join("")}</div>` : "")
     + (() => { const { p, v } = scores(), kl = NAMEN.filter((n) => p[n]).sort((a, b) => p[b] - p[a]), vr = NAMEN.filter((n) => v[n]).sort((a, b) => v[b] - v[a]);
@@ -3150,7 +3154,7 @@ const QUEST = {
     stemMet("quest/stem-foto", 1, () => questKlok(d.sec, () => { quest.fase = "klaar"; meld(); $("q-uit").textContent = "Tijd! Staat iedereen erop?"; }), 9000);
   },
   wie() { // a painting from very close, slowly zooming out; the regie reveals the name, then the next one
-    const d = QT.wie, al = quest?.id === "wie" ? quest.gezien : [], met = NAMEN.filter((n) => PORTRET[n]), nog = met.filter((n) => !al.includes(n)), pot = nog.length ? nog : met;
+    const d = QT.wie, al = quest?.id === "wie" ? quest.gezien : [], met = AANWEZIG.filter((n) => PORTRET[n]), nog = met.filter((n) => !al.includes(n)), pot = nog.length ? nog : met;
     if (!pot.length) return; const naam = pot[Math.floor(Math.random() * pot.length)];
     const [fx, fy, fw] = Portret.gezicht?.(naam) || [.5, .2, .15], ox = Math.min(.88, Math.max(.12, fx + (Math.random() < .5 ? -1 : 1) * fw * (.6 + Math.random()))), oy = Math.min(.88, Math.max(.1, fy + fw * (.8 + Math.random() * 1.4))); // a detail beside or below the face, not the face itself
     questScherm({ id: "wie", naam: d.naam, fase: "zoomt", gezien: [...(nog.length ? al : []), naam], antwoord: naam },
@@ -3180,10 +3184,10 @@ const QUEST = {
     const KQ = window.KLASSE_QUESTS || {}, K = window.KARAKTER || {};
     const tel = (alleenHoofd) => { const t = Object.fromEntries(NAMEN.map((n) => [n, 0])); for (const l of logboek) if (l.type === "klasse") { t[l.hoofd]++; if (!alleenHoofd) (l.mee || []).forEach((n) => t[n]++); } return t; };
     const minst = (lijst, t) => { const m = Math.min(...lijst.map((n) => t[n])), p = lijst.filter((n) => t[n] === m); return p[Math.floor(Math.random() * p.length)]; };
-    const kand = NAMEN.filter((n) => KQ[K[n]?.klasse]?.length); if (!kand.length) return;
+    const kand = AANWEZIG.filter((n) => KQ[K[n]?.klasse]?.length); if (!kand.length) return;
     const hoofd = minst(kand, tel(true)), qs = KQ[K[hoofd].klasse], gedaan = logboek.filter((l) => l.type === "klasse" && l.hoofd === hoofd).map((l) => l.quest);
     const vrij = qs.filter((q) => !gedaan.includes(q.naam)), pot = vrij.length ? vrij : qs, q = pot[Math.floor(Math.random() * pot.length)];
-    const tm = tel(false), mee = []; for (let i = 0; i < (q.mee || 2); i++) mee.push(minst(NAMEN.filter((n) => n !== hoofd && !mee.includes(n)), tm));
+    const tm = tel(false), mee = []; for (let i = 0; i < (q.mee || 2); i++) mee.push(minst(AANWEZIG.filter((n) => n !== hoofd && !mee.includes(n)), tm));
     log("klasse", { hoofd, mee, quest: q.naam, zegel: q.zegel });
     questScherm({ id: "klasse", naam: q.naam, fase: "kiest", hoofd, mee, zegel: q.zegel },
       `<div class="q-klasse"><div class="gm-kop carved">Klassemoment</div><div class="gm-naam carved" id="q-hoofd">…</div><div class="q-sub" id="q-sub"></div><div class="q-titel carved" id="q-titel"></div><div class="q-tekst" id="q-tekst"></div><div class="q-rij" id="q-rij"></div><div class="q-uit" id="q-uit"></div></div>`);
@@ -3331,6 +3335,11 @@ const OPDRACHTEN = {
   ere: (o) => { const n = Math.max(0, Math.min(ereLijst().length, (ere.stap ?? -1) + o.d)); ereStap(n, ere.speelt); },
   // without Firebase the regie stores the assignment here, in the tv's own state
   "ere-toewijs": (o) => { ere.toewijzing ||= {}; if (o.naam) ere.toewijzing[`t${o.i}`] = String(o.naam).slice(0, 40); else delete ere.toewijzing[`t${o.i}`]; meld(); },
+  // the opening ran by accident before the weekend: undo only its traces (Seals back to 0, the Hall shut again, chapter I untold);
+  // everything the players sent in and accepted stays (same round), a restore point comes first
+  "opening-terug": async () => { await herstelpunt("vlak vóór opening terugdraaien");
+    for (const z of ZEGELS) z.fiches = 0; teken(); rollenOpen = false; kroniek.delete(1); logboek = logboek.filter((l) => l.type !== "fiche"); meld();
+    setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); },
   "alles-opnieuw": async () => { await herstelpunt("vlak vóór alles opnieuw"); planning = {}; ronde = Date.now(); kroniek = new Set(); openingGehad = false; quizStop(); vertelSla(true); tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
     setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); }, // back to the welcome screen, so the regie shows "Start verhaal" again
 };

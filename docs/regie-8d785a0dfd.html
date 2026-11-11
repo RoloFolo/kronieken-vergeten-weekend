@@ -230,7 +230,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
       <button class="goud" id="b-start" type="button">Start verhaal</button>
       <button id="b-verder" type="button">Volgende stap</button>
     </div>
-    <p class="klein">Klik één keer op de tv-laptop zelf voordat je start, anders mag de browser geen geluid afspelen. Zet vooraf elf gevulde glazen klaar. Na het verhaal vraagt Godfried iedereen zijn glas te pakken; de tv geeft daar een minuut voor. Druk eerder op "Glazen vol: toost!" als iedereen er klaar voor is: Godfried brengt de toost uit en de Hall opent. Verder slaat "Volgende stap" het lopende deel over.</p>
+    <p class="klein">Klik één keer op de tv-laptop zelf voordat je start, anders mag de browser geen geluid afspelen. Zet vooraf tien gevulde glazen klaar. Na het verhaal vraagt Godfried iedereen zijn glas te pakken; de tv geeft daar een minuut voor. Druk eerder op "Glazen vol: toost!" als iedereen er klaar voor is: Godfried brengt de toost uit en de Hall opent. Verder slaat "Volgende stap" het lopende deel over.</p>
   </section>
 
   <section class="kaart los" id="s-scherm">
@@ -494,6 +494,9 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
       <span>Alle events kunnen dan opnieuw voorkomen. Zeker weten?</span>
       <div class="rij"><button class="rood" id="b-reset-ja" type="button">Ja, opnieuw</button><button id="b-reset-nee" type="button">Annuleren</button></div>
     </div>
+    <button id="b-opening-terug" type="button" style="margin-top:10px">Opening terugdraaien (Zegels naar 0, Hall weer dicht)</button>
+    <p class="klein" style="margin:6px 0 0">Voor als de opening per ongeluk al gespeeld is. Alleen de opening gaat terug: wat de Wachters instuurden en aanvaardden blijft. De tv moet aan staan; hij bewaart eerst een herstelpunt en start daarna opnieuw.</p>
+    <p class="klein" id="opening-status" hidden></p>
     <button id="b-alles" type="button" style="margin-top:10px">Hele spel opnieuw beginnen</button>
     <p class="klein" id="alles-status" style="margin:8px 0 0" hidden></p>
     <div class="bevestig" id="alles-vraag" hidden>
@@ -507,17 +510,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=141"></script>
-<script src="a/quests-tv.js?v=141"></script>
-<script src="a/planning.js?v=141"></script>
-<script src="a/godfried.js?v=141"></script>
-<script src="a/spel.js?v=141"></script>
-<script src="a/wachters.js?v=141"></script>
-<script src="a/rollen.js?v=141"></script>
-<script src="a/firebase-config.js?v=141"></script>
-<script src="a/portretten.js?v=141"></script>
-<script src="a/koppeling.js?v=141"></script>
-<script src="a/voorbereiding.js?v=141"></script>
+<script src="a/events.js?v=142"></script>
+<script src="a/quests-tv.js?v=142"></script>
+<script src="a/planning.js?v=142"></script>
+<script src="a/godfried.js?v=142"></script>
+<script src="a/spel.js?v=142"></script>
+<script src="a/wachters.js?v=142"></script>
+<script src="a/rollen.js?v=142"></script>
+<script src="a/firebase-config.js?v=142"></script>
+<script src="a/portretten.js?v=142"></script>
+<script src="a/koppeling.js?v=142"></script>
+<script src="a/voorbereiding.js?v=142"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -920,6 +923,9 @@ $("b-aftiteling-uit").onclick = () => stuur({ cmd: "aftiteling-uit" });
 $("b-ere-speel").onclick = () => stuur({ cmd: ereStand.speelt ? "ere-pauze" : "ere-speel" });
 $("b-ere-terug").onclick = () => stuur({ cmd: "ere", d: -1 });
 $("b-ere-volgende").onclick = () => stuur({ cmd: "ere", d: 1 });
+$("b-opening-terug").onclick = () => { const g = laatsteStand?.tvInfo?.gemeld, s = $("opening-status"); s.hidden = false;
+  if (!g || Date.now() - g > 75000) { s.textContent = "De tv staat niet aan. Open eerst de tv (index.html?tv), dan nog eens."; s.style.color = "#ff8a80"; return; }
+  tweeKeer($("b-opening-terug"), "Zeker? Tik nog eens", () => { stuur({ cmd: "opening-terug" }); s.textContent = "Verstuurd: de tv zet de Zegels op 0 en start opnieuw."; s.style.color = "#efe3d4"; }); };
 $("b-alles").onclick = () => { const g = laatsteStand?.tvInfo?.gemeld, dood = !g || Date.now() - g > 75000; $("alles-tv").hidden = !dood; 
   const live = window.KRONIEKEN_SESSIE !== "test", typ = $("alles-typ"); typ.hidden = !live; typ.value = ""; $("b-alles-ja").disabled = dood || live;
   typ.oninput = () => ($("b-alles-ja").disabled = dood || typ.value.trim().toUpperCase() !== "WISSEN"); $("alles-vraag").hidden = false; };

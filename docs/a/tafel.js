@@ -54,19 +54,19 @@
     teken(doos, { open = true, gekozen = null, stand = null, opKies } = {}) {
       const W = window.WACHTERS || [], n = W.length;
       // seat order: by XP when there is a standing (the leader at the head of the table), otherwise the fixed order
-      const volgorde = stand ? [...W].sort((a, b) => (stand[b.naam] || 0) - (stand[a.naam] || 0) || W.indexOf(a) - W.indexOf(b)) : W;
+      const volgorde = stand ? [...W].sort((a, b) => !!a.afwezig - !!b.afwezig || (stand[b.naam] || 0) - (stand[a.naam] || 0) || W.indexOf(a) - W.indexOf(b)) : W; // who could not come sits last
       const plek = (w) => { const i = volgorde.indexOf(w), hoek = (i / n) * Math.PI * 2 - Math.PI / 2; return [50 + Math.cos(hoek) * 41, 50 + Math.sin(hoek) * 41, i]; };
       const inhoud = (w) => { const rol = rolVan(w), zien = open && rol, [, , i] = plek(w), foto = window.Portret?.url(w.naam);
         return `${foto ? `<span class="gezicht" data-n="${schoon(w.naam)}">${stand && i === 0 && (stand[w.naam] || 0) > 0 ? '<span class="kroon">♛</span>' : ""}${stand ? `<span class="plek">${i + 1}</span><span class="xp">${stand[w.naam] || 0} XP</span>` : ""}</span>`
-          : `<img src="${zien ? `a/rollen/${rol.id}.webp` : "a/medaillon-vlam.webp"}" alt="">`}<b>${schoon(w.naam)}</b><small>${zien ? schoon(rol.naam.replace(/^The /, "")) : "verzegeld"}</small>`; };
+          : `<img src="${zien ? `a/rollen/${rol.id}.webp` : "a/medaillon-vlam.webp"}" alt="">`}<b>${schoon(w.naam)}</b><small>${w.afwezig ? schoon(w.afwezig) : zien ? schoon(rol.naam.replace(/^The /, "")) : "verzegeld"}</small>`; };
       const bestaand = doos.querySelector(".tafel");
       if (bestaand && bestaand.querySelectorAll(".stoel").length === n) { // already drawn: the seats glide to their new places
         bestaand.querySelectorAll(".stoel").forEach((b) => { const w = W.find((x) => x.naam === b.dataset.naam), [x, y, i] = plek(w), rol = rolVan(w), zien = open && rol;
-          b.style.left = `${x}%`; b.style.top = `${y}%`; b.classList.toggle("dicht", !zien); b.classList.toggle("hoofd", !!stand && i === 0); b.classList.toggle("gekozen", gekozen === w.naam);
+          b.style.left = `${x}%`; b.style.top = `${y}%`; b.classList.toggle("dicht", !zien); b.classList.toggle("hoofd", !!stand && i === 0); b.classList.toggle("gekozen", gekozen === w.naam); b.classList.toggle("weg", !!w.afwezig);
           b.innerHTML = inhoud(w); });
       } else doos.innerHTML = `<div class="tafel"><div class="blad"></div>${W.map((w) => {
         const [x, y, i] = plek(w), rol = rolVan(w), zien = open && rol;
-        return `<button class="stoel ${zien ? "" : "dicht"} ${gekozen === w.naam ? "gekozen" : ""} ${stand && i === 0 ? "hoofd" : ""}" type="button" data-naam="${schoon(w.naam)}" style="left:${x}%;top:${y}%"
+        return `<button class="stoel ${w.afwezig ? "weg" : ""} ${zien ? "" : "dicht"} ${gekozen === w.naam ? "gekozen" : ""} ${stand && i === 0 ? "hoofd" : ""}" type="button" data-naam="${schoon(w.naam)}" style="left:${x}%;top:${y}%"
           aria-label="${schoon(w.naam)}${zien ? `, ${schoon(rol.naam)}` : ""}${stand ? `, ${stand[w.naam] || 0} XP` : ""}">${inhoud(w)}</button>`;
       }).join("")}</div>`;
       doos.querySelectorAll(".gezicht").forEach((el) => window.Portret.rond(el, el.dataset.n));

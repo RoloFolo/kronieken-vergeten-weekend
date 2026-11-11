@@ -10,9 +10,9 @@ window.VOORAF = {
   // per Wachter: titel, opdracht, en welk Zegel hij voedt als de regie "Bevel volbracht" drukt (+3 fiches)
   bevelen: { // de organisatoren (Rob, Jean, Roland) krijgen geen bevel; elk Zegel krijgt er twee (samen 6 fiches)
     Robin: { titel: "De Legendarische Borrelplank", zegel: "hoorn",
-      tekst: "Samen met Geert verzorg jij op de eerste avond een uitbundig feestmaal voor de Wachters: een legendarische borrelplank voor 11 man, rijkelijk gevuld met de beste spijzen uit het koninkrijk. Zorg dat de plank de hele avond gevuld blijft en de Kronieken ingaat." },
+      tekst: "Samen met Geert verzorg jij op de eerste avond een uitbundig feestmaal voor de Wachters: een legendarische borrelplank voor 10 man, rijkelijk gevuld met de beste spijzen uit het koninkrijk. Zorg dat de plank de hele avond gevuld blijft en de Kronieken ingaat." },
     Geert: { titel: "De Legendarische Borrelplank", zegel: "hoorn",
-      tekst: "Samen met Robin verzorg jij op de eerste avond een uitbundig feestmaal voor de Wachters: een legendarische borrelplank voor 11 man, rijkelijk gevuld met de beste spijzen uit het koninkrijk. Zorg dat de plank de hele avond gevuld blijft en de Kronieken ingaat." },
+      tekst: "Samen met Robin verzorg jij op de eerste avond een uitbundig feestmaal voor de Wachters: een legendarische borrelplank voor 10 man, rijkelijk gevuld met de beste spijzen uit het koninkrijk. Zorg dat de plank de hele avond gevuld blijft en de Kronieken ingaat." },
     Stefan: { titel: "Het Spel der Rollen", zegel: "hart", larp: true, // ziet in zijn app de gedaanten van iedereen
       tekst: "Zondagochtend leid jij een LARP-sessie van hooguit een uur, en sportief mag het ook. Het verhaal en de spelvorm zijn van jou. Vrijdag en zaterdag kun je de groep al instructies geven." },
     Roy: { titel: "Meester van de Frituur", zegel: "vlam",
