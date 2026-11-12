@@ -497,6 +497,22 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <button id="b-opening-terug" type="button" style="margin-top:10px">Opening terugdraaien (Zegels naar 0, Hall weer dicht)</button>
     <p class="klein" style="margin:6px 0 0">Voor als de opening per ongeluk al gespeeld is. Alleen de opening gaat terug: wat de Wachters instuurden en aanvaardden blijft. De tv moet aan staan; hij bewaart eerst een herstelpunt en start daarna opnieuw.</p>
     <p class="klein" id="opening-status" hidden></p>
+    <h2 style="margin-top:16px">Eén onderdeel resetten</h2>
+    <p class="klein" style="margin:0 0 8px">Zet alleen dit onderdeel terug naar het begin; de rest blijft staan. De tv moet aan staan, bewaart eerst een herstelpunt en start daarna opnieuw.</p>
+    <select id="deel-kies" style="width:100%">
+      <option value="">Kies een onderdeel…</option>
+      <option value="finale">Finale: alle aktes weer dicht, gebruikte relieken terug</option>
+      <option value="relieken">Fakkeltocht en relieken: tocht, kist en relieken leeg</option>
+      <option value="zegels">Zegels: alle fiches op 0</option>
+      <option value="events">Events: alle events weer beschikbaar</option>
+      <option value="bevelen">Bevelen: afvinkingen weg (gegeven fiches blijven)</option>
+      <option value="schaduw">Schaduwdrager: periodes, kaarten, ijs en vloek weg (XP blijft)</option>
+      <option value="kroniek">Kroniek: alle hoofdstukken weer onverteld</option>
+      <option value="dieven">Dieven: buit leeg</option>
+      <option value="ere">Eretitels en aftiteling: show terug naar het begin (titels blijven)</option>
+    </select>
+    <button id="b-deel" type="button" style="margin-top:8px" disabled>Reset dit onderdeel</button>
+    <p class="klein" id="deel-status" hidden></p>
     <button id="b-alles" type="button" style="margin-top:10px">Hele spel opnieuw beginnen</button>
     <p class="klein" id="alles-status" style="margin:8px 0 0" hidden></p>
     <div class="bevestig" id="alles-vraag" hidden>
@@ -510,17 +526,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=144"></script>
-<script src="a/quests-tv.js?v=144"></script>
-<script src="a/planning.js?v=144"></script>
-<script src="a/godfried.js?v=144"></script>
-<script src="a/spel.js?v=144"></script>
-<script src="a/wachters.js?v=144"></script>
-<script src="a/rollen.js?v=144"></script>
-<script src="a/firebase-config.js?v=144"></script>
-<script src="a/portretten.js?v=144"></script>
-<script src="a/koppeling.js?v=144"></script>
-<script src="a/voorbereiding.js?v=144"></script>
+<script src="a/events.js?v=145"></script>
+<script src="a/quests-tv.js?v=145"></script>
+<script src="a/planning.js?v=145"></script>
+<script src="a/godfried.js?v=145"></script>
+<script src="a/spel.js?v=145"></script>
+<script src="a/wachters.js?v=145"></script>
+<script src="a/rollen.js?v=145"></script>
+<script src="a/firebase-config.js?v=145"></script>
+<script src="a/portretten.js?v=145"></script>
+<script src="a/koppeling.js?v=145"></script>
+<script src="a/voorbereiding.js?v=145"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -923,6 +939,10 @@ $("b-aftiteling-uit").onclick = () => stuur({ cmd: "aftiteling-uit" });
 $("b-ere-speel").onclick = () => stuur({ cmd: ereStand.speelt ? "ere-pauze" : "ere-speel" });
 $("b-ere-terug").onclick = () => stuur({ cmd: "ere", d: -1 });
 $("b-ere-volgende").onclick = () => stuur({ cmd: "ere", d: 1 });
+$("deel-kies").onchange = () => { $("b-deel").disabled = !$("deel-kies").value; $("deel-status").hidden = true; };
+$("b-deel").onclick = () => { const g = laatsteStand?.tvInfo?.gemeld, s = $("deel-status"), k = $("deel-kies"), naam = k.selectedOptions[0].textContent.split(":")[0]; s.hidden = false;
+  if (!k.value) return; if (!g || Date.now() - g > 75000) { s.textContent = "De tv staat niet aan. Open eerst de tv (index.html?tv), dan nog eens."; s.style.color = "#ff8a80"; return; }
+  tweeKeer($("b-deel"), `Zeker? ${naam} gaat terug. Tik nog eens`, () => { stuur({ cmd: "deel-reset", deel: k.value }); s.textContent = `Verstuurd: de tv zet ${naam} terug en start opnieuw. Herstelpunt "vlak vóór reset: ${k.value}" staat klaar.`; s.style.color = "#efe3d4"; k.value = ""; $("b-deel").disabled = true; }); };
 $("b-opening-terug").onclick = () => { const g = laatsteStand?.tvInfo?.gemeld, s = $("opening-status"); s.hidden = false;
   if (!g || Date.now() - g > 75000) { s.textContent = "De tv staat niet aan. Open eerst de tv (index.html?tv), dan nog eens."; s.style.color = "#ff8a80"; return; }
   tweeKeer($("b-opening-terug"), "Zeker? Tik nog eens", () => { stuur({ cmd: "opening-terug" }); s.textContent = "Verstuurd: de tv zet de Zegels op 0 en start opnieuw."; s.style.color = "#efe3d4"; }); };

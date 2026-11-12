@@ -1293,19 +1293,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=144"></script>
-<script src="a/godfried.js?v=144"></script>
-<script src="a/spel.js?v=144"></script>
-<script src="a/voorbereiding.js?v=144"></script>
-<script src="a/wachters.js?v=144"></script>
-<script src="a/firebase-config.js?v=144"></script>
-<script src="a/portretten.js?v=144"></script>
-<script src="a/koppeling.js?v=144"></script>
-<script src="a/rollen.js?v=144"></script>
-<script src="a/quests-tv.js?v=144"></script>
-<script src="a/planning.js?v=144"></script>
-<script src="a/route.js?v=144"></script>
-<script src="a/tafel.js?v=144"></script>
+<script src="a/events.js?v=145"></script>
+<script src="a/godfried.js?v=145"></script>
+<script src="a/spel.js?v=145"></script>
+<script src="a/voorbereiding.js?v=145"></script>
+<script src="a/wachters.js?v=145"></script>
+<script src="a/firebase-config.js?v=145"></script>
+<script src="a/portretten.js?v=145"></script>
+<script src="a/koppeling.js?v=145"></script>
+<script src="a/rollen.js?v=145"></script>
+<script src="a/quests-tv.js?v=145"></script>
+<script src="a/planning.js?v=145"></script>
+<script src="a/route.js?v=145"></script>
+<script src="a/tafel.js?v=145"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -3346,6 +3346,22 @@ const OPDRACHTEN = {
   // everything the players sent in and accepted stays (same round), a restore point comes first
   "opening-terug": async () => { await herstelpunt("vlak vóór opening terugdraaien");
     for (const z of ZEGELS) z.fiches = 0; teken(); rollenOpen = false; kroniek.delete(1); logboek = logboek.filter((l) => l.type !== "fiche"); meld();
+    setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); },
+  // reset one part of the game, nothing else: a restore point first, then the tv starts again so every screen is clean
+  "deel-reset": async (o) => {
+    const DELEN = {
+      zegels: () => { for (const z of ZEGELS) z.fiches = 0; teken(); logboek = logboek.filter((l) => l.type !== "fiche"); },
+      events: () => { gebruikt.clear(); },
+      relieken: () => { tochtOpen = false; kistGeopend = false; tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); logboek = logboek.filter((l) => l.type !== "kist"); },
+      finale: () => { fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; reliekGebruikt.clear(); }, // relics spent on hints come back
+      ere: () => { ereStop(); aftitelingUit(); delete ere.stap; ere.speelt = false; ere.i = -1; }, // the show from the start; titles given and credits entries stay
+      bevelen: () => { bevelGedaan.clear(); },
+      schaduw: () => { verrader = null; verraders = []; chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); },
+      kroniek: () => { kroniek = new Set(); },
+      dieven: () => { dieven = null; },
+    };
+    const doe = DELEN[o.deel]; if (!doe) return;
+    await herstelpunt(`vlak vóór reset: ${o.deel}`); doe(); bewaar();
     setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); },
   "alles-opnieuw": async () => { await herstelpunt("vlak vóór alles opnieuw"); planning = {}; ronde = Date.now(); kroniek = new Set(); openingGehad = false; quizStop(); vertelSla(true); tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
     setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); }, // back to the welcome screen, so the regie shows "Start verhaal" again
