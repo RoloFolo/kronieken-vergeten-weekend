@@ -1293,19 +1293,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=148"></script>
-<script src="a/godfried.js?v=148"></script>
-<script src="a/spel.js?v=148"></script>
-<script src="a/voorbereiding.js?v=148"></script>
-<script src="a/wachters.js?v=148"></script>
-<script src="a/firebase-config.js?v=148"></script>
-<script src="a/portretten.js?v=148"></script>
-<script src="a/koppeling.js?v=148"></script>
-<script src="a/rollen.js?v=148"></script>
-<script src="a/quests-tv.js?v=148"></script>
-<script src="a/planning.js?v=148"></script>
-<script src="a/route.js?v=148"></script>
-<script src="a/tafel.js?v=148"></script>
+<script src="a/events.js?v=149"></script>
+<script src="a/godfried.js?v=149"></script>
+<script src="a/spel.js?v=149"></script>
+<script src="a/voorbereiding.js?v=149"></script>
+<script src="a/wachters.js?v=149"></script>
+<script src="a/firebase-config.js?v=149"></script>
+<script src="a/portretten.js?v=149"></script>
+<script src="a/koppeling.js?v=149"></script>
+<script src="a/rollen.js?v=149"></script>
+<script src="a/quests-tv.js?v=149"></script>
+<script src="a/planning.js?v=149"></script>
+<script src="a/route.js?v=149"></script>
+<script src="a/tafel.js?v=149"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2536,6 +2536,7 @@ function anekdotes() {
     .filter((a) => a.tekst).sort((a, b) => String(a.over).localeCompare(String(b.over)) || (a.t || 0) - (b.t || 0));
 }
 function aftiteling() {
+  if (!$("groot-moment").hidden) grootMomentWeg(); // Wie volgt? (or any big moment) still on the screen: away first, the credits come on top
   afTimers.forEach(clearTimeout); afTimers = []; if (paneelNu !== "ere") paneel("ere");
   const a = $("aftiteling"), r = $("af-rol"), s = $("af-slot"), t = (ms, fn) => afTimers.push(setTimeout(fn, ms));
   r.innerHTML = aftitelingHtml(); gezichten(r); r.classList.remove("loopt"); s.classList.remove("aan", "tot");

@@ -446,6 +446,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <p class="klein" style="margin:0 0 8px">Kies 2 of 3 namen. De dobbelsteen met elf namen valt ‘toevallig’ op hen.</p>
     <div class="rij" id="wv-kies" style="grid-template-columns:repeat(3,1fr)"></div>
     <button class="goud groot" id="b-wievolgt" type="button" style="margin-top:8px" disabled>Werp de D11</button>
+    <button id="b-wv-weg" type="button" style="margin-top:8px">Wie volgt? sluiten</button>
   </section>
   <section class="kaart" data-fase="ere">
     <h2>Het best in hun rol</h2>
@@ -526,17 +527,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=148"></script>
-<script src="a/quests-tv.js?v=148"></script>
-<script src="a/planning.js?v=148"></script>
-<script src="a/godfried.js?v=148"></script>
-<script src="a/spel.js?v=148"></script>
-<script src="a/wachters.js?v=148"></script>
-<script src="a/rollen.js?v=148"></script>
-<script src="a/firebase-config.js?v=148"></script>
-<script src="a/portretten.js?v=148"></script>
-<script src="a/koppeling.js?v=148"></script>
-<script src="a/voorbereiding.js?v=148"></script>
+<script src="a/events.js?v=149"></script>
+<script src="a/quests-tv.js?v=149"></script>
+<script src="a/planning.js?v=149"></script>
+<script src="a/godfried.js?v=149"></script>
+<script src="a/spel.js?v=149"></script>
+<script src="a/wachters.js?v=149"></script>
+<script src="a/rollen.js?v=149"></script>
+<script src="a/firebase-config.js?v=149"></script>
+<script src="a/portretten.js?v=149"></script>
+<script src="a/koppeling.js?v=149"></script>
+<script src="a/voorbereiding.js?v=149"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -898,6 +899,7 @@ $("b-credit").onclick = () => { const t = $("cr-tekst").value.trim(); if (!t) re
 // best traitor and who follows
 $("b-vr-toon").onclick = () => stuur({ cmd: "verraders-toon" });
 $("b-groot-weg").onclick = () => stuur({ cmd: "groot-weg" });
+$("b-wv-weg").onclick = () => stuur({ cmd: "groot-weg" });
 $("vr-kroon").onclick = (e) => { const b = e.target.closest("button"); if (b) stuur({ cmd: "verrader-kroon", naam: b.dataset.n }); };
 function tekenVerraderKroon(s) { const namen = [...new Set((s.verraders || []).map((v) => v.naam))]; $("vr-kroon").innerHTML = namen.length ? namen.map((n) => `<button type="button" data-n="${n}" class="${s.ere?.besteVerrader === n ? "goud" : ""}">Kroon ${n}</button>`).join("") : '<p class="klein">Nog geen Schaduwdragers geweest.</p>'; }
 let wvKeuze = [];
