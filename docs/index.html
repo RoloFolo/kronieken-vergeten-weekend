@@ -778,7 +778,7 @@ body:has(#verhaal.toost:not([hidden])) .crest { opacity: 0; }
 /* the honours play over the dawn city: the Shadow is gone */
 .stage.in-ere .paneel { background: linear-gradient(180deg, rgba(14,8,4,.6), rgba(14,8,4,.38) 38%, rgba(14,8,4,.8)), url(a/fin/dageraad.webp) center / cover; }
 .ere .wie { display: flex; align-items: center; justify-content: center; gap: 2vw; }
-.ere .portret { width: clamp(90px, 15vh, 240px); aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 3px solid #d9b77a; box-shadow: 0 0 0 6px rgba(20,10,4,.55), 0 0 50px rgba(255,190,90,.7); }
+.ere .portret { display: block; flex: none; background: center 20% / cover no-repeat; width: clamp(90px, 15vh, 240px); aspect-ratio: 1; border-radius: 50%; border: 3px solid #d9b77a; box-shadow: 0 0 0 6px rgba(20,10,4,.55), 0 0 50px rgba(255,190,90,.7); }
 .ere.stil > * { opacity: 0; transition: opacity 3s ease; }
 /* the credits: rolling slowly over the dawn city, then "Wie volgt?" */
 .aftiteling { position: absolute; inset: 0; z-index: 40; overflow: hidden; background: #0b0604; opacity: 0; transition: opacity 3s ease; pointer-events: none; }
@@ -795,7 +795,7 @@ body:has(#verhaal.toost:not([hidden])) .crest { opacity: 0; }
 .af-regel { display: grid; grid-template-columns: 1fr 1fr; gap: 2.2vw; align-items: center; }
 .af-regel span { text-align: right; font: italic clamp(15px, 1.45vw, 30px)/1.3 var(--display); color: #e8d6b4; }
 .af-regel b { display: flex; align-items: center; gap: 1vw; text-align: left; font: 700 clamp(17px, 1.7vw, 36px)/1.2 var(--carved); letter-spacing: .06em; color: #fff3dc; }
-.af-regel img { width: clamp(44px, 6.5vh, 110px); aspect-ratio: 1; object-fit: cover; border-radius: 50%; border: 2px solid #d9b77a; }
+.af-regel .af-gz { display: inline-block; flex: none; vertical-align: middle; background: center 20% / cover no-repeat; width: clamp(44px, 6.5vh, 110px); aspect-ratio: 1; border-radius: 50%; border: 2px solid #d9b77a; }
 .af-regel small { font-size: .75em; opacity: .8; }
 /* long lists in two columns, so the credits stay short */
 .af-twee { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1vh 4vw; width: min(90vw, 1500px); justify-self: center; }
@@ -1293,19 +1293,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=147"></script>
-<script src="a/godfried.js?v=147"></script>
-<script src="a/spel.js?v=147"></script>
-<script src="a/voorbereiding.js?v=147"></script>
-<script src="a/wachters.js?v=147"></script>
-<script src="a/firebase-config.js?v=147"></script>
-<script src="a/portretten.js?v=147"></script>
-<script src="a/koppeling.js?v=147"></script>
-<script src="a/rollen.js?v=147"></script>
-<script src="a/quests-tv.js?v=147"></script>
-<script src="a/planning.js?v=147"></script>
-<script src="a/route.js?v=147"></script>
-<script src="a/tafel.js?v=147"></script>
+<script src="a/events.js?v=148"></script>
+<script src="a/godfried.js?v=148"></script>
+<script src="a/spel.js?v=148"></script>
+<script src="a/voorbereiding.js?v=148"></script>
+<script src="a/wachters.js?v=148"></script>
+<script src="a/firebase-config.js?v=148"></script>
+<script src="a/portretten.js?v=148"></script>
+<script src="a/koppeling.js?v=148"></script>
+<script src="a/rollen.js?v=148"></script>
+<script src="a/quests-tv.js?v=148"></script>
+<script src="a/planning.js?v=148"></script>
+<script src="a/route.js?v=148"></script>
+<script src="a/tafel.js?v=148"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2481,16 +2481,19 @@ function tekenEre(onthul = true) {
     $("ere").innerHTML = ere.stap >= lijst.length && lijst.length ? `<h1 class="kop carved">Lang leve de Wachters</h1><p class="onder">Hun namen staan voor altijd in de Kronieken.</p>`
       : `<h1 class="kop carved">Ere van de Wachters</h1><p class="onder">Wie heeft dit weekend zijn plek in de Kronieken verdiend?</p>`; return;
   }
+  queueMicrotask(() => gezichten($("ere")));
   $("ere").innerHTML = `<div class="nr carved">Titel ${ere.stap + 1} van ${lijst.length}</div><h2 class="carved">${x.t.naam}</h2>
-    <p class="voor">${x.t.voor}</p><p class="spreuk">“${x.t.spreuk}”</p><div class="wie carved ${onthul ? "" : "verborgen-wie"}">${PORTRET[x.wie] ? `<img class="portret" src="${PORTRET[x.wie]}" alt="">` : ""}<span>${String(x.wie).replace(/[<>&]/g, "")}</span></div>`;
+    <p class="voor">${x.t.voor}</p><p class="spreuk">“${x.t.spreuk}”</p><div class="wie carved ${onthul ? "" : "verborgen-wie"}">${PORTRET[x.wie] || Portret.url(x.wie) ? `<i class="portret" data-gz="${schoon(x.wie)}"></i>` : ""}<span>${String(x.wie).replace(/[<>&]/g, "")}</span></div>`;
 }
+// a round face: the face-centred crop as at the Round Table, or else the painting loaded on this tv
+function gezichten(el) { el.querySelectorAll("[data-gz]").forEach((i) => { const n = i.dataset.gz; if (!Portret.rond(i, n, 1.15) && PORTRET[n]) i.style.backgroundImage = `url(${PORTRET[n]})`; }); }
 function ereStop() { ereTimers.forEach(clearTimeout); ereTimers = []; }
 // The credits, like at the end of a film: the Wachters and their roles, the honours, the weekend in numbers, then "Wie volgt?".
 let afTimers = [];
 function aftitelingHtml() {
   const tel = (type, f = () => true) => logboek.filter((l) => l.type === type && f(l)).length;
   const rol = (n) => (window.ROLLEN || []).find((r) => r.id === (window.ROL_VAN || {})[n]);
-  const regel = (links, rechts, naam) => `<div class="af-regel"><span>${links}</span><b>${naam && PORTRET[naam] ? `<img src="${PORTRET[naam]}" alt="">` : ""}${rechts}</b></div>`;
+  const regel = (links, rechts, naam) => `<div class="af-regel"><span>${links}</span><b>${naam && (PORTRET[naam] || Portret.url(naam)) ? `<i class="af-gz" data-gz="${schoon(naam)}"></i>` : ""}${rechts}</b></div>`;
   const blok = (kop, regels, twee) => regels.length ? `<h2 class="carved">${kop}</h2>${twee && regels.length > 3 ? `<div class="af-twee">${regels.join("")}</div>` : regels.join("")}` : "";
   const plus = logboek.filter((l) => l.type === "fiche" && l.n > 0).length, min = logboek.filter((l) => l.type === "fiche" && l.n < 0).length;
   const cijfers = [
@@ -2535,7 +2538,7 @@ function anekdotes() {
 function aftiteling() {
   afTimers.forEach(clearTimeout); afTimers = []; if (paneelNu !== "ere") paneel("ere");
   const a = $("aftiteling"), r = $("af-rol"), s = $("af-slot"), t = (ms, fn) => afTimers.push(setTimeout(fn, ms));
-  r.innerHTML = aftitelingHtml(); r.classList.remove("loopt"); s.classList.remove("aan", "tot");
+  r.innerHTML = aftitelingHtml(); gezichten(r); r.classList.remove("loopt"); s.classList.remove("aan", "tot");
   a.hidden = false; void a.offsetWidth; a.classList.add("aan"); halMuziek.vol(.45, 5000);
   const duur = (r.offsetHeight + innerHeight) / (innerHeight * .055); r.style.setProperty("--duur", `${duur}s`); // about 5.5% of the screen per second
   t(2500, () => r.classList.add("loopt"));
