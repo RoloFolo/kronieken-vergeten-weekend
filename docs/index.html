@@ -1293,19 +1293,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=146"></script>
-<script src="a/godfried.js?v=146"></script>
-<script src="a/spel.js?v=146"></script>
-<script src="a/voorbereiding.js?v=146"></script>
-<script src="a/wachters.js?v=146"></script>
-<script src="a/firebase-config.js?v=146"></script>
-<script src="a/portretten.js?v=146"></script>
-<script src="a/koppeling.js?v=146"></script>
-<script src="a/rollen.js?v=146"></script>
-<script src="a/quests-tv.js?v=146"></script>
-<script src="a/planning.js?v=146"></script>
-<script src="a/route.js?v=146"></script>
-<script src="a/tafel.js?v=146"></script>
+<script src="a/events.js?v=147"></script>
+<script src="a/godfried.js?v=147"></script>
+<script src="a/spel.js?v=147"></script>
+<script src="a/voorbereiding.js?v=147"></script>
+<script src="a/wachters.js?v=147"></script>
+<script src="a/firebase-config.js?v=147"></script>
+<script src="a/portretten.js?v=147"></script>
+<script src="a/koppeling.js?v=147"></script>
+<script src="a/rollen.js?v=147"></script>
+<script src="a/quests-tv.js?v=147"></script>
+<script src="a/planning.js?v=147"></script>
+<script src="a/route.js?v=147"></script>
+<script src="a/tafel.js?v=147"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2243,12 +2243,13 @@ const SPOOR = { "chaos-steel": (l) => `er verdween een fiche uit de ${zegelNaamV
 // Without Firebase (a local test) the example memories from spel.js.
 const hashNaam = (s) => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
 const VUUR_MAX = 5;
-function vuurBron() {
-  if (!Object.keys(voorafAlles).length) return (S.herinneringen || []).filter((h) => h.tekst && NAMEN.includes(h.wie)).map((h) => ({ wie: h.wie, tekst: h.tekst, t: 0 }));
-  return anekdotes().filter((a) => a.van && (!a.over || a.over === a.van)).map((a) => ({ wie: a.van, tekst: a.tekst, t: a.t || 0 }));
+function vuurBron() { // only Wachters who are there can stand in front; with nothing sent in (a test) the example memories
+  const echt = anekdotes().filter((a) => a.van && AANWEZIG.includes(a.van) && (!a.over || a.over === a.van)).map((a) => ({ wie: a.van, tekst: a.tekst, t: a.t || 0 }));
+  if (echt.length || window.KRONIEKEN_SESSIE === "live" && window.FIREBASE_CONFIG) return echt;
+  return (S.herinneringen || []).filter((h) => h.tekst && AANWEZIG.includes(h.wie)).map((h) => ({ wie: h.wie, tekst: h.tekst, t: 0 }));
 }
 function vuurRondes() {
-  if (fin.vuur) return fin.vuur;
+  if (fin.vuur?.length) return fin.vuur; // an empty list stored earlier is made again
   const eigen = {}; for (const a of vuurBron()) (eigen[a.wie] ||= []).push(a);
   const voor = Object.fromEntries(NAMEN.map((n) => [n, 0]));
   const rondes = Object.keys(eigen).sort((x, y) => hashNaam(x + ronde) - hashNaam(y + ronde)).slice(0, VUUR_MAX).map((wie, k) => {
@@ -2256,7 +2257,8 @@ function vuurRondes() {
     const mee = AANWEZIG.filter((n) => n !== wie).sort((x, y) => voor[x] - voor[y] || hashNaam(x + ronde + k) - hashNaam(y + ronde + k)).slice(0, 2); mee.forEach((n) => voor[n]++);
     return { wie, tekst: a.tekst, drie: [wie, ...mee].sort((x, y) => hashNaam(x + k + ronde + "d") - hashNaam(y + k + ronde + "d")) };
   });
-  return (fin.vuur = rondes);
+  if (rondes.length && (voorafGeladen || !window.FIREBASE_CONFIG)) fin.vuur = rondes; // never remember an empty list, nor one made before the memories arrived
+  return rondes;
 }
 const vuurLeeg = () => Object.keys(voorafAlles).length ? AANWEZIG.filter((n) => !anekdotes().some((a) => a.van === n)) : (S.herinneringen || []).filter((h) => !h.tekst).map((h) => h.wie);
 const schandpaalGehoord = new Set();
@@ -2524,7 +2526,7 @@ function aftitelingHtml() {
     + `<div style="height:30vh"></div>`;
 }
 // every memory the Wachters sent in before the weekend (Firebase /vooraf, read by the tv for the credits only)
-let voorafAlles = {};
+let voorafAlles = {}, voorafGeladen = false;
 function anekdotes() {
   const naamVan = (k) => NAMEN.find((n) => Koppeling.emailVan(n).toLowerCase().replaceAll(".", ",") === k);
   return Object.entries(voorafAlles).flatMap(([k, v]) => Object.values(v?.anekdotes || {}).map((a) => ({ ...a, van: naamVan(k) })))
@@ -3400,7 +3402,7 @@ function bewaakTv(s) {
   document.body.appendChild(el); el.querySelector("button").onclick = () => location.reload();
 }
 if (!window.FIREBASE_CONFIG || new URLSearchParams(location.search).has("tv"))
-  Koppeling.start({ rol: "tv", opPlanning: (p) => { planHand = p || {}; meld(); if (paneelNu === "route") tekenRoute(); }, opStand: laadStand, opOpdracht: (o) => { if (!passief) OPDRACHTEN[o.cmd]?.(o); }, opEre: (t) => { toewijzing = t || {}; }, opVooraf: (v) => { voorafAlles = v || {}; } }).then((v) => { server = !!v; });
+  Koppeling.start({ rol: "tv", opPlanning: (p) => { planHand = p || {}; meld(); if (paneelNu === "route") tekenRoute(); }, opStand: laadStand, opOpdracht: (o) => { if (!passief) OPDRACHTEN[o.cmd]?.(o); }, opEre: (t) => { toewijzing = t || {}; }, opVooraf: (v) => { voorafAlles = v || {}; voorafGeladen = true; } }).then((v) => { server = !!v; });
 
 /* ================= Schaduw-event ================= */
 let stem = null, typer = null, stormTimer = null, beslist = false;
