@@ -818,6 +818,7 @@ body:has(#verhaal.toost:not([hidden])) .crest { opacity: 0; }
 .af-anekdote p { margin: 0 0 .6vh; font: italic clamp(15px, 1.45vw, 30px)/1.45 var(--display); color: #fff3dc; }
 .af-anekdote b { font: 700 clamp(13px, 1.2vw, 24px)/1.2 var(--carved); letter-spacing: .08em; color: #d9b77a; }
 .af-anekdote b small { font: italic 400 .85em var(--display); letter-spacing: 0; color: #e8d6b4; opacity: .8; }
+.af-groep { display: block; width: min(86vw, 1500px); justify-self: center; margin: 2vh auto 4vh; border: 3px solid #d9b77a; box-shadow: 0 0 40px rgba(226,50,60,.45), 0 16px 40px rgba(0,0,0,.8); }
 .af-fotos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3vh 2.4vw; padding: 1vh 0 2vh; }
 .af-fotos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; padding: .8vh .8vh 3vh; background: #f4ead6; box-shadow: 0 12px 30px rgba(0,0,0,.7); }
 .af-fotos img:nth-child(3n + 1) { rotate: -2.5deg; } .af-fotos img:nth-child(3n + 2) { rotate: 1.5deg; translate: 0 3vh; } .af-fotos img:nth-child(3n) { rotate: 3deg; }
@@ -1292,19 +1293,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=143"></script>
-<script src="a/godfried.js?v=143"></script>
-<script src="a/spel.js?v=143"></script>
-<script src="a/voorbereiding.js?v=143"></script>
-<script src="a/wachters.js?v=143"></script>
-<script src="a/firebase-config.js?v=143"></script>
-<script src="a/portretten.js?v=143"></script>
-<script src="a/koppeling.js?v=143"></script>
-<script src="a/rollen.js?v=143"></script>
-<script src="a/quests-tv.js?v=143"></script>
-<script src="a/planning.js?v=143"></script>
-<script src="a/route.js?v=143"></script>
-<script src="a/tafel.js?v=143"></script>
+<script src="a/events.js?v=144"></script>
+<script src="a/godfried.js?v=144"></script>
+<script src="a/spel.js?v=144"></script>
+<script src="a/voorbereiding.js?v=144"></script>
+<script src="a/wachters.js?v=144"></script>
+<script src="a/firebase-config.js?v=144"></script>
+<script src="a/portretten.js?v=144"></script>
+<script src="a/koppeling.js?v=144"></script>
+<script src="a/rollen.js?v=144"></script>
+<script src="a/quests-tv.js?v=144"></script>
+<script src="a/planning.js?v=144"></script>
+<script src="a/route.js?v=144"></script>
+<script src="a/tafel.js?v=144"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2519,6 +2520,7 @@ function aftitelingHtml() {
     + blok("Het weekend in cijfers", cijfers, true)
     + blok("Met de stemmen van", [regel("De verteller", "Godfried van Bouillon"), regel("De vijand", "De Schaduwkoning")])
     + blok("Bedacht en geregeld door", [regel("De hoeders van de Hall", "Rob, Jean en Roland")])
+    + (GROEP.url ? `<h2 class="carved">De Wachters, bijeen</h2><img class="af-groep" src="${GROEP.url}" alt="">` : "") // the group painting, near the end
     + `<div style="height:30vh"></div>`;
 }
 // every memory the Wachters sent in before the weekend (Firebase /vooraf, read by the tv for the credits only)
@@ -2547,7 +2549,8 @@ const idb = (r) => new Promise((ok, nee) => { r.onsuccess = () => ok(r.result); 
 const portretDb = () => { const r = indexedDB.open("kronieken", 2); r.onupgradeneeded = () => { for (const s of ["portretten", "fotos"]) if (!r.result.objectStoreNames.contains(s)) r.result.createObjectStore(s); }; return idb(r); };
 // honourable mentions in the credits, earned before the weekend even began
 const EERVOL = [{ wie: "Johan", titel: "De Bouillonmeester", tekst: "Kwam al vóór het weekend met een hamer en drie dozen Maggi naar Bouillon. Het hele kasteel ruikt naar kippensoep." }];
-const FOTOS = [];
+const FOTOS = [], GROEP = { url: null }; // GROEP: the group painting (a file named groep.*), kept in this browser only like the portraits
+const isGroep = (f) => /^groep/i.test(f.name);
 function fotoKnop() { $("b-fotos").textContent = `Foto's laden (${FOTOS.length})`; }
 (async () => { try { const st = (await portretDb()).transaction("fotos").objectStore("fotos"); (await idb(st.getAll())).forEach((b) => FOTOS.push(URL.createObjectURL(b))); } catch {} fotoKnop(); })();
 // a phone photo is big: keep a 1600 px copy, light enough to roll by smoothly
@@ -2557,16 +2560,17 @@ async function verklein(f) { try { const bm = await createImageBitmap(f), s = Ma
 $("b-fotos").onclick = () => $("fotos-kies").click();
 $("fotos-kies").onchange = async (e) => {
   const db = await portretDb().catch(() => null);
-  for (const f of e.target.files) { const b = await verklein(f); FOTOS.push(URL.createObjectURL(b)); try { db?.transaction("fotos", "readwrite").objectStore("fotos").put(b, `${f.name}-${f.size}`); } catch {} fotoKnop(); }
+  for (const f of e.target.files) { if (isGroep(f)) { GROEP.url = URL.createObjectURL(f); try { db?.transaction("portretten", "readwrite").objectStore("portretten").put(f, "_groep"); } catch {} continue; } const b = await verklein(f); FOTOS.push(URL.createObjectURL(b)); try { db?.transaction("fotos", "readwrite").objectStore("fotos").put(b, `${f.name}-${f.size}`); } catch {} fotoKnop(); }
   e.target.value = "";
 };
 function portretKnop() { $("b-portret").textContent = `Portretten laden (${Object.keys(PORTRET).length}/${NAMEN.length})`; }
 (async () => { try { const st = (await portretDb()).transaction("portretten").objectStore("portretten"); const [k, v] = await Promise.all([idb(st.getAllKeys()), idb(st.getAll())]);
-  k.forEach((n, i) => (PORTRET[n] = URL.createObjectURL(v[i]))); } catch {} portretKnop(); })();
+  k.forEach((n, i) => { if (n === "_groep") GROEP.url = URL.createObjectURL(v[i]); else PORTRET[n] = URL.createObjectURL(v[i]); }); } catch {} portretKnop(); })();
 $("b-portret").onclick = () => $("portret-kies").click();
 $("portret-kies").onchange = async (e) => {
   const db = await portretDb().catch(() => null);
   for (const f of e.target.files) {
+    if (isGroep(f)) { GROEP.url = URL.createObjectURL(f); try { db?.transaction("portretten", "readwrite").objectStore("portretten").put(f, "_groep"); } catch {} continue; }
     const basis = f.name.toLowerCase().replace(/\.[a-z0-9]+$/, "").replace(/-[ab]$/, ""), naam = NAMEN.find((n) => n.toLowerCase() === basis); if (!naam) continue;
     PORTRET[naam] = URL.createObjectURL(f); try { db?.transaction("portretten", "readwrite").objectStore("portretten").put(f, naam); } catch {}
   }
