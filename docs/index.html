@@ -1299,19 +1299,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=151"></script>
-<script src="a/godfried.js?v=151"></script>
-<script src="a/spel.js?v=151"></script>
-<script src="a/voorbereiding.js?v=151"></script>
-<script src="a/wachters.js?v=151"></script>
-<script src="a/firebase-config.js?v=151"></script>
-<script src="a/portretten.js?v=151"></script>
-<script src="a/koppeling.js?v=151"></script>
-<script src="a/rollen.js?v=151"></script>
-<script src="a/quests-tv.js?v=151"></script>
-<script src="a/planning.js?v=151"></script>
-<script src="a/route.js?v=151"></script>
-<script src="a/tafel.js?v=151"></script>
+<script src="a/events.js?v=152"></script>
+<script src="a/godfried.js?v=152"></script>
+<script src="a/spel.js?v=152"></script>
+<script src="a/voorbereiding.js?v=152"></script>
+<script src="a/wachters.js?v=152"></script>
+<script src="a/firebase-config.js?v=152"></script>
+<script src="a/portretten.js?v=152"></script>
+<script src="a/koppeling.js?v=152"></script>
+<script src="a/rollen.js?v=152"></script>
+<script src="a/quests-tv.js?v=152"></script>
+<script src="a/planning.js?v=152"></script>
+<script src="a/route.js?v=152"></script>
+<script src="a/tafel.js?v=152"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -3417,7 +3417,7 @@ function bewaakTv(s) {
   document.body.appendChild(el); el.querySelector("button").onclick = () => location.reload();
 }
 if (!window.FIREBASE_CONFIG || new URLSearchParams(location.search).has("tv"))
-  Koppeling.start({ rol: "tv", opPlanning: (p) => { planHand = p || {}; meld(); if (paneelNu === "route") tekenRoute(); }, opStand: laadStand, opOpdracht: (o) => { if (!passief) OPDRACHTEN[o.cmd]?.(o); }, opEre: (t) => { toewijzing = t || {}; }, opVooraf: (v) => { voorafAlles = v || {}; voorafGeladen = true; } }).then((v) => { server = !!v; });
+  Koppeling.start({ rol: "tv", opPlanning: (p) => { planHand = p || {}; meld(); if (paneelNu === "route") tekenRoute(); }, opStand: laadStand, opOpdracht: (o, vers = true) => { if (passief) return false; if (vers) OPDRACHTEN[o.cmd]?.(o); }, opEre: (t) => { toewijzing = t || {}; }, opVooraf: (v) => { voorafAlles = v || {}; voorafGeladen = true; } }).then((v) => { server = !!v; });
 
 /* ================= Schaduw-event ================= */
 let stem = null, typer = null, stormTimer = null, beslist = false;

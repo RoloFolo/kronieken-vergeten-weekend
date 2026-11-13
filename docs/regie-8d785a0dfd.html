@@ -198,6 +198,7 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <span id="verbinding">Verbinden met de tv…</span>
     <span class="scherm" id="scherm"></span>
   </div>
+  <div class="kaart" id="test-teken" hidden style="border-color:var(--bronze);color:var(--bronze-hi)">TESTsessie: deze regie stuurt naar de test-tv, niet naar de echte. Open de app zonder ?test voor het echte weekend.</div>
   <p class="klein" id="tv-info" style="margin:-8px 4px 0"></p>
   <p class="klein" id="tv-oud" style="margin:4px 4px 0;color:#ff8a80" hidden></p>
   <div class="kaart" id="tv-alarm" hidden style="border-color:var(--ember);color:#ffd2d0"></div>
@@ -527,17 +528,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=151"></script>
-<script src="a/quests-tv.js?v=151"></script>
-<script src="a/planning.js?v=151"></script>
-<script src="a/godfried.js?v=151"></script>
-<script src="a/spel.js?v=151"></script>
-<script src="a/wachters.js?v=151"></script>
-<script src="a/rollen.js?v=151"></script>
-<script src="a/firebase-config.js?v=151"></script>
-<script src="a/portretten.js?v=151"></script>
-<script src="a/koppeling.js?v=151"></script>
-<script src="a/voorbereiding.js?v=151"></script>
+<script src="a/events.js?v=152"></script>
+<script src="a/quests-tv.js?v=152"></script>
+<script src="a/planning.js?v=152"></script>
+<script src="a/godfried.js?v=152"></script>
+<script src="a/spel.js?v=152"></script>
+<script src="a/wachters.js?v=152"></script>
+<script src="a/rollen.js?v=152"></script>
+<script src="a/firebase-config.js?v=152"></script>
+<script src="a/portretten.js?v=152"></script>
+<script src="a/koppeling.js?v=152"></script>
+<script src="a/voorbereiding.js?v=152"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -637,6 +638,7 @@ for (const z of ZEGELS) {
 
 // which tv windows wrote the stand lately; two writers (or one without a tv mark = an old version) explains a flipping state
 const schrijvers = new Map(); let laatsteStand = null;
+if (window.KRONIEKEN_SESSIE === "test") $("test-teken").hidden = false;
 // no heartbeat from the tv for 75 seconds: nothing will execute the buttons
 setInterval(() => {
   const g = laatsteStand?.tvInfo?.gemeld, dood = !g || Date.now() - g > 75000;
@@ -659,7 +661,7 @@ function bewaakTvs(s) {
     : "Let op: er schrijven twee tv-vensters tegelijk. Sluit alle tabbladen met ?tv behalve één.";
 }
 function toon(s) {
-  bewaakTvs(s); $("b-rotatie").classList.toggle("aan", s.rotatie !== false); tekenXpLijst(s); tekenWijzigingen(s); tekenDieven(s); tekenQuest(s); tekenGeheim(s); tekenPlan(s); queueMicrotask(() => tekenBalk(s));
+  bewaakTvs(s); puntCheck(s); $("b-rotatie").classList.toggle("aan", s.rotatie !== false); tekenXpLijst(s); tekenWijzigingen(s); tekenDieven(s); tekenQuest(s); tekenGeheim(s); tekenPlan(s); queueMicrotask(() => tekenBalk(s));
   // what the traitor did that everyone can see anyway: a frozen seal (no fiches) and a cursed Wachter
   const ijsTxt = Object.entries(s.ijs || {}).filter(([, t]) => t > Date.now()).map(([id, t]) => `❄ ${ZEGELS.find((z) => z.id === id)?.naam} is bevroren tot ${new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}. Tik op ❄ om te ontdooien.`);
   if (s.vloek) ijsTxt.push(`Vervloekt: ${s.vloek.naam}. ${s.vloek.tekst}`);
@@ -889,7 +891,21 @@ function tekenPunt() {
 $("punt-wie").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.naam = b.dataset.n; tekenPunt(); } };
 $("punt-zegel").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.zegel = b.dataset.z; tekenPunt(); } };
 $("punt-n").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.n = +b.dataset.n; tekenPunt(); } };
-$("b-punt").onclick = () => { stuur({ cmd: "punt", naam: puntKeuze.naam, zegel: puntKeuze.zegel, xp: puntKeuze.n, waarom: $("punt-waarom").value.trim() }); $("punt-stand").textContent = `Verstuurd: ${$("b-punt").textContent}.`; puntKeuze = { naam: null, zegel: null, n: null }; $("punt-waarom").value = ""; tekenPunt(); };
+let puntWacht = null;
+const puntMelding = (t, kleur) => { const p = $("punt-stand"); p.textContent = t; p.style.color = kleur || ""; };
+function puntCheck(s) { // a new XP entry in the stand that matches what was sent: the tv booked it
+  if (!puntWacht) return; const nieuw = (s.logboek || []).find((l) => l.type === "punt" && !puntWacht.al.has(l.t) && l.naam === puntWacht.naam && +l.xp === puntWacht.xp);
+  if (nieuw) { clearTimeout(puntWacht.timer); puntMelding(`✓ Op de tv: ${puntWacht.tekst}.`, "#9be29b"); puntWacht = null; }
+}
+function puntMislukt(tekst) {
+  const g = laatsteStand?.tvInfo?.gemeld, dood = !g || Date.now() - g > 75000;
+  puntMelding(`✗ Niet aangekomen: ${tekst}. ` + (window.KRONIEKEN_SESSIE === "test" ? "Je regie staat op de TESTsessie, de echte tv hoort dit niet: open de app zonder ?test." : dood ? "Er is geen actieve tv: open de tv (adres met ?tv) op de laptop." : "Druk op de tv-laptop Ctrl+F5, sluit andere tv-tabbladen en geef het opnieuw."), "#ff8a80");
+}
+$("b-punt").onclick = async () => { const tekst = $("b-punt").textContent, wacht = { naam: puntKeuze.naam, xp: puntKeuze.n, tekst, al: new Set((laatsteStand?.logboek || []).filter((l) => l.type === "punt").map((l) => l.t)) };
+  if (puntWacht) clearTimeout(puntWacht.timer); puntWacht = wacht; puntMelding(`Onderweg naar de tv: ${tekst}…`);
+  wacht.timer = setTimeout(() => { if (puntWacht === wacht) { puntWacht = null; puntMislukt(tekst); } }, 12000);
+  const ok = stuur({ cmd: "punt", naam: puntKeuze.naam, zegel: puntKeuze.zegel, xp: puntKeuze.n, waarom: $("punt-waarom").value.trim() });
+  Promise.resolve(ok).then((v) => { if (v === false && puntWacht === wacht) { clearTimeout(wacht.timer); puntWacht = null; puntMelding(`✗ Niet verstuurd: ${tekst}. Geen verbinding, probeer het opnieuw.`, "#ff8a80"); } }); puntKeuze = { naam: null, zegel: null, n: null }; $("punt-waarom").value = ""; tekenPunt(); };
 tekenPunt();
 // lines for the credits
 let crSoort = "titel";

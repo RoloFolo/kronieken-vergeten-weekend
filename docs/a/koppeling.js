@@ -96,6 +96,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
   // token fresh, listen again after a cancel, retry a refused write once with a new token, and report it.
   const status = { online: false, kapot: 0, fout: 0 };
   const meld = () => window.dispatchEvent(new CustomEvent("koppeling-status", { detail: { ...status } }));
+  let tijdVerschil = 0; db.onValue(db.ref(d, ".info/serverTimeOffset"), (s) => { tijdVerschil = +s.val() || 0; }, () => {}); const nu = () => Date.now() + tijdVerschil; // the database's clock, the same on every device
   const vers = (forceer) => a.currentUser ? a.currentUser.getIdToken(forceer).catch(() => null) : Promise.resolve(null);
   setInterval(() => vers(false), 4 * 60000);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) vers(false); });
@@ -115,7 +116,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
     catch { await vers(true); try { await doe(); status.fout = 0; meld(); return true; } catch { status.fout++; meld(); return false; } }
   };
   if (alleenAdmin) luister(db.onValue, "stand", (s) => opStand?.(s.val() || {}));
-  if (rol === "tv") luister(db.onChildAdded, "opdrachten", (s) => { const o = s.val(); db.remove(s.ref).catch(() => {}); if (o && Date.now() - (o.t || 0) < 60000) opOpdracht?.(o); });
+  if (rol === "tv") luister(db.onChildAdded, "opdrachten", (s) => { const o = s.val(); if (o && opOpdracht?.(o, nu() - (o.t || 0) < 120000) === false) return; db.remove(s.ref).catch(() => {}); }); // the tv says false when it is not the writing tv: then the order stays for the one that is
   if (rol === "wachter") luister(db.onValue, "publiek", (s) => opPubliek?.(s.val() || {}));
   // a cancelled listener says nothing about the role: never treat it as "no longer the traitor"
   if (rol === "wachter" || rol === "chaos") luister(db.onValue, `verraad/${sleutel(email)}`, (s) => { opVerraad?.(s.val()); if (rol === "chaos") opStand?.(s.val() || {}); });
@@ -139,7 +140,7 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
       const v = stand.verrader;
       schrijf("verraad", v ? { [sleutel(emailVan(v.naam))]: { naam: v.naam, sinds: v.sinds, tot: v.tot || null, fiches: stand.fiches, scherm: stand.scherm, chaos: stand.chaos || null } } : null);
     },
-    stuur: (o) => metToken(() => db.push(db.ref(d, sessiePad("opdrachten")), { ...o, van: email, t: Date.now() })),
+    stuur: (o) => metToken(() => db.push(db.ref(d, sessiePad("opdrachten")), { ...o, van: email, t: nu() })),
     uitloggen: () => auth.signOut(a),
     vooraf: (pad, waarde) => metToken(() => db.set(db.ref(d, sessiePad(`vooraf/${sleutel(email)}/${pad}`)), waarde)),
     planning: rol === "regie" ? (id, klaar) => metToken(() => db.set(db.ref(d, sessiePad(`ere/planning/${id}`)), typeof klaar === "boolean" ? klaar : null)) : null,
