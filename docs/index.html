@@ -1299,19 +1299,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=152"></script>
-<script src="a/godfried.js?v=152"></script>
-<script src="a/spel.js?v=152"></script>
-<script src="a/voorbereiding.js?v=152"></script>
-<script src="a/wachters.js?v=152"></script>
-<script src="a/firebase-config.js?v=152"></script>
-<script src="a/portretten.js?v=152"></script>
-<script src="a/koppeling.js?v=152"></script>
-<script src="a/rollen.js?v=152"></script>
-<script src="a/quests-tv.js?v=152"></script>
-<script src="a/planning.js?v=152"></script>
-<script src="a/route.js?v=152"></script>
-<script src="a/tafel.js?v=152"></script>
+<script src="a/events.js?v=153"></script>
+<script src="a/godfried.js?v=153"></script>
+<script src="a/spel.js?v=153"></script>
+<script src="a/voorbereiding.js?v=153"></script>
+<script src="a/wachters.js?v=153"></script>
+<script src="a/firebase-config.js?v=153"></script>
+<script src="a/portretten.js?v=153"></script>
+<script src="a/koppeling.js?v=153"></script>
+<script src="a/rollen.js?v=153"></script>
+<script src="a/quests-tv.js?v=153"></script>
+<script src="a/planning.js?v=153"></script>
+<script src="a/route.js?v=153"></script>
+<script src="a/tafel.js?v=153"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -3391,7 +3391,7 @@ const tvApparaat = (() => { const u = navigator.userAgent; const os = /Android/.
   const br = /Edg\//.test(u) ? "Edge" : /Chrome\//.test(u) ? "Chrome" : /Firefox\//.test(u) ? "Firefox" : /Safari\//.test(u) ? "Safari" : "browser"; return `${os} · ${br}`; })();
 let tvVersie = "?"; fetch(`a/versie.txt?t=${Date.now()}`, { cache: "no-store" }).then((r) => r.text()).then((v) => (tvVersie = v.trim())).catch(() => {});
 function laadStand(s) {
-  if (herstelt) return; if (standGeladen) return bewaakTv(s); standGeladen = true; geladenOp = Date.now();
+  if (herstelt) return; if (standGeladen) return bewaakTv(s); standGeladen = true; geladenOp = Date.now(); regieGezien = s.regieActie?.id || null; // what the regie booked without a tv is already in this stand
   for (const z of ZEGELS) z.fiches = s.fiches?.[z.id] ?? z.fiches;
   gebruikt = new Set(s.gebruikt || []); teller(); teken();
   tochtOpen = !!s.tochtOpen; kistGeopend = !!s.kistGeopend; bevelGedaan = new Set(s.bevelen || []); tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
@@ -3407,7 +3407,9 @@ function laadStand(s) {
 // if another tv window writes the stand, this one stops writing and offers to take over
 // heartbeat: the regie can see that this tv is alive (and that the buttons will work)
 setInterval(() => meld(), 30000);
+let regieGezien = null;
 function bewaakTv(s) {
+  const ra = s.regieActie; if (ra?.id && ra.id !== regieGezien && !passief) { regieGezien = ra.id; if (ra.soort === "punt") punt(ra.l); else if (ra.soort === "terug") puntTerug({ t: ra.t }); return; }
   // a stand from another window (also an old version without a tv mark) means two tvs are writing
   if (passief || s.tv === tvId || Date.now() - geladenOp < 6000) return;
   passief = true; clearTimeout(meldTimer);

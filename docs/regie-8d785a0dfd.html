@@ -528,17 +528,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=152"></script>
-<script src="a/quests-tv.js?v=152"></script>
-<script src="a/planning.js?v=152"></script>
-<script src="a/godfried.js?v=152"></script>
-<script src="a/spel.js?v=152"></script>
-<script src="a/wachters.js?v=152"></script>
-<script src="a/rollen.js?v=152"></script>
-<script src="a/firebase-config.js?v=152"></script>
-<script src="a/portretten.js?v=152"></script>
-<script src="a/koppeling.js?v=152"></script>
-<script src="a/voorbereiding.js?v=152"></script>
+<script src="a/events.js?v=153"></script>
+<script src="a/quests-tv.js?v=153"></script>
+<script src="a/planning.js?v=153"></script>
+<script src="a/godfried.js?v=153"></script>
+<script src="a/spel.js?v=153"></script>
+<script src="a/wachters.js?v=153"></script>
+<script src="a/rollen.js?v=153"></script>
+<script src="a/firebase-config.js?v=153"></script>
+<script src="a/portretten.js?v=153"></script>
+<script src="a/koppeling.js?v=153"></script>
+<script src="a/voorbereiding.js?v=153"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -892,6 +892,31 @@ $("punt-wie").onclick = (e) => { const b = e.target.closest("button"); if (b) { 
 $("punt-zegel").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.zegel = b.dataset.z; tekenPunt(); } };
 $("punt-n").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.n = +b.dataset.n; tekenPunt(); } };
 let puntWacht = null;
+// no tv running (before the weekend, or the laptop is off): the regie books the XP itself in the database. The Round Table in the app shows it
+// at once, and the tv takes it from the stand when it starts. A tv that does run after all takes the booking over (regieActie).
+const tvDood = () => { const g = laatsteStand?.tvInfo?.gemeld; return !g || Date.now() - g > 75000; };
+const ficheVoorXp = (xp) => Math.sign(xp) * (Math.abs(xp) >= 30 ? 3 : Math.abs(xp) >= 20 ? 2 : 1);
+async function zelfBoeken(actie, wijzig) {
+  if (!laatsteStand) return false;
+  const s = JSON.parse(JSON.stringify(laatsteStand)); s.logboek ||= []; s.fiches ||= {}; wijzig(s);
+  const stand = Object.fromEntries((window.WACHTERS || []).map((w) => [w.naam, 0])), recent = [];
+  for (const l of s.logboek) if (l.type === "punt" && l.naam in stand) { const xp = l.xp ?? (l.n || 0) * 10; stand[l.naam] += xp; recent.push({ naam: l.naam, zegel: l.zegel, xp, n: xp, waarom: l.waarom || "" }); }
+  s.publiek = { ...(s.publiek || {}), scores: { stand, recent: recent.slice(-6).reverse(), zegels: { ...s.fiches } } };
+  s.regieActie = { id: `r${Date.now()}${Math.random().toString(36).slice(2, 6)}`, ...actie };
+  return (await Koppeling.meldStand(s)) !== false;
+}
+function zelfPunt(o) {
+  const xp = Math.max(-50, Math.min(50, Math.round(+o.xp) || 0)); if (!xp) return Promise.resolve(false);
+  const l = { naam: o.naam, zegel: o.zegel, xp, waarom: String(o.waarom || "").slice(0, 140) };
+  return zelfBoeken({ soort: "punt", l }, (s) => { const n = ficheVoorXp(xp);
+    s.logboek.push({ t: Date.now(), type: "punt", ...l, n, verrader: s.verrader?.naam === o.naam, zonderTv: true });
+    s.fiches[o.zegel] = Math.max(0, (s.fiches[o.zegel] || 0) + n); });
+}
+function zelfTerug(t) {
+  return zelfBoeken({ soort: "terug", t }, (s) => { const i = s.logboek.findIndex((l) => l.type === "punt" && l.t === t); if (i < 0) return;
+    const l = s.logboek.splice(i, 1)[0]; s.fiches[l.zegel] = Math.max(0, (s.fiches[l.zegel] || 0) - (l.n || 0));
+    s.logboek.push({ t: Date.now(), type: "punt-terug", naam: l.naam, zegel: l.zegel, xp: l.xp, waarom: l.waarom || "" }); });
+}
 const puntMelding = (t, kleur) => { const p = $("punt-stand"); p.textContent = t; p.style.color = kleur || ""; };
 function puntCheck(s) { // a new XP entry in the stand that matches what was sent: the tv booked it
   if (!puntWacht) return; const nieuw = (s.logboek || []).find((l) => l.type === "punt" && !puntWacht.al.has(l.t) && l.naam === puntWacht.naam && +l.xp === puntWacht.xp);
@@ -901,7 +926,11 @@ function puntMislukt(tekst) {
   const g = laatsteStand?.tvInfo?.gemeld, dood = !g || Date.now() - g > 75000;
   puntMelding(`✗ Niet aangekomen: ${tekst}. ` + (window.KRONIEKEN_SESSIE === "test" ? "Je regie staat op de TESTsessie, de echte tv hoort dit niet: open de app zonder ?test." : dood ? "Er is geen actieve tv: open de tv (adres met ?tv) op de laptop." : "Druk op de tv-laptop Ctrl+F5, sluit andere tv-tabbladen en geef het opnieuw."), "#ff8a80");
 }
-$("b-punt").onclick = async () => { const tekst = $("b-punt").textContent, wacht = { naam: puntKeuze.naam, xp: puntKeuze.n, tekst, al: new Set((laatsteStand?.logboek || []).filter((l) => l.type === "punt").map((l) => l.t)) };
+$("b-punt").onclick = async () => { const tekst = $("b-punt").textContent;
+  if (tvDood() && laatsteStand) { const o = { naam: puntKeuze.naam, zegel: puntKeuze.zegel, xp: puntKeuze.n, waarom: $("punt-waarom").value.trim() };
+    puntKeuze = { naam: null, zegel: null, n: null }; $("punt-waarom").value = ""; tekenPunt(); puntMelding(`Bezig: ${tekst}…`);
+    const ok = await zelfPunt(o); puntMelding(ok ? `✓ Geboekt (zonder tv): ${tekst}. Staat meteen aan de Ronde Tafel in de app; de tv neemt het over zodra hij aangaat.` : `✗ Niet gelukt: ${tekst}. Geen verbinding, probeer het opnieuw.`, ok ? "#9be29b" : "#ff8a80"); return; }
+  const wacht = { naam: puntKeuze.naam, xp: puntKeuze.n, tekst, al: new Set((laatsteStand?.logboek || []).filter((l) => l.type === "punt").map((l) => l.t)) };
   if (puntWacht) clearTimeout(puntWacht.timer); puntWacht = wacht; puntMelding(`Onderweg naar de tv: ${tekst}…`);
   wacht.timer = setTimeout(() => { if (puntWacht === wacht) { puntWacht = null; puntMislukt(tekst); } }, 12000);
   const ok = stuur({ cmd: "punt", naam: puntKeuze.naam, zegel: puntKeuze.zegel, xp: puntKeuze.n, waarom: $("punt-waarom").value.trim() });
@@ -1013,7 +1042,7 @@ function tweeKeer(b, vraag, doe) { if (b.dataset.zeker) { delete b.dataset.zeker
 function tekenXpLijst(s) {
   const l = (s.logboek || []).filter((x) => x.type === "punt").slice(-8).reverse();
   $("punt-laatst").innerHTML = l.length ? `<b class="klein" style="margin:0">Laatst gegeven</b>` + l.map((x) => `<div class="xp-r"><span><b>${veilig(x.naam)} ${xpTekst(x)}</b> · ${veilig(zegelNaam(x.zegel))}<small>${tijdVan(x.t)}${x.waarom ? ` · ${veilig(x.waarom)}` : ""}</small></span><button type="button" data-t="${x.t}">↶ Terug</button></div>`).join("") : "";
-  $("punt-laatst").querySelectorAll("button").forEach((b) => (b.onclick = () => tweeKeer(b, "Zeker?", () => { stuur({ cmd: "punt-terug", t: +b.dataset.t }); b.disabled = true; b.textContent = "…"; })));
+  $("punt-laatst").querySelectorAll("button").forEach((b) => (b.onclick = () => tweeKeer(b, "Zeker?", () => { if (tvDood()) zelfTerug(+b.dataset.t); else stuur({ cmd: "punt-terug", t: +b.dataset.t }); b.disabled = true; b.textContent = "…"; })));
 }
 const WIJZ = { punt: (l) => `${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})${l.waarom ? `: ${l.waarom}` : ""}`, "punt-terug": (l) => `XP teruggedraaid: ${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})`,
   fiche: (l) => `${zegelNaam(l.id)} ${l.n > 0 ? "+" : "−"}${Math.abs(l.n)} fiche`, bevel: (l) => `Bevel volbracht: ${l.naam}`, kist: (l) => `Reliekenkist geopend: ${l.n} relieken`,

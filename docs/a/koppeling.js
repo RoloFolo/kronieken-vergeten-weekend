@@ -134,11 +134,12 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
     soort: "firebase",
     meldStand: (stand) => {
       const schrijf = (pad, w) => metToken(() => db.set(db.ref(d, sessiePad(pad)), w));
-      schrijf("stand", JSON.parse(JSON.stringify(stand)));
-      if (stand.publiek) schrijf("publiek", stand.publiek);
+      const klaar = [schrijf("stand", JSON.parse(JSON.stringify(stand)))];
+      if (stand.publiek) klaar.push(schrijf("publiek", stand.publiek));
       // only the current traitor gets a node, with just what the traitor panel needs
       const v = stand.verrader;
       schrijf("verraad", v ? { [sleutel(emailVan(v.naam))]: { naam: v.naam, sinds: v.sinds, tot: v.tot || null, fiches: stand.fiches, scherm: stand.scherm, chaos: stand.chaos || null } } : null);
+      return Promise.all(klaar).then((r) => r.every(Boolean));
     },
     stuur: (o) => metToken(() => db.push(db.ref(d, sessiePad("opdrachten")), { ...o, van: email, t: nu() })),
     uitloggen: () => auth.signOut(a),
@@ -180,7 +181,7 @@ window.Koppeling = {
     catch (e) { console.warn("Koppeling:", e); this.verbinding = null; }
     return this.verbinding;
   },
-  meldStand(s) { this.verbinding?.meldStand(s); },
+  meldStand(s) { return this.verbinding?.meldStand(s); },
   stuur(o) { return this.verbinding?.stuur(o); },
   uitloggen() { return this.verbinding?.uitloggen?.(); },
   ere(i, naam) { return this.verbinding?.ere ? this.verbinding.ere(i, naam) : null; },
