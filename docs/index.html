@@ -1299,19 +1299,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=153"></script>
-<script src="a/godfried.js?v=153"></script>
-<script src="a/spel.js?v=153"></script>
-<script src="a/voorbereiding.js?v=153"></script>
-<script src="a/wachters.js?v=153"></script>
-<script src="a/firebase-config.js?v=153"></script>
-<script src="a/portretten.js?v=153"></script>
-<script src="a/koppeling.js?v=153"></script>
-<script src="a/rollen.js?v=153"></script>
-<script src="a/quests-tv.js?v=153"></script>
-<script src="a/planning.js?v=153"></script>
-<script src="a/route.js?v=153"></script>
-<script src="a/tafel.js?v=153"></script>
+<script src="a/events.js?v=154"></script>
+<script src="a/godfried.js?v=154"></script>
+<script src="a/spel.js?v=154"></script>
+<script src="a/voorbereiding.js?v=154"></script>
+<script src="a/wachters.js?v=154"></script>
+<script src="a/firebase-config.js?v=154"></script>
+<script src="a/portretten.js?v=154"></script>
+<script src="a/koppeling.js?v=154"></script>
+<script src="a/rollen.js?v=154"></script>
+<script src="a/quests-tv.js?v=154"></script>
+<script src="a/planning.js?v=154"></script>
+<script src="a/route.js?v=154"></script>
+<script src="a/tafel.js?v=154"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2994,21 +2994,19 @@ let puntTimer = null;
 const ficheVoorXp = (xp) => Math.sign(xp) * (Math.abs(xp) >= 30 ? 3 : Math.abs(xp) >= 20 ? 2 : 1);
 const xpVan = (l) => l.xp ?? (l.n || 0) * 10; // older log lines had small points
 function punt(o) {
-  const z = ZEGELS.find((x) => x.id === o.zegel), xp = Math.max(-50, Math.min(50, Math.round(+(o.xp ?? (o.n || 0) * 10) || 0))); if (!z || !xp || !NAMEN.includes(o.naam)) return;
-  const n = ficheVoorXp(xp), alsVerrader = verrader?.naam === o.naam;
-  log("punt", { naam: o.naam, zegel: o.zegel, xp, n, waarom: String(o.waarom || "").slice(0, 140), verrader: alsVerrader }); meld();
-  for (let i = 0; i < Math.abs(n); i++) setTimeout(() => fiche(o.zegel, n > 0 ? 1 : -1), 400 + i * 550);
+  const z = ZEGELS.find((x) => x.id === o.zegel) || null, xp = Math.max(-50, Math.min(50, Math.round(+(o.xp ?? (o.n || 0) * 10) || 0))); if (!xp || !NAMEN.includes(o.naam)) return;
+  const alsVerrader = verrader?.naam === o.naam; // XP stands apart from the Seals: it adds no fiches (n: 0), the regie fills the Seals by hand
+  log("punt", { naam: o.naam, zegel: z ? o.zegel : null, xp, n: 0, waarom: String(o.waarom || "").slice(0, 140), verrader: alsVerrader }); meld();
   const s = $("puntstrook"), pu = PORTRET[o.naam]; s.classList.toggle("met-portret", !!pu);
-  s.innerHTML = pu ? `<img class="ps-portret" src="${pu}" alt=""><div class="ps-tekst"><b class="${xp > 0 ? "plus" : "min"}">${schoon(o.naam)} ${xp > 0 ? "+" : "−"}${Math.abs(xp)} XP</b><span>${schoon(o.waarom || z.naam)}</span><img src="${z.medaille}" alt=""></div>`
-    : `<img src="${z.medaille}" alt=""><b class="${xp > 0 ? "plus" : "min"}">${schoon(o.naam)} ${xp > 0 ? "+" : "−"}${Math.abs(xp)} XP</b><span>${schoon(o.waarom || z.naam)}</span>`;
+  s.innerHTML = pu ? `<img class="ps-portret" src="${pu}" alt=""><div class="ps-tekst"><b class="${xp > 0 ? "plus" : "min"}">${schoon(o.naam)} ${xp > 0 ? "+" : "−"}${Math.abs(xp)} XP</b><span>${schoon(o.waarom || z?.naam || "")}</span>${z ? `<img src="${z.medaille}" alt="">` : ""}</div>`
+    : `${z ? `<img src="${z.medaille}" alt="">` : ""}<b class="${xp > 0 ? "plus" : "min"}">${schoon(o.naam)} ${xp > 0 ? "+" : "−"}${Math.abs(xp)} XP</b><span>${schoon(o.waarom || z?.naam || "")}</span>`;
   s.classList.add("aan"); clearTimeout(puntTimer); puntTimer = setTimeout(() => s.classList.remove("aan"), pu ? 11000 : 7000);
   if (paneelNu === "tafel") zaalStand();
 }
 // the regie takes back an XP entry given by mistake: the entry leaves the log, the Seal loses (or gets back) its fiches
 function puntTerug(o) {
   const i = logboek.findIndex((l) => l.type === "punt" && l.t === +o.t); if (i < 0) return;
-  const l = logboek[i], z = ZEGELS.find((x) => x.id === l.zegel); logboek.splice(i, 1);
-  if (z) { z.fiches = Math.max(0, z.fiches - (l.n || 0)); teken(); }
+  const l = logboek[i]; logboek.splice(i, 1); // XP stands apart from the Seals: taking it back leaves the fiches alone
   log("punt-terug", { naam: l.naam, zegel: l.zegel, xp: l.xp, waarom: l.waarom || "" }); meld();
   if (paneelNu === "tafel") zaalStand();
 }
@@ -3096,7 +3094,7 @@ function scorebord() {
   const d = scorebordData(), rang = NAMEN.map((n) => [n, d.stand[n]]).sort((a, b) => b[1] - a[1]);
   $("sb-midden").innerHTML = `<div><h3>De Zegels</h3>${ZEGELS.map((z) => `<div class="sb-zegel"><img src="${z.medaille}" alt=""><span>${z.naam}</span><b>${z.fiches}</b></div>`).join("")}</div>
     <div><h3>Het klassement · XP</h3><ol class="sb-rang">${rang.map(([n, p], i) => `<li><i>${i + 1}.</i><span class="sb-av" data-n="${n}"></span><span>${schoon(n)}</span><b>${p}</b></li>`).join("")}</ol></div>
-    <div><h3>De laatste XP</h3><ol class="sb-recent">${d.recent.length ? d.recent.map((r) => `<li class="${Portret.url(r.naam) ? "met-av" : ""}">${Portret.url(r.naam) ? `<span class="sb-av" data-n="${r.naam}"></span>` : ""}<b class="${r.xp > 0 ? "plus" : "min"}">${schoon(r.naam)} ${r.xp > 0 ? "+" : "−"}${Math.abs(r.xp)} XP · ${zegelNaamVan(r.zegel).split(" ")[0]}</b>${r.waarom ? `<span>${schoon(r.waarom)}</span>` : ""}</li>`).join("") : "<li><span>Nog geen XP uitgedeeld.</span></li>"}</ol></div>`;
+    <div><h3>De laatste XP</h3><ol class="sb-recent">${d.recent.length ? d.recent.map((r) => `<li class="${Portret.url(r.naam) ? "met-av" : ""}">${Portret.url(r.naam) ? `<span class="sb-av" data-n="${r.naam}"></span>` : ""}<b class="${r.xp > 0 ? "plus" : "min"}">${schoon(r.naam)} ${r.xp > 0 ? "+" : "−"}${Math.abs(r.xp)} XP${r.zegel ? ` · ${zegelNaamVan(r.zegel).split(" ")[0]}` : ""}</b>${r.waarom ? `<span>${schoon(r.waarom)}</span>` : ""}</li>`).join("") : "<li><span>Nog geen XP uitgedeeld.</span></li>"}</ol></div>`;
   $("sb-midden").querySelectorAll(".sb-av").forEach((el) => Portret.rond(el, el.dataset.n) || (el.style.visibility = "hidden")); // no painting yet: keep the column
   const s = $("scorebord"); s.hidden = false; void s.offsetWidth; s.classList.add("aan"); speel("klok", .5, 1.3);
   const eind = Date.now() + 45000, balk = $("sb-balk");
@@ -3234,7 +3232,7 @@ function geheugenRonde(n) {
 function questUit(goed) {
   const q = quest; if (!q || q.fase === "uit") return;
   if (q.id === "geheugen") { const b = q.beste || 0, n = b >= 8 ? 3 : b >= 6 ? 2 : b >= 4 ? 1 : 0; return questKlaar(n > 0, n, `Langste reeks: ${b}.`); }
-  if (q.id === "klasse" && goed) { punt({ naam: q.hoofd, zegel: q.zegel, xp: 20, waarom: `Klassemoment: ${q.naam}` }); q.mee.forEach((n, i) => setTimeout(() => punt({ naam: n, zegel: q.zegel, xp: 10, waarom: `Klassemoment: ${q.naam}` }), 1500 * (i + 1))); return questKlaar(true, 0); }
+  if (q.id === "klasse" && goed) { punt({ naam: q.hoofd, zegel: q.zegel, xp: 20, waarom: `Klassemoment: ${q.naam}` }); q.mee.forEach((n, i) => setTimeout(() => punt({ naam: n, zegel: q.zegel, xp: 10, waarom: `Klassemoment: ${q.naam}` }), 1500 * (i + 1))); return questKlaar(true, 1); }
   questKlaar(goed, q.fiches || 0);
 }
 // ===== De Dieven: at the finale the Seals are not full; the Thieves (Jean and Johan) get the task to steal back what is missing,

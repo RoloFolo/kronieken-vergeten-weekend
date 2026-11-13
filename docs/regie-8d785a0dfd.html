@@ -242,12 +242,12 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 
   <section class="kaart" id="s-punt" data-fase="xp">
     <h2>XP geven of afnemen</h2>
-    <p class="klein" style="margin:0 0 8px">Voor een volbrachte quest (de XP staat op de kaart) of iets wat iemand echt deed. Hij krijgt de XP, live aan de Ronde Tafel; het Zegel krijgt fiches zoals op de kaarten: 5–10 XP is 1, 20 is 2, 30 is 3. Was hij op dat moment Schaduwdrager en kost het XP, dan telt het als verraderswerk.</p>
+    <p class="klein" style="margin:0 0 8px">Voor een volbrachte quest (de XP staat op de kaart) of iets wat iemand echt deed. Hij krijgt de XP, live aan de Ronde Tafel. XP staat los van de Zegels: die vul je zelf bij De Zegels (tab Hall). Was hij op dat moment Schaduwdrager en kost het XP, dan telt het als verraderswerk.</p>
     <div class="rij" id="punt-wie" style="grid-template-columns:repeat(3,1fr)"></div>
-    <div class="rij" id="punt-zegel" style="margin-top:8px;grid-template-columns:repeat(4,1fr)"><button type="button" data-z="vlam">Vlam</button><button type="button" data-z="hoorn">Hoorn</button><button type="button" data-z="schild">Schild</button><button type="button" data-z="hart">Hart</button></div>
+    <div class="rij" id="punt-zegel" hidden style="margin-top:8px;grid-template-columns:repeat(4,1fr)"><button type="button" data-z="vlam">Vlam</button><button type="button" data-z="hoorn">Hoorn</button><button type="button" data-z="schild">Schild</button><button type="button" data-z="hart">Hart</button></div>
     <div class="rij" id="punt-n" style="margin-top:8px;grid-template-columns:repeat(6,1fr)"><button type="button" data-n="-10">−10</button><button type="button" data-n="-5">−5</button><button type="button" data-n="5">+5</button><button type="button" data-n="10">+10</button><button type="button" data-n="20">+20</button><button type="button" data-n="30">+30</button></div>
     <input id="punt-waarom" type="text" maxlength="140" placeholder="Waarom? (bijv. vertelde een prachtig verhaal)" style="width:100%;margin-top:8px">
-    <button class="goud groot" id="b-punt" type="button" style="margin-top:8px" disabled>Kies wie, welk Zegel en hoeveel</button>
+    <button class="goud groot" id="b-punt" type="button" style="margin-top:8px" disabled>Kies wie en hoeveel XP</button>
     <p class="klein" id="punt-stand" style="margin:8px 0 0"></p>
     <div id="punt-laatst" style="display:grid;gap:2px;margin-top:10px"></div>
   </section>
@@ -528,17 +528,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=153"></script>
-<script src="a/quests-tv.js?v=153"></script>
-<script src="a/planning.js?v=153"></script>
-<script src="a/godfried.js?v=153"></script>
-<script src="a/spel.js?v=153"></script>
-<script src="a/wachters.js?v=153"></script>
-<script src="a/rollen.js?v=153"></script>
-<script src="a/firebase-config.js?v=153"></script>
-<script src="a/portretten.js?v=153"></script>
-<script src="a/koppeling.js?v=153"></script>
-<script src="a/voorbereiding.js?v=153"></script>
+<script src="a/events.js?v=154"></script>
+<script src="a/quests-tv.js?v=154"></script>
+<script src="a/planning.js?v=154"></script>
+<script src="a/godfried.js?v=154"></script>
+<script src="a/spel.js?v=154"></script>
+<script src="a/wachters.js?v=154"></script>
+<script src="a/rollen.js?v=154"></script>
+<script src="a/firebase-config.js?v=154"></script>
+<script src="a/portretten.js?v=154"></script>
+<script src="a/koppeling.js?v=154"></script>
+<script src="a/voorbereiding.js?v=154"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -885,8 +885,8 @@ function tekenPunt() {
   $("punt-wie").innerHTML = (window.WACHTERS || []).map((w) => `<button type="button" data-n="${w.naam}" class="${puntKeuze.naam === w.naam ? "goud" : ""}">${w.naam}</button>`).join("");
   document.querySelectorAll("#punt-zegel button").forEach((b) => b.classList.toggle("goud", b.dataset.z === puntKeuze.zegel));
   document.querySelectorAll("#punt-n button").forEach((b) => b.classList.toggle("goud", +b.dataset.n === puntKeuze.n));
-  const klaar = puntKeuze.naam && puntKeuze.zegel && puntKeuze.n;
-  $("b-punt").disabled = !klaar; $("b-punt").textContent = klaar ? `${puntKeuze.naam} ${puntKeuze.n > 0 ? "+" : "−"}${Math.abs(puntKeuze.n)} XP · ${puntKeuze.zegel} ${puntKeuze.n > 0 ? "+" : "−"}${Math.abs(puntKeuze.n) >= 30 ? 3 : Math.abs(puntKeuze.n) >= 20 ? 2 : 1}` : "Kies wie, welk Zegel en hoeveel XP";
+  const klaar = puntKeuze.naam && puntKeuze.n;
+  $("b-punt").disabled = !klaar; $("b-punt").textContent = klaar ? `${puntKeuze.naam} ${puntKeuze.n > 0 ? "+" : "−"}${Math.abs(puntKeuze.n)} XP` : "Kies wie en hoeveel XP"; // XP adds no fiches to a Seal
 }
 $("punt-wie").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.naam = b.dataset.n; tekenPunt(); } };
 $("punt-zegel").onclick = (e) => { const b = e.target.closest("button"); if (b) { puntKeuze.zegel = b.dataset.z; tekenPunt(); } };
@@ -907,14 +907,13 @@ async function zelfBoeken(actie, wijzig) {
 }
 function zelfPunt(o) {
   const xp = Math.max(-50, Math.min(50, Math.round(+o.xp) || 0)); if (!xp) return Promise.resolve(false);
-  const l = { naam: o.naam, zegel: o.zegel, xp, waarom: String(o.waarom || "").slice(0, 140) };
-  return zelfBoeken({ soort: "punt", l }, (s) => { const n = ficheVoorXp(xp);
-    s.logboek.push({ t: Date.now(), type: "punt", ...l, n, verrader: s.verrader?.naam === o.naam, zonderTv: true });
-    s.fiches[o.zegel] = Math.max(0, (s.fiches[o.zegel] || 0) + n); });
+  const l = { naam: o.naam, zegel: o.zegel || null, xp, waarom: String(o.waarom || "").slice(0, 140) };
+  return zelfBoeken({ soort: "punt", l }, (s) => { // XP adds no fiches
+    s.logboek.push({ t: Date.now(), type: "punt", ...l, n: 0, verrader: s.verrader?.naam === o.naam, zonderTv: true }); });
 }
 function zelfTerug(t) {
   return zelfBoeken({ soort: "terug", t }, (s) => { const i = s.logboek.findIndex((l) => l.type === "punt" && l.t === t); if (i < 0) return;
-    const l = s.logboek.splice(i, 1)[0]; s.fiches[l.zegel] = Math.max(0, (s.fiches[l.zegel] || 0) - (l.n || 0));
+    const l = s.logboek.splice(i, 1)[0]; // the fiches stay: XP stands apart from the Seals
     s.logboek.push({ t: Date.now(), type: "punt-terug", naam: l.naam, zegel: l.zegel, xp: l.xp, waarom: l.waarom || "" }); });
 }
 const puntMelding = (t, kleur) => { const p = $("punt-stand"); p.textContent = t; p.style.color = kleur || ""; };
@@ -1041,10 +1040,10 @@ function tweeKeer(b, vraag, doe) { if (b.dataset.zeker) { delete b.dataset.zeker
   setTimeout(() => { if (b.dataset.zeker) { delete b.dataset.zeker; b.innerHTML = t; b.classList.remove("rood"); } }, 4000); }
 function tekenXpLijst(s) {
   const l = (s.logboek || []).filter((x) => x.type === "punt").slice(-8).reverse();
-  $("punt-laatst").innerHTML = l.length ? `<b class="klein" style="margin:0">Laatst gegeven</b>` + l.map((x) => `<div class="xp-r"><span><b>${veilig(x.naam)} ${xpTekst(x)}</b> · ${veilig(zegelNaam(x.zegel))}<small>${tijdVan(x.t)}${x.waarom ? ` · ${veilig(x.waarom)}` : ""}</small></span><button type="button" data-t="${x.t}">↶ Terug</button></div>`).join("") : "";
+  $("punt-laatst").innerHTML = l.length ? `<b class="klein" style="margin:0">Laatst gegeven</b>` + l.map((x) => `<div class="xp-r"><span><b>${veilig(x.naam)} ${xpTekst(x)}</b>${x.zegel ? ` · ${veilig(zegelNaam(x.zegel))}` : ""}<small>${tijdVan(x.t)}${x.waarom ? ` · ${veilig(x.waarom)}` : ""}</small></span><button type="button" data-t="${x.t}">↶ Terug</button></div>`).join("") : "";
   $("punt-laatst").querySelectorAll("button").forEach((b) => (b.onclick = () => tweeKeer(b, "Zeker?", () => { if (tvDood()) zelfTerug(+b.dataset.t); else stuur({ cmd: "punt-terug", t: +b.dataset.t }); b.disabled = true; b.textContent = "…"; })));
 }
-const WIJZ = { punt: (l) => `${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})${l.waarom ? `: ${l.waarom}` : ""}`, "punt-terug": (l) => `XP teruggedraaid: ${l.naam} ${xpTekst(l)} (${zegelNaam(l.zegel)})`,
+const WIJZ = { punt: (l) => `${l.naam} ${xpTekst(l)}${l.zegel ? ` (${zegelNaam(l.zegel)})` : ""}${l.waarom ? `: ${l.waarom}` : ""}`, "punt-terug": (l) => `XP teruggedraaid: ${l.naam} ${xpTekst(l)}${l.zegel ? ` (${zegelNaam(l.zegel)})` : ""}`,
   fiche: (l) => `${zegelNaam(l.id)} ${l.n > 0 ? "+" : "−"}${Math.abs(l.n)} fiche`, bevel: (l) => `Bevel volbracht: ${l.naam}`, kist: (l) => `Reliekenkist geopend: ${l.n} relieken`,
   uitslag: (l) => `Event ${l.goed ? "gehaald" : "mislukt"}`, chaos: () => "Schaduwkaart gespeeld", geheim: (l) => `Geheime opdracht voor ${l.naam}`, "geheim-ok": (l) => `${l.naam} volbracht zijn geheime opdracht (+20 Schaduwpunten, +1 kaart)`, "geheim-rest": (l) => `${l.naam}: extra kaart niet gebruikt, telt als +${10 * (l.n || 1)} Schaduwpunten`, quest: (l) => `Quest ${l.naam}: ${l.goed ? "gelukt" : "mislukt"}${l.n ? ` (+${l.n} fiche${l.n > 1 ? "s" : ""})` : ""}`, klasse: (l) => `Klassemoment: ${l.hoofd}, ${l.quest}`, citaat: (l) => `Wie zei het? “${l.tekst}”${l.naam ? ` (${l.naam})` : ""}`, dief: (l) => `De Dieven stalen ${l.n ? `${l.n} fiche${l.n > 1 ? "s" : ""} terug` : "niets"}`, "verrader-einde": () => "Schaduwtijd voorbij" };
 function tekenWijzigingen(s) {
