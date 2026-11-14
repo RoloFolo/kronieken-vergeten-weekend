@@ -1299,19 +1299,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=155"></script>
-<script src="a/godfried.js?v=155"></script>
-<script src="a/spel.js?v=155"></script>
-<script src="a/voorbereiding.js?v=155"></script>
-<script src="a/wachters.js?v=155"></script>
-<script src="a/firebase-config.js?v=155"></script>
-<script src="a/portretten.js?v=155"></script>
-<script src="a/koppeling.js?v=155"></script>
-<script src="a/rollen.js?v=155"></script>
-<script src="a/quests-tv.js?v=155"></script>
-<script src="a/planning.js?v=155"></script>
-<script src="a/route.js?v=155"></script>
-<script src="a/tafel.js?v=155"></script>
+<script src="a/events.js?v=156"></script>
+<script src="a/godfried.js?v=156"></script>
+<script src="a/spel.js?v=156"></script>
+<script src="a/voorbereiding.js?v=156"></script>
+<script src="a/wachters.js?v=156"></script>
+<script src="a/firebase-config.js?v=156"></script>
+<script src="a/portretten.js?v=156"></script>
+<script src="a/koppeling.js?v=156"></script>
+<script src="a/rollen.js?v=156"></script>
+<script src="a/quests-tv.js?v=156"></script>
+<script src="a/planning.js?v=156"></script>
+<script src="a/route.js?v=156"></script>
+<script src="a/tafel.js?v=156"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2998,6 +2998,10 @@ function punt(o) {
   const z = ZEGELS.find((x) => x.id === o.zegel) || null, xp = Math.max(-50, Math.min(50, Math.round(+(o.xp ?? (o.n || 0) * 10) || 0))); if (!xp || !NAMEN.includes(o.naam)) return;
   const alsVerrader = verrader?.naam === o.naam; // XP stands apart from the Seals: it adds no fiches (n: 0), the regie fills the Seals by hand
   log("punt", { naam: o.naam, zegel: z ? o.zegel : null, xp, n: 0, waarom: String(o.waarom || "").slice(0, 140), verrader: alsVerrader }); meld();
+  puntStrook({ naam: o.naam, xp, waarom: o.waarom, zegel: z ? o.zegel : null });
+}
+function puntStrook(o) {
+  const z = ZEGELS.find((x) => x.id === o.zegel) || null, xp = o.xp;
   const s = $("puntstrook"), pu = PORTRET[o.naam]; s.classList.toggle("met-portret", !!pu);
   s.innerHTML = pu ? `<img class="ps-portret" src="${pu}" alt=""><div class="ps-tekst"><b class="${xp > 0 ? "plus" : "min"}">${schoon(o.naam)} ${xp > 0 ? "+" : "−"}${Math.abs(xp)} XP</b><span>${schoon(o.waarom || z?.naam || "")}</span>${z ? `<img src="${z.medaille}" alt="">` : ""}</div>`
     : `${z ? `<img src="${z.medaille}" alt="">` : ""}<b class="${xp > 0 ? "plus" : "min"}">${schoon(o.naam)} ${xp > 0 ? "+" : "−"}${Math.abs(xp)} XP</b><span>${schoon(o.waarom || z?.naam || "")}</span>`;
@@ -3401,12 +3405,29 @@ function laadStand(s) {
   if (vloek) { $("vloek-teken").innerHTML = `<b>Vervloekt · ${schoon(vloek.naam)}</b>${schoon(vloek.tekst)}`; $("vloek-teken").hidden = false; }
   logboek = s.logboek || []; verraders = s.verraders || []; verrader = s.verrader || null; rollenOpen = !!s.publiek?.hal;
   fin.voortgang ||= {};
-  meld();
+  meld(); for (const id of Object.keys(xpBoek)) xpGezien.add(id); xpSamen(); // the book may have arrived first
 }
 // if another tv window writes the stand, this one stops writing and offers to take over
 // heartbeat: the regie can see that this tv is alive (and that the buttons will work)
 setInterval(() => meld(), 30000);
 let regieGezien = null;
+// the XP book (Koppeling: herstel/xp): what the organisers gave, one entry each, written by the regie itself. The tv copies it into its log
+// (marked xpId), so the Round Table, the honours and the credits count it; an entry taken back (weg) leaves the log again.
+let xpBoek = {}; const xpGezien = new Set();
+function opXp(b) { xpBoek = b || {}; xpSamen(); }
+function xpSamen() {
+  if (!standGeladen || herstelt) return; let anders = false;
+  for (const [id, e] of Object.entries(xpBoek)) {
+    if (!e || (+e.ronde || 1) !== (+ronde || 1) || !NAMEN.includes(e.naam)) continue;
+    const i = logboek.findIndex((l) => l.type === "punt" && l.xpId === id);
+    if (e.weg) { if (i >= 0) { logboek.splice(i, 1); anders = true; } continue; }
+    if (i >= 0) continue;
+    logboek.push({ t: +e.t || Date.now(), type: "punt", naam: e.naam, zegel: null, xp: +e.xp || 0, n: 0, waarom: String(e.waarom || "").slice(0, 140), verrader: !!e.verrader, xpId: id, door: e.door || "" }); anders = true;
+    if (!xpGezien.has(id) && Math.abs(Koppeling.nu() - (+e.t || 0)) < 120000) puntStrook(e);
+    xpGezien.add(id);
+  }
+  if (anders) { logboek.sort((a, b) => a.t - b.t); meld(); if (paneelNu === "tafel") zaalStand(); }
+}
 function regieOver(s) {
   const heb = new Set(logboek.map((l) => `${l.type}:${l.t}`)), nieuw = (s.logboek || []).filter((l) => (l.type === "punt" || l.type === "punt-terug") && !heb.has(`${l.type}:${l.t}`));
   for (const l of nieuw) { if (l.type === "punt-terug" && l.van) { const i = logboek.findIndex((x) => x.type === "punt" && x.t === l.van); if (i >= 0) logboek.splice(i, 1); } logboek.push(l); }
@@ -3423,7 +3444,7 @@ function bewaakTv(s) {
   document.body.appendChild(el); el.querySelector("button").onclick = () => location.reload();
 }
 if (!window.FIREBASE_CONFIG || new URLSearchParams(location.search).has("tv"))
-  Koppeling.start({ rol: "tv", opPlanning: (p) => { planHand = p || {}; meld(); if (paneelNu === "route") tekenRoute(); }, opStand: laadStand, opOpdracht: (o, vers = true) => { if (passief) return false; if (vers) OPDRACHTEN[o.cmd]?.(o); }, opEre: (t) => { toewijzing = t || {}; }, opVooraf: (v) => { voorafAlles = v || {}; voorafGeladen = true; } }).then((v) => { server = !!v; });
+  Koppeling.start({ rol: "tv", opPlanning: (p) => { planHand = p || {}; meld(); if (paneelNu === "route") tekenRoute(); }, opStand: laadStand, opOpdracht: (o, vers = true) => { if (passief) return false; if (vers) OPDRACHTEN[o.cmd]?.(o); }, opXp, opEre: (t) => { toewijzing = t || {}; }, opVooraf: (v) => { voorafAlles = v || {}; voorafGeladen = true; } }).then((v) => { server = !!v; });
 
 /* ================= Schaduw-event ================= */
 let stem = null, typer = null, stormTimer = null, beslist = false;

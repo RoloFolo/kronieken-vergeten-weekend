@@ -250,6 +250,8 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <button class="goud groot" id="b-punt" type="button" style="margin-top:8px" disabled>Kies wie en hoeveel XP</button>
     <p class="klein" id="punt-stand" style="margin:8px 0 0"></p>
     <div id="punt-laatst" style="display:grid;gap:2px;margin-top:10px"></div>
+    <button type="button" id="b-xp-zoek" style="margin-top:10px">XP terugzoeken in de herstelpunten</button>
+    <div id="xp-zoek" style="display:grid;gap:2px;margin-top:6px"></div>
   </section>
   <section class="kaart" data-fase="quests" hidden>
     <h2>Nu op de tv</h2>
@@ -528,17 +530,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=155"></script>
-<script src="a/quests-tv.js?v=155"></script>
-<script src="a/planning.js?v=155"></script>
-<script src="a/godfried.js?v=155"></script>
-<script src="a/spel.js?v=155"></script>
-<script src="a/wachters.js?v=155"></script>
-<script src="a/rollen.js?v=155"></script>
-<script src="a/firebase-config.js?v=155"></script>
-<script src="a/portretten.js?v=155"></script>
-<script src="a/koppeling.js?v=155"></script>
-<script src="a/voorbereiding.js?v=155"></script>
+<script src="a/events.js?v=156"></script>
+<script src="a/quests-tv.js?v=156"></script>
+<script src="a/planning.js?v=156"></script>
+<script src="a/godfried.js?v=156"></script>
+<script src="a/spel.js?v=156"></script>
+<script src="a/wachters.js?v=156"></script>
+<script src="a/rollen.js?v=156"></script>
+<script src="a/firebase-config.js?v=156"></script>
+<script src="a/portretten.js?v=156"></script>
+<script src="a/koppeling.js?v=156"></script>
+<script src="a/voorbereiding.js?v=156"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -760,7 +762,7 @@ $("portret-kies").onchange = async (e) => { const W = window.WACHTERS || [], los
   for (const f of e.target.files) { const w = W.find((x) => f.name.toLowerCase().startsWith(x.naam.toLowerCase() + " ") || f.name.toLowerCase().startsWith(x.naam.toLowerCase() + ".")); if (!w) { los.push(f.name); continue; }
     $("portret-status").textContent = `Bezig: ${w.naam}…`; const ok = await Koppeling.portret(w.naam, await Portret.verklein(f), await Portret.verklein(f, 1024, .86)); if (ok === false) los.push(`${f.name} (niet opgeslagen)`); }
   e.target.value = ""; tekenPortretten(); if (los.length) $("portret-status").textContent += ` Niet gelukt: ${los.join(", ")}.`; };
-Koppeling.start({ rol: "regie", opPlanning: (p) => { planHand = p || {}; if (laatsteStand) tekenPlan(laatsteStand); }, opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); tekenGodfried(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); }, opEre: (t) => { ereToewijzing = t || {}; tekenEreRegie(); } })
+Koppeling.start({ rol: "regie", opXp: (b) => { xpBoek = b || {}; if (laatsteStand) tekenXpLijst(laatsteStand); }, opPlanning: (p) => { planHand = p || {}; if (laatsteStand) tekenPlan(laatsteStand); }, opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); tekenGodfried(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); }, opEre: (t) => { ereToewijzing = t || {}; tekenEreRegie(); } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; });
 
 $("b-start").onclick = () => stuur({ cmd: "start" });
@@ -925,15 +927,30 @@ function puntMislukt(tekst) {
   const g = laatsteStand?.tvInfo?.gemeld, dood = !g || Date.now() - g > 75000;
   puntMelding(`✗ Niet aangekomen: ${tekst}. ` + (window.KRONIEKEN_SESSIE === "test" ? "Je regie staat op de TESTsessie, de echte tv hoort dit niet: open de app zonder ?test." : dood ? "Er is geen actieve tv: open de tv (adres met ?tv) op de laptop." : "Druk op de tv-laptop Ctrl+F5, sluit andere tv-tabbladen en geef het opnieuw."), "#ff8a80");
 }
+// XP goes straight into the XP book in the database (one entry each, also without a tv); the tv and the app's Round Table take it from there
+let xpBoek = {};
+const xpEigen = () => Object.entries(xpBoek).filter(([, x]) => x && (+x.ronde || 1) === (+laatsteStand?.ronde || 1));
+function alleXp() { // the old entries in the tv's log plus the book's entries the tv has not copied yet; taken-back book entries left out
+  const s = laatsteStand || {}, weg = new Set(xpEigen().filter(([, x]) => x.weg).map(([id]) => id)), heb = new Set();
+  const l = (s.logboek || []).filter((x) => x.type === "punt" && !weg.has(x.xpId)).map((x) => { if (x.xpId) heb.add(x.xpId); return { ...x, id: x.xpId || null }; });
+  for (const [id, x] of xpEigen()) if (!x.weg && !heb.has(id)) l.push({ t: +x.t, type: "punt", naam: x.naam, xp: +x.xp, waarom: x.waarom || "", verrader: !!x.verrader, door: x.door || "", id });
+  return l.sort((a, b) => a.t - b.t);
+}
+function scoresNu() { // the same as the tv's scoreboard, so the app shows the XP at once
+  const stand = Object.fromEntries((window.WACHTERS || []).map((w) => [w.naam, 0])), recent = [];
+  for (const l of alleXp()) if (l.naam in stand) { const xp = l.xp ?? (l.n || 0) * 10; stand[l.naam] += xp; recent.push({ naam: l.naam, zegel: l.zegel || null, xp, n: xp, waarom: l.waarom || "" }); }
+  return { stand, recent: recent.slice(-6).reverse(), zegels: { ...(laatsteStand?.fiches || {}) } };
+}
+const xpId = () => `x${Koppeling.nu().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 $("b-punt").onclick = async () => { const tekst = $("b-punt").textContent;
-  if (tvDood() && laatsteStand) { const o = { naam: puntKeuze.naam, zegel: puntKeuze.zegel, xp: puntKeuze.n, waarom: $("punt-waarom").value.trim() };
-    puntKeuze = { naam: null, zegel: null, n: null }; $("punt-waarom").value = ""; tekenPunt(); puntMelding(`Bezig: ${tekst}…`);
-    const ok = await zelfPunt(o); puntMelding(ok ? `✓ Geboekt (zonder tv): ${tekst}. Staat meteen aan de Ronde Tafel in de app; de tv neemt het over zodra hij aangaat.` : `✗ Niet gelukt: ${tekst}. Geen verbinding, probeer het opnieuw.`, ok ? "#9be29b" : "#ff8a80"); return; }
-  const wacht = { naam: puntKeuze.naam, xp: puntKeuze.n, tekst, al: new Set((laatsteStand?.logboek || []).filter((l) => l.type === "punt").map((l) => l.t)) };
-  if (puntWacht) clearTimeout(puntWacht.timer); puntWacht = wacht; puntMelding(`Onderweg naar de tv: ${tekst}…`);
-  wacht.timer = setTimeout(() => { if (puntWacht === wacht) { puntWacht = null; puntMislukt(tekst); } }, 12000);
-  const ok = stuur({ cmd: "punt", naam: puntKeuze.naam, zegel: puntKeuze.zegel, xp: puntKeuze.n, waarom: $("punt-waarom").value.trim() });
-  Promise.resolve(ok).then((v) => { if (v === false && puntWacht === wacht) { clearTimeout(wacht.timer); puntWacht = null; puntMelding(`✗ Niet verstuurd: ${tekst}. Geen verbinding, probeer het opnieuw.`, "#ff8a80"); } }); puntKeuze = { naam: null, zegel: null, n: null }; $("punt-waarom").value = ""; tekenPunt(); };
+  if (!laatsteStand) return puntMelding("Nog geen verbinding met de database. Even wachten en opnieuw.", "#ff8a80");
+  const naam = puntKeuze.naam, id = xpId();
+  const x = { t: Koppeling.nu(), naam, xp: puntKeuze.n, waarom: $("punt-waarom").value.trim().slice(0, 140), door: Koppeling.ik?.naam || "", ronde: laatsteStand.ronde || 1, verrader: laatsteStand.verrader?.naam === naam };
+  puntKeuze = { naam: null, zegel: null, n: null }; $("punt-waarom").value = ""; tekenPunt(); puntMelding(`Opslaan: ${tekst}…`);
+  const ok = await Koppeling.xpZet(id, x);
+  if (!ok) return puntMelding(`✗ Niet opgeslagen: ${tekst}. Geen verbinding, probeer het opnieuw.`, "#ff8a80");
+  xpBoek = { ...xpBoek, [id]: x }; Koppeling.scoresZet(scoresNu()); tekenXpLijst(laatsteStand);
+  puntMelding(`✓ Opgeslagen: ${tekst}. Staat in de database en meteen aan de Ronde Tafel in de app${tvDood() ? "; de tv neemt het over zodra hij aangaat" : ""}.`, "#9be29b"); };
 tekenPunt();
 // lines for the credits
 let crSoort = "titel";
@@ -1038,11 +1055,37 @@ const xpTekst = (l) => `${l.xp > 0 ? "+" : "−"}${Math.abs(l.xp || (l.n || 0) *
 // twice tapping: the first tap asks, the second within 4 seconds does it
 function tweeKeer(b, vraag, doe) { if (b.dataset.zeker) { delete b.dataset.zeker; b.innerHTML = b._oud ?? b.innerHTML; b.classList.remove("rood"); doe(); return; } const t = b._oud = b.innerHTML; b.dataset.zeker = "1"; b.textContent = vraag; b.classList.add("rood");
   setTimeout(() => { if (b.dataset.zeker) { delete b.dataset.zeker; b.innerHTML = t; b.classList.remove("rood"); } }, 4000); }
+// XP that once stood in the tv's log (a restore point holds a copy every half hour and before every reset) but is no longer there,
+// and was not taken back on purpose: listed, and one tap puts it in the XP book again
+let xpGevonden = [];
+$("b-xp-zoek").onclick = async () => { const b = $("b-xp-zoek"), uit = $("xp-zoek"); b.disabled = true; uit.innerHTML = '<p class="klein">Herstelpunten doorzoeken…</p>';
+  try {
+    const lijst = await Koppeling.herstelLijst(), ronde = +laatsteStand?.ronde || 1, gezien = new Map(), terug = new Set(), terugOud = [];
+    const kijk = (log) => { for (const l of log || []) { if (l.type === "punt" && !l.xpId) gezien.set(l.t, l); if (l.type === "punt-terug") { if (l.van) terug.add(+l.van); else if (!terugOud.some((r) => r.t === l.t)) terugOud.push(l); } } };
+    for (const h of lijst) { const s = await Koppeling.herstelHaal(h.id).catch(() => null); if (s && (+s.ronde || 1) === ronde) kijk(s.logboek); }
+    kijk(laatsteStand?.logboek);
+    const heb = new Set(alleXp().map((l) => +l.t)); for (const [, x] of xpEigen()) if (x.hersteldVan) heb.add(+x.hersteldVan);
+    const oud = [...terugOud].sort((a, b) => a.t - b.t);
+    xpGevonden = [...gezien.values()].sort((a, b) => a.t - b.t).filter((l) => { if (heb.has(+l.t) || terug.has(+l.t)) return false;
+      const i = oud.findIndex((r) => r.t > l.t && r.naam === l.naam && +(r.xp ?? 0) === +(l.xp ?? 0)); if (i >= 0) { oud.splice(i, 1); return false; } return true; }); // taken back before versions noted which one
+    uit.innerHTML = !lijst.length ? '<p class="klein">Er zijn nog geen herstelpunten.</p>' : !xpGevonden.length ? `<p class="klein">${lijst.length} herstelpunten doorzocht: geen XP gevonden die ontbreekt.</p>`
+      : `<b class="klein" style="margin:0">Ontbreekt nu (${xpGevonden.length}), gevonden in ${lijst.length} herstelpunten</b>` + xpGevonden.map((l, i) => `<div class="xp-r"><span><b>${veilig(l.naam)} ${xpTekst(l)}</b><small>${tijdVan(l.t)}${l.waarom ? ` · ${veilig(l.waarom)}` : ""}</small></span><button type="button" data-i="${i}">Zet terug</button></div>`).join("")
+        + (xpGevonden.length > 1 ? '<button type="button" class="goud" id="b-xp-alles">Alles terugzetten</button>' : "");
+    const zet = async (i) => { const l = xpGevonden[i]; if (!l || l.klaar) return true; const id = xpId();
+      const w = { t: l.t, naam: l.naam, xp: l.xp ?? (l.n || 0) * 10, waarom: l.waarom || "", door: `hersteld door ${Koppeling.ik?.naam || "de regie"}`, ronde, verrader: !!l.verrader, hersteldVan: l.t };
+      const ok = await Koppeling.xpZet(id, w); if (ok) { l.klaar = true; xpBoek = { ...xpBoek, [id]: w }; } return ok; };
+    uit.querySelectorAll("button[data-i]").forEach((k) => (k.onclick = async () => { k.disabled = true; const ok = await zet(+k.dataset.i); k.textContent = ok ? "✓ Terug" : "✗ opnieuw"; k.disabled = ok; Koppeling.scoresZet(scoresNu()); tekenXpLijst(laatsteStand); }));
+    const alles = $("b-xp-alles"); if (alles) alles.onclick = () => tweeKeer(alles, `Zeker? ${xpGevonden.length} keer XP terug. Tik nog eens`, async () => { alles.disabled = true;
+      for (const k of uit.querySelectorAll("button[data-i]")) { k.disabled = true; k.textContent = (await zet(+k.dataset.i)) ? "✓ Terug" : "✗"; } Koppeling.scoresZet(scoresNu()); tekenXpLijst(laatsteStand); alles.textContent = "✓ Klaar"; });
+  } catch (err) { uit.innerHTML = `<p class="klein" style="color:#ff8a80">Zoeken mislukte: ${veilig(String(err?.message || err))}</p>`; }
+  b.disabled = false; };
 function tekenXpLijst(s) {
-  const l = (s.logboek || []).filter((x) => x.type === "punt").reverse(), tot = {}; for (const x of l) tot[x.naam] = (tot[x.naam] || 0) + (x.xp ?? (x.n || 0) * 10);
+  const l = alleXp().reverse(), tot = {}; for (const x of l) tot[x.naam] = (tot[x.naam] || 0) + (x.xp ?? (x.n || 0) * 10);
   const totaal = Object.entries(tot).sort((a, b) => b[1] - a[1]).map(([n, v]) => `${veilig(n)} ${v}`).join(" · ");
-  $("punt-laatst").innerHTML = l.length ? `<b class="klein" style="margin:0">Alle uitgereikte XP (${l.length}), nieuwste boven</b><small class="klein" style="color:var(--ash)">Totaal: ${totaal}</small><div style="max-height:55vh;overflow-y:auto;overscroll-behavior:contain;border:1px solid rgba(239,227,212,.15);border-radius:8px;padding:0 8px">` + l.map((x) => `<div class="xp-r"><span><b>${veilig(x.naam)} ${xpTekst(x)}</b>${x.zegel ? ` · ${veilig(zegelNaam(x.zegel))}` : ""}<small>${tijdVan(x.t)}${x.waarom ? ` · ${veilig(x.waarom)}` : ""}</small></span><button type="button" data-t="${x.t}">↶ Terug</button></div>`).join("") + "</div>" : "";
-  $("punt-laatst").querySelectorAll("button").forEach((b) => (b.onclick = () => tweeKeer(b, "Zeker?", () => { if (tvDood()) zelfTerug(+b.dataset.t); else stuur({ cmd: "punt-terug", t: +b.dataset.t }); b.disabled = true; b.textContent = "…"; })));
+  $("punt-laatst").innerHTML = l.length ? `<b class="klein" style="margin:0">Alle uitgereikte XP (${l.length}), nieuwste boven</b><small class="klein" style="color:var(--ash)">Totaal: ${totaal}</small><div style="max-height:55vh;overflow-y:auto;overscroll-behavior:contain;border:1px solid rgba(239,227,212,.15);border-radius:8px;padding:0 8px">` + l.map((x) => `<div class="xp-r"><span><b>${veilig(x.naam)} ${xpTekst(x)}</b>${x.zegel ? ` · ${veilig(zegelNaam(x.zegel))}` : ""}<small>${tijdVan(x.t)}${x.door ? ` · door ${veilig(x.door)}` : ""}${x.waarom ? ` · ${veilig(x.waarom)}` : ""}</small></span><button type="button" data-t="${x.t}" data-id="${x.id || ""}">↶ Terug</button></div>`).join("") + "</div>" : "";
+  $("punt-laatst").querySelectorAll("button").forEach((b) => (b.onclick = () => tweeKeer(b, "Zeker?", async () => { b.disabled = true; b.textContent = "…"; const id = b.dataset.id;
+    if (id && xpBoek[id]) { const w = { ...xpBoek[id], weg: Koppeling.nu(), wegDoor: Koppeling.ik?.naam || "" }; if (await Koppeling.xpZet(id, w)) { xpBoek = { ...xpBoek, [id]: w }; Koppeling.scoresZet(scoresNu()); tekenXpLijst(laatsteStand); } else { b.disabled = false; b.textContent = "✗ opnieuw"; } return; }
+    if (tvDood()) zelfTerug(+b.dataset.t); else stuur({ cmd: "punt-terug", t: +b.dataset.t }); })));
 }
 const WIJZ = { punt: (l) => `${l.naam} ${xpTekst(l)}${l.zegel ? ` (${zegelNaam(l.zegel)})` : ""}${l.waarom ? `: ${l.waarom}` : ""}`, "punt-terug": (l) => `XP teruggedraaid: ${l.naam} ${xpTekst(l)}${l.zegel ? ` (${zegelNaam(l.zegel)})` : ""}`,
   fiche: (l) => `${zegelNaam(l.id)} ${l.n > 0 ? "+" : "−"}${Math.abs(l.n)} fiche`, bevel: (l) => `Bevel volbracht: ${l.naam}`, kist: (l) => `Reliekenkist geopend: ${l.n} relieken`,

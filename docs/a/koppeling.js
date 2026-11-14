@@ -73,7 +73,7 @@ function geenToegang(email) {
   });
 }
 
-async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraad, opVooraf, opEre, opLarp, opPlanning }) {
+async function viaFirebase({ opXp, rol, naam, opStand, opOpdracht, opPubliek, opVerraad, opVooraf, opEre, opLarp, opPlanning }) {
   const [{ initializeApp }, auth, db] = await Promise.all([import(FB + "firebase-app.js"), import(FB + "firebase-auth.js"), import(FB + "firebase-database.js")]);
   const app = initializeApp(window.FIREBASE_CONFIG);
   const a = auth.getAuth(app); await auth.setPersistence(a, auth.browserLocalPersistence);
@@ -116,6 +116,9 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
     catch { await vers(true); try { await doe(); status.fout = 0; meld(); return true; } catch { status.fout++; meld(); return false; } }
   };
   if (alleenAdmin) luister(db.onValue, "stand", (s) => opStand?.(s.val() || {}));
+  // the XP book: every XP the organisers give, straight in the database, one entry each (no tv needed, nothing overwrites it).
+  // It lives under herstel/ because only the organisers may read and write there, so no new database rules are needed.
+  if (rol === "regie" || rol === "tv") luister(db.onValue, "herstel/xp", (s) => opXp?.(s.val() || {}));
   if (rol === "tv") luister(db.onChildAdded, "opdrachten", (s) => { const o = s.val(); if (o && opOpdracht?.(o, nu() - (o.t || 0) < 120000) === false) return; db.remove(s.ref).catch(() => {}); }); // the tv says false when it is not the writing tv: then the order stays for the one that is
   if (rol === "wachter") luister(db.onValue, "publiek", (s) => opPubliek?.(s.val() || {}));
   // a cancelled listener says nothing about the role: never treat it as "no longer the traitor"
@@ -142,6 +145,9 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
       return Promise.all(klaar).then((r) => r.every(Boolean));
     },
     stuur: (o) => metToken(() => db.push(db.ref(d, sessiePad("opdrachten")), { ...o, van: email, t: nu() })),
+    nu,
+    xpZet: alleenAdmin ? (id, waarde) => metToken(() => db.set(db.ref(d, sessiePad(`herstel/xp/${id}`)), waarde ?? null)) : null,
+    scoresZet: alleenAdmin ? (sc) => metToken(() => db.set(db.ref(d, sessiePad("publiek/scores")), sc)) : null,
     uitloggen: () => auth.signOut(a),
     vooraf: (pad, waarde) => metToken(() => db.set(db.ref(d, sessiePad(`vooraf/${sleutel(email)}/${pad}`)), waarde)),
     planning: rol === "regie" ? (id, klaar) => metToken(() => db.set(db.ref(d, sessiePad(`ere/planning/${id}`)), typeof klaar === "boolean" ? klaar : null)) : null,
@@ -160,15 +166,17 @@ async function viaFirebase({ rol, naam, opStand, opOpdracht, opPubliek, opVerraa
   };
 }
 
-async function viaServer({ rol, opStand, opOpdracht, opPubliek }) {
+async function viaServer({ rol, opStand, opOpdracht, opPubliek, opXp }) {
   const r = await fetch("/api/stand"); if (!r.ok) throw new Error("geen server");
   const eerste = await r.json();
   const bron = new EventSource("/api/stroom");
   bron.addEventListener("stand", (e) => { const s = JSON.parse(e.data); opStand?.(s); opPubliek?.(s.publiek || {}); });
   if (rol === "wachter") opPubliek?.(eerste.publiek || {});
   if (rol === "tv") bron.addEventListener("opdracht", (e) => opOpdracht?.(JSON.parse(e.data)));
+  if (rol === "tv" || rol === "regie") { bron.addEventListener("xp", (e) => opXp?.(JSON.parse(e.data))); fetch("/api/xp").then((r) => r.json()).then((b) => opXp?.(b)).catch(() => {}); }
   const post = (pad, o) => fetch(pad, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(o) }).catch(() => {});
-  return { soort: "server", bron, meldStand: (s) => post("/api/stand", s), stuur: (o) => post("/api/opdracht", o),
+  return { soort: "server", bron, meldStand: (s) => post("/api/stand", s), stuur: (o) => post("/api/opdracht", o), nu: () => Date.now(),
+    xpZet: (id, waarde) => post("/api/xp", { id, waarde: waarde ?? null }).then((r) => !!r?.ok), scoresZet: (sc) => post("/api/scores", sc).then((r) => !!r?.ok),
     herstelBewaar: (s, waarom) => post("/api/herstel", { waarom, stand: s }).then(() => true),
     herstelLijst: () => fetch("/api/herstel").then((r) => r.json()),
     herstelHaal: (id) => fetch(`/api/herstel?id=${encodeURIComponent(id)}`).then((r) => r.json()) };
@@ -183,6 +191,9 @@ window.Koppeling = {
   },
   meldStand(s) { return this.verbinding?.meldStand(s); },
   stuur(o) { return this.verbinding?.stuur(o); },
+  nu() { return this.verbinding?.nu ? this.verbinding.nu() : Date.now(); },
+  xpZet(id, waarde) { return this.verbinding?.xpZet ? this.verbinding.xpZet(id, waarde) : Promise.resolve(false); },
+  scoresZet(sc) { return this.verbinding?.scoresZet ? this.verbinding.scoresZet(sc) : Promise.resolve(false); },
   uitloggen() { return this.verbinding?.uitloggen?.(); },
   ere(i, naam) { return this.verbinding?.ere ? this.verbinding.ere(i, naam) : null; },
   vooraf(pad, waarde) { return this.verbinding?.vooraf ? this.verbinding.vooraf(pad, waarde) : Promise.resolve(false); },
