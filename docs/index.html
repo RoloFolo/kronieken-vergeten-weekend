@@ -1299,19 +1299,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=154"></script>
-<script src="a/godfried.js?v=154"></script>
-<script src="a/spel.js?v=154"></script>
-<script src="a/voorbereiding.js?v=154"></script>
-<script src="a/wachters.js?v=154"></script>
-<script src="a/firebase-config.js?v=154"></script>
-<script src="a/portretten.js?v=154"></script>
-<script src="a/koppeling.js?v=154"></script>
-<script src="a/rollen.js?v=154"></script>
-<script src="a/quests-tv.js?v=154"></script>
-<script src="a/planning.js?v=154"></script>
-<script src="a/route.js?v=154"></script>
-<script src="a/tafel.js?v=154"></script>
+<script src="a/events.js?v=155"></script>
+<script src="a/godfried.js?v=155"></script>
+<script src="a/spel.js?v=155"></script>
+<script src="a/voorbereiding.js?v=155"></script>
+<script src="a/wachters.js?v=155"></script>
+<script src="a/firebase-config.js?v=155"></script>
+<script src="a/portretten.js?v=155"></script>
+<script src="a/koppeling.js?v=155"></script>
+<script src="a/rollen.js?v=155"></script>
+<script src="a/quests-tv.js?v=155"></script>
+<script src="a/planning.js?v=155"></script>
+<script src="a/route.js?v=155"></script>
+<script src="a/tafel.js?v=155"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2000,7 +2000,8 @@ let ronde = 1;
 let fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }, ere = { i: -1, namen: {} }, paneelNu = null, bevelGedaan = new Set();
 // the weekend's log (for Akte II and IV) and the traitor periods
 let logboek = [], verraders = [], verrader = null;
-function log(type, data = {}) { logboek.push({ t: Date.now(), type, ...data }); if (logboek.length > 800) logboek.shift(); }
+const TELT = new Set(["punt", "punt-terug", "chaos", "geheim-ok", "geheim-rest"]); // the scores are made of these: never trimmed
+function log(type, data = {}) { logboek.push({ t: Date.now(), type, ...data }); if (logboek.length > 800) { const i = logboek.findIndex((l) => !TELT.has(l.type)); if (i >= 0) logboek.splice(i, 1); } }
 const medaille = (id) => ZEGELS.find((z) => z.id === id)?.medaille;
 function paneel(naam) {
   if (zaalTijdelijk && naam !== zaalTijdelijk.scherm && naam !== zaalTijdelijk.terug) { clearTimeout(zaalTijdelijk.timer); zaalTijdelijk = null; clearInterval(zaalTik); $("z-tijd").classList.remove("aan"); $("r-tijd").classList.remove("aan"); }
@@ -3007,7 +3008,7 @@ function punt(o) {
 function puntTerug(o) {
   const i = logboek.findIndex((l) => l.type === "punt" && l.t === +o.t); if (i < 0) return;
   const l = logboek[i]; logboek.splice(i, 1); // XP stands apart from the Seals: taking it back leaves the fiches alone
-  log("punt-terug", { naam: l.naam, zegel: l.zegel, xp: l.xp, waarom: l.waarom || "" }); meld();
+  log("punt-terug", { van: l.t, naam: l.naam, zegel: l.zegel, xp: l.xp, waarom: l.waarom || "" }); meld();
   if (paneelNu === "tafel") zaalStand();
 }
 // restore points: a copy of the whole state in the database, before every big reset, every half hour when something changed, and on request
@@ -3406,8 +3407,13 @@ function laadStand(s) {
 // heartbeat: the regie can see that this tv is alive (and that the buttons will work)
 setInterval(() => meld(), 30000);
 let regieGezien = null;
+function regieOver(s) {
+  const heb = new Set(logboek.map((l) => `${l.type}:${l.t}`)), nieuw = (s.logboek || []).filter((l) => (l.type === "punt" || l.type === "punt-terug") && !heb.has(`${l.type}:${l.t}`));
+  for (const l of nieuw) { if (l.type === "punt-terug" && l.van) { const i = logboek.findIndex((x) => x.type === "punt" && x.t === l.van); if (i >= 0) logboek.splice(i, 1); } logboek.push(l); }
+  logboek.sort((a, b) => a.t - b.t); meld(); if (paneelNu === "tafel") zaalStand();
+}
 function bewaakTv(s) {
-  const ra = s.regieActie; if (ra?.id && ra.id !== regieGezien && !passief) { regieGezien = ra.id; if (ra.soort === "punt") punt(ra.l); else if (ra.soort === "terug") puntTerug({ t: ra.t }); return; }
+  const ra = s.regieActie; if (ra?.id && ra.id !== regieGezien && !passief) { regieGezien = ra.id; regieOver(s); return; }
   // a stand from another window (also an old version without a tv mark) means two tvs are writing
   if (passief || s.tv === tvId || Date.now() - geladenOp < 6000) return;
   passief = true; clearTimeout(meldTimer);

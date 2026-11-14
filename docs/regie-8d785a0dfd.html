@@ -528,17 +528,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=154"></script>
-<script src="a/quests-tv.js?v=154"></script>
-<script src="a/planning.js?v=154"></script>
-<script src="a/godfried.js?v=154"></script>
-<script src="a/spel.js?v=154"></script>
-<script src="a/wachters.js?v=154"></script>
-<script src="a/rollen.js?v=154"></script>
-<script src="a/firebase-config.js?v=154"></script>
-<script src="a/portretten.js?v=154"></script>
-<script src="a/koppeling.js?v=154"></script>
-<script src="a/voorbereiding.js?v=154"></script>
+<script src="a/events.js?v=155"></script>
+<script src="a/quests-tv.js?v=155"></script>
+<script src="a/planning.js?v=155"></script>
+<script src="a/godfried.js?v=155"></script>
+<script src="a/spel.js?v=155"></script>
+<script src="a/wachters.js?v=155"></script>
+<script src="a/rollen.js?v=155"></script>
+<script src="a/firebase-config.js?v=155"></script>
+<script src="a/portretten.js?v=155"></script>
+<script src="a/koppeling.js?v=155"></script>
+<script src="a/voorbereiding.js?v=155"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -914,7 +914,7 @@ function zelfPunt(o) {
 function zelfTerug(t) {
   return zelfBoeken({ soort: "terug", t }, (s) => { const i = s.logboek.findIndex((l) => l.type === "punt" && l.t === t); if (i < 0) return;
     const l = s.logboek.splice(i, 1)[0]; // the fiches stay: XP stands apart from the Seals
-    s.logboek.push({ t: Date.now(), type: "punt-terug", naam: l.naam, zegel: l.zegel, xp: l.xp, waarom: l.waarom || "" }); });
+    s.logboek.push({ t: Date.now(), type: "punt-terug", van: l.t, naam: l.naam, zegel: l.zegel, xp: l.xp, waarom: l.waarom || "" }); });
 }
 const puntMelding = (t, kleur) => { const p = $("punt-stand"); p.textContent = t; p.style.color = kleur || ""; };
 function puntCheck(s) { // a new XP entry in the stand that matches what was sent: the tv booked it
@@ -1039,8 +1039,9 @@ const xpTekst = (l) => `${l.xp > 0 ? "+" : "−"}${Math.abs(l.xp || (l.n || 0) *
 function tweeKeer(b, vraag, doe) { if (b.dataset.zeker) { delete b.dataset.zeker; b.innerHTML = b._oud ?? b.innerHTML; b.classList.remove("rood"); doe(); return; } const t = b._oud = b.innerHTML; b.dataset.zeker = "1"; b.textContent = vraag; b.classList.add("rood");
   setTimeout(() => { if (b.dataset.zeker) { delete b.dataset.zeker; b.innerHTML = t; b.classList.remove("rood"); } }, 4000); }
 function tekenXpLijst(s) {
-  const l = (s.logboek || []).filter((x) => x.type === "punt").slice(-8).reverse();
-  $("punt-laatst").innerHTML = l.length ? `<b class="klein" style="margin:0">Laatst gegeven</b>` + l.map((x) => `<div class="xp-r"><span><b>${veilig(x.naam)} ${xpTekst(x)}</b>${x.zegel ? ` · ${veilig(zegelNaam(x.zegel))}` : ""}<small>${tijdVan(x.t)}${x.waarom ? ` · ${veilig(x.waarom)}` : ""}</small></span><button type="button" data-t="${x.t}">↶ Terug</button></div>`).join("") : "";
+  const l = (s.logboek || []).filter((x) => x.type === "punt").reverse(), tot = {}; for (const x of l) tot[x.naam] = (tot[x.naam] || 0) + (x.xp ?? (x.n || 0) * 10);
+  const totaal = Object.entries(tot).sort((a, b) => b[1] - a[1]).map(([n, v]) => `${veilig(n)} ${v}`).join(" · ");
+  $("punt-laatst").innerHTML = l.length ? `<b class="klein" style="margin:0">Alle uitgereikte XP (${l.length}), nieuwste boven</b><small class="klein" style="color:var(--ash)">Totaal: ${totaal}</small><div style="max-height:55vh;overflow-y:auto;overscroll-behavior:contain;border:1px solid rgba(239,227,212,.15);border-radius:8px;padding:0 8px">` + l.map((x) => `<div class="xp-r"><span><b>${veilig(x.naam)} ${xpTekst(x)}</b>${x.zegel ? ` · ${veilig(zegelNaam(x.zegel))}` : ""}<small>${tijdVan(x.t)}${x.waarom ? ` · ${veilig(x.waarom)}` : ""}</small></span><button type="button" data-t="${x.t}">↶ Terug</button></div>`).join("") + "</div>" : "";
   $("punt-laatst").querySelectorAll("button").forEach((b) => (b.onclick = () => tweeKeer(b, "Zeker?", () => { if (tvDood()) zelfTerug(+b.dataset.t); else stuur({ cmd: "punt-terug", t: +b.dataset.t }); b.disabled = true; b.textContent = "…"; })));
 }
 const WIJZ = { punt: (l) => `${l.naam} ${xpTekst(l)}${l.zegel ? ` (${zegelNaam(l.zegel)})` : ""}${l.waarom ? `: ${l.waarom}` : ""}`, "punt-terug": (l) => `XP teruggedraaid: ${l.naam} ${xpTekst(l)}${l.zegel ? ` (${zegelNaam(l.zegel)})` : ""}`,
