@@ -24,7 +24,7 @@ window.ROUTE = {
     { id: "larp", plan: "zo-larp", tijd: "2026-11-15T10:30", naam: "Het Spel der Rollen", bevel: ["Stefan"], link: "larp", info: "Stefans LARP, hooguit een uur.", mee: "Je kostuum, en schoenen waarin je kunt bewegen." },
     { id: "quiz3", plan: "zo-quiz3", tijd: "2026-11-15T13:30", naam: "Godfrieds Quiz III", icoon: "a/godfried/gezicht.webp", info: "De laatste vier vragen, vlak voor de finale." },
     { id: "finale", plan: "zo-finale", tijd: "2026-11-15T14:00", naam: "De Finale", icoon: "a/route/poort.webp", anker: "poort", na: "quiz3", info: "De broederschap tegen de Schaduwkoning." },
-    { id: "ere", plan: "zo-titels", tijd: "2026-11-15T15:00", naam: "Ere en aftiteling", icoon: "a/logo.webp", na: "finale", info: "De eretitels, wie volgt in 2027, en de aftiteling." },
+    { id: "ere", plan: "zo-titels", tijd: "2026-11-15T15:00", naam: "De kist en wie volgt", icoon: "a/logo.webp", na: "finale", info: "De kist gaat open, de envelop op de schoorsteen, en wie organiseert 2027?" },
   ],
   // the road on each painting (fractions of width and height), and which point is the castle and which the gate
   tv: { beeld: "a/route/tv.webp", w: 2752, h: 1536, kasteel: 22, poort: 34,

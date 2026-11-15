@@ -826,6 +826,8 @@ body:has(#verhaal.toost:not([hidden])) .crest { opacity: 0; }
 #g-inhoud .wie-rij .af img { border-color: #d9b77a; box-shadow: 0 0 14px rgba(255,217,138,.5); }
 #g-inhoud .wie-rij figcaption { font-size: clamp(12px, 1vw, 20px); color: #ffd98a; letter-spacing: .06em; text-transform: uppercase; }
 #g-inhoud .wie-rij:only-child img { width: 18vh; height: 18vh; }
+.gewelf .vuur-klok { margin: 1vh 0 0; font: 700 clamp(28px, 4vw, 80px)/1 var(--carved); color: #ffd98a; text-shadow: 0 0 30px rgba(255,190,90,.5); }
+#g-inhoud .drie figure.echt img { border-color: #ffd98a; box-shadow: 0 0 0 2px #000, 0 0 40px rgba(255,217,138,.8); }
 #g-inhoud .tegels { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.2vh 1vw; margin: 2vh auto; max-width: 60vw; }
 #g-inhoud .tegel { padding: 1vh 1.3vw; border: 1px solid #b8955f; background: rgba(20,10,8,.85); font: italic clamp(16px, 1.5vw, 30px)/1.2 var(--display); color: #f3e3c4; transition: opacity .4s, transform .4s; }
 #g-inhoud .tegel.weg { opacity: .12; transform: scale(.9); }
@@ -1313,19 +1315,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=158"></script>
-<script src="a/godfried.js?v=158"></script>
-<script src="a/spel.js?v=158"></script>
-<script src="a/voorbereiding.js?v=158"></script>
-<script src="a/wachters.js?v=158"></script>
-<script src="a/firebase-config.js?v=158"></script>
-<script src="a/portretten.js?v=158"></script>
-<script src="a/koppeling.js?v=158"></script>
-<script src="a/rollen.js?v=158"></script>
-<script src="a/quests-tv.js?v=158"></script>
-<script src="a/planning.js?v=158"></script>
-<script src="a/route.js?v=158"></script>
-<script src="a/tafel.js?v=158"></script>
+<script src="a/events.js?v=159"></script>
+<script src="a/godfried.js?v=159"></script>
+<script src="a/spel.js?v=159"></script>
+<script src="a/voorbereiding.js?v=159"></script>
+<script src="a/wachters.js?v=159"></script>
+<script src="a/firebase-config.js?v=159"></script>
+<script src="a/portretten.js?v=159"></script>
+<script src="a/koppeling.js?v=159"></script>
+<script src="a/rollen.js?v=159"></script>
+<script src="a/quests-tv.js?v=159"></script>
+<script src="a/planning.js?v=159"></script>
+<script src="a/route.js?v=159"></script>
+<script src="a/tafel.js?v=159"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1897,7 +1899,13 @@ function betreden() {
 
 /* ================= later screens: Wachterstocht, kist, finale, ere ================= */
 const S = window.SPEL;
-let tochtGedaan = new Set(), relieken = new Set(), reliekGebruikt = new Set();
+let tochtGedaan = new Set(), relieken = new Set(), reliekGebruikt = new Set(), tochtBetaald = new Set();
+const TOCHT_FICHES = 2;
+function tochtVerreken() { // a task of the tocht done: +2 for its Seal; ticked off again: back
+  for (const o of S.tocht) { if (!o.zegel) continue; const moet = tochtGedaan.has(o.id), heeft = tochtBetaald.has(o.id); if (moet === heeft) continue;
+    if (moet && bevroren(o.zegel)) continue; fiche(o.zegel, moet ? TOCHT_FICHES : -TOCHT_FICHES); moet ? tochtBetaald.add(o.id) : tochtBetaald.delete(o.id); }
+  meld();
+}
 let tochtOpen = false, tochtIntroLoopt = false, tochtIntroTimers = []; // tochtOpen: the tasks are shown on the personal pages
 const poortKlaar = () => { const i = $("tocht-beeld"); return !!i && i.complete && i.naturalWidth > 0; }; // also true when the image came from the cache
 // the camera flies into the castle; the first time with an intro, later straight to the tasks
@@ -2266,22 +2274,31 @@ const SPOOR = { "chaos-steel": (l) => `er verdween een fiche uit de ${zegelNaamV
 // as their own story, two bluff; the rest guess, once. Whoever sent nothing goes to the pillory first. The other moments go into the credits.
 // Without Firebase (a local test) the example memories from spel.js.
 const hashNaam = (s) => [...String(s)].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7);
-const VUUR_MAX = 5;
+const vuurAktes = () => S.aktes.filter((x) => x.soort === "herinnering");
+const VUUR_MAX = (window.SPEL?.aktes || []).filter((x) => x.soort === "herinnering").length || 4;
+const vuurBegonnen = (k) => { const a = vuurAktes()[k]; return !!a && !!(fin.opgelost?.[a.zegel] || fin.voortgang?.[a.zegel]?.length || fin.vuurFase?.[k]); };
+// the countdown on the card while the three prepare (the tv and the phones count to the same database time)
+setInterval(() => document.querySelectorAll(".vuur-klok").forEach((el) => { const s = Math.max(0, Math.ceil((+el.dataset.tot - Koppeling.nu()) / 1000));
+  el.textContent = s ? `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}` : "Tijd! Naar voren."; }), 500);
+// XP given by the finale itself goes into the XP book like any XP (the tv copies it into its log); without a database line, straight into the log
+function xpGeef(naam, xp, waarom) {
+  const id = `x${Koppeling.nu().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+  Promise.resolve(Koppeling.xpZet?.(id, { t: Koppeling.nu(), naam, xp, waarom, door: "Godfried (finale)", ronde: ronde || 1, verrader: false })).then((ok) => { if (!ok) punt({ naam, xp, waarom }); }).catch(() => punt({ naam, xp, waarom }));
+}
 function vuurBron() { // only Wachters who are there can stand in front; with nothing sent in (a test) the example memories
   const echt = anekdotes().filter((a) => a.van && AANWEZIG.includes(a.van) && (!a.over || a.over === a.van)).map((a) => ({ wie: a.van, tekst: a.tekst, t: a.t || 0 }));
   if (echt.length || window.KRONIEKEN_SESSIE === "live" && window.FIREBASE_CONFIG) return echt;
   return (S.herinneringen || []).filter((h) => h.tekst && AANWEZIG.includes(h.wie)).map((h) => ({ wie: h.wie, tekst: h.tekst, t: 0 }));
 }
-function vuurRondes() {
-  if (fin.vuur?.length) return fin.vuur; // an empty list stored earlier is made again
-  const eigen = {}; for (const a of vuurBron()) (eigen[a.wie] ||= []).push(a);
-  const voor = Object.fromEntries(NAMEN.map((n) => [n, 0]));
-  const rondes = Object.keys(eigen).sort((x, y) => hashNaam(x + ronde) - hashNaam(y + ronde)).slice(0, VUUR_MAX).map((wie, k) => {
-    const l = eigen[wie], a = l[hashNaam(wie + ronde + "a") % l.length]; voor[wie]++;
-    const mee = AANWEZIG.filter((n) => n !== wie).sort((x, y) => voor[x] - voor[y] || hashNaam(x + ronde + k) - hashNaam(y + ronde + k)).slice(0, 2); mee.forEach((n) => voor[n]++);
-    return { wie, tekst: a.tekst, drie: [wie, ...mee].sort((x, y) => hashNaam(x + k + ronde + "d") - hashNaam(y + k + ronde + "d")) };
-  });
-  if (rondes.length && (voorafGeladen || !window.FIREBASE_CONFIG)) fin.vuur = rondes; // never remember an empty list, nor one made before the memories arrived
+function vuurRondes() { // one moment per act; what the regie picked comes first, the rest drawn (each from a different Wachter where possible)
+  const al = (fin.vuur || []).filter(Boolean); if (al.length >= VUUR_MAX) return al;
+  const eigen = {}; for (const a of vuurBron()) if (!al.some((r) => r.tekst === a.tekst)) (eigen[a.wie] ||= []).push(a);
+  const voor = Object.fromEntries(NAMEN.map((n) => [n, 0])); for (const r of al) r.drie.forEach((n) => voor[n]++);
+  const wie = Object.keys(eigen).sort((x, y) => al.some((r) => r.wie === x) - al.some((r) => r.wie === y) || hashNaam(x + ronde) - hashNaam(y + ronde)).slice(0, VUUR_MAX - al.length);
+  const rondes = [...al, ...wie.map((w, j) => { const k = al.length + j, l = eigen[w], a = l[hashNaam(w + ronde + "a") % l.length]; voor[w]++;
+    const mee = AANWEZIG.filter((n) => n !== w).sort((x, y) => voor[x] - voor[y] || hashNaam(x + ronde + k) - hashNaam(y + ronde + k)).slice(0, 2); mee.forEach((n) => voor[n]++);
+    return { wie: w, tekst: a.tekst, drie: [w, ...mee].sort((x, y) => hashNaam(x + k + ronde + "d") - hashNaam(y + k + ronde + "d")) }; })];
+  if (rondes.length > al.length && (voorafGeladen || !window.FIREBASE_CONFIG)) fin.vuur = rondes; // never remember a list made before the memories arrived
   return rondes;
 }
 const vuurLeeg = () => Object.keys(voorafAlles).length ? AANWEZIG.filter((n) => !anekdotes().some((a) => a.van === n)) : (S.herinneringen || []).filter((h) => !h.tekst).map((h) => h.wie);
@@ -2290,16 +2307,18 @@ function schandpaalStem(i) { if (schandpaalGehoord.has(`${ronde}-${i}`)) return;
 const fragmentTekst = () => (S.proost || []).join(" ");
 function aktePuzzel(a, stil) {
   const v = fin.voortgang[a.zegel] ||= [];
-  if (a.soort === "herinnering") {
-    const rondes = vuurRondes(), leeg = vuurLeeg(), stappen = [...(leeg.length ? ["paal"] : []), ...rondes.map((_, n) => n)], i = stappen.findIndex((x) => !v.includes(x));
-    const sterren = rondes.map((r, n) => `<span class="ster ${v.includes(n) ? "aan" : ""}">${v.includes(n) ? schoon(r.wie) : "✦"}</span>`).join("");
-    if (i < 0) return { klaar: true, html: `<div class="sterren">${sterren}</div>` };
-    const st = stappen[i];
-    if (st === "paal") { if (!stil) schandpaalStem(0); return { html: `<div class="sterren">${sterren}</div><div class="schandpaal">${Array.from({ length: 18 }, (_, n) => `<i style="left:${(n * 37) % 100}%;animation-delay:${-(n * .7) % 6}s"></i>`).join("")}<b class="carved">${leeg.map(schoon).join(" · ")}</b></div><p class="vraag">${leeg.length > 1 ? "Zij lieten" : `${schoon(leeg[0])} liet`} het vuur leeg.</p><p class="klein-tv">Pek en veren! Aan de schandpaal vertelt ieder zijn gênantste moment, hier en nu.</p>`,
-      knop: "Schandpaal gehad: verder", check: (w) => w === "verder", goed: () => v.push("paal") }; }
-    const r = rondes[st];
-    return { html: `<div class="sterren">${sterren}</div><p class="vraag">${schoon(r.tekst)}</p><div class="drie">${r.drie.map((n) => `<figure>${PORTRET[n] ? `<img src="${PORTRET[n]}" alt="">` : ""}<figcaption class="carved">${schoon(n)}</figcaption></figure>`).join("")}</div><p class="klein-tv">Wie van de drie? Ieder vertelt het als zijn eigen verhaal: twee bluffen, één spreekt de waarheid. Eén keer raden.</p>`,
-      drie: r.drie, hint: `Zijn naam begint met een ${r.wie[0]}.`, check: (w) => String(w).toLowerCase() === r.wie.toLowerCase(), goed: () => v.push(st), mis: () => v.push(st), onthul: r.wie };
+  if (a.soort === "herinnering") { // one round of "Wie van de drie?" per act; the pillory first, in the first act only
+    const k = vuurAktes().indexOf(a), r = vuurRondes()[k], leeg = k === 0 ? vuurLeeg() : [];
+    if (leeg.length && !v.includes("paal")) { if (!stil) schandpaalStem(0); return { html: `<div class="schandpaal">${Array.from({ length: 18 }, (_, n) => `<i style="left:${(n * 37) % 100}%;animation-delay:${-(n * .7) % 6}s"></i>`).join("")}<b class="carved">${leeg.map(schoon).join(" · ")}</b></div><p class="vraag">${leeg.length > 1 ? "Zij lieten" : `${schoon(leeg[0])} liet`} het vuur leeg.</p><p class="klein-tv">Pek en veren! Aan de schandpaal vertelt ieder zijn gênantste moment, hier en nu.</p>`,
+      knop: "Schandpaal gehad: verder", check: (w) => w === "verder", goed: () => v.push("paal"), paal: leeg }; }
+    if (!r) return { klaar: true, html: `<p class="vraag">Voor deze akte is er geen gênant moment.</p>` };
+    const drie = (af) => `<div class="drie">${r.drie.map((n) => `<figure class="${af && n === r.wie ? "echt" : ""}">${PORTRET[n] ? `<img src="${PORTRET[n]}" alt="">` : ""}<figcaption class="carved">${schoon(n)}</figcaption></figure>`).join("")}</div>`;
+    if (v.includes(0)) return { klaar: true, html: `${drie(true)}<p class="klein-tv">Het was ${schoon(r.wie)}.</p>` };
+    const fase = fin.vuurFase?.[k];
+    if (fase !== "los") return { html: `${drie()}<p class="vraag">${fase === "prep" ? "Deze drie lezen het verhaal op hun telefoon…" : "Deze drie Wachters: naar voren."}</p>${fase === "prep" ? `<p class="vuur-klok" data-tot="${fin.vuurTot?.[k] || 0}"></p>` : ""}`, wacht: true, drie: r.drie };
+    return { html: `<p class="vraag">${schoon(r.tekst)}</p>${drie()}<p class="klein-tv">Wie van de drie? Twee bluffen, één spreekt de waarheid. Eén keer raden.</p>`,
+      drie: r.drie, hint: `Zijn naam begint met een ${r.wie[0]}.`, check: (w) => String(w).toLowerCase() === r.wie.toLowerCase(), goed: () => v.push(0), mis: () => v.push(0), onthul: r.wie,
+      bluf: (w) => r.drie.find((n) => n !== r.wie && n.toLowerCase() === String(w).toLowerCase()) || null };
   }
   if (a.soort === "weekend") {
     const vragen = weekendVragen(), i = vragen.findIndex((_, n) => !v.includes(n));
@@ -2343,16 +2362,20 @@ function wieRondes() {
 function vuurKies(lijst) {
   const voor = Object.fromEntries(NAMEN.map((n) => [n, 0])), uniek = new Set();
   const rondes = (Array.isArray(lijst) ? lijst : []).map((r) => ({ wie: String(r?.wie || ""), tekst: String(r?.tekst || "").trim().slice(0, 600), mee: Array.isArray(r?.mee) ? r.mee : [] }))
-    .filter((r) => AANWEZIG.includes(r.wie) && r.tekst && !uniek.has(r.tekst) && uniek.add(r.tekst)).slice(0, 8)
+    .filter((r) => AANWEZIG.includes(r.wie) && r.tekst && !uniek.has(r.tekst) && uniek.add(r.tekst)).slice(0, VUUR_MAX)
     .map((r) => { r.mee = [...new Set(r.mee.filter((n) => AANWEZIG.includes(n) && n !== r.wie))].slice(0, 2); voor[r.wie]++; r.mee.forEach((n) => voor[n]++); return r; });
   return rondes.map((r, k) => { const mee = [...r.mee];
     while (mee.length < 2) { const n = AANWEZIG.filter((x) => x !== r.wie && !mee.includes(x)).sort((x, y) => voor[x] - voor[y] || hashNaam(x + ronde + k) - hashNaam(y + ronde + k))[0]; if (!n) break; mee.push(n); voor[n]++; }
     return { wie: r.wie, tekst: r.tekst, drie: [r.wie, ...mee].sort((x, y) => hashNaam(x + k + ronde + "d") - hashNaam(y + k + ronde + "d")), gekozen: true }; });
 }
+function vuurPubliek() {
+  const a = S.aktes[fin.nu], k = vuurAktes().indexOf(a), f = fin.vuurFase?.[k], r = fin.vuur?.[k];
+  return k >= 0 && f && r && !fin.opgelost[a.zegel] ? { akte: ROMEIN[fin.nu], naam: a.naam, tekst: r.tekst, drie: r.drie, tot: fin.vuurTot?.[k] || 0, los: f === "los" } : null;
+}
 function aktePuzzelInfo() {
   const a = S.aktes[fin.nu]; if (!a || fin.opgelost[a.zegel] || !(fin.open[a.zegel] || zegelVol(a.zegel))) return a ? { soort: a.soort, stap: 0 } : null;
   const p = aktePuzzel(a, true);
-  return { soort: a.soort, stap: fin.voortgang[a.zegel]?.length ?? 0, zegelVraag: !!p.zegelVraag, drie: p.drie || null, tegels: p.tegels || null, knop: p.knop || null };
+  return { soort: a.soort, stap: fin.voortgang[a.zegel]?.length ?? 0, zegelVraag: !!p.zegelVraag, drie: p.drie || null, tegels: p.tegels || null, knop: p.knop || null, wacht: !!p.wacht, paal: !!p.paal };
 }
 // The finale plays in the last vault. Opening (first time): the Shadow King mocks, Godfried explains. Each act: the camera
 // flies to its socket, the title rises while Godfried reads the act, then the question card comes up. A right answer flashes
@@ -2452,6 +2475,7 @@ function antwoord(w) {
   if (paneelNu !== "finale") return; const a = S.aktes[fin.nu];
   if (fin.opgelost[a.zegel] || !(fin.open[a.zegel] || zegelVol(a.zegel))) return;
   const p = aktePuzzel(a); if (p.klaar || !p.check) return;
+  if (w === "paal-goed" && p.paal) { p.paal.forEach((n) => xpGeef(n, 50, "Pek en veren: een goed verhaal")); w = "verder"; }
   if (!$("g-kaart").classList.contains("aan")) gSla(); // the answer came in during an intro
   const k = $("g-kaart"); k.classList.remove("goed", "fout"); void k.offsetWidth;
   if (p.check(w)) {
@@ -2463,6 +2487,7 @@ function antwoord(w) {
     const s = $("g-stempel"); s.textContent = "De Schaduw lacht"; s.classList.remove("aan"); void s.offsetWidth; s.classList.add("aan");
     if (p.schaduw) { const g = $("gewelf"); g.classList.add("rood", "beeft"); speel("donder-hard", 1); setTimeout(() => flits("rood"), 700); setTimeout(() => g.classList.remove("rood", "beeft"), 2600); } // the Shadow King himself, for a moment
     gT(450, () => gZeg(gWillekeurig(p.schaduw ? "lach" : "fout"), () => { gTimers = []; }, 7000));
+    const bluffer = p.bluf?.(w); if (bluffer) xpGeef(bluffer, 50, "Wie van de drie: zijn bluf werd geloofd");
     if (p.mis) { // one guess (Acts I and II) or two (Act IV): then the answer shows and the act goes on
       p.mis(); meld(); if (p.onthul) { s.textContent = `Het was ${p.onthul}`; if (a.soort === "wie") grootOnthul(); }
       if (aktePuzzel(a).klaar) { fin.opgelost[a.zegel] = true; meld(); gT(3600, () => cijferValt(fin.nu)); }
@@ -2519,10 +2544,10 @@ function tekenEinde() {
   $("d-code").innerHTML = S.slotcode.map((c) => "<span>" + c + "</span>").join("");
   if (!$("dageraad").classList.contains("stil")) { $("d-zin").textContent = "Open de kist met de vier cijfers."; $("d-code").classList.add("aan"); }
 }
-function naarEre() { // the chest is open: Godfried turns to honour, and the titles begin
+function naarEre() { // the chest is open: Godfried points to the envelope on the mantelpiece (no titles, no credits any more)
   if (fin.einde === 2) return; fin.einde = 2; meld(); if (zegeStem) fade(zegeStem, 0, 400);
-  $("d-code").classList.remove("aan"); $("d-zin").style.opacity = 0;
-  zegeStem = stemMet("fin/einde-ere", 1, () => { stage.classList.remove("zege"); ere.speelt = true; ereStap(0, true); }, 16000);
+  $("d-code").classList.remove("aan"); $("d-zin").textContent = "Open de envelop op de schoorsteen.";
+  zegeStem = stemMet("fin/einde-envelop", 1, () => {}, 16000);
 }
 // Ere van de Wachters: the organisers assign the titles beforehand (regie, stored in /ere); here they are only played.
 // "Speel af" runs through every assigned title by itself: the title and what it is for, a short tension, then the name
@@ -2956,10 +2981,10 @@ function standNu() {
     tv: tvId, tvInfo: { apparaat: tvApparaat, versie: tvVersie, sinds: geladenOp, gemeld: Date.now(), geluid: tvMagGeluid() }, fiches: Object.fromEntries(ZEGELS.map((z) => [z.id, z.fiches])), gebruikt: [...gebruikt],
     event: wakker() && EVENT ? { id: EVENT.id, naam: EVENT.naam, regel: EVENT.regel, soort: EVENT.soort, zegel: EVENT.zegel, verlies: EVENT.verlies * extra } : null,
     scherm: schermNu(), d20: !$("b-d20").disabled, d20Wacht: !!d20Na, quiz: gq ? { ...gq, uit: [...gq.uit] } : null, kroniek: [...kroniek],
-    tochtGedaan: [...tochtGedaan], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], ronde, fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
+    tochtGedaan: [...tochtGedaan], tochtBetaald: [...tochtBetaald], relieken: [...relieken], reliekGebruikt: [...reliekGebruikt], bevelen: [...bevelGedaan], ronde, fin, ere, chaos: { ...chaos, wacht: { ...wacht } },
     ijs, vloek, vloekD20, dieven, planning, quest: quest ? { id: quest.id, naam: quest.naam, fase: quest.fase, lengte: quest.lengte || 0, beste: quest.beste || 0, hoofd: quest.hoofd || null, mee: quest.mee || null, antwoord: quest.antwoord || null } : null, rotatie,
     logboek, verraders, verrader: verrader ? { naam: verrader.naam, token: verrader.token, sinds: verrader.sinds, tot: verrader.tot || null } : null,
-    publiek: { ronde, levend: Date.now(), tafel: paneelNu === "tafel", route: window.ROUTE ? [...routeKlaar()] : [], kroniek: [...kroniek], scores: scorebordData(), hal: rollenOpen, eed: !!fin.eedOpen, tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
+    publiek: { ronde, levend: Date.now(), tafel: paneelNu === "tafel", route: window.ROUTE ? [...routeKlaar()] : [], kroniek: [...kroniek], scores: scorebordData(), hal: rollenOpen, eed: !!fin.eedOpen, vuur: vuurPubliek(), tocht: tochtOpen && !kistGeopend ? { open: true, gedaan: [...tochtGedaan] } : null } /* the tasks show on the phones while the walk is on: from opening the tocht until the chest is opened */, // the only part the personal pages can read
     tochtOpen, kistGeopend,
     aktevraag: paneelNu === "finale" ? aktePuzzelInfo() : null,
   });
@@ -3377,7 +3402,7 @@ const OPDRACHTEN = {
   "events-opnieuw": () => { herstelpunt("vlak vóór alle events opnieuw"); gebruikt.clear(); bewaar(); },
   scherm: (o) => { if (uitlegActief) stopUitleg(); if (dronkActief) { dronkActief = false; dronkKlaar = true; fade(dronkStem, 0, 300); }
     rollenOpen = true; if (binnen === null) { verhaalKlaar = true; proloog?.pause(); $("verhaal").hidden = true; betreden(); } if (wakker()) hal(); paneel(o.naam === "hal" ? null : o.naam); },
-  tocht: (o) => { o.aan ? tochtGedaan.add(o.id) : tochtGedaan.delete(o.id); if (paneelNu === "tocht") vinkTocht(o.id, !!o.aan); meld(); },
+  tocht: (o) => { o.aan ? tochtGedaan.add(o.id) : tochtGedaan.delete(o.id); if (paneelNu === "tocht") vinkTocht(o.id, !!o.aan); tochtVerreken(); meld(); },
   "kist-open": () => kistRitueel(),
   reliek: (o) => { // tick a relic by hand: before the ceremony it is only noted; after it the open chest shows it
     if (o.aan) relieken.add(o.id); else relieken.delete(o.id);
@@ -3394,8 +3419,21 @@ const OPDRACHTEN = {
   "geen-verrader": () => { eindigVerraad("regie"); meld(); },
   ontdooi: (o) => { if (ijs[o.id]) { ijs[o.id] = Date.now() - 1; tekenIjs(); } },
   hint: () => hintVoor(),
-  "vuur-kies": (o) => { // Act I as the regie set it (an empty list: drawn at random again); not once the act has begun
-    if (fin.voortgang?.vlam?.length || fin.opgelost?.vlam) return; const r = vuurKies(o.rondes); fin.vuur = r.length ? r : null; meld(); if (paneelNu === "finale") tekenFinale(); },
+  "vuur-kies": (o) => { // the four moments as the regie set them (an empty list: drawn at random); acts already begun keep theirs
+    const oud = fin.vuur || [], vast = [...Array(VUUR_MAX).keys()].filter((k) => vuurBegonnen(k) && oud[k]);
+    if (!vast.length) { const r = vuurKies(o.rondes); fin.vuur = r.length ? r : null; }
+    else { const nieuw = vuurKies((o.rondes || []).filter((x) => !vast.some((k) => oud[k].tekst === String(x?.tekst || "").trim()))); let j = 0;
+      fin.vuur = [...Array(VUUR_MAX).keys()].map((k) => vast.includes(k) ? oud[k] : nieuw[j++] || oud[k] || null).filter(Boolean); }
+    meld(); if (paneelNu === "finale") tekenFinale(); },
+  "vuur-prep": () => { // the three of this act get the story on their phones, five minutes to prepare
+    const a = S.aktes[fin.nu], k = vuurAktes().indexOf(a); if (k < 0 || fin.opgelost[a.zegel] || !vuurRondes()[k]) return;
+    (fin.vuurFase ||= {})[k] = "prep"; (fin.vuurTot ||= {})[k] = Koppeling.nu() + 5 * 60000; meld();
+    if (paneelNu === "finale" && $("g-kaart").classList.contains("aan")) kaartWissel(); },
+  "vuur-start": () => { // they are ready: the story comes on the screen and the group guesses
+    const a = S.aktes[fin.nu], k = vuurAktes().indexOf(a); if (k < 0 || fin.opgelost[a.zegel] || !vuurRondes()[k]) return;
+    (fin.vuurFase ||= {})[k] = "los"; meld(); if (paneelNu !== "finale") return;
+    if (!$("g-kaart").classList.contains("aan")) gSla(); else kaartWissel(); speel("fin/sfx-akte", .7); },
+  "tocht-fiches": () => tochtVerreken(),
   "akte2-kies": (o) => { // Act II as the regie picked it: up to 8 reasons, in order (an empty list: the tv draws); not once the act has begun
     if (fin.voortgang?.hoorn?.length || fin.opgelost?.hoorn) return;
     const vr = (Array.isArray(o.vragen) ? o.vragen : []).map((q) => ({ waarom: String(q?.waarom || "").trim().slice(0, 200), namen: (Array.isArray(q?.namen) ? q.namen : []).filter((n) => NAMEN.includes(n)) }))
@@ -3423,7 +3461,7 @@ const OPDRACHTEN = {
     const DELEN = {
       zegels: () => { for (const z of ZEGELS) z.fiches = 0; teken(); logboek = logboek.filter((l) => l.type !== "fiche"); },
       events: () => { gebruikt.clear(); },
-      relieken: () => { tochtOpen = false; kistGeopend = false; tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); logboek = logboek.filter((l) => l.type !== "kist"); },
+      relieken: () => { tochtOpen = false; kistGeopend = false; tochtGedaan.clear(); tochtBetaald.clear(); relieken.clear(); reliekGebruikt.clear(); logboek = logboek.filter((l) => l.type !== "kist"); },
       finale: () => { fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; reliekGebruikt.clear(); }, // relics spent on hints come back
       ere: () => { ereStop(); aftitelingUit(); delete ere.stap; ere.speelt = false; ere.i = -1; }, // the show from the start; titles given and credits entries stay
       bevelen: () => { bevelGedaan.clear(); },
@@ -3434,7 +3472,7 @@ const OPDRACHTEN = {
     const doe = DELEN[o.deel]; if (!doe) return;
     await herstelpunt(`vlak vóór reset: ${o.deel}`); doe(); bewaar();
     setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); },
-  "alles-opnieuw": async () => { await herstelpunt("vlak vóór alles opnieuw"); planning = {}; ronde = Date.now(); kroniek = new Set(); openingGehad = false; quizStop(); vertelSla(true); tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
+  "alles-opnieuw": async () => { await herstelpunt("vlak vóór alles opnieuw"); planning = {}; ronde = Date.now(); kroniek = new Set(); openingGehad = false; quizStop(); vertelSla(true); tochtOpen = false; kistGeopend = false; bevelGedaan.clear(); chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); logboek = []; verraders = []; verrader = null; rollenOpen = false; for (const z of ZEGELS) z.fiches = 0; teken(); gebruikt.clear(); tochtGedaan.clear(); tochtBetaald.clear(); relieken.clear(); reliekGebruikt.clear(); fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; ere = { i: -1, namen: {} }; paneelNu = null; bewaar();
     setTimeout(() => { location.hash = "nu"; location.reload(); }, 2500); }, // back to the welcome screen, so the regie shows "Start verhaal" again
 };
 // With Firebase only the tv laptop logs in (address ends in ?tv); public visitors just see the countdown.
@@ -3448,7 +3486,7 @@ function laadStand(s) {
   if (herstelt) return; if (standGeladen) return bewaakTv(s); standGeladen = true; geladenOp = Date.now(); regieGezien = s.regieActie?.id || null; // what the regie booked without a tv is already in this stand
   for (const z of ZEGELS) z.fiches = s.fiches?.[z.id] ?? z.fiches;
   gebruikt = new Set(s.gebruikt || []); teller(); teken();
-  tochtOpen = !!s.tochtOpen; kistGeopend = !!s.kistGeopend; bevelGedaan = new Set(s.bevelen || []); tochtGedaan = new Set(s.tochtGedaan || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
+  tochtOpen = !!s.tochtOpen; kistGeopend = !!s.kistGeopend; bevelGedaan = new Set(s.bevelen || []); tochtGedaan = new Set(s.tochtGedaan || []); tochtBetaald = new Set(s.tochtBetaald || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
   ronde = s.ronde || 1; kroniek = new Set(s.kroniek || []);
   if (s.fin) fin = { nu: 0, open: {}, opgelost: {}, hint: {}, ...s.fin }; if (s.ere) ere = { i: -1, namen: {}, ...s.ere };
   if (s.chaos) { const { wacht: w, ...rest } = s.chaos; chaos = rest; Object.assign(wacht, w || {}); }

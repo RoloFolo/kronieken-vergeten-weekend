@@ -19,15 +19,15 @@ window.SPEL = {
   // ===== De finale: vier aktes, samen ongeveer een uur. Elke akte geeft bij voltooiing één cijfer van het slot. =====
   slotcode: [7, 6, 9, 8], // volgorde: vlam, hoorn, schild, hart. Zo moet het cijferslot op de kist staan.
   drempel: 12,            // fiches waarbij een Zegel zijn akte vanzelf opent; anders eerst een beproeving
-  aktes: [
+  aktes: [ // four times "Wie van de drie?": one embarrassing moment per act, three Wachters in front, one guess; then the digit falls
     { zegel: "vlam", naam: "Het Vuur der Herinnering", soort: "herinnering",
       intro: "Het vuur onthoudt alles, ook wat jullie liever vergeten. Drie Wachters vertellen hetzelfde verhaal: één spreekt de waarheid, twee liegen. Wie van de drie?" },
-    { zegel: "hoorn", naam: "Het Feestmaal", soort: "weekend",
-      intro: "De Hoorn heeft alles gezien wat jullie dit weekend deden. Bewijs dat jullie het zelf ook nog weten." },
-    { zegel: "schild", naam: "De Eed der Broeders", soort: "eed",
-      intro: "Weten jullie nog wat wij zwoeren bij de Eerste Dronk? Leg de woorden in de juiste volgorde… en hef dan samen het glas." },
-    { zegel: "hart", naam: "De Gezichten van het Hart", soort: "wie", stem: "akte-4-wie.wav",
-      intro: "Het Hart kent ieder van jullie. Maar kennen jullie elkaar ook? Drie keer toont het een Wachter van heel dichtbij. Zeg wie het is." },
+    { zegel: "hoorn", naam: "De Hoorn der Verhalen", soort: "herinnering", stem: "akte-2-vuur.wav",
+      intro: "Opnieuw staan drie Wachters bij het vuur. Eén van hen beleefde dit echt, twee liegen alsof hun leven ervan afhangt." },
+    { zegel: "schild", naam: "Het Schild der Leugens", soort: "herinnering", stem: "akte-3-vuur.wav",
+      intro: "Drie nieuwe gezichten, één waarheid. Het Schild vangt elke leugen, maar jullie moeten hem zien." },
+    { zegel: "hart", naam: "Het Hart der Waarheid", soort: "herinnering", stem: "akte-4-vuur.wav",
+      intro: "De laatste drie Wachters, het laatste cijfer. Wie van de drie spreekt de waarheid?" },
   ],
 
   // Akte I. Per Wachter een herinnering (anekdote) en eventueel een foto in docs/a/fotos/. In te vullen door de organisatoren.

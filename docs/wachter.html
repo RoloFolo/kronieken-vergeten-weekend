@@ -52,6 +52,8 @@ html, body { overflow-x: hidden; }
 .route-komt button .z { font-size: 18px; color: var(--ash); }
 #tabs button.nieuw::after { content: ""; position: absolute; top: 4px; right: 18%; width: 9px; height: 9px; border-radius: 50%; background: var(--ember); box-shadow: 0 0 8px var(--ember); }
 .stoel.weg { filter: grayscale(1) brightness(.65); } .stoel.weg small { font-style: italic; } /* a Wachter who could not come */
+.vuur-tab { text-align: center; } .vuur-tab h2 { margin: 0 0 6px; } .vuur-tab .vuur-tekst { margin: 14px 0; padding: 14px; border: 1px solid #b8955f; background: rgba(20,10,8,.7); font: italic 400 clamp(19px, 5.4vw, 26px)/1.4 var(--display); color: #fbe3b4; text-align: left; }
+.vuur-tab .vuur-klok { font: 700 clamp(40px, 14vw, 64px)/1 var(--carved, serif); color: #ffd98a; margin: 6px 0; } .vuur-tab .klein { color: var(--ash); font-size: 14px; }
 .paneel { position: relative; padding: 22px 20px 24px; background: var(--paneel); border: 2px solid #6e5230; box-shadow: inset 0 0 0 1px rgba(226,50,60,.45), 0 16px 44px #000; }
 .paneel h2 { margin: 0 0 10px; font-size: 13px; letter-spacing: .3em; text-align: center; }
 .brief { font: italic 17px/1.6 var(--display); text-align: center; }
@@ -423,6 +425,7 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   </section>
 
   <!-- tab: the Wachterstocht, to read again on the way -->
+  <section class="paneel vuur-tab verborgen" id="tab-vuur"></section>
   <section class="paneel tocht tab verborgen" id="tocht">
     <h2 class="carved">De Wachterstocht</h2>
     <p class="tocht-onder">Vanavond in Château de Bouillon. Vijf beproevingen; elke volbrachte opent een vak van de Reliekenkist.</p>
@@ -476,10 +479,11 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
 
   <p class="slot tab-ik">De Kronieken van het Vergeten Weekend · Bouillon<span id="uit" class="verborgen"><br><button type="button" class="uitlog" id="b-uit">Niet jij? Log uit</button></span><br><button type="button" class="uitlog" id="b-geluid"></button><br><button type="button" class="uitlog verborgen" id="b-speler"></button></p>
 </main>
-<div class="frame verborgen" id="frame-regie"><iframe title="Regie" data-src="regie-8d785a0dfd.html?v=158"></iframe></div>
-<div class="frame verborgen" id="frame-verrader"><iframe title="Schaduwpaneel" data-src="chaos-06d0ece377.html?v=158"></iframe></div>
+<div class="frame verborgen" id="frame-regie"><iframe title="Regie" data-src="regie-8d785a0dfd.html?v=159"></iframe></div>
+<div class="frame verborgen" id="frame-verrader"><iframe title="Schaduwpaneel" data-src="chaos-06d0ece377.html?v=159"></iframe></div>
 <nav class="tabs" id="tabs" aria-label="Menu">
   <button type="button" data-tab="ik"><img class="ico" src="a/medaillon-vlam.webp" alt="">Ik</button>
+  <button type="button" data-tab="vuur" class="goud" hidden><img class="ico" src="a/medaillon-vlam.webp" alt="">Vuur</button>
   <button type="button" data-tab="tafel"><img class="ico" src="a/medaillon-schild.webp" alt="">Tafel</button>
   <button type="button" data-tab="route"><img class="ico" src="a/route/kasteel.webp" alt="" style="border-radius:50%">Route</button>
   <button type="button" data-tab="tocht" hidden><img class="ico" src="a/reliek-vlam.webp" alt="">Tocht</button>
@@ -497,16 +501,16 @@ body:has(#binnen:not(.verborgen)) .tabs, body:has(#intro:not(.verborgen)) .tabs 
   <section class="paneel"><h2 class="carved" id="melding-kop"></h2><p id="melding-tekst"></p><button class="knop" type="button" id="melding-ok">Begrepen</button></section>
 </div>
 
-<script src="a/wachters.js?v=158"></script>
-<script src="a/godfried.js?v=158"></script>
-<script src="a/spel.js?v=158"></script>
-<script src="a/rollen.js?v=158"></script>
-<script src="a/firebase-config.js?v=158"></script>
-<script src="a/portretten.js?v=158"></script>
-<script src="a/koppeling.js?v=158"></script>
-<script src="a/tafel.js?v=158"></script>
-<script src="a/voorbereiding.js?v=158"></script>
-<script src="a/route.js?v=158"></script>
+<script src="a/wachters.js?v=159"></script>
+<script src="a/godfried.js?v=159"></script>
+<script src="a/spel.js?v=159"></script>
+<script src="a/rollen.js?v=159"></script>
+<script src="a/firebase-config.js?v=159"></script>
+<script src="a/portretten.js?v=159"></script>
+<script src="a/koppeling.js?v=159"></script>
+<script src="a/tafel.js?v=159"></script>
+<script src="a/voorbereiding.js?v=159"></script>
+<script src="a/route.js?v=159"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -640,12 +644,32 @@ function verraadEcht(info) {
   }
   wasVerrader = nu; tekenTabs();
 }
+// ---------- Wie van de drie? (finale): the story on the phones of the three in front, five minutes to prepare ----------
+let vuurSleutel = null, vuurTik = null;
+function tekenVuur() {
+  const v = mijnVuur(), el = $("tab-vuur"); clearInterval(vuurTik); if (!v) { el.innerHTML = ""; return; }
+  const mee = v.drie.filter((n) => n !== wachter.naam);
+  el.innerHTML = `<h2 class="carved">Akte ${schoon(v.akte)} · Wie van de drie?</h2>
+    <p>Jij staat zo vooraan met <b>${mee.map(schoon).join("</b> en <b>")}</b>. Vertel dit verhaal alsof het jou overkwam. Eén van jullie spreekt de waarheid, twee bluffen.</p>
+    <div class="vuur-tekst">“${schoon(v.tekst)}”</div>
+    <div class="vuur-klok" id="vuur-klok"></div>
+    <p class="klein">Raadt de groep jouw naam terwijl het niet jouw verhaal is? Dan krijg je +50 XP. Laat dit scherm aan niemand zien.</p>`;
+  const tik = () => { const k = $("vuur-klok"); if (!k) return; if (v.los) { k.textContent = "Vertel!"; return; }
+    const s = Math.max(0, Math.ceil(((+v.tot || 0) - Koppeling.nu()) / 1000)); k.textContent = s ? `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}` : "Tijd! Naar voren."; };
+  tik(); if (!v.los) vuurTik = setInterval(tik, 500);
+}
+function vuurNieuw() { // a new story for this Wachter: buzz, and open the tab
+  const v = mijnVuur(), sleutel = v ? `${v.akte}|${v.tekst}` : null;
+  if (sleutel && sleutel !== vuurSleutel) { vuurSleutel = sleutel; tekenTabs(); piep("volbracht", .7); if (navigator.vibrate) try { navigator.vibrate([200, 100, 200, 100, 400]); } catch {} toonTab("vuur"); return; }
+  if (!sleutel) vuurSleutel = null; tekenTabs(); if (tabNu === "vuur") tekenVuur();
+}
 // ---------- tabs ----------
 let tabNu = "ik";
 try { tabNu = localStorage.getItem("kronieken-tab") || "ik"; } catch {}
 // test mode: an organiser can play as an ordinary Wachter on this phone (the regie tab is hidden)
 let alsSpeler = false; try { alsSpeler = localStorage.getItem("kronieken-als-speler") === "ja"; } catch {}
-const beschikbaar = (t) => t === "ik" || t === "tafel" || t === "route" || (t === "larp" && (isLarpLeider() || !!larpStaat.gestart)) || (t === "tocht" && !!publiek.tocht) || (t === "regie" && !!Koppeling.ik?.admin && !alsSpeler) || (t === "verrader" && isVerrader);
+const mijnVuur = () => wachter && publiek.vuur?.drie?.includes(wachter.naam) ? publiek.vuur : null; // "Wie van de drie?": this Wachter stands in front
+const beschikbaar = (t) => (t === "vuur" && !!mijnVuur()) || t === "ik" || t === "tafel" || t === "route" || (t === "larp" && (isLarpLeider() || !!larpStaat.gestart)) || (t === "tocht" && !!publiek.tocht) || (t === "regie" && !!Koppeling.ik?.admin && !alsSpeler) || (t === "verrader" && isVerrader);
 function toonTab(t) {
   if (!beschikbaar(t)) t = "ik"; tabNu = t; try { localStorage.setItem("kronieken-tab", t); } catch {}
   document.querySelectorAll("#tabs button").forEach((b) => b.setAttribute("aria-current", b.dataset.tab === t));
@@ -653,6 +677,7 @@ function toonTab(t) {
   for (const id of ["schaduw", "vooraf", "bevel", "spreek-rij", "gedaante", "hulp", "stap2", "stap3", "verzegeld", "rol-blok", "kroniek", "onbekend"]) $(id).classList.toggle("tab-weg", !ik);
   document.querySelector(".slot").classList.toggle("tab-weg", !ik); $("binnen").classList.toggle("tab-weg", !ik);
   $("tab-route").classList.toggle("verborgen", t !== "route"); if (t === "route") tekenRoute();
+  $("tab-vuur").classList.toggle("verborgen", t !== "vuur"); if (t === "vuur") tekenVuur();
   $("tab-tafel").classList.toggle("verborgen", t !== "tafel"); $("tab-larp").classList.toggle("verborgen", t !== "larp"); if (t === "larp") tekenLarp(); $("tocht").classList.toggle("tab-weg", t !== "tocht");
   for (const naam of ["regie", "verrader"]) {
     const fr = $(`frame-${naam}`), aan = t === naam; fr.classList.toggle("verborgen", !aan);
@@ -1018,7 +1043,7 @@ $("b-geluid").onclick = () => { oudGeluid(); if (!geluidAan) { muziek?.pause(); 
 
 zetNaam(); klok(); teken(); tekenTabs(); toonTab(tabNu);
 setInterval(() => { klok(); teken(); }, 1000);
-Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; publiekGeladen = true; teken(); tekenTocht(); tekenKroniek(); if (tabNu === "tafel") tekenTafel(); else tekenScorebord(); if (tabNu === "route") tekenRoute(); routeNieuw(); }, opVerraad: verraad, opLarp,
+Koppeling.start({ rol: "wachter", naam: FIRE && /^[a-z]+$/i.test(hash) ? hash : null, opPubliek: (p) => { publiek = p || {}; publiekGeladen = true; vuurNieuw(); teken(); tekenTocht(); tekenKroniek(); if (tabNu === "tafel") tekenTafel(); else tekenScorebord(); if (tabNu === "route") tekenRoute(); routeNieuw(); }, opVerraad: verraad, opLarp,
   opVooraf: (v) => { mijnVooraf = v || {}; vooraafGetekend = ""; toonVooraf(!$("vooraf").classList.contains("verborgen")); } }).then(() => {
   const ik = Koppeling.ik; if (!ik) return;
   wachter = (window.WACHTERS || []).find((w) => w.naam === ik.naam) || { naam: ik.naam, token: ik.email }; token = wachter.token;
