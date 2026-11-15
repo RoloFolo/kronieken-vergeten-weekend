@@ -1315,19 +1315,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=160"></script>
-<script src="a/godfried.js?v=160"></script>
-<script src="a/spel.js?v=160"></script>
-<script src="a/voorbereiding.js?v=160"></script>
-<script src="a/wachters.js?v=160"></script>
-<script src="a/firebase-config.js?v=160"></script>
-<script src="a/portretten.js?v=160"></script>
-<script src="a/koppeling.js?v=160"></script>
-<script src="a/rollen.js?v=160"></script>
-<script src="a/quests-tv.js?v=160"></script>
-<script src="a/planning.js?v=160"></script>
-<script src="a/route.js?v=160"></script>
-<script src="a/tafel.js?v=160"></script>
+<script src="a/events.js?v=161"></script>
+<script src="a/godfried.js?v=161"></script>
+<script src="a/spel.js?v=161"></script>
+<script src="a/voorbereiding.js?v=161"></script>
+<script src="a/wachters.js?v=161"></script>
+<script src="a/firebase-config.js?v=161"></script>
+<script src="a/portretten.js?v=161"></script>
+<script src="a/koppeling.js?v=161"></script>
+<script src="a/rollen.js?v=161"></script>
+<script src="a/quests-tv.js?v=161"></script>
+<script src="a/planning.js?v=161"></script>
+<script src="a/route.js?v=161"></script>
+<script src="a/tafel.js?v=161"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2367,6 +2367,11 @@ function vuurKies(lijst) {
   return rondes.map((r, k) => { const mee = [...r.mee];
     while (mee.length < 2) { const n = AANWEZIG.filter((x) => x !== r.wie && !mee.includes(x)).sort((x, y) => voor[x] - voor[y] || hashNaam(x + ronde + k) - hashNaam(y + ronde + k))[0]; if (!n) break; mee.push(n); voor[n]++; }
     return { wie: r.wie, tekst: r.tekst, drie: [r.wie, ...mee].sort((x, y) => hashNaam(x + k + ronde + "d") - hashNaam(y + k + ronde + "d")), gekozen: true }; });
+}
+let vuurKeusDb = null;
+function vuurKeusToepassen() { // the regie's pick, saved in the database (also while the tv was off); taken over once per save
+  if (!standGeladen || passief || !vuurKeusDb?.t || fin.vuurKeusT === vuurKeusDb.t) return;
+  fin.vuurKeusT = vuurKeusDb.t; OPDRACHTEN["vuur-kies"]({ rondes: Object.values(vuurKeusDb.rondes || {}).map((r) => ({ ...r, mee: Object.values(r?.mee || {}) })) });
 }
 function vuurPubliek() {
   const a = S.aktes[fin.nu], k = vuurAktes().indexOf(a), f = fin.vuurFase?.[k], r = fin.vuur?.[k];
@@ -3423,7 +3428,7 @@ const OPDRACHTEN = {
     const oud = fin.vuur || [], vast = [...Array(VUUR_MAX).keys()].filter((k) => vuurBegonnen(k) && oud[k]);
     if (!vast.length) { const r = vuurKies(o.rondes); fin.vuur = r.length ? r : null; }
     else { const nieuw = vuurKies((o.rondes || []).filter((x) => !vast.some((k) => oud[k].tekst === String(x?.tekst || "").trim()))); let j = 0;
-      fin.vuur = [...Array(VUUR_MAX).keys()].map((k) => vast.includes(k) ? oud[k] : nieuw[j++] || oud[k] || null).filter(Boolean); }
+      fin.vuur = [...Array(VUUR_MAX).keys()].map((k) => vast.includes(k) ? oud[k] : nieuw[j++] || null).filter(Boolean); }
     meld(); if (paneelNu === "finale") tekenFinale(); },
   "vuur-prep": () => { // the three of this act get the story on their phones, five minutes to prepare
     const a = S.aktes[fin.nu], k = vuurAktes().indexOf(a); if (k < 0 || fin.opgelost[a.zegel] || !vuurRondes()[k]) return;
@@ -3462,7 +3467,7 @@ const OPDRACHTEN = {
       zegels: () => { for (const z of ZEGELS) z.fiches = 0; teken(); logboek = logboek.filter((l) => l.type !== "fiche"); },
       events: () => { gebruikt.clear(); },
       relieken: () => { tochtOpen = false; kistGeopend = false; tochtGedaan.clear(); tochtBetaald.clear(); relieken.clear(); reliekGebruikt.clear(); logboek = logboek.filter((l) => l.type !== "kist"); },
-      finale: () => { fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; reliekGebruikt.clear(); }, // relics spent on hints come back
+      finale: () => { fin = { nu: 0, open: {}, opgelost: {}, hint: {}, voortgang: {} }; reliekGebruikt.clear(); setTimeout(vuurKeusToepassen, 0); }, // relics spent on hints come back
       ere: () => { ereStop(); aftitelingUit(); delete ere.stap; ere.speelt = false; ere.i = -1; }, // the show from the start; titles given and credits entries stay
       bevelen: () => { bevelGedaan.clear(); },
       schaduw: () => { verrader = null; verraders = []; chaos = { dag: "", kaarten: KAARTEN_PER_DAG }; ijs = {}; vloek = null; vloekD20 = false; $("vloek-teken").hidden = true; tekenIjs(); },
@@ -3483,7 +3488,7 @@ const tvApparaat = (() => { const u = navigator.userAgent; const os = /Android/.
   const br = /Edg\//.test(u) ? "Edge" : /Chrome\//.test(u) ? "Chrome" : /Firefox\//.test(u) ? "Firefox" : /Safari\//.test(u) ? "Safari" : "browser"; return `${os} · ${br}`; })();
 let tvVersie = "?"; fetch(`a/versie.txt?t=${Date.now()}`, { cache: "no-store" }).then((r) => r.text()).then((v) => (tvVersie = v.trim())).catch(() => {});
 function laadStand(s) {
-  if (herstelt) return; if (standGeladen) return bewaakTv(s); standGeladen = true; geladenOp = Date.now(); regieGezien = s.regieActie?.id || null; // what the regie booked without a tv is already in this stand
+  if (herstelt) return; if (standGeladen) return bewaakTv(s); standGeladen = true; geladenOp = Date.now(); setTimeout(vuurKeusToepassen, 0); regieGezien = s.regieActie?.id || null; // what the regie booked without a tv is already in this stand
   for (const z of ZEGELS) z.fiches = s.fiches?.[z.id] ?? z.fiches;
   gebruikt = new Set(s.gebruikt || []); teller(); teken();
   tochtOpen = !!s.tochtOpen; kistGeopend = !!s.kistGeopend; bevelGedaan = new Set(s.bevelen || []); tochtGedaan = new Set(s.tochtGedaan || []); tochtBetaald = new Set(s.tochtBetaald || []); relieken = new Set(s.relieken || []); reliekGebruikt = new Set(s.reliekGebruikt || []);
@@ -3533,7 +3538,7 @@ function bewaakTv(s) {
   document.body.appendChild(el); el.querySelector("button").onclick = () => location.reload();
 }
 if (!window.FIREBASE_CONFIG || new URLSearchParams(location.search).has("tv"))
-  Koppeling.start({ rol: "tv", opPlanning: (p) => { planHand = p || {}; meld(); if (paneelNu === "route") tekenRoute(); }, opStand: laadStand, opOpdracht: (o, vers = true) => { if (passief) return false; if (vers) OPDRACHTEN[o.cmd]?.(o); }, opXp, opEre: (t) => { toewijzing = t || {}; }, opVooraf: (v) => { voorafAlles = v || {}; voorafGeladen = true; } }).then((v) => { server = !!v; });
+  Koppeling.start({ rol: "tv", opVuurKeus: (v) => { vuurKeusDb = v; vuurKeusToepassen(); }, opPlanning: (p) => { planHand = p || {}; meld(); if (paneelNu === "route") tekenRoute(); }, opStand: laadStand, opOpdracht: (o, vers = true) => { if (passief) return false; if (vers) OPDRACHTEN[o.cmd]?.(o); }, opXp, opEre: (t) => { toewijzing = t || {}; }, opVooraf: (v) => { voorafAlles = v || {}; voorafGeladen = true; } }).then((v) => { server = !!v; });
 
 /* ================= Schaduw-event ================= */
 let stem = null, typer = null, stormTimer = null, beslist = false;

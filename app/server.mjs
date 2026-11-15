@@ -45,6 +45,8 @@ createServer(async (req, res) => {
   if (pad === "/api/herstel") { const id = new URL(req.url, "http://x").searchParams.get("id"); res.writeHead(200, { "Content-Type": "application/json" });
     return res.end(JSON.stringify(id ? herstel.get(id)?.stand ?? null : [...herstel].map(([id, h]) => ({ id, t: h.t, waarom: h.waarom })).reverse()));
   }
+  if (pad === "/api/vuurkeus" && req.method === "GET") { res.writeHead(200, { "Content-Type": "application/json" }); return res.end(JSON.stringify(stand.vuurKeus || null)); }
+  if (pad === "/api/vuurkeus" && req.method === "POST") { const o = await lees(req); stand.vuurKeus = o?.t ? o : null; bewaar(); zend("vuurkeus", stand.vuurKeus); res.writeHead(204); return res.end(); }
   if (pad === "/api/xp" && req.method === "GET") { res.writeHead(200, { "Content-Type": "application/json" }); return res.end(JSON.stringify(stand.xpBoek || {})); }
   if (pad === "/api/xp" && req.method === "POST") { // het XP-boek: elke XP apart, los van de tv
     const o = await lees(req); stand.xpBoek ||= {}; if (o.waarde == null) delete stand.xpBoek[o.id]; else stand.xpBoek[o.id] = o.waarde; bewaar(); zend("xp", stand.xpBoek); res.writeHead(204); return res.end();
