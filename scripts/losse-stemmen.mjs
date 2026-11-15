@@ -58,7 +58,7 @@ const REGELS = [
   ["fin/akte-1", "Charon", GODFRIED, "Akte één. Het Vuur der Herinnering. Het vuur onthoudt alles, ook wat jullie liever vergeten. Drie Wachters vertellen hetzelfde verhaal. Eén spreekt de waarheid… twee liegen. Wie van de drie?"],
   ["fin/akte-2", "Charon", GODFRIED, "Akte twee. Het Feestmaal. De Hoorn heeft alles gezien wat jullie dit weekend deden. Bewijs dat jullie het zelf ook nog weten."],
   ["fin/akte-3", "Charon", GODFRIED, "Akte drie. De Eed der Broeders. Weten jullie nog wat wij zwoeren, bij de Eerste Dronk? Leg de woorden in de juiste volgorde… en hef dan samen het glas."],
-  ["fin/akte-4", "Charon", GODFRIED, "Akte vier. De Schaduwdragers. Het hele weekend droeg telkens een ander de Schaduw. Wie diende de Schaduwkoning het best… en wie liet hem in de steek?"],
+  ["fin/akte-4", "Charon", GODFRIED, "Akte vier. De Gezichten van het Hart. Het Hart kent ieder van jullie. Maar kennen jullie elkaar ook? Drie keer toont het een Wachter van heel dichtbij. Zeg mij… wie is dit?"],
   ["fin/goed-1", "Charon", GODFRIED, "Juist. Het vuur herkent de waarheid."],
   ["fin/goed-2", "Charon", GODFRIED, "Zo is het, Wachters!"],
   ["fin/goed-3", "Charon", GODFRIED, "Goed gesproken. De Schaduw deinst terug."],

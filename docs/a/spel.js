@@ -26,8 +26,8 @@ window.SPEL = {
       intro: "De Hoorn heeft alles gezien wat jullie dit weekend deden. Bewijs dat jullie het zelf ook nog weten." },
     { zegel: "schild", naam: "De Eed der Broeders", soort: "eed",
       intro: "Weten jullie nog wat wij zwoeren bij de Eerste Dronk? Leg de woorden in de juiste volgorde… en hef dan samen het glas." },
-    { zegel: "hart", naam: "De Schaduwdragers", soort: "verrader",
-      intro: "Het hele weekend droeg telkens een ander de Schaduw. Wie diende de Schaduwkoning het best… en wie liet hem in de steek?" },
+    { zegel: "hart", naam: "De Gezichten van het Hart", soort: "wie", stem: "akte-4-wie.wav",
+      intro: "Het Hart kent ieder van jullie. Maar kennen jullie elkaar ook? Drie keer toont het een Wachter van heel dichtbij. Zeg wie het is." },
   ],
 
   // Akte I. Per Wachter een herinnering (anekdote) en eventueel een foto in docs/a/fotos/. In te vullen door de organisatoren.

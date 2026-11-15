@@ -29,7 +29,7 @@ window.PLANNING = [
   { id: "zo-larp", dag: "zo", tijd: "10:30", titel: "Het Spel der Rollen", tekst: "Stefans LARP, ± 1 uur. Iedereen in kostuum.", bevel: ["Stefan"] },
   { id: "zo-afronden", dag: "zo", tijd: "12:30", titel: "Lunch en afronden", tekst: "Laatste quests. Vink de bevelen af die nog openstaan en vul de eretitels in.", bevel: ["Martin"], kaart: ["Wie krijgt welke titel", "Het best in hun rol"] },
   { id: "zo-quiz3", dag: "zo", tijd: "13:30", titel: "Quiz III", tekst: "Eerst Oproep. De laatste vier vragen sterken (of verzwakken) de Zegels vlak voor de finale.", in: ["b-quiz-3"], auto: "quiz3" },
-  { id: "zo-finale", dag: "zo", tijd: "14:00", titel: "De finale", tekst: "Vier aktes; elke akte laat een cijfer vallen: 7 · 6 · 9 · 8. Zegels niet vol? Daag de Dieven uit. ± 1 uur.", scherm: "finale", kaart: ["Finale", "De Dieven"], auto: "finale" },
+  { id: "zo-finale", dag: "zo", tijd: "14:00", titel: "De finale", tekst: "Vier aktes; elke akte laat een cijfer vallen: 7 · 6 · 9 · 8. Zegels niet vol? Daag de Dieven uit. ± 1 uur.", scherm: "finale", kaart: ["Akte I: de gênante momenten kiezen", "Akte II: de vragen", "Finale", "De Dieven"], auto: "finale" },
   { id: "zo-titels", dag: "zo", tijd: "15:00", titel: "De kist en de eretitels", tekst: "Kist open: bouillonblokjes en een cadeautje voor iedereen. Dan de eretitels, en kroon wie de Schaduwkoning het best diende.", kaart: ["Ere van de Wachters · afspelen", "Wie diende de Schaduwkoning het best?"] },
   { id: "zo-aftiteling", dag: "zo", tijd: "± 15:30", titel: "Wie volgt? en de aftiteling", tekst: "De D11 kiest de organisatoren van 2027, dan rolt de aftiteling.", kaart: ["Wie volgt? · 2027", "Voor de aftiteling"], in: ["b-aftiteling", "b-aftiteling-uit"] },
 

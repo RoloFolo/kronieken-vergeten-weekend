@@ -813,6 +813,19 @@ body:has(#verhaal.toost:not([hidden])) .crest { opacity: 0; }
 #g-inhoud .drie figure { margin: 0; display: grid; justify-items: center; gap: .8vh; }
 #g-inhoud .drie img { height: 19vh; aspect-ratio: 2 / 3; object-fit: cover; border: 2px solid #d9b77a; box-shadow: 0 0 0 2px #000, 0 0 24px rgba(226,50,60,.4); }
 #g-inhoud .drie figcaption { font-size: clamp(16px, 1.5vw, 30px); color: #ffd98a; letter-spacing: .06em; text-transform: uppercase; }
+/* Act IV: the portrait big in the middle, a layer over the lock; the card below keeps the row and the text */
+.gewelf .g-groot { position: absolute; z-index: 3; left: 50%; top: 3vh; translate: -50% 0; opacity: 0; transition: opacity .6s ease; }
+.gewelf .g-groot.aan { opacity: 1; }
+.gewelf .g-groot .g-zoom { height: 70vh; aspect-ratio: 2 / 3; overflow: hidden; border: 4px solid #d9b77a; box-shadow: 0 0 0 3px #000, 0 0 90px rgba(226,50,60,.55), 0 2vh 6vh rgba(0,0,0,.8); }
+.gewelf .g-groot .g-zoom img { width: 100%; height: 100%; object-fit: cover; animation: g-zoom 50s cubic-bezier(.5, 0, .9, .6) forwards; }
+.gewelf .g-groot .g-zoom img.onthul { animation: none; transition: transform 1.4s ease; }
+@keyframes g-zoom { from { transform: scale(14); } to { transform: scale(1.3); } }
+#g-inhoud .wie-rij { display: flex; justify-content: center; gap: 1.4vw; margin-top: .5vh; }
+#g-inhoud .wie-rij figure { margin: 0; display: grid; justify-items: center; gap: .5vh; }
+#g-inhoud .wie-rij img, #g-inhoud .wie-rij span { width: 5.5vh; height: 5.5vh; border-radius: 50%; object-fit: cover; border: 2px solid #6e5230; display: grid; place-items: center; font: 700 2.8vh/1 var(--carved); color: #6e5230; background: rgba(14,6,7,.85); }
+#g-inhoud .wie-rij .af img { border-color: #d9b77a; box-shadow: 0 0 14px rgba(255,217,138,.5); }
+#g-inhoud .wie-rij figcaption { font-size: clamp(12px, 1vw, 20px); color: #ffd98a; letter-spacing: .06em; text-transform: uppercase; }
+#g-inhoud .wie-rij:only-child img { width: 18vh; height: 18vh; }
 #g-inhoud .tegels { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.2vh 1vw; margin: 2vh auto; max-width: 60vw; }
 #g-inhoud .tegel { padding: 1vh 1.3vw; border: 1px solid #b8955f; background: rgba(20,10,8,.85); font: italic clamp(16px, 1.5vw, 30px)/1.2 var(--display); color: #f3e3c4; transition: opacity .4s, transform .4s; }
 #g-inhoud .tegel.weg { opacity: .12; transform: scale(.9); }
@@ -1192,6 +1205,7 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
     </div></div>
     <div class="g-flits" id="g-flits"></div>
     <div class="g-titel" id="g-titel"><span class="carved" id="g-titel-nr"></span><h2 class="carved" id="g-titel-naam"></h2></div>
+    <div class="g-groot" id="g-groot"></div>
     <div class="g-kaart" id="g-kaart"><div class="g-inhoud" id="g-inhoud"></div><div class="g-stempel carved" id="g-stempel"></div></div>
   </div>
   <div class="verteller" id="verteller" hidden aria-live="polite"><img class="vt-beeld" id="vt-beeld" alt=""><div class="vt-blad" id="vt-blad"></div><button class="enter sla-over" id="vt-verder" type="button"><span class="carved">Verder</span></button><div class="vt-tekst"><div class="vt-kop carved" id="vt-kop"></div><div class="vt-zinnen" id="vt-zinnen"></div></div></div>
@@ -1299,19 +1313,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=156"></script>
-<script src="a/godfried.js?v=156"></script>
-<script src="a/spel.js?v=156"></script>
-<script src="a/voorbereiding.js?v=156"></script>
-<script src="a/wachters.js?v=156"></script>
-<script src="a/firebase-config.js?v=156"></script>
-<script src="a/portretten.js?v=156"></script>
-<script src="a/koppeling.js?v=156"></script>
-<script src="a/rollen.js?v=156"></script>
-<script src="a/quests-tv.js?v=156"></script>
-<script src="a/planning.js?v=156"></script>
-<script src="a/route.js?v=156"></script>
-<script src="a/tafel.js?v=156"></script>
+<script src="a/events.js?v=157"></script>
+<script src="a/godfried.js?v=157"></script>
+<script src="a/spel.js?v=157"></script>
+<script src="a/voorbereiding.js?v=157"></script>
+<script src="a/wachters.js?v=157"></script>
+<script src="a/firebase-config.js?v=157"></script>
+<script src="a/portretten.js?v=157"></script>
+<script src="a/koppeling.js?v=157"></script>
+<script src="a/rollen.js?v=157"></script>
+<script src="a/quests-tv.js?v=157"></script>
+<script src="a/planning.js?v=157"></script>
+<script src="a/route.js?v=157"></script>
+<script src="a/tafel.js?v=157"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -1617,7 +1631,7 @@ function tik() { const d = new Date(); $("dag").textContent = DAGEN[d.getDay()];
 tik(); setInterval(tik, 10000);
 
 /* ================= sound ================= */
-const bron = (n) => `a/${n}.mp3`;
+const bron = (n) => /\.(wav|mp3)$/.test(n) ? `a/${n}` : `a/${n}.mp3`; // a name with its own extension plays as is
 function speel(n, vol = 1, rate = 1) { const a = new Audio(bron(n)); a.volume = vol; a.playbackRate = rate; a.play().catch(() => {}); return a; }
 // one Godfried voice at a time: a new line silences the one still speaking, so voices never pile up
 let stemNu = null;
@@ -2303,17 +2317,37 @@ function aktePuzzel(a, stil) {
       tegels: volgorde.map((n) => ({ i: n, tekst: F[n], gelegd: gelegd.includes(n) })), hint: `Het volgende stuk: “${F[gelegd.length]}”`,
       check: (w) => w === `tegel:${gelegd.length}`, goed: () => v.push(gelegd.length) };
   }
-  // the Schaduwdragers: three questions, the periods with their traces beside them (the names show once the act is done)
-  const vragen = schaduwVragen(), periodes = verraadPeriodes(), i = vragen.findIndex((_, n) => !v.includes(n)), af = i < 0;
-  if (!vragen.length) return { klaar: true, html: `<p class="vraag">Er was dit weekend geen Schaduwdrager actief. De Schaduw stond er alleen voor.</p>` };
-  const kaarten = periodes.map((p) => `<div class="periode ${af ? "ontmaskerd" : ""}"><div class="wanneer">${tijd(p.van)}${p.tot ? ` – ${tijd(p.tot)}` : " – nu"}</div>
-    <ul>${p.sporen.length ? p.sporen.slice(-4).map((l) => `<li>${new Date(l.t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}: ${SPOOR[l.cmd]?.(l) ?? "er gebeurde iets vreemds"}</li>`).join("") : "<li>Geen sporen. Deze Schaduwdrager hield zich gedeisd…</li>"}</ul>
-    <div class="wie-was">${af ? schoon(p.naam) : "?"}</div></div>`).join("");
-  if (af) return { klaar: true, html: `<div class="periodes">${kaarten}</div>` };
-  const q = vragen[i], sleutel = `${a.zegel}-${i}`, fout = fin.mis?.[sleutel] || 0;
-  return { html: `<div class="periodes">${kaarten}</div><p class="vraag">${schoon(q.vraag)}</p><p class="klein-tv">${fout ? "Nog één kans…" : "Twee kansen."}</p>`,
-    hint: `De naam begint met een ${q.antwoord[0][0]}.`, check: (w) => q.antwoord.map((x) => x.toLowerCase()).includes(String(w).toLowerCase()), goed: () => v.push(i),
-    mis: () => { (fin.mis ||= {})[sleutel] = fout + 1; if (fout + 1 >= 2) v.push(i); }, onthul: fout + 1 >= 2 ? q.antwoord.join(" of ") : null, schaduw: true };
+  // Act IV: "Wie is dit?" three times: a painted portrait from very close, slowly zooming out; two guesses each, then the name shows
+  const rondes = wieRondes(), i = rondes.findIndex((_, n) => !v.includes(n));
+  if (!rondes.length) return { klaar: true, html: `<p class="vraag">Er staan geen portretten op deze tv.</p>` };
+  const rij = `<div class="wie-rij">${rondes.map((r, n) => v.includes(n) ? `<figure class="af">${PORTRET[r.naam] ? `<img src="${PORTRET[r.naam]}" alt="">` : ""}<figcaption class="carved">${schoon(r.naam)}</figcaption></figure>` : `<figure><span>?</span></figure>`).join("")}</div>`;
+  if (i < 0) return { klaar: true, html: rij };
+  const r = rondes[i], sleutel = `${a.zegel}-${i}`, fout = fin.mis?.[sleutel] || 0, k = `${ronde}-${i}`;
+  if (!stil && !wieStart[k]) wieStart[k] = Date.now(); // the zoom runs on a clock, so a redrawn card carries on where it was
+  const al = wieStart[k] ? (Date.now() - wieStart[k]) / 1000 : 0;
+  return { html: `${rij}<i class="wie-plek" hidden></i><div class="g-zoom"><img src="${PORTRET[r.naam] || ""}" alt="" style="transform-origin:${r.ox * 100}% ${r.oy * 100}%;animation-delay:-${al.toFixed(1)}s"></div><p class="klein-tv">${fout ? "Nog één kans…" : "Wie is dit? Twee kansen."}</p>`,
+    hint: `Zijn naam begint met een ${r.naam[0]}.`, check: (w) => String(w).toLowerCase() === r.naam.toLowerCase(), goed: () => v.push(i),
+    mis: () => { (fin.mis ||= {})[sleutel] = fout + 1; if (fout + 1 >= 2) v.push(i); }, onthul: fout + 1 >= 2 ? r.naam : null };
+}
+// Act IV: three Wachters who are here and have a portrait, each with a spot beside or below the face to zoom out from; chosen once
+const wieStart = {};
+function wieRondes() {
+  if (fin.wie?.length) return fin.wie;
+  const met = AANWEZIG.filter((n) => PORTRET[n]); if (!met.length) return [];
+  for (const k in wieStart) delete wieStart[k]; // a new draw (after a finale reset) zooms from the start again
+  const plek = (x, lo, hi) => +Math.min(hi, Math.max(lo, x)).toFixed(3);
+  return (fin.wie = [...met].sort(() => Math.random() - .5).slice(0, 3).map((naam) => { const [fx, fy, fw] = Portret.gezicht?.(naam) || [.5, .2, .15];
+    return { naam, ox: plek(fx + (Math.random() < .5 ? -1 : 1) * fw * (.6 + Math.random()), .12, .88), oy: plek(fy + fw * (.8 + Math.random() * 1.4), .1, .88) }; }));
+}
+// Act I chosen by the regie: the moments, in order, and per moment optionally who bluffs beside the one it happened to (the rest drawn)
+function vuurKies(lijst) {
+  const voor = Object.fromEntries(NAMEN.map((n) => [n, 0])), uniek = new Set();
+  const rondes = (Array.isArray(lijst) ? lijst : []).map((r) => ({ wie: String(r?.wie || ""), tekst: String(r?.tekst || "").trim().slice(0, 600), mee: Array.isArray(r?.mee) ? r.mee : [] }))
+    .filter((r) => AANWEZIG.includes(r.wie) && r.tekst && !uniek.has(r.tekst) && uniek.add(r.tekst)).slice(0, 8)
+    .map((r) => { r.mee = [...new Set(r.mee.filter((n) => AANWEZIG.includes(n) && n !== r.wie))].slice(0, 2); voor[r.wie]++; r.mee.forEach((n) => voor[n]++); return r; });
+  return rondes.map((r, k) => { const mee = [...r.mee];
+    while (mee.length < 2) { const n = AANWEZIG.filter((x) => x !== r.wie && !mee.includes(x)).sort((x, y) => voor[x] - voor[y] || hashNaam(x + ronde + k) - hashNaam(y + ronde + k))[0]; if (!n) break; mee.push(n); voor[n]++; }
+    return { wie: r.wie, tekst: r.tekst, drie: [r.wie, ...mee].sort((x, y) => hashNaam(x + k + ronde + "d") - hashNaam(y + k + ronde + "d")), gekozen: true }; });
 }
 function aktePuzzelInfo() {
   const a = S.aktes[fin.nu]; if (!a || fin.opgelost[a.zegel] || !(fin.open[a.zegel] || zegelVol(a.zegel))) return a ? { soort: a.soort, stap: 0 } : null;
@@ -2369,8 +2403,18 @@ function kaartHtml() {
   if (fin.hint[a.zegel] === stap && p.hint) { const r = S.relieken.find((k) => k.id === fin.hintMet?.[a.zegel]); h += `<div class="hint">${r ? `<img src="${r.img}" alt="">` : ""}<span>${p.hint}</span></div>`; }
   return h;
 }
+function grootBij() { // the card's portrait (Act IV) goes into the big layer; a card without one empties it
+  const g = $("g-groot"), z = $("g-inhoud").querySelector(".g-zoom");
+  if (z) { g.replaceChildren(z); g.classList.add("aan"); } else if (!$("g-inhoud").querySelector(".wie-plek")) grootWeg();
+}
+function grootWeg() { const g = $("g-groot"); g.classList.remove("aan"); setTimeout(() => { if (!g.classList.contains("aan")) g.replaceChildren(); }, 700); }
+function grootOnthul() { // a round is over: the portrait zooms out all the way, from wherever it was
+  const i = $("g-groot").querySelector("img"); if (!i) return; const nu = getComputedStyle(i).transform;
+  i.style.transform = nu; i.classList.add("onthul"); void i.offsetWidth; i.style.transform = "scale(1)";
+}
+new MutationObserver(grootBij).observe($("g-inhoud"), { childList: true });
 function kaartIn() { $("g-inhoud").innerHTML = kaartHtml(); const k = $("g-kaart"); k.classList.remove("goed", "fout"); k.classList.add("aan"); }
-function kaartWeg() { $("g-kaart").classList.remove("aan"); }
+function kaartWeg() { $("g-kaart").classList.remove("aan"); grootWeg(); }
 function kaartWissel() { const i = $("g-inhoud"); i.classList.add("wissel"); setTimeout(() => { i.innerHTML = kaartHtml(); i.classList.remove("wissel"); }, 380); }
 function titel(a, aan) { if (a) { $("g-titel-nr").textContent = `Akte ${ROMEIN[S.aktes.indexOf(a)]}`; $("g-titel-naam").textContent = a.naam; } $("g-titel").classList.toggle("aan", aan); }
 function flits(soort) { const f = $("g-flits"); f.className = `g-flits ${soort}`; void f.offsetWidth; f.classList.add("aan"); }
@@ -2390,7 +2434,7 @@ function akteIn(stil) {
   if (stil && fin.intro?.[a.zegel]) { gCam("vraag"); return kaartIn(); }
   kaartWeg(); titel(a, false); gCam("nis", fin.nu);
   gT(1600, () => { titel(a, true); speel("fin/sfx-akte", .8); });
-  gT(3000, () => gZeg(`akte-${fin.nu + 1}`, () => {
+  gT(3000, () => gZeg(a.stem || `akte-${fin.nu + 1}`, () => {
     (fin.intro ||= {})[a.zegel] = true; meld();
     gT(500, () => { titel(null, false); gCam("vraag"); gT(1500, () => { kaartIn(); gTimers = [];
       if (!(fin.open[a.zegel] || zegelVol(a.zegel))) gT(1000, () => gZeg("dicht", () => { gTimers = []; }, 16000)); }); });
@@ -2411,7 +2455,7 @@ function antwoord(w) {
   if (!$("g-kaart").classList.contains("aan")) gSla(); // the answer came in during an intro
   const k = $("g-kaart"); k.classList.remove("goed", "fout"); void k.offsetWidth;
   if (p.check(w)) {
-    p.goed(); flits("goud"); k.classList.add("goed"); speel("fin/sfx-goed", .9);
+    p.goed(); flits("goud"); k.classList.add("goed"); speel("fin/sfx-goed", .9); if (a.soort === "wie") grootOnthul();
     if (aktePuzzel(a).klaar) { fin.opgelost[a.zegel] = true; meld(); if (a.soort === "eed") { kaartWissel(); setTimeout(() => { stemKanaal(speel("dronk-5", 1)); speel("proost-klink", 1); setTimeout(() => speel("gejuich", .8), 600); }, 900); return cijferValt(fin.nu, 9000); } return cijferValt(fin.nu); } // the act is complete: its digit falls into the lock
     meld(); gT(350, () => gZeg(gWillekeurig("goed"), () => {}, 5000)); gT(2000, kaartWissel); gT(2400, () => { gTimers = []; });
   } else {
@@ -2420,7 +2464,7 @@ function antwoord(w) {
     if (p.schaduw) { const g = $("gewelf"); g.classList.add("rood", "beeft"); speel("donder-hard", 1); setTimeout(() => flits("rood"), 700); setTimeout(() => g.classList.remove("rood", "beeft"), 2600); } // the Shadow King himself, for a moment
     gT(450, () => gZeg(gWillekeurig(p.schaduw ? "lach" : "fout"), () => { gTimers = []; }, 7000));
     if (p.mis) { // one guess (Acts I and II) or two (Act IV): then the answer shows and the act goes on
-      p.mis(); meld(); if (p.onthul) s.textContent = `Het was ${p.onthul}`;
+      p.mis(); meld(); if (p.onthul) { s.textContent = `Het was ${p.onthul}`; if (a.soort === "wie") grootOnthul(); }
       if (aktePuzzel(a).klaar) { fin.opgelost[a.zegel] = true; meld(); gT(3600, () => cijferValt(fin.nu)); }
       else gT(3400, () => { kaartWissel(); gTimers = []; });
     }
@@ -3350,6 +3394,10 @@ const OPDRACHTEN = {
   "geen-verrader": () => { eindigVerraad("regie"); meld(); },
   ontdooi: (o) => { if (ijs[o.id]) { ijs[o.id] = Date.now() - 1; tekenIjs(); } },
   hint: () => hintVoor(),
+  "vuur-kies": (o) => { // Act I as the regie set it (an empty list: drawn at random again); not once the act has begun
+    if (fin.voortgang?.vlam?.length || fin.opgelost?.vlam) return; const r = vuurKies(o.rondes); fin.vuur = r.length ? r : null; meld(); if (paneelNu === "finale") tekenFinale(); },
+  "akte2-maak": (o) => { // Act II: make the questions now so the regie can read them (or let them be made when the act begins); not once it has begun
+    if (fin.voortgang?.hoorn?.length || fin.opgelost?.hoorn) return; fin.weekendVragen = null; if (o.maak) weekendVragen(); meld(); if (paneelNu === "finale") tekenFinale(); },
   "akte-gehaald": () => { // the regie skips the rest of an act (not fun, taking too long): it counts as done and its digit falls
     if (paneelNu !== "finale") return; const a = S.aktes[fin.nu]; if (!a || fin.opgelost[a.zegel]) return;
     gStop(); titel(null, false); fin.opgelost[a.zegel] = true; (fin.intro ||= {})[a.zegel] = true; meld();

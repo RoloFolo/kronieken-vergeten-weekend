@@ -428,6 +428,20 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
     <div class="lijst" id="cr-lijst" style="margin-top:10px"></div>
   </section>
   <section class="kaart" data-fase="finale">
+    <h2>Akte I: de gênante momenten kiezen</h2>
+    <p class="klein" style="margin:0 0 8px">Tik de momenten aan in de volgorde waarin ze op de tv komen (tot 8; 5 is genoeg voor een kwartier). Bij elk gekozen moment kun je de twee bluffers kiezen; wat je open laat, kiest de tv (wie het minst vooraan stond gaat voor). Niets gekozen = de tv kiest zelf 5 momenten. Wie niets instuurde, gaat zoals altijd eerst aan de schandpaal. Kan niet meer zodra Akte I loopt.</p>
+    <p class="klein" id="vk-stand" style="margin:0 0 8px"></p>
+    <div id="vk-lijst" style="display:grid;gap:6px;max-height:60vh;overflow:auto"></div>
+    <div class="rij" style="margin-top:8px"><button class="goud" id="b-vk-zet" type="button">Zet klaar op de tv</button><button id="b-vk-los" type="button">Tv kiest zelf</button></div>
+    <p class="klein" id="vk-melding"></p>
+  </section>
+  <section class="kaart" data-fase="finale">
+    <h2>Akte II: de vragen</h2>
+    <p class="klein" style="margin:0 0 8px">De tv maakt de vragen uit wat het spel bewaarde: uitspraken bij Wie zei het?, XP met een reden, klassemomenten, en wie nu de meeste XP of fiches heeft. Maak ze hier om ze te lezen. Let op: de antwoorden over XP en fiches gelden voor het moment van maken, dus maak ze vlak voor de finale opnieuw (of wis ze, dan maakt de tv ze als Akte II begint).</p>
+    <div id="a2-lijst" style="display:grid;gap:4px"></div>
+    <div class="rij" style="margin-top:8px"><button class="goud" id="b-a2-maak" type="button">Vragen (opnieuw) maken</button><button id="b-a2-wis" type="button">Wissen</button></div>
+  </section>
+  <section class="kaart" data-fase="finale">
     <h2>De Dieven</h2>
     <p class="klein" style="margin:0 0 8px">Zijn de Zegels niet vol als de finale begint? Daag de Thieves uit (Jean en Johan): de tv geeft ze de opdracht om terug te stelen wat de Schaduw nam. Hoe, bepalen ze zelf. Beoordeel daarna de roof: creativiteit wordt beloond. De buit gaat als fiches naar de leegste Zegels.</p>
     <p class="klein" id="dief-stand" style="margin:0 0 8px"></p>
@@ -530,17 +544,17 @@ input[type=text] { width: 100%; font: inherit; color: var(--bone); background: r
 <div class="menu-blad" id="menu-blad" hidden></div>
 <div class="nu-balk" id="nu-balk" hidden></div>
 
-<script src="a/events.js?v=156"></script>
-<script src="a/quests-tv.js?v=156"></script>
-<script src="a/planning.js?v=156"></script>
-<script src="a/godfried.js?v=156"></script>
-<script src="a/spel.js?v=156"></script>
-<script src="a/wachters.js?v=156"></script>
-<script src="a/rollen.js?v=156"></script>
-<script src="a/firebase-config.js?v=156"></script>
-<script src="a/portretten.js?v=156"></script>
-<script src="a/koppeling.js?v=156"></script>
-<script src="a/voorbereiding.js?v=156"></script>
+<script src="a/events.js?v=157"></script>
+<script src="a/quests-tv.js?v=157"></script>
+<script src="a/planning.js?v=157"></script>
+<script src="a/godfried.js?v=157"></script>
+<script src="a/spel.js?v=157"></script>
+<script src="a/wachters.js?v=157"></script>
+<script src="a/rollen.js?v=157"></script>
+<script src="a/firebase-config.js?v=157"></script>
+<script src="a/portretten.js?v=157"></script>
+<script src="a/koppeling.js?v=157"></script>
+<script src="a/voorbereiding.js?v=157"></script>
 <script>
 const $ = (id) => document.getElementById(id);
 // a new version online? then this page refreshes itself (checked every minute; never while typing)
@@ -701,14 +715,15 @@ function toon(s) {
   const p = S.aktes[fin.nu], vol = (s.fiches?.[p.zegel] ?? 0) >= S.drempel, open = vol || fin.open?.[p.zegel], klaar = !!fin.opgelost?.[p.zegel];
   $("fin-status").textContent = klaar ? "Deze akte is volbracht." : open ? "De akte staat open op de tv." : "Zegel is niet vol genoeg: de groep moet eerst een beproeving doorstaan (bedenk er zelf één, of laat de D20 beslissen).";
   const info = s.aktevraag || {}, bezig = open && !klaar;
-  $("a-namen").hidden = !(bezig && !info.knop && (["herinnering", "verrader"].includes(p.soort) || (p.soort === "weekend" && !info.zegelVraag)));
+  $("a-namen").hidden = !(bezig && !info.knop && (["herinnering", "verrader", "wie"].includes(p.soort) || (p.soort === "weekend" && !info.zegelVraag)));
   document.querySelectorAll("#a-namen button").forEach((b) => b.classList.toggle("goud", !!info.drie?.includes(b.dataset.n))); // Act I: the three in front
   $("a-getal").hidden = true;
   $("a-zegels").hidden = !(bezig && p.soort === "weekend" && info.zegelVraag);
   $("a-tegels").hidden = !(bezig && p.soort === "eed" && info.tegels);
   if (info.tegels) $("a-tegels").innerHTML = info.tegels.map((t) => `<button type="button" data-i="${t.i}" ${t.gelegd ? "disabled" : ""}>${t.tekst}</button>`).join("");
   $("b-eed").hidden = !(bezig && info.knop); $("b-eed").textContent = info.knop || "";
-  $("a-uitleg").textContent = !bezig ? "" : { herinnering: info.knop ? "Na de schandpaal: druk op de knop." : "Wie van de drie (goud gemarkeerd)? Tik de naam die de groep kiest. Eén keer raden.", weekend: "Tik wat de groep antwoordt. Eén keer raden.", eed: "Tik de stukken in de volgorde die de groep roept. Fout = de Schaduw lacht, opnieuw.", verrader: "Tik de naam die de groep noemt. Twee kansen per vraag." }[p.soort];
+  $("a-uitleg").textContent = !bezig ? "" : { herinnering: info.knop ? "Na de schandpaal: druk op de knop." : "Wie van de drie (goud gemarkeerd)? Tik de naam die de groep kiest. Eén keer raden.", weekend: "Tik wat de groep antwoordt. Eén keer raden.", eed: "Tik de stukken in de volgorde die de groep roept. Fout = de Schaduw lacht, opnieuw.", verrader: "Tik de naam die de groep noemt. Twee kansen per vraag.", wie: "Tik de naam die de groep roept. Twee kansen per portret; daarna toont de tv wie het was." }[p.soort];
+  tekenAkteKeus(s);
   verraderNu = s.verrader || null; toonLink();
   const uur = (t) => new Date(t).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" });
   $("verrader-nu").textContent = verraderNu ? `Verrader nu: ${verraderNu.naam}, sinds ${uur(verraderNu.sinds)}${verraderNu.tot ? ` tot ${uur(verraderNu.tot)}` : ""}.` : "Er is nu geen Schaduwdrager.";
@@ -741,6 +756,36 @@ addEventListener("koppeling-status", (e) => { kopStatus = e.detail; tekenVerbind
 // before the weekend: per Wachter his order, accepted or not, his memories and his room wish; "Volbracht" during the weekend
 let vooraf = {}, bevelGedaan = new Set();
 const sleutelVan = (naam) => Koppeling.emailVan(naam).toLowerCase().replaceAll(".", ",");
+// Act I chosen by the regie: the moments in the order tapped, with optional bluffers; Act II's questions to read
+let vkKeus = null, vkKlaar = false; // null: follow what the tv has; else [{sleutel, wie, tekst, mee}]
+const vkEsc = (t) => String(t ?? "").replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[k]);
+function vkMomenten() { const aanwezig = (window.WACHTERS || []).filter((w) => !w.afwezig).map((w) => w.naam);
+  return (window.WACHTERS || []).flatMap((w) => Object.entries(vooraf[sleutelVan(w.naam)]?.anekdotes || {}).map(([k, a]) => ({ sleutel: `${w.naam}/${k}`, van: w.naam, wie: a.over && aanwezig.includes(a.over) ? a.over : w.naam, tekst: String(a.tekst || "").trim() })))
+    .filter((a) => a.tekst && aanwezig.includes(a.wie)); }
+function tekenAkteKeus(s) {
+  const fin = s?.fin || {}, tv = Array.isArray(fin.vuur) ? fin.vuur : [], bezig = !!(fin.voortgang?.vlam?.length || fin.opgelost?.vlam), mom = vkMomenten();
+  if (!vkKeus) vkKeus = tv.filter((r) => r.gekozen).map((r) => { const m = mom.find((x) => x.tekst === r.tekst); return { sleutel: m?.sleutel || r.tekst, wie: r.wie, tekst: r.tekst, mee: r.drie.filter((n) => n !== r.wie) }; });
+  for (const k of vkKeus) { const m = mom.find((x) => x.tekst === k.tekst); if (m) k.sleutel = m.sleutel; } // the moments may arrive after the stand
+  $("vk-stand").innerHTML = bezig ? "<b>Akte I loopt of is klaar:</b> de keuze staat vast." : !tv.length ? "Op de tv: nog niets vast, de tv kiest zelf als Akte I begint." : `Op de tv klaar (${tv.some((r) => r.gekozen) ? "door jullie gekozen" : "door de tv getrokken"}): ` + tv.map((r, i) => `${i + 1}. <b>${vkEsc(r.wie)}</b> met ${vkEsc(r.drie.filter((n) => n !== r.wie).join(" en "))}`).join(" · ");
+  const W = (window.WACHTERS || []).filter((w) => !w.afwezig).map((w) => w.naam);
+  $("vk-lijst").innerHTML = !mom.length ? '<p class="klein">Nog geen gênante momenten ingestuurd (of nog niet geladen).</p>' : mom.map((m) => { const i = vkKeus.findIndex((x) => x.sleutel === m.sleutel), k = vkKeus[i];
+    return `<div class="anek" style="${k ? "border-color:#d9b77a;background:rgba(217,183,122,.12)" : ""}"><button type="button" data-vk="${vkEsc(m.sleutel)}" ${bezig ? "disabled" : ""} style="width:100%;text-align:left">${k ? `<b>${i + 1}.</b> ` : ""}<b>${vkEsc(m.wie)}</b>${m.van !== m.wie ? ` (ingestuurd door ${vkEsc(m.van)})` : ""}<br><span class="klein">${vkEsc(m.tekst)}</span></button>${k ? `<div class="klein" style="margin:6px 0 4px">Bluffers (${k.mee.length}/2, open = tv kiest):</div><div class="namen" style="grid-template-columns:repeat(4,1fr)">${W.filter((n) => n !== m.wie).map((n) => `<button type="button" data-mee="${vkEsc(n)}" data-van="${vkEsc(m.sleutel)}" class="${k.mee.includes(n) ? "goud" : ""}" ${bezig ? "disabled" : ""}>${vkEsc(n)}</button>`).join("")}</div>` : ""}</div>`; }).join("");
+  $("b-vk-zet").disabled = bezig || !vkKeus.length; $("b-vk-los").disabled = bezig;
+  $("b-vk-zet").textContent = vkKeus.length ? `Zet ${vkKeus.length} moment${vkKeus.length === 1 ? "" : "en"} klaar op de tv` : "Kies eerst momenten";
+  const vr = fin.weekendVragen, a2bezig = !!(fin.voortgang?.hoorn?.length || fin.opgelost?.hoorn), ZN = { vlam: "Vlam", hoorn: "Hoorn", schild: "Schild", hart: "Hart" };
+  $("a2-lijst").innerHTML = vr?.length ? vr.map((q, i) => `<div class="anek">${i + 1}. ${vkEsc(q.vraag)}<br><span class="klein">Antwoord: <b>${vkEsc(q.antwoord.map((x) => q.zegel ? ZN[x] || x : x).join(" of "))}</b></span></div>`).join("") : '<p class="klein">Nog niet gemaakt: de tv maakt ze als Akte II begint.</p>';
+  $("b-a2-maak").disabled = $("b-a2-wis").disabled = a2bezig; if (a2bezig) $("a2-lijst").insertAdjacentHTML("afterbegin", '<p class="klein"><b>Akte II loopt of is klaar:</b> de vragen staan vast.</p>');
+}
+$("vk-lijst").onclick = (e) => { const b = e.target.closest("button"); if (!b || b.disabled) return;
+  if (b.dataset.vk) { const i = vkKeus.findIndex((x) => x.sleutel === b.dataset.vk);
+    if (i >= 0) vkKeus.splice(i, 1); else { if (vkKeus.length >= 8) return; const m = vkMomenten().find((x) => x.sleutel === b.dataset.vk); if (m) vkKeus.push({ sleutel: m.sleutel, wie: m.wie, tekst: m.tekst, mee: [] }); } }
+  else if (b.dataset.mee) { const k = vkKeus.find((x) => x.sleutel === b.dataset.van); if (!k) return; const n = b.dataset.mee;
+    if (k.mee.includes(n)) k.mee = k.mee.filter((x) => x !== n); else if (k.mee.length < 2) k.mee.push(n); else k.mee = [k.mee[1], n]; }
+  $("vk-melding").textContent = "Nog niet op de tv: tik op Zet klaar."; tekenAkteKeus(laatsteStand); };
+$("b-vk-zet").onclick = () => { stuur({ cmd: "vuur-kies", rondes: vkKeus.map((k) => ({ wie: k.wie, tekst: k.tekst, mee: k.mee })) }); $("vk-melding").textContent = "Verstuurd. Hierboven bij ‘Op de tv klaar’ zie je het zodra de tv het heeft (de tv moet aan staan)."; };
+$("b-vk-los").onclick = () => tweeKeer($("b-vk-los"), "Zeker? Keuze weg", () => { vkKeus = []; stuur({ cmd: "vuur-kies", rondes: [] }); $("vk-melding").textContent = "Verstuurd: de tv kiest zelf als Akte I begint."; tekenAkteKeus(laatsteStand); });
+$("b-a2-maak").onclick = () => stuur({ cmd: "akte2-maak", maak: true });
+$("b-a2-wis").onclick = () => stuur({ cmd: "akte2-maak", maak: false });
 function tekenVooraf() {
   const V = window.VOORAF || {}, esc = (t) => String(t ?? "").replace(/[&<>"]/g, (k) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[k]);
   $("vooraf-lijst").innerHTML = (window.WACHTERS || []).map((w) => {
@@ -762,7 +807,7 @@ $("portret-kies").onchange = async (e) => { const W = window.WACHTERS || [], los
   for (const f of e.target.files) { const w = W.find((x) => f.name.toLowerCase().startsWith(x.naam.toLowerCase() + " ") || f.name.toLowerCase().startsWith(x.naam.toLowerCase() + ".")); if (!w) { los.push(f.name); continue; }
     $("portret-status").textContent = `Bezig: ${w.naam}…`; const ok = await Koppeling.portret(w.naam, await Portret.verklein(f), await Portret.verklein(f, 1024, .86)); if (ok === false) los.push(`${f.name} (niet opgeslagen)`); }
   e.target.value = ""; tekenPortretten(); if (los.length) $("portret-status").textContent += ` Niet gelukt: ${los.join(", ")}.`; };
-Koppeling.start({ rol: "regie", opXp: (b) => { xpBoek = b || {}; if (laatsteStand) tekenXpLijst(laatsteStand); }, opPlanning: (p) => { planHand = p || {}; if (laatsteStand) tekenPlan(laatsteStand); }, opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); tekenGodfried(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); }, opEre: (t) => { ereToewijzing = t || {}; tekenEreRegie(); } })
+Koppeling.start({ rol: "regie", opXp: (b) => { xpBoek = b || {}; if (laatsteStand) tekenXpLijst(laatsteStand); }, opPlanning: (p) => { planHand = p || {}; if (laatsteStand) tekenPlan(laatsteStand); }, opStand: (s) => { kreegStand = true; tekenVerbinding(); toon(s); tekenGodfried(s); bevelGedaan = new Set(s.bevelen || []); tekenVooraf(); }, opVooraf: (v) => { vooraf = v || {}; tekenVooraf(); if (laatsteStand) tekenAkteKeus(laatsteStand); }, opEre: (t) => { ereToewijzing = t || {}; tekenEreRegie(); } })
   .then((v) => { if (!v) $("verbinding").textContent = "Geen verbinding met de tv"; });
 
 $("b-start").onclick = () => stuur({ cmd: "start" });
