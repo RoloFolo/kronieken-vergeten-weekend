@@ -1313,19 +1313,19 @@ kbd { font: 11px var(--body); border: 1px solid rgba(239,227,212,.25); border-ra
   </details>
 </div>
 
-<script src="a/events.js?v=157"></script>
-<script src="a/godfried.js?v=157"></script>
-<script src="a/spel.js?v=157"></script>
-<script src="a/voorbereiding.js?v=157"></script>
-<script src="a/wachters.js?v=157"></script>
-<script src="a/firebase-config.js?v=157"></script>
-<script src="a/portretten.js?v=157"></script>
-<script src="a/koppeling.js?v=157"></script>
-<script src="a/rollen.js?v=157"></script>
-<script src="a/quests-tv.js?v=157"></script>
-<script src="a/planning.js?v=157"></script>
-<script src="a/route.js?v=157"></script>
-<script src="a/tafel.js?v=157"></script>
+<script src="a/events.js?v=158"></script>
+<script src="a/godfried.js?v=158"></script>
+<script src="a/spel.js?v=158"></script>
+<script src="a/voorbereiding.js?v=158"></script>
+<script src="a/wachters.js?v=158"></script>
+<script src="a/firebase-config.js?v=158"></script>
+<script src="a/portretten.js?v=158"></script>
+<script src="a/koppeling.js?v=158"></script>
+<script src="a/rollen.js?v=158"></script>
+<script src="a/quests-tv.js?v=158"></script>
+<script src="a/planning.js?v=158"></script>
+<script src="a/route.js?v=158"></script>
+<script src="a/tafel.js?v=158"></script>
 <script>
 /* ================= data ================= */
 const ZEGELS = [
@@ -2219,21 +2219,21 @@ const zegelNaamVan = (id) => ZEGELS.find((z) => z.id === id)?.naam ?? id;
 const tijd = (t) => new Date(t).toLocaleString("nl-NL", { weekday: "long", hour: "2-digit", minute: "2-digit" });
 const schoon = (t) => String(t).replace(/[<>&]/g, "");
 
-// --- Akte II: light questions about the weekend, from what the game kept (quotes, XP, class moments); frozen once asked ---
+// --- Akte II: "Wie kreeg XP voor …?" only. The regie picks up to 8 reasons; without a pick the tv draws 8. Frozen once made ---
+const XP_VRAGEN = 8;
+function xpRedenen() { // every reason XP was given for (taken-back XP is no longer in the log), with everyone who got XP for it
+  const per = new Map();
+  for (const l of logboek) { if (l.type !== "punt" || !NAMEN.includes(l.naam) || xpVan(l) <= 0) continue; const r = String(l.waarom || "").trim(); if (r.length < 4) continue;
+    const k = r.toLowerCase(), x = per.get(k) || { waarom: r, namen: [], t: l.t }; if (!x.namen.includes(l.naam)) x.namen.push(l.naam); per.set(k, x); }
+  return [...per.values()];
+}
+const xpVraag = (waarom, namen) => ({ vraag: `Wie kreeg XP voor: “${waarom}”?`, antwoord: namen });
 function weekendVragen() {
   if (fin.weekendVragen) return fin.weekendVragen;
-  const h = (s) => hashNaam(s + ronde), uniek = (l, k) => l.filter((x, i) => l.findIndex((y) => k(y) === k(x)) === i), kies = (l, n, z) => [...l].sort((x, y) => h(z + x.t) - h(z + y.t)).slice(0, n);
-  const verlies = {}; for (const l of logboek) if (l.type === "fiche" && l.n < 0) verlies[l.id] = (verlies[l.id] || 0) + 1;
-  const meest = Math.max(0, ...Object.values(verlies)), zwaarst = Object.keys(verlies).filter((k) => verlies[k] === meest);
-  const citaten = kies(uniek(logboek.filter((l) => l.type === "citaat" && NAMEN.includes(l.naam) && l.tekst), (l) => l.tekst.trim().toLowerCase()), 2, "c").map((l) => ({ vraag: `Wie zei: “${l.tekst}”?`, antwoord: [l.naam] }));
-  const xp = kies(uniek(logboek.filter((l) => l.type === "punt" && NAMEN.includes(l.naam) && xpVan(l) > 0 && String(l.waarom || "").length > 6), (l) => l.waarom.trim().toLowerCase()), 2, "x").map((l) => ({ vraag: `Wie kreeg XP voor: “${l.waarom}”?`, antwoord: [l.naam] }));
-  const klasse = kies(uniek(logboek.filter((l) => l.type === "klasse" && NAMEN.includes(l.hoofd)), (l) => l.quest), 1, "k").map((l) => ({ vraag: `Wie was de hoofdpersoon bij het klassemoment “${l.quest}”?`, antwoord: [l.hoofd] }));
-  const p = scores().p, top = Math.max(...NAMEN.map((n) => p[n] || 0)), meestFiches = Math.max(...ZEGELS.map((z) => z.fiches));
-  const basis = [citaten[0], xp[0], klasse[0], citaten[1], xp[1]].filter(Boolean).slice(0, 4);
-  const extra = [{ vraag: "Wie heeft op dit moment de meeste XP aan de Ronde Tafel?", antwoord: NAMEN.filter((n) => (p[n] || 0) === top) },
-    { vraag: "Welk Zegel verloor dit weekend de meeste fiches?", zegel: true, antwoord: zwaarst.length ? zwaarst : ZEGELS.map((z) => z.id) },
-    { vraag: "Welk Zegel heeft nu de meeste fiches?", zegel: true, antwoord: ZEGELS.filter((z) => z.fiches === meestFiches).map((z) => z.id) }];
-  return (fin.weekendVragen = [...basis, ...extra].slice(0, 5));
+  const l = xpRedenen().sort((x, y) => hashNaam("x" + x.t + ronde) - hashNaam("x" + y.t + ronde)).slice(0, XP_VRAGEN);
+  const vr = l.map((x) => xpVraag(x.waarom, x.namen));
+  if (vr.length) fin.weekendVragen = vr; // never freeze an empty list
+  return vr;
 }
 // --- Akte IV: three questions about the Schaduwdragers: who served best, who let the Shadow down, who pressed every button at once ---
 function verraadPeriodes() {
@@ -3396,8 +3396,11 @@ const OPDRACHTEN = {
   hint: () => hintVoor(),
   "vuur-kies": (o) => { // Act I as the regie set it (an empty list: drawn at random again); not once the act has begun
     if (fin.voortgang?.vlam?.length || fin.opgelost?.vlam) return; const r = vuurKies(o.rondes); fin.vuur = r.length ? r : null; meld(); if (paneelNu === "finale") tekenFinale(); },
-  "akte2-maak": (o) => { // Act II: make the questions now so the regie can read them (or let them be made when the act begins); not once it has begun
-    if (fin.voortgang?.hoorn?.length || fin.opgelost?.hoorn) return; fin.weekendVragen = null; if (o.maak) weekendVragen(); meld(); if (paneelNu === "finale") tekenFinale(); },
+  "akte2-kies": (o) => { // Act II as the regie picked it: up to 8 reasons, in order (an empty list: the tv draws); not once the act has begun
+    if (fin.voortgang?.hoorn?.length || fin.opgelost?.hoorn) return;
+    const vr = (Array.isArray(o.vragen) ? o.vragen : []).map((q) => ({ waarom: String(q?.waarom || "").trim().slice(0, 200), namen: (Array.isArray(q?.namen) ? q.namen : []).filter((n) => NAMEN.includes(n)) }))
+      .filter((q) => q.waarom && q.namen.length).slice(0, XP_VRAGEN).map((q) => ({ ...xpVraag(q.waarom, q.namen), gekozen: true }));
+    fin.weekendVragen = vr.length ? vr : null; meld(); if (paneelNu === "finale") tekenFinale(); },
   "akte-gehaald": () => { // the regie skips the rest of an act (not fun, taking too long): it counts as done and its digit falls
     if (paneelNu !== "finale") return; const a = S.aktes[fin.nu]; if (!a || fin.opgelost[a.zegel]) return;
     gStop(); titel(null, false); fin.opgelost[a.zegel] = true; (fin.intro ||= {})[a.zegel] = true; meld();
